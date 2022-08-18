@@ -1,0 +1,3 @@
+content chartero chrome/content/
+overlay chrome://zotero/content/zoteroPane.xul chrome://chartero/content/overlay.xul
+overlay chrome://zotero/content/preferences/preferences.xul chrome://chartero/content/preferences.xul

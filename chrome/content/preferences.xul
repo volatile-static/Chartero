@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<overlay id="chartero-preferences" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
+
+  <prefwindow id="zotero-prefs">
+    <prefpane id="zotero-prefpane-chartero" insertafter="zotero-prefpane-advanced" label="xuanxiang">
+
+      <rows>
+        <row>
+          <label value="233" />
+          <label value="666" />
+        </row>
+      </rows>
+    </prefpane>
+  </prefwindow>
+</overlay>
