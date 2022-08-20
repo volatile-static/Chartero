@@ -1,8 +1,32 @@
 <?xml version="1.0"?>
+<?xml-stylesheet href="chrome://chartero/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://chartero/locale/overlay.dtd">
 
 <overlay id="chartero"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <tabbox id="zotero-view-tabbox">
+        <tabs id="zotero-editpane-tabs">
+            <tab id="tab6" label="6666666"></tab>
+        </tabs>
+        <tabpanels id="zotero-view-item">
 
-    <script src="chrome://zotero/content/include.js"/>
-    <script src="chrome://jasminum/content/scripts/include.js"/>
+            <tabpanel id="tabpanel6">
+            <window id="chartero-window"
+                    title="Find Files"
+                    orient="horizontal"
+                    xmlns:html="http://www.w3.org/1999/xhtml"
+                    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+                <!-- 图表容器 DOM -->
+                <html:div id="container62" style="width: 260px;height:300px;"></html:div>
+
+            </window>
+            <button id="cancel-button" label="555"/>
+          </tabpanel>
+
+        </tabpanels>
+    </tabbox>
+    <script src="chrome://zotero/content/include.js" type="application/javascript"/>
+    <script src="chrome://chartero/content/highcharts.js" type="application/javascript"/>
+    <script src="chrome://chartero/content/include.js" type="application/javascript"/>
 </overlay>

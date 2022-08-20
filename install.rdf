@@ -40,9 +40,9 @@
     </em:targetApplication>
 
     <!-- 扩展的元数据。 --> 
-    <em:iconURL>chrome://chartero/skin/icon.png</em:iconURL>
+    <em:iconURL>chrome://chartero/skin/default/chartero/icon.png</em:iconURL>
     <em:multiprocessCompatible>true</em:multiprocessCompatible>
-    <em:optionsURL>chrome://chartero/content/preferences.xul</em:optionsURL>
+    <em:optionsURL>chrome://chartero/content/overlay.xul</em:optionsURL>
     <em:updateURL>https://gitee.com/const_volatile/chartero/master/update.rdf</em:updateURL>
     
     <!-- 扩展作者。选填。 --> 

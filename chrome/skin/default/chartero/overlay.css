@@ -1,0 +1,35 @@
+.jasminum-searchCNKI-icon {
+	list-style-image: url('chrome://jasminum/skin/searchCNKI.png');
+}
+
+.jasminum-name-icon {
+	list-style-image: url('chrome://jasminum/skin/name.png');
+}
+
+.jasminum-bookmark-icon {
+	list-style-image: url('chrome://jasminum/skin/bookmark.png');
+}
+
+.jasminum-tools-icon {
+	list-style-image: url('chrome://jasminum/skin/wrench.png');
+}
+
+.jasminum-cnki-icon {
+	list-style-image: url('chrome://jasminum/skin/wrench_orange.png');
+}
+
+.jasminum-cssci-icon {
+	list-style-image: url('chrome://jasminum/skin/triangular-ruler.png');
+}
+
+.jasminum-default-icon {
+	list-style-image: url('chrome://jasminum/skin/bullet_yellow.png');
+}
+
+.jasminum-zh-icon {
+	list-style-image: url('chrome://jasminum/skin/flag-china.png');
+}
+
+.jasminum-pdf-icon {
+	list-style-image: url('chrome://jasminum/skin/pdf.png');
+}
