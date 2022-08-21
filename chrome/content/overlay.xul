@@ -6,11 +6,11 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <tabbox id="zotero-view-tabbox">
         <tabs id="zotero-editpane-tabs">
-            <tab id="tab6" label="6666666"></tab>
+            <tab id="chartero-item-tab" label="仪表盘"></tab>
         </tabs>
         <tabpanels id="zotero-view-item">
 
-            <tabpanel id="tabpanel6">
+            <tabpanel id="chartero-item-tabpanel">
             <window id="chartero-window"
                     title="Find Files"
                     orient="horizontal"
@@ -18,10 +18,9 @@
                     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
                 <!-- 图表容器 DOM -->
-                <html:div id="container62" style="width: 260px;height:300px;"></html:div>
+                <html:div id="chartero-dashboard" style="width: 260px;height:60px;"></html:div>
 
             </window>
-            <button id="cancel-button" label="555"/>
           </tabpanel>
 
         </tabpanels>

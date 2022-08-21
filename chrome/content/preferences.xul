@@ -8,15 +8,17 @@
     <prefpane id="zotero-prefpane-chartero" 
               insertafter="zotero-prefpane-advanced" 
               label="Chartero"
-              image="chrome://chartero/skin/accept.png"
+              image="chrome://chartero/skin/icon.png"
               onpaneload="initPref();">
+      <preferences>
+          <preference id="pref-chartero-interval" name="extensions.zotero.chartero.interval" type="int"/>
+      </preferences>
+
       <rows>
         <row>
-          <button id="cancel-button" label="&about;" oncommand="alert('Hello World!')" />
-          <label value="a" />
-          <button id="okbutton" label="OK" oncommand="Zotero.debug('okkkkkkkkkkkkkkkkkkkkk')"/>
-          
-          <label value="666" />
+          <label value="检测间隔（重启生效）："/>
+          <textbox preference="pref-chartero-interval"/>
+          <label value="毫秒"/>
         </row>
       </rows>
     </prefpane>

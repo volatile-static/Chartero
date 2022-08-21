@@ -12,7 +12,6 @@
     <!-- 在这里的值必须是2。该标签说明该应用的Firefox扩展，而不是其他XUL应用程序。Firefox插件的代码是2，如果是Firefox主题则会是4。必填。 --> 
     <em:type>2</em:type>
 
-
     <!-- 安装扩展的目标应用程序以及最高版本和最低版本。必填。 --> 
     <em:targetApplication>
       <Description>
@@ -31,6 +30,7 @@
         <em:maxVersion>45.*</em:maxVersion>
       </Description>
     </em:targetApplication>
+    <!-- Requires Firefox or Zotero Standalone -->
     <em:targetApplication>
       <Description>
         <em:id>juris-m@juris-m.github.io</em:id>
@@ -40,7 +40,7 @@
     </em:targetApplication>
 
     <!-- 扩展的元数据。 --> 
-    <em:iconURL>chrome://chartero/skin/default/chartero/icon.png</em:iconURL>
+    <em:iconURL>chrome://chartero/skin/icon.png</em:iconURL>
     <em:multiprocessCompatible>true</em:multiprocessCompatible>
     <em:optionsURL>chrome://chartero/content/overlay.xul</em:optionsURL>
     <em:updateURL>https://gitee.com/const_volatile/chartero/master/update.rdf</em:updateURL>

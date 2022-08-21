@@ -1,84 +1,125 @@
 Zotero.Chartero = new function () {
-    // Default values
+    var readingSummary;
+    var interval;
+
+    this.onTime = function () {
+        // 根据当前打开的标签页获取阅读器对象
+        const reader = Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
+        if (!reader)
+            return;  // 不是阅读器页面
+
+        // 获取当前页码与文档标题
+        const pageIndex = reader.state.pageIndex;
+        const item = Zotero.Items.get(reader.itemID);
+        // const top = Zotero.Items.get(item.parentItemID);
+
+        if (!readingSummary[item.key])  // 新文件
+            readingSummary[item.key] = {};
+
+        if (!readingSummary[item.key][pageIndex])  // 新页码
+            readingSummary[item.key][pageIndex] = interval / 1000;
+        else
+            readingSummary[item.key][pageIndex] += interval / 1000;
+
+        const text = JSON.stringify(readingSummary);
+        Zotero.Prefs.set("chartero.data", text);
+    };
+
+    this.onItemSelect = function (event) {
+        if (event.target.id != "chartero-item-tab")
+            return;
+        const items = ZoteroPane.getSelectedItems();
+        if (items.length != 1 || !items[0].isRegularItem())
+            return;  // TODO: multi-charts
+        let item;
+        const attachment =
+            Zotero.Items.get(items[0].getAttachments()).find((att) => att.isPDFAttachment());
+        if (attachment) {
+            item = attachment;
+        } else return;
+        if (!readingSummary[item.key])  // 还没读过
+            return;
+
+        let max = 0;
+        for (const i in readingSummary[item.key]) 
+            max = Math.max(max, readingSummary[item.key][i]);
+
+        let categories = new Array();
+        let data = new Array();
+
+        for (let i = 1; i <= max; ++i) {
+            categories.push(i);
+            if (readingSummary[item.key][i])
+                data.push(readingSummary[item.key][i])
+            else
+                data.push(0);
+        }
+
+        // 图表配置
+        let options = {
+            chart: {
+                type: 'bar'                          //指定图表的类型，默认是折线图（line）
+            },
+            title: {
+                text: '每页阅读时间'                 // 标题
+            },
+            xAxis: {
+                categories: categories   // x 轴分类
+            },
+            yAxis: {
+                title: {
+                    text: '秒'                // y 轴标题
+                }
+            },
+            series: [{
+                data: data
+            }]
+        };
+        // 图表初始化函数
+        const chart = Highcharts.chart('chartero-dashboard', options);
+    }
+
+    this.notifierCallback = {
+        // Check new added item, and adds meta data.
+        notify: async function (event, type, ids, extraData) {
+            Zotero.log("////////////////////////////////////notify chartero");
+            Zotero.log(event);
+            Zotero.log(ids);
+            Zotero.log(extraData);
+        },
+    };
 
     /**
      * Initiate addon
      */
     this.init = async function () {
+        const notifierID = Zotero.Notifier.registerObserver(
+            this.notifierCallback,
+            ["item", "tab"]
+        );
+        // Unregister callback when the window closes (important to avoid a memory leak)
+        window.addEventListener(
+            "unload",
+            function (e) {
+                Zotero.Notifier.unregisterObserver(notifierID);
+            },
+            false
+        );
 
-        Zotero.log("Init Chartero ...");
-        // 图表配置
-        var options = {
-            chart: {
-                type: 'bar'                          //指定图表的类型，默认是折线图（line）
-            },
-            title: {
-                text: '我的第一个图表'                 // 标题
-            },
-            xAxis: {
-                categories: ['苹果', '香蕉', '橙子']   // x 轴分类
-            },
-            yAxis: {
-                title: {
-                    text: '吃水果个数'                // y 轴标题
-                }
-            },
-            series: [{                              // 数据列
-                name: '小明',                        // 数据列名
-                data: [1, 0, 4]                     // 数据
-            }, {
-                name: '小红',
-                data: [5, 7, 3]
-            }]
-        };
-        // 图表初始化函数
-        Zotero.log(document.getElementById("container62"));
-        var chart = Highcharts.chart('container62', options);
-        Zotero.log(chart);
-    };
+        const tabbox = document.getElementById("zotero-view-tabbox");
+        tabbox.addEventListener("command", this.onItemSelect);
 
-    /**
-     * Initiate Jasminum preferences
-     */
-    this.initPref = function () {
-        if (Zotero.Prefs.get("jasminum.pdftkpath") === undefined) {
-            var pdftkpath = "C:\\Program Files (x86)\\PDFtk Server\\bin";
-            if (Zotero.isLinux) {
-                pdftkpath = "/usr/bin";
-            } else if (Zotero.isMac) {
-                pdftkpath = "/opt/pdflabs/pdftk/bin";
-            }
-            Zotero.Prefs.set("jasminum.pdftkpath", pdftkpath);
+        interval = Zotero.Prefs.get("chartero.interval");
+        if (!interval) {
+            interval = 1000;
+            Zotero.Prefs.set("chartero.interval", interval);
         }
-        if (Zotero.Prefs.get("jasminum.autoupdate") === undefined) {
-            Zotero.Prefs.set("jasminum.autoupdate", false);
-        }
-        if (Zotero.Prefs.get("jasminum.namepatent") === undefined) {
-            Zotero.Prefs.set("jasminum.namepatent", "{%t}_{%g}");
-        }
-        if (Zotero.Prefs.get("jasminum.zhnamesplit") === undefined) {
-            Zotero.Prefs.set("jasminum.zhnamesplit", true);
-        }
-        if (Zotero.Prefs.get("jasminum.rename") === undefined) {
-            Zotero.Prefs.set("jasminum.rename", true);
-        }
-        if (Zotero.Prefs.get("jasminum.autobookmark") === undefined) {
-            Zotero.Prefs.set("jasminum.autobookmark", true);
-        }
-        if (Zotero.Prefs.get("jasminum.autolanguage") === undefined) {
-            Zotero.Prefs.set("jasminum.autolanguage", false);
-        }
-        if (Zotero.Prefs.get("jasminum.language") === undefined) {
-            Zotero.Prefs.set("jasminum.language", 'zh-CN');
-        }
-        if (Zotero.Prefs.get("jasminum.foreignlanguage") === undefined) {
-            Zotero.Prefs.set("jasminum.foreignlanguage", 'en-US');
-        }
-        if (Zotero.Prefs.get("jasminum.attachment") === undefined) {
-            Zotero.Prefs.set("jasminum.attachment", 'pdf');
-        }
-        if (Zotero.Prefs.get("jasminum.citefield") === undefined) {
-            Zotero.Prefs.set("jasminum.citefield", 'extra');
-        }
+        setInterval(this.onTime, interval);
+
+        let jsonText = Zotero.Prefs.get("chartero.data");
+        if (!jsonText)
+            jsonText = "{}";
+        readingSummary = JSON.parse(jsonText);
+
     };
 }
