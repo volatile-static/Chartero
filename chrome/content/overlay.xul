@@ -11,21 +11,26 @@
         <tabpanels id="zotero-view-item">
 
             <tabpanel id="chartero-item-tabpanel">
-            <window id="chartero-window"
-                    title="Find Files"
-                    orient="horizontal"
-                    xmlns:html="http://www.w3.org/1999/xhtml"
-                    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-
-                <!-- 图表容器 DOM -->
-                <html:div id="chartero-dashboard" style="width: 260px;height:60px;"></html:div>
-
-            </window>
-          </tabpanel>
+                <rows flex="0">
+                    <row>
+                        <progressmeter id="reading-progress" value="0%"/>
+                    </row>
+                    <row>
+                        <window id="chartero-window"
+                                title="Find Files"
+                                orient="horizontal"
+                                xmlns:html="http://www.w3.org/1999/xhtml"
+                                xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+                            <!-- 图表容器 DOM -->
+                            <html:div id="chartero-dashboard" style="width: 260px;height:60px;"></html:div>
+                        </window>
+                    </row>
+                </rows>
+            </tabpanel>
 
         </tabpanels>
     </tabbox>
-    <script src="chrome://zotero/content/include.js" type="application/javascript"/>
-    <script src="chrome://chartero/content/highcharts.js" type="application/javascript"/>
+    <script src="chrome://zotero/content/include.js" type="application/javascript"/>   
+    <script src="resource://zotero/pdf-reader/pdf.js" type="application/javascript"/>
     <script src="chrome://chartero/content/include.js" type="application/javascript"/>
 </overlay>

@@ -25,3 +25,31 @@ Zotero PDF reading chart
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
+
+```js
+const cont = document.getElementById(`${Zotero_Tabs.selectedID}-context`);
+const box = cont.querySelector("tabbox");
+const tab = document.createElement('tab');
+tab.setAttribute('label', "555");
+box.tabs.append(tab);
+const panel = document.createElement('tabpanel');
+panel.setAttribute('flex', '1');
+panel.className = 'zotero-editpane-item-box';
+box.tabpanels.append(panel);
+
+notifierCallback = {
+    notify: async function (event, type, ids, extraData) {
+        Zotero.log("777777777777777777777777777777777777777777777");
+    },
+}
+Zotero.Notifier.registerObserver(notifierCallback, ["item"])
+
+
+
+        const path = await item.getFilePathAsync();
+        const pdfDoc = await pdfjsLib.getDocument({
+            url: "F:\\a.pdf",
+            cMapUrl: "resource://zotero/pdf-reader/cmaps/",
+            cMapPacked: true,
+        }).promise;
+```

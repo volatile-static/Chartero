@@ -2,12 +2,40 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
-   <Description about="urn:mozilla:install-manifest">
+  <Description about="urn:mozilla:install-manifest">
     <!-- 指出扩展的ID。该ID应该是一个Email格式的字符串，或者是一个GUID。注意，使用Email的作用是保证该ID的唯一性，并不要求这个Email地址是有效的。必填。 -->
     <em:id>chartero@volatile.static</em:id>
-
     <!-- 指出插件的版本号。必填。 -->
-    <em:version>0.1</em:version>
+    <em:version>0.2</em:version>
+
+    <!-- 扩展的元数据。 --> 
+    <em:iconURL>chrome://chartero/skin/icon.png</em:iconURL>
+    <em:optionsURL>chrome://chartero/content/overlay.xul</em:optionsURL>
+    <em:updateURL>https://gitee.com/const_volatile/chartero/blob/master/update.rdf</em:updateURL>
+    <em:multiprocessCompatible>true</em:multiprocessCompatible>
+    
+    <em:localized>
+      <Description>
+        <em:locale>en-US</em:locale>
+        <!-- 扩展名字。必填。 --> 
+        <em:name>Chartero</em:name>
+        <!-- 扩展作者。选填。 --> 
+        <em:creator>volatile static</em:creator>
+        <!-- 扩展的描述。这里的描述将出现在Zotero的工具-附加组件的描述栏。选填。 --> 
+        <em:description>To become the most beautiful Zotero addon.</em:description>
+        <!-- 扩展主页的URL。选填。 --> 
+        <em:homepageURL>https://github.com/volatile-static/chartero</em:homepageURL>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>zh-CN</em:locale>
+        <em:name>Chartero</em:name>
+        <em:creator>volatile static</em:creator>
+        <em:description>要当最好看的Zotero插件</em:description>
+        <em:homepageURL>https://gitee.com/const_volatile/chartero</em:homepageURL>
+      </Description>
+    </em:localized>
 
     <!-- 在这里的值必须是2。该标签说明该应用的Firefox扩展，而不是其他XUL应用程序。Firefox插件的代码是2，如果是Firefox主题则会是4。必填。 --> 
     <em:type>2</em:type>
@@ -39,33 +67,5 @@
       </Description>
     </em:targetApplication>
 
-    <!-- 扩展的元数据。 --> 
-    <em:iconURL>chrome://chartero/skin/icon.png</em:iconURL>
-    <em:multiprocessCompatible>true</em:multiprocessCompatible>
-    <em:optionsURL>chrome://chartero/content/overlay.xul</em:optionsURL>
-    <em:updateURL>https://gitee.com/const_volatile/chartero/master/update.rdf</em:updateURL>
-    
-    <!-- 扩展作者。选填。 --> 
-    <em:creator>volatile static</em:creator>
-    
-    <!-- 扩展主页的URL。选填。 --> 
-    <em:homepageURL>https://gitee.com/const_volatile/chartero/</em:homepageURL> 
-
-    <em:localized>
-      <Description>
-        <em:locale>en-US</em:locale>
-        <!-- 扩展名字。必填。 --> 
-        <em:name>Chartero</em:name>
-        <!-- 扩展的描述。这里的描述将出现在Zotero的工具-附加组件的描述栏。选填。 --> 
-        <em:description>Charts about PDF reader summary.</em:description>
-      </Description>
-    </em:localized>
-    <em:localized>
-      <Description>
-        <em:locale>zh-CN</em:locale>
-        <em:name>Chartero</em:name>
-        <em:description>一个简单的 Zotero 中文插件</em:description>
-      </Description>
-    </em:localized>
   </Description>
 </RDF>
