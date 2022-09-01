@@ -11,7 +11,7 @@
 ### 数据存储位置
 浏览历史的原始数据以JSON格式保存在一条笔记条目中，
 你可以移动他，但不要更改笔记的内容。
-> 当Chartero无法自动识别到该条目时，请手动获取笔记的ID并保存至
+> 当Chartero无法自动识别到该条目时，请[手动获取笔记的ID](#常用调试代码)并保存至
 [C盘的Zotero首选项](https://www.zotero.org/support/kb/profile_directory)中。
 ## 教程或文档
 1. [插件安装](https://zotero-chinese.feishu.cn/wiki/wikcnWTc9848uF9rPMvYTx4yGkb) 
