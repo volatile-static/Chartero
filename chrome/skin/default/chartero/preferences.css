@@ -1,0 +1,72 @@
+#cont {
+	border: 10px solid rgb(178, 6, 190);
+	-moz-box-align: center;
+	-moz-box-pack: end;
+}
+
+.progress-container {
+    position: fixed;
+	width: 200px;
+	height: 200px;
+	padding: 5px;
+	border: 5px solid rgb(118, 218, 255);
+	transform: translate(-50%, -50%);
+	border-radius: 50%;
+	overflow: hidden;
+    top: 200px;
+    left: 100px;
+}
+
+.progress-wave {
+	position: relative;
+	width: 200px;
+	height: 200px;
+	background-color: rgb(118, 218, 255);
+	border-radius: 50%;
+}
+
+.progress-wave:before, .progress-wave:after {
+	content: "";
+	position: absolute;
+	width: 400px;
+	height: 400px;
+	top: 0;
+	left: 50%;
+	background-color: rgba(255, 255, 255, .4);
+	border-radius: 45%;
+	transform: translate(-50%, -70%) rotate(0);
+	animation: rotate 6s linear infinite;
+	z-index: 1;
+}
+
+.progress-wave:after {
+	border-radius: 47%;
+	background-color: rgba(255, 255, 255, .9);
+	transform: translate(-50%, -70%) rotate(0);
+	animation: rotate 10s linear -5s infinite;
+	z-index: 2;
+}
+
+.progress-container p {
+	position: absolute; 
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 36px;
+	color: #000;
+	z-index: 10;
+}
+
+@keyframes rotate {
+	0% {
+		transform: translate(-50%, -70%) rotate(360deg);
+	}
+
+	50% {
+		transform: translate(-50%, -73%) rotate(180deg);
+	}
+
+	100% {
+		transform: translate(-50%, -70%) rotate(360deg);
+	}
+}

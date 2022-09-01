@@ -6,7 +6,7 @@
     <!-- 指出扩展的ID。该ID应该是一个Email格式的字符串，或者是一个GUID。注意，使用Email的作用是保证该ID的唯一性，并不要求这个Email地址是有效的。必填。 -->
     <em:id>chartero@volatile.static</em:id>
     <!-- 指出插件的版本号。必填。 -->
-    <em:version>0.2</em:version>
+    <em:version>0.2.0</em:version>
 
     <!-- 扩展的元数据。 --> 
     <em:iconURL>chrome://chartero/skin/icon.png</em:iconURL>
@@ -22,7 +22,7 @@
         <!-- 扩展作者。选填。 --> 
         <em:creator>volatile static</em:creator>
         <!-- 扩展的描述。这里的描述将出现在Zotero的工具-附加组件的描述栏。选填。 --> 
-        <em:description>To become the most beautiful Zotero addon.</em:description>
+        <em:description>A good-looking Zotero add-on.</em:description>
         <!-- 扩展主页的URL。选填。 --> 
         <em:homepageURL>https://github.com/volatile-static/chartero</em:homepageURL>
       </Description>
@@ -32,7 +32,7 @@
         <em:locale>zh-CN</em:locale>
         <em:name>Chartero</em:name>
         <em:creator>volatile static</em:creator>
-        <em:description>要当最好看的Zotero插件</em:description>
+        <em:description>一个好看的Zotero插件</em:description>
         <em:homepageURL>https://gitee.com/const_volatile/chartero</em:homepageURL>
       </Description>
     </em:localized>

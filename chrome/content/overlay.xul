@@ -3,6 +3,7 @@
 <!DOCTYPE overlay SYSTEM "chrome://chartero/locale/overlay.dtd">
 
 <overlay id="chartero"
+    xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <tabbox id="zotero-view-tabbox">
         <tabs id="zotero-editpane-tabs">
@@ -10,27 +11,32 @@
         </tabs>
         <tabpanels id="zotero-view-item">
 
-            <tabpanel id="chartero-item-tabpanel">
-                <rows flex="0">
-                    <row>
-                        <progressmeter id="reading-progress" value="0%"/>
-                    </row>
-                    <row>
-                        <window id="chartero-window"
-                                title="Find Files"
-                                orient="horizontal"
-                                xmlns:html="http://www.w3.org/1999/xhtml"
-                                xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-                            <!-- 图表容器 DOM -->
-                            <html:div id="chartero-dashboard" style="width: 260px;height:60px;"></html:div>
-                        </window>
-                    </row>
-                </rows>
-            </tabpanel>
+            <tabpanel id="chartero-item-tabpanel" flex="1" orient="vertical">
+                <deck id="chartero-item-deck" selectedIndex="1" flex="1" orient="vertical">
+                    <label class="chartero-center-label">该条目不存在浏览历史</label>
+                    <vbox id="chartero-item-vbox" flex="1" orient="vertical">
 
+                        <hbox id="reading-progress-box" align="baseline">
+                            <label value="阅读进度："/>
+                            <stack flex="1">
+                                <html:progress id="reading-progress" max="100"/>
+                                <label id="reading-progress-lable"/>
+                            </stack>
+                            <label value="已读"/>
+                            <label id="chartero-dashboard-read-pages" class="small-margin"/>
+                            <label value="页 / 共"/>
+                            <label id="chartero-dashboard-total-pages" class="small-margin"/>
+                            <label value="页"/>
+                        </hbox>
+                        <html:div id="chartero-dashboard" class="chartero-dashboard-chart"/>
+                        
+                    </vbox>
+                </deck>
+            </tabpanel>
+            
         </tabpanels>
     </tabbox>
-    <script src="chrome://zotero/content/include.js" type="application/javascript"/>   
-    <script src="resource://zotero/pdf-reader/pdf.js" type="application/javascript"/>
+    <script src="chrome://zotero/content/include.js" type="application/javascript"/> 
+    <script src="chrome://chartero/content/history.js" type="application/javascript"/> 
     <script src="chrome://chartero/content/include.js" type="application/javascript"/>
 </overlay>

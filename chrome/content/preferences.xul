@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<?xml-stylesheet href="chrome://chartero/skin/preferences.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://chartero/locale/overlay.dtd">
 
 <overlay id="chartero-preferences" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
@@ -11,16 +12,23 @@
               image="chrome://chartero/skin/icon.png"
               onpaneload="initPref();">
       <preferences>
-          <preference id="pref-chartero-interval" name="extensions.zotero.chartero.interval" type="int"/>
+          <preference id="pref-chartero-scan-period" name="extensions.zotero.chartero.scanPeriod" type="int"/>
+          <preference id="pref-chartero-save-period" name="extensions.zotero.chartero.savePeriod" type="int"/>
       </preferences>
 
-      <rows>
-        <row>
-          <label value="检测间隔（重启生效）："/>
-          <textbox preference="pref-chartero-interval"/>
+      <vbox>
+        <hbox align="baseline">
+          <label value="记录周期（重启生效）："/>
+          <textbox preference="pref-chartero-scan-period" type="number" min="1" increment="1000"/>
           <label value="毫秒"/>
-        </row>
-      </rows>
+        </hbox>
+        
+        <hbox align="baseline">
+          <label value="保存周期（重启生效）："/>
+          <textbox preference="pref-chartero-save-period" type="number" min="1" increment="1000"/>
+          <label value="毫秒"/>
+        </hbox>
+      </vbox>
     </prefpane>
 
     <script type="application/javascript" src="chrome://zotero/content/include.js"/>

@@ -1,35 +1,41 @@
-.jasminum-searchCNKI-icon {
-	list-style-image: url('chrome://jasminum/skin/searchCNKI.png');
+.chartero-center-label {
+	padding: 6em 0;
+	border: 2px solid rgba(245, 131, 0, 0.614);
+	text-align: center;
 }
 
-.jasminum-name-icon {
-	list-style-image: url('chrome://jasminum/skin/name.png');
+@keyframes myani {
+	from {
+		border: 1px solid rgb(178, 6, 190);
+	}
+
+	to {
+		border: 10px solid rgb(29, 195, 106);
+	}
 }
 
-.jasminum-bookmark-icon {
-	list-style-image: url('chrome://jasminum/skin/bookmark.png');
+.chartero-dashboard-chart {
+	/* -moz-box-flex: 62; 
+	border: 1px solid rgb(178, 6, 190);
+	-moz-box-orient: vertical;*/
+	padding: 0 8px;
+	height: 20rem;
+	/* animation: myani 1s linear 0s infinite alternate; */
 }
 
-.jasminum-tools-icon {
-	list-style-image: url('chrome://jasminum/skin/wrench.png');
+#reading-progress-lable {
+	/* background-color: rgba(14, 21, 232, 0.108); */
+	margin-left: 6rem;
+	margin-right: 6rem;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	-moz-box-align: center;
+	-moz-box-pack: center;
 }
 
-.jasminum-cnki-icon {
-	list-style-image: url('chrome://jasminum/skin/wrench_orange.png');
-}
-
-.jasminum-cssci-icon {
-	list-style-image: url('chrome://jasminum/skin/triangular-ruler.png');
-}
-
-.jasminum-default-icon {
-	list-style-image: url('chrome://jasminum/skin/bullet_yellow.png');
-}
-
-.jasminum-zh-icon {
-	list-style-image: url('chrome://jasminum/skin/flag-china.png');
-}
-
-.jasminum-pdf-icon {
-	list-style-image: url('chrome://jasminum/skin/pdf.png');
+#reading-progress-box {
+	padding-left: 1rem;
+	padding-right: 1rem;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
 }
