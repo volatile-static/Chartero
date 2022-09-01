@@ -12,8 +12,10 @@
         <tabpanels id="zotero-view-item">
 
             <tabpanel id="chartero-item-tabpanel" flex="1" orient="vertical">
-                <deck id="chartero-item-deck" selectedIndex="1" flex="1" orient="vertical">
-                    <label class="chartero-center-label">该条目不存在浏览历史</label>
+                <deck id="chartero-item-deck" flex="1" orient="vertical">
+                    <groupbox pack="center" align="center">
+                        <label class="chartero-center-label">该条目暂无浏览历史</label>
+                    </groupbox>
                     <vbox id="chartero-item-vbox" flex="1" orient="vertical">
 
                         <hbox id="reading-progress-box" align="baseline">

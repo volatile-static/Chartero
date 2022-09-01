@@ -155,7 +155,7 @@ Zotero.Chartero = new function () {
                 panning: true,
                 panKey: 'shift',
                 type: 'bar',  // 指定图表的类型，默认是折线图（line）
-                width: box.clientWidth - 20  // 随侧边栏缩放
+                width: box.clientWidth - 16  // 随侧边栏缩放
             },
             exporting: {
                 buttons: {
