@@ -27,7 +27,6 @@
 4. 改变窗口宽度时侧边栏不能同时缩放
 5. 图表的保存按钮横向排列
 ### features
-1. 超过一定时间无操作后停止记录
 2. 对一个条目画出随日期变化的阅读时长
 3. 不同标签的条目数与阅读时长饼图
 4. 文件库的甘特图
@@ -73,4 +72,12 @@ ico.after(ico)
 - 获取某行条目
 ```js
 Zotero.Items.get(ZoteroPane.itemsView.getRow(2).id)
+```
+- PDF页面
+```js
+Zotero.Reader.getByTabID(Zotero_Tabs.selectedID)._window[2]
+```
+- PDF右侧边栏
+```js
+Zotero.Reader.getByTabID(Zotero_Tabs.selectedID)._window[3]
 ```

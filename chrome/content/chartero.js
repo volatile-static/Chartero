@@ -3,6 +3,7 @@ Zotero.Chartero = new function () {
     var scanPeriod, savePeriod;  // 定时器时间间隔
     var noteItem;  // 存储数据的笔记条目
     var dashboardChart;  // 仪表盘图表对象
+    var isReaderActive;
 
     // 根据当前打开的标签页获取阅读器对象
     function getReader() {
@@ -68,9 +69,9 @@ Zotero.Chartero = new function () {
     async function hasRead(item) {
         await setReadingData();  // 加载浏览历史
         var pdf = await item.getBestAttachment();
-        if (!pdf || !pdf.isPDFAttachment() || !readingHistory.items[pdf.id]) 
+        if (!pdf || !pdf.isPDFAttachment() || !readingHistory.items[pdf.id])
             return false; // 没有PDF附件或者还没读过
-        else 
+        else
             return pdf;
     }
 
@@ -84,8 +85,8 @@ Zotero.Chartero = new function () {
 
     this.scanSched = function () {
         const reader = getReader();
-        if (!reader)
-            return;  // 不是阅读器页面
+        if (!isReaderActive || !reader)
+            return;  // 没在阅读中
         if (!readingHistory)
             readingHistory = new HistoryLibrary(Zotero.Libraries.userLibraryID);
 
@@ -153,7 +154,7 @@ Zotero.Chartero = new function () {
         }, false);  // 更新图表
         this.onResize();
 
-        
+
         const readPages = Object.keys(history.p).length;
         const p = getReadingProgress(item.id);
         $("#reading-progress").animate({ value: p });
@@ -240,6 +241,14 @@ Zotero.Chartero = new function () {
             },
             false
         );
+
+        window.addEventListener('activate', () => {
+            isReaderActive = true;
+        }, true);
+        window.addEventListener('deactivate', () => {
+            isReaderActive = false;
+        }, true);
+
         $("#zotero-items-splitter").mouseup(this.onResize);
         const tabbox = document.getElementById("zotero-view-tabbox");
 
@@ -255,6 +264,7 @@ Zotero.Chartero = new function () {
             if (e.target.id == "chartero-item-tab")
                 this.onItemSelect();
         });
+
     }
 
     /**
