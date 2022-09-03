@@ -9,6 +9,12 @@ Zotero.Chartero = new function () {
         return Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
     }
 
+    // 计算阅读进度百分比
+    function getReadingProgress(id) {
+        const readPages = Object.keys(readingHistory.items[id].p).length;
+        return Math.round(readPages * 1000 / readingHistory.items[id].n / 10);
+    }
+
     // 在第一次保存数据前准备好笔记条目
     async function setReadingData() {
         if (noteItem)
@@ -59,6 +65,15 @@ Zotero.Chartero = new function () {
         Zotero.Prefs.set("chartero.dataID", await noteItem.saveTx());
     }
 
+    async function hasRead(item) {
+        await setReadingData();  // 加载浏览历史
+        var pdf = await item.getBestAttachment();
+        if (!pdf || !pdf.isPDFAttachment() || !readingHistory.items[pdf.id]) 
+            return false; // 没有PDF附件或者还没读过
+        else 
+            return pdf;
+    }
+
     this.saveSched = async function () {
         await setReadingData();
         if (getReader()) {  // 将数据存入笔记条目
@@ -101,12 +116,12 @@ Zotero.Chartero = new function () {
             $('#chartero-item-deck').attr('selectedIndex', 0);
             return;  // TODO: 多合一绘图
         }
-        await setReadingData();  // 加载浏览历史
 
-        const item = await items[0].getBestAttachment();
-        if (!item || !item.isPDFAttachment() || !readingHistory.items[item.id]) {
+        const item = await hasRead(items[0]);
+        // alert(item.id);
+        if (!item) { // 没有PDF附件或者还没读过
             $('#chartero-item-deck').attr('selectedIndex', 0);
-            return; // 没有PDF附件或者还没读过
+            return;
         }
         $('#chartero-item-deck').attr('selectedIndex', 1);
 
@@ -138,10 +153,10 @@ Zotero.Chartero = new function () {
         }, false);  // 更新图表
         this.onResize();
 
-        // 显示阅读进度
+        
         const readPages = Object.keys(history.p).length;
-        const p = Math.round(readPages * 1000 / history.n / 10);
-        $("#reading-progress").animate({value:p});
+        const p = getReadingProgress(item.id);
+        $("#reading-progress").animate({ value: p });
         $("#reading-progress-lable").attr("value", p + "%");
         $("#chartero-dashboard-read-pages").attr("value", readPages);
         $("#chartero-dashboard-total-pages").attr("value", history.n);
@@ -249,5 +264,42 @@ Zotero.Chartero = new function () {
         this.initPrefs();
         this.initCharts();
         this.initEvents();
+    };
+
+    this.refreshItemsProgress = async function () {
+        ZoteroPane.itemsView.collapseAllRows();  // 附件上不显示
+
+        for (let i = 0; i < ZoteroPane.itemsView.rowCount; ++i) {
+            const title = $(`#item-tree-main-default-row-${i}`).find('.title');
+            const topID = ZoteroPane.itemsView.getRow(i).id;  // 第i行item的id
+            const item = Zotero.Items.get(topID);
+
+            if (!item.isRegularItem())
+                continue;
+            const pdf = await hasRead(item);  // 是否读过
+            if (!pdf)
+                continue;
+            const p = getReadingProgress(pdf.id);  // 百分比，整数
+
+            switch (parseInt(p / 25)) {
+                case 0:  // 小于25%
+                    title.after('🔴');
+                    break;
+                case 1:  // 25% ~ 50%
+                    title.after('🟠');
+                    break;
+                case 2:  // 50% ~ 75%
+                    title.after('🟡');
+                    break;
+                case 3:  // 75% ~ 99%
+                    title.after('🟢');
+                    break;
+                case 4:  // 100%（页数多时可能有一两页没读）
+                    title.after('💯');
+                    break;
+                default:
+                    break;
+            }
+        }
     };
 }

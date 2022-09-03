@@ -23,8 +23,9 @@
 ### bugs
 1. 切换任何条目时，仪表盘始终被加载
 2. 笔记里原有的数据会覆盖第一次保存前的数据（[setReadingData](./chrome/content/chartero.js)）
-3. 改变侧边栏大小时图表不能正确调整（受信息标签影响）
-4. 图表的保存按钮横向排列
+3. 改变侧边栏大小时图表不能正确调整
+4. 改变窗口宽度时侧边栏不能同时缩放
+5. 图表的保存按钮横向排列
 ### features
 1. 超过一定时间无操作后停止记录
 2. 对一个条目画出随日期变化的阅读时长
@@ -62,4 +63,14 @@ item.setType(Zotero.ItemTypes.getID('note'));
 - jQuery元素动画 
 ```js
 $("#reading-progress").animate({value:p});
+```
+- 在某行标题后添加元素
+```js
+const ico = $('#item-tree-main-default-row-6').find('.title');
+const htm = '666';
+ico.after(ico)
+```
+- 获取某行条目
+```js
+Zotero.Items.get(ZoteroPane.itemsView.getRow(2).id)
 ```

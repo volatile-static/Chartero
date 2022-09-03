@@ -1,1 +1,8 @@
-<!ENTITY about "About">
+<!ENTITY chartero.dashboard.noHistory "该条目暂无浏览历史">
+<!ENTITY chartero.dashboard "Dashboard">
+<!ENTITY chartero.toolbarbutton.tip "Refresh reading progress">
+<!ENTITY chartero.readingProgressBox.tip "浏览过的页面与总页数之比">
+<!ENTITY chartero.readingProgressBox.label "Reading progress">
+<!ENTITY chartero.readingProgressBox.label.read "已读">
+<!ENTITY chartero.readingProgressBox.label.total "页 / 共">
+<!ENTITY chartero.readingProgressBox.label.pages "pages">

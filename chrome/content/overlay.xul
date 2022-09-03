@@ -5,30 +5,40 @@
 <overlay id="chartero"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <hbox id="zotero-items-toolbar">
+        <spacer flex="1"/>
+		<toolbarbutton id="chartero-toolbar-button" class="zotero-tb-button"  
+            tooltiptext="&chartero.toolbarbutton.tip;" 
+            oncommand="Zotero.Chartero.refreshItemsProgress();"/>
+        <toolbarseparator/>
+    </hbox>
+
     <tabbox id="zotero-view-tabbox">
         <tabs id="zotero-editpane-tabs">
-            <tab id="chartero-item-tab" label="仪表盘"></tab>
+            <tab id="chartero-item-tab" label="&chartero.dashboard;"></tab>
         </tabs>
         <tabpanels id="zotero-view-item">
 
             <tabpanel id="chartero-item-tabpanel" flex="1" orient="vertical">
                 <deck id="chartero-item-deck" flex="1" orient="vertical">
                     <groupbox pack="center" align="center">
-                        <label class="chartero-center-label">该条目暂无浏览历史</label>
+                        <label class="chartero-center-label">&chartero.dashboard.noHistory;</label>
                     </groupbox>
                     <vbox id="chartero-item-vbox" flex="1" orient="vertical">
 
-                        <hbox id="reading-progress-box" align="baseline">
-                            <label value="阅读进度："/>
+                        <hbox id="reading-progress-box" align="center" 
+                              tooltiptext="&chartero.readingProgressBox.tip;">
+                            <label value="&chartero.readingProgressBox.label;"/>
                             <stack flex="1">
                                 <html:progress id="reading-progress" max="100"/>
                                 <label id="reading-progress-lable"/>
                             </stack>
-                            <label value="已读"/>
+                            <label value="&chartero.readingProgressBox.label.read;"/>
                             <label id="chartero-dashboard-read-pages" class="small-margin"/>
-                            <label value="页 / 共"/>
+                            <label value="&chartero.readingProgressBox.label.total;"/>
                             <label id="chartero-dashboard-total-pages" class="small-margin"/>
-                            <label value="页"/>
+                            <label value="&chartero.readingProgressBox.label.pages;"/>
                         </hbox>
                         <html:div id="chartero-dashboard" class="chartero-dashboard-chart"/>
                         
