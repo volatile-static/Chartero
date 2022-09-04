@@ -16,7 +16,7 @@
 
     <tabbox id="zotero-view-tabbox">
         <tabs id="zotero-editpane-tabs">
-            <tab id="chartero-item-tab" label="&chartero.dashboard;"></tab>
+            <tab id="chartero-item-tab" label="&chartero.dashboard;" class="glow-label"></tab>
         </tabs>
         <tabpanels id="zotero-view-item">
 

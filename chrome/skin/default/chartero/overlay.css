@@ -1,5 +1,5 @@
 #chartero-toolbar-button {
-    list-style-image: url("chrome://chartero/skin/icon.png");
+	list-style-image: url("chrome://chartero/skin/icon@16px.png");
 }
 
 .chartero-center-label {
@@ -34,6 +34,23 @@
 	margin-bottom: 3px;
 	-moz-box-align: center;
 	-moz-box-pack: center;
+}
+
+.glow-label {
+	text-decoration: none;
+	transition: all 0.6s;
+	overflow: visible;
+}
+
+.glow-label:hover {
+	color: #2c0036;
+	text-shadow:
+		0 0 2px rgba(202, 228, 225, 0.92),
+		0 0 10px rgba(202, 228, 225, 0.34),
+		0 0 4px rgba(30, 132, 242, 0.52),
+		0 0 7px rgba(30, 132, 242, 0.92),
+		0 0 11px rgba(30, 132, 242, 0.78),
+		0 0 16px rgba(30, 132, 242, 0.92);
 }
 
 #reading-progress-box {

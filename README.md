@@ -14,8 +14,8 @@
 > 当Chartero无法自动识别到该条目时，请[手动获取笔记的ID](#常用调试代码)并保存至
 [C盘的Zotero首选项](https://www.zotero.org/support/kb/profile_directory)中。
 ## 教程或文档
-1. [插件安装](https://zotero-chinese.feishu.cn/wiki/wikcnWTc9848uF9rPMvYTx4yGkb) 
-2. [插件开发](https://zotero-chinese.feishu.cn/wiki/wikcn2498hSjibbd4vDRre5pPmQ)
+1. [插件安装](https://zotero.yuque.com/staff-gkhviy/zotero/addons) 
+2. [插件开发](https://zotero.yuque.com/books/share/8d230829-6004-4934-b4c6-685a7001bfa0)
 ## 隐私
 您的浏览历史将以**明文**形式存储在一个笔记条目中，并可随Zotero数据库同步至云端，
 但Chartero插件本身不存在任何访问网络的行为。
