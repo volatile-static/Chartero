@@ -3,7 +3,7 @@ content chartero chrome/content/
 skin chartero default	chrome/skin/default/chartero/
 
 overlay chrome://zotero/content/zoteroPane.xul chrome://chartero/content/overlay.xul
-overlay chrome://zotero/content/preferences/preferences.xul chrome://chartero/content/preferences.xul
+overlay chrome://zotero/content/preferences/preferences.xul chrome://chartero/content/preferences/preferences.xul
 
 locale chartero en-US chrome/locale/en-US/
 locale chartero zh-CN chrome/locale/zh-CN/

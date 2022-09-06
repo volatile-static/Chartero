@@ -1,8 +1,0 @@
-listhead, listheader, listcell {
-    text-align: center;
-    border: 1px solid grey;
-}
-
-#selected {
-    background-color:greenyellow;
-}

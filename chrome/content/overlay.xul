@@ -26,22 +26,7 @@
                         <label class="chartero-center-label">&chartero.dashboard.noHistory;</label>
                     </groupbox>
                     <vbox id="chartero-item-vbox" flex="1" orient="vertical">
-
-                        <hbox id="reading-progress-box" align="center" 
-                              tooltiptext="&chartero.readingProgressBox.tip;">
-                            <label value="&chartero.readingProgressBox.label;"/>
-                            <stack flex="1">
-                                <html:progress id="reading-progress" max="100"/>
-                                <label id="reading-progress-lable"/>
-                            </stack>
-                            <label value="&chartero.readingProgressBox.label.read;"/>
-                            <label id="chartero-dashboard-read-pages" class="small-margin"/>
-                            <label value="&chartero.readingProgressBox.label.total;"/>
-                            <label id="chartero-dashboard-total-pages" class="small-margin"/>
-                            <label value="&chartero.readingProgressBox.label.pages;"/>
-                        </hbox>
-                        <html:div id="chartero-dashboard" class="chartero-dashboard-chart"/>
-                        
+                        <iframe id="chartero-data-iframe" flex="2" src="chrome://chartero/content/TabPanel/index.html"/>
                     </vbox>
                 </deck>
             </tabpanel>

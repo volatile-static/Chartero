@@ -10,12 +10,6 @@ Zotero.Chartero = new function () {
         return Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
     }
 
-    // 计算阅读进度百分比
-    function getReadingProgress(id) {
-        const readPages = Object.keys(readingHistory.items[id].p).length;
-        return Math.round(readPages * 1000 / readingHistory.items[id].n / 10);
-    }
-
     // 在第一次保存数据前准备好笔记条目
     async function setReadingData() {
         if (noteItem)
@@ -111,78 +105,35 @@ Zotero.Chartero = new function () {
         readingHistory.items[reader.itemID] = item;
     };
 
-    this.onItemSelect = async function () {
-        const items = ZoteroPane.getSelectedItems();
-        if (items.length != 1 || !items[0].isRegularItem()) {
-            $('#chartero-item-deck').attr('selectedIndex', 0);
-            return;  // TODO: 多合一绘图
-        }
-
-        const item = await hasRead(items[0]);
-        // alert(item.id);
-        if (!item) { // 没有PDF附件或者还没读过
-            $('#chartero-item-deck').attr('selectedIndex', 0);
-            return;
-        }
+    function updateTabPanel(item) {
         $('#chartero-item-deck').attr('selectedIndex', 1);
-
-        const history = readingHistory.items[item.id];  // 当前条目的浏览历史
-        // 寻找页码范围
-        let max = 0;
-        for (const i in history.p)
-            if (!isNaN(i))
-                max = Math.max(max, i);
-        let min = max;
-        for (const i in history.p)
-            if (!isNaN(i))
-                min = Math.min(min, i);
-
-        let categories = new Array();
-        let data = new Array();
-        // 填充作图数据
-        for (let i = min; i <= max; ++i) {
-            categories.push(i);
-            if (history.p[i])
-                data.push(page_getTotalSeconds(history.p[i]))
-            else
-                data.push(0);
-        }
-        dashboardChart.xAxis[0].setCategories(categories, false);  // x 轴分类
-        dashboardChart.series[0].update({
-            name: item.getField('title'),
-            data: data
-        }, false);  // 更新图表
-        this.onResize();
-
-
-        const readPages = Object.keys(history.p).length;
-        const p = getReadingProgress(item.id);
-        $("#reading-progress").animate({ value: p });
-        $("#reading-progress-lable").attr("value", p + "%");
-        $("#chartero-dashboard-read-pages").attr("value", readPages);
-        $("#chartero-dashboard-total-pages").attr("value", history.n);
+        let f = document.getElementById('chartero-data-iframe');
+        f.contentWindow.postMessage({
+            history: readingHistory.items[item.id],  // 当前条目的浏览历史
+            title: item.getField('title')
+        }, '*');
     }
 
-    this.onResize = function (event) {  // 调整图表大小
-        const box = document.getElementById("chartero-item-vbox");
-        dashboardChart.update({
-            chart: {
-                zoomType: 'x',
-                panning: true,
-                panKey: 'shift',
-                type: 'bar',  // 指定图表的类型，默认是折线图（line）
-                width: box.clientWidth - 16  // 随侧边栏缩放
-            },
-            exporting: {
-                buttons: {
-                    contextButton: {
-                        symbol: 'menuball',
-                        x: 60 - box.clientWidth,
-                        menuItems: ["viewFullscreen", "separator", "downloadSVG"]
-                    }
-                }
-            }
-        });
+    function showDataTree() {
+
+    }
+
+    this.onItemSelect = async function () {
+        const items = ZoteroPane.getSelectedItems();
+
+        if (items.length != 1)
+            return;  // TODO: 多合一绘图
+        else if (items[0].id == Zotero.Prefs.get("chartero.dataID")) {
+            showDataTree();
+            return;
+        } else if (!items[0].isRegularItem())
+            return;
+
+        const item = await hasRead(items[0]);
+        if (item)
+            updateTabPanel(item);
+        else // 没有PDF附件或者还没读过
+            $('#chartero-item-deck').attr('selectedIndex', 0);
     }
 
     this.notifierCallback = {
@@ -195,20 +146,6 @@ Zotero.Chartero = new function () {
             Zotero.log(extraData);
         },
     };
-
-    this.initCharts = function () {
-        // 图表配置
-        const options = {
-            title: { text: '每页阅读时间' }, // 标题
-            xAxis: {},
-            yAxis: {
-                title: { text: '秒' }  // y 轴标题
-            },
-            series: [{}]
-        };
-        // 图表初始化函数
-        dashboardChart = Highcharts.chart('chartero-dashboard', options);
-    }
 
     // 设置默认参数
     this.initPrefs = function () {
@@ -272,7 +209,6 @@ Zotero.Chartero = new function () {
      */
     this.init = async function () {
         this.initPrefs();
-        this.initCharts();
         this.initEvents();
     };
 

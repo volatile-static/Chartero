@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Chartero sidebar tab panel iframe.</title>
+  <link rel="stylesheet" href="chrome://chartero/skin/jquery/jquery-ui.css" />
+  <link rel="stylesheet" href="tabpanel.css" />
+  <script src="../jQuery/jQuery.js"></script>
+  <script src="../jQuery/jquery-ui.js"></script>
+  <script src="../highcharts/highcharts.js"></script>
+  <script src="../highcharts/modules/exporting.js"></script>
+  <script src="../highcharts/modules/export-data.js"></script>
+  <script src="../highcharts/modules/offline-exporting.js"></script>
+  <script src="../highcharts/themes/dark-unica.js"></script>
+  <script src="../history.js"></script>
+</head>
+
+<body>
+  <div id="reading-progress-container">
+    <div id="reading-progressmeter">
+      <div class="progress-container">
+        <div class="wave-change"></div>
+        <div class="wave"></div>
+        <p id="reading-progress-label">2%</p>
+      </div>
+    </div>
+    <div id="reading-progress-info">
+      <h3 id="reading-progress-title">阅读进度</h3>
+      <ul id="reading-progress-lable">
+        <li class="reading-progress-item">已读</li>
+        <li class="reading-progress-item" id="reading-pages"></li>
+        <li class="reading-progress-item">页 / 共</li>
+        <li class="reading-progress-item" id="reading-total"></li>
+        <li class="reading-progress-item">页</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="charts-container">
+    <div id="accordion">
+      <h3>页码-时长图</h3>
+        <div id="page-time-chart" class="accordion-chart"></div>
+      <h3>阅读时长趋势</h3>
+      <div id="date-time-chart" class="accordion-chart"></div>
+    </div>
+  </div>
+
+  <script src="tabpanel.js"></script>
+</body>
+
+</html>
