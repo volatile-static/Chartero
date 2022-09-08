@@ -31,6 +31,8 @@
 6. tree显示原始数据的图标与时间权重，title放进tooltips
 7. skyline
 8. raw json的剪贴板操作
+9. 平滑滚动条
+
 ## 参与贡献
 > *欢迎PR！*
 ### 软件架构

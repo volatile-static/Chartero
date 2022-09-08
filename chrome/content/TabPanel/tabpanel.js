@@ -1,6 +1,5 @@
 var chartPageTime, chartDateTime;
 
-
 function setReadingProgress(read, total) {
   // 计算阅读进度百分比
   const p = Math.round(read * 1000 / total / 10);
@@ -39,9 +38,27 @@ function plotPageTime(history, title) {
   });  // 更新图表
 }
 
+function plotDateTime(history, title) {
+  const firstTime = item_firstTime(history);
+  const lastTime = item_lastTime(history);
+  const categories = new Array();
+  const data = new Array();
+  
+  // 遍历每天
+  for (let i = firstTime; i <= lastTime; i += 86400) {
+    categories.push((new Date(i * 1000)).toLocaleDateString());
+    data.push(item_getDateTime(history, i * 1000));
+  }
+  chartDateTime.xAxis[0].setCategories(categories, false);
+  chartDateTime.series[0].update({
+    name: title,
+    data: data
+  });
+}
+
 function initCharts() {
   // 图表配置
-  const options = {
+  let options = {
     chart: {
       style: { fontFamily: "", },
       zoomType: 'x',
@@ -50,7 +67,7 @@ function initCharts() {
       borderRadius: 6,
       type: 'bar',  // 指定图表的类型，默认是折线图（line）
     },
-    title: { text: '每页阅读时间' }, // 标题
+    title: { text: '每页阅读时长' }, // 标题
     credits: { enabled: false },
     xAxis: {},
     yAxis: {
@@ -60,6 +77,11 @@ function initCharts() {
   };
   // 图表初始化函数
   chartPageTime = Highcharts.chart('page-time-chart', options);
+
+  options.title.text = '每日阅读时长';
+  options.xAxis = { title: { text: '日期' } };
+  options.yAxis.title.text = '秒';
+  options.chart.type = 'line';
   chartDateTime = Highcharts.chart('date-time-chart', options);
 }
 
@@ -67,6 +89,7 @@ function handler(event) {
   const history = event.data.history;
   setReadingProgress(Object.keys(history.p).length, history.n);
   plotPageTime(history, event.data.title);
+  plotDateTime(history, event.data.title);
 }
 
 window.addEventListener('DOMContentLoaded', () => {

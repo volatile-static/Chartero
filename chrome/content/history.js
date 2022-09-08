@@ -23,6 +23,14 @@ function page_getTotalSeconds(page) {
     return result;
 }
 
+function page_getDateTime(page, date) {
+    let result = 0;
+    for (const i in page.t)
+        if (date.toDateString() == (new Date(i*1000)).toDateString())
+            result += page.t[i];
+    return result;
+}
+
 class HistoryPage {
     constructor() {
         this.t = {};
@@ -32,14 +40,21 @@ class HistoryPage {
 function item_firstTime(item) {
     let result = 9999999999;
     for (const page in item.p)
-        result = Math.min(result, item.p[page].firstTime());
+        result = Math.min(result, page_firstTime(item.p[page]));
     return result;
 }
 
 function item_lastTime(item) {
     let result = 0;
     for (const page in item.p)
-        result = Math.max(result, item.p[page].lastTime());
+        result = Math.max(result, page_lastTime(item.p[page]));
+    return result;
+}
+
+function item_getDateTime(item, time) {  // ms
+    let result = 0;
+    for (const page in item.p)
+        result += page_getDateTime(item.p[page], new Date(time));
     return result;
 }
 
