@@ -21,18 +21,16 @@
 但Chartero插件本身不存在任何访问网络的行为。
 ## TODO
 ### bugs
-1. 切换任何条目时，仪表盘始终被加载
 2. 笔记里原有的数据会覆盖第一次保存前的数据（[setReadingData](./chrome/content/chartero.js)）
-3. 改变侧边栏大小时图表不能正确调整
-4. 改变窗口宽度时侧边栏不能同时缩放
-5. 图表的保存按钮横向排列
+4. 改变窗口宽度时侧边栏不能同时缩放（最大化还原后）
 ### features
 2. 对一个条目画出随日期变化的阅读时长
 3. 不同标签的条目数与阅读时长饼图
 4. 文件库的甘特图
 5. 文件库阅读时长top10
-6. tree显示原始数据
+6. tree显示原始数据的图标与时间权重，title放进tooltips
 7. skyline
+8. raw json的剪贴板操作
 ## 参与贡献
 > *欢迎PR！*
 ### 软件架构
@@ -81,4 +79,40 @@ Zotero.Reader.getByTabID(Zotero_Tabs.selectedID)._window[2]
 - PDF右侧边栏
 ```js
 Zotero.Reader.getByTabID(Zotero_Tabs.selectedID)._window[3]
+```
+- tree
+```html
+ <tree enableColumnDrag="true" flex="1" id="chartero-data-tree">
+    <treecols>
+        <treeid="chartero-data-treecol-kflex="2" label="primary="true"/>
+        <splitclass="tree-splitter"/>
+        <treeid="chartero-data-treecol-vflex="1" label="阅读进度"/>
+    </treecols>
+    <treechildren>
+        <treeitem container="true">
+            <treerow>
+                <treecell label="Bo>
+                <treecell label="Bo>
+            </treerow>
+            <treechildren>
+        <treeitem container="true">
+            <treerow>
+                <treecell label="Bo>
+                <treeclabel="Carpenter" />
+            </treerow>
+            <treechildren>
+            </treechildren>
+        </treeitem>
+        <treeitem container="true">
+            <treerow>
+                <treecell label="Bo>
+                <treeclabel="Carpenter" />
+            </treerow>
+            <treechildren>
+            </treechildren>
+        </treeitem>
+            </treechildren>
+        </treeitem>
+    </treechildren>
+</tree>
 ```

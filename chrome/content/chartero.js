@@ -114,8 +114,13 @@ Zotero.Chartero = new function () {
         }, '*');
     }
 
-    function showDataTree() {
-
+    async function showDataTree() {
+        const pane = document.getElementById('zotero-item-pane-content');
+        const frame = document.getElementById('chartero-data-viewer');
+        pane.selectedPanel = frame;
+        
+        await setReadingData();
+        frame.contentWindow.postMessage(noteItem.getNote(), '*');
     }
 
     this.onItemSelect = async function () {
@@ -128,7 +133,12 @@ Zotero.Chartero = new function () {
             return;
         } else if (!items[0].isRegularItem())
             return;
-
+        else {
+            const tabbox = document.getElementById("zotero-view-tabbox");
+            if (tabbox.selectedTab.id != 'chartero-item-tab')
+                return;
+        }
+        
         const item = await hasRead(items[0]);
         if (item)
             updateTabPanel(item);
@@ -191,11 +201,7 @@ Zotero.Chartero = new function () {
 
         // https://github.com/dcartertod/zotero-plugins
         Zotero.uiReadyPromise.then(() => {
-            ZoteroPane.itemsView.onSelect.addListener(() => {
-                const panel = document.getElementById("chartero-item-tabpanel");
-                if (tabbox.selectedPanel === panel)
-                    this.onItemSelect();
-            })
+            ZoteroPane.itemsView.onSelect.addListener(this.onItemSelect)
         });
         tabbox.addEventListener("command", (e) => {
             if (e.target.id == "chartero-item-tab")
@@ -225,7 +231,10 @@ Zotero.Chartero = new function () {
             const pdf = await hasRead(item);  // 是否读过
             if (!pdf)
                 continue;
-            const p = getReadingProgress(pdf.id);  // 百分比，整数
+
+            const history = readingHistory.items[pdf.id];
+            const readPages = Object.keys(history.p).length;
+            const p = Math.round(readPages * 1000 / history.n / 10);  // 百分比，整数
 
             switch (parseInt(p / 25)) {
                 case 0:  // 小于25%

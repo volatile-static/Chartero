@@ -14,25 +14,27 @@
         <toolbarseparator/>
     </hbox>
 
-    <tabbox id="zotero-view-tabbox">
-        <tabs id="zotero-editpane-tabs">
-            <tab id="chartero-item-tab" label="&chartero.dashboard;" class="glow-label"></tab>
-        </tabs>
-        <tabpanels id="zotero-view-item">
+    <deck id="zotero-item-pane-content">
+        <tabbox id="zotero-view-tabbox">
+            <tabs id="zotero-editpane-tabs">
+                <tab id="chartero-item-tab" label="&chartero.dashboard;" class="glow-label"></tab>
+            </tabs>
+            <tabpanels id="zotero-view-item">
+                <tabpanel id="chartero-item-tabpanel" flex="1" orient="vertical">
+                    <deck id="chartero-item-deck" flex="1" orient="vertical">
+                        <groupbox pack="center" align="center">
+                            <label class="chartero-center-label">&chartero.dashboard.noHistory;</label>
+                        </groupbox>
+                        <vbox id="chartero-item-vbox" flex="1" orient="vertical">
+                            <iframe id="chartero-data-iframe" flex="2" src="chrome://chartero/content/TabPanel/index.html"/>
+                        </vbox>
+                    </deck>
+                </tabpanel>
+            </tabpanels>
+        </tabbox>
 
-            <tabpanel id="chartero-item-tabpanel" flex="1" orient="vertical">
-                <deck id="chartero-item-deck" flex="1" orient="vertical">
-                    <groupbox pack="center" align="center">
-                        <label class="chartero-center-label">&chartero.dashboard.noHistory;</label>
-                    </groupbox>
-                    <vbox id="chartero-item-vbox" flex="1" orient="vertical">
-                        <iframe id="chartero-data-iframe" flex="2" src="chrome://chartero/content/TabPanel/index.html"/>
-                    </vbox>
-                </deck>
-            </tabpanel>
-            
-        </tabpanels>
-    </tabbox>
+        <iframe id="chartero-data-viewer" flex="1" src="chrome://chartero/content/DataTree/index.html"/>
+    </deck>
     <script src="chrome://zotero/content/include.js" type="application/javascript"/> 
     <script src="chrome://chartero/content/history.js" type="application/javascript"/> 
     <script src="chrome://chartero/content/include.js" type="application/javascript"/>

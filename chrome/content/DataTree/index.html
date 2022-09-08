@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Chartero history JSON viewer</title>
+
+  <link rel="stylesheet" href="chrome://chartero/skin/jquery/jquery-ui.css" />
+  <link rel="stylesheet" href="chrome://chartero/skin/jquery/jstree.css" />
+  <link rel="stylesheet" href="datatree.css" />
+
+  <script src="../jQuery/jQuery.js"></script>
+  <script src="../jQuery/jquery-ui.js"></script>
+  <script src="../jQuery/jstree.js"></script>
+  <script src="chrome://zotero/content/include.js"> </script>
+</head>
+
+<body>
+  <h2>原始数据</h2>
+  <div class="rawbuttons">
+    <div class="rawbutton">复制到剪贴板</div>
+    <div class="rawbutton">从剪贴板导入</div>
+  </div>
+  <h2>数据可视化</h2>
+  <div id="chartero-data-tree"></div>
+
+  <script src="datatree.js"></script>
+</body>
+
+</html>

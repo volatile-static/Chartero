@@ -1,0 +1,24 @@
+#chartero-data-tree {
+    margin: 6px 6px 6px 6px;
+    border-radius: 6px 6px 6px 6px;
+    border: rgba(10, 163, 69, 1) dotted 1px;
+    display: contents;
+    position: absolute;
+    top: 150px;
+    background: linear-gradient(0deg,rgba(188, 230, 114, 0.216) 26%, rgba(5, 119, 72, 0.156) 62%);
+}
+
+.rawbutton {
+    margin: 5px 5px 5px 5px;
+}
+
+.rawbuttons {
+    flex-direction: row;
+    display: flex !important;
+    justify-content: space-around;
+    align-items: baseline;
+}
+
+body {
+    font-size: 12px;
+}

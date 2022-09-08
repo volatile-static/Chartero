@@ -3,37 +3,8 @@
 }
 
 .chartero-center-label {
-	border: 2px solid rgba(245, 131, 0, 0.614);
+	/* border: 2px solid rgba(245, 131, 0, 0.614); */
 	text-align: center;
-}
-
-@keyframes myani {
-	from {
-		border: 1px solid rgb(178, 6, 190);
-	}
-
-	to {
-		border: 10px solid rgb(29, 195, 106);
-	}
-}
-
-.chartero-dashboard-chart {
-	/* -moz-box-flex: 62; 
-	border: 1px solid rgb(178, 6, 190);
-	-moz-box-orient: vertical;*/
-	padding: 0 8px;
-	height: 20rem;
-	/* animation: myani 1s linear 0s infinite alternate; */
-}
-
-#reading-progress-lable {
-	/* background-color: rgba(14, 21, 232, 0.108); */
-	margin-left: 6rem;
-	margin-right: 6rem;
-	margin-top: 3px;
-	margin-bottom: 3px;
-	-moz-box-align: center;
-	-moz-box-pack: center;
 }
 
 .glow-label {
@@ -51,11 +22,4 @@
 		0 0 7px rgba(30, 132, 242, 0.92),
 		0 0 11px rgba(30, 132, 242, 0.78),
 		0 0 16px rgba(30, 132, 242, 0.92);
-}
-
-#reading-progress-box {
-	padding-left: 1rem;
-	padding-right: 1rem;
-	margin-top: 1rem;
-	margin-bottom: 1rem;
 }

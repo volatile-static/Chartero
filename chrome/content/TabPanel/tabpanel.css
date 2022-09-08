@@ -84,11 +84,7 @@
 }
 
 .accordion-chart {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
+    padding: 1px !important;
     align-content: stretch;
 }
 
@@ -147,6 +143,6 @@
     align-items: center;
     display: block !important;
     justify-content: center;
-    margin: 15px 10px 0 10px;
+    margin: 15px 0 1% 0;
     flex-direction: column;
 }
