@@ -42,10 +42,12 @@
 ```js
 const items = ZoteroPane.getSelectedItems();
 ```
+
 - 根据当前打开的标签页获取阅读器对象:
 ```js
 Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
 ```
+
 - 动态添加阅读器侧边栏的选项卡：
 ```js
 const cont = document.getElementById(`${Zotero_Tabs.selectedID}-context`);
@@ -53,60 +55,44 @@ const box = cont.querySelector("tabbox");
 box.tabs.append(tab);
 box.tabpanels.append(panel);
 ```
+
 - 修改条目类型：
 ```js
 var item = new Zotero.Item('computerProgram');
 item.setType(Zotero.ItemTypes.getID('note'));
 ```
-- jQuery元素动画 
-```js
-$("#reading-progress").animate({value:p});
-```
-- 在某行标题后添加元素
-```js
-const ico = $('#item-tree-main-default-row-6').find('.title');
-const htm = '666';
-ico.after(ico)
-```
-- 获取某行条目
+
+- 获取某行条目(load from row?)
 ```js
 Zotero.Items.get(ZoteroPane.itemsView.getRow(2).id)
 ```
-- PDF页面
-```js
-Zotero.Reader.getByTabID(Zotero_Tabs.selectedID)._window[2]
-```
-- PDF右侧边栏
-```js
-Zotero.Reader.getByTabID(Zotero_Tabs.selectedID)._window[3]
-```
 - tree
-```html
+```xml
  <tree enableColumnDrag="true" flex="1" id="chartero-data-tree">
     <treecols>
-        <treeid="chartero-data-treecol-kflex="2" label="primary="true"/>
-        <splitclass="tree-splitter"/>
-        <treeid="chartero-data-treecol-vflex="1" label="阅读进度"/>
+        <treecol id="chartero-data-treecol-k" flex="2" label="" primary="true"/>
+        <split class="tree-splitter"/>
+        <treecol id="chartero-data-treecol-v" flex="1" label="阅读进度"/>
     </treecols>
     <treechildren>
         <treeitem container="true">
             <treerow>
-                <treecell label="Bo>
-                <treecell label="Bo>
+                <treecell label="Bo"/>
+                <treecell label="Bo"/>
             </treerow>
             <treechildren>
         <treeitem container="true">
             <treerow>
-                <treecell label="Bo>
-                <treeclabel="Carpenter" />
+                <treecell label="Bo"/>
+                <treecell label="Carpenter" />
             </treerow>
             <treechildren>
             </treechildren>
         </treeitem>
         <treeitem container="true">
             <treerow>
-                <treecell label="Bo>
-                <treeclabel="Carpenter" />
+                <treecell label="Bo"/>
+                <treecell label="Carpenter" />
             </treerow>
             <treechildren>
             </treechildren>
@@ -116,3 +102,9 @@ Zotero.Reader.getByTabID(Zotero_Tabs.selectedID)._window[3]
     </treechildren>
 </tree>
 ```
+
+## 致谢
+[windingwind](https://github.com/windingwind)同学是
+[pdf-translate](https://github.com/windingwind/zotero-pdf-translate)
+与[better-notes](https://github.com/windingwind/zotero-better-notes)
+等热门插件的作者，他在本插件的开发过程中提供了巨大的帮助。
