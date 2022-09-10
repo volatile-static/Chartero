@@ -13,15 +13,27 @@
   <script src="../jQuery/jquery-ui.js"></script>
   <script src="../jQuery/jstree.js"></script>
   <script src="chrome://zotero/content/include.js"> </script>
+  <script src="../history.js"></script>
 </head>
 
 <body>
-  <h2>原始数据</h2>
-  <div class="rawbuttons">
-    <div class="rawbutton">复制到剪贴板</div>
-    <div class="rawbutton">从剪贴板导入</div>
+  <div id="chartero-data-status-bar">
+    <span id="chartero-data-info"></span>
+    <ul class="ui-widget ui-helper-clearfix">
+      <li id="tool-button-collapse" class="ui-state-default ui-corner-all" title="折叠">
+        <span class="ui-icon ui-icon-minusthick"></span>
+      </li>
+      <li id="tool-button-copy" class="ui-state-default ui-corner-all" title="复制到剪贴板">
+        <span class="ui-icon ui-icon-copy"></span>
+      </li>
+      <li id="tool-button-delete" class="ui-state-default ui-corner-all">
+        <span class="ui-icon ui-icon-trash"></span>
+      </li>
+      <li id="tool-button-import" class="ui-state-default ui-corner-all">
+        <span class="ui-icon ui-icon-folder-open"></span>
+      </li>
+    </ul>
   </div>
-  <h2>数据可视化</h2>
   <div id="chartero-data-tree"></div>
 
   <script src="datatree.js"></script>

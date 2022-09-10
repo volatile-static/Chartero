@@ -1,22 +1,42 @@
 #chartero-data-tree {
-    margin: 6px 6px 6px 6px;
-    border-radius: 6px 6px 6px 6px;
-    border: rgba(10, 163, 69, 1) dotted 1px;
-    display: contents;
+    display: block;
+    overflow: scroll;
     position: absolute;
-    top: 150px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 22px);
     background: linear-gradient(0deg,rgba(188, 230, 114, 0.216) 26%, rgba(5, 119, 72, 0.156) 62%);
 }
 
-.rawbutton {
-    margin: 5px 5px 5px 5px;
+#chartero-data-status-bar {
+    height: 22px;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 12px);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 6px 0 6px;
+    background: linear-gradient(101deg,rgba(68, 207, 246, 0.393) 1%, rgba(174, 164, 227, 0.667) 100%);
 }
 
-.rawbuttons {
+#chartero-data-status-bar ul {
     flex-direction: row;
-    display: flex !important;
-    justify-content: space-around;
-    align-items: baseline;
+    display: flex; 
+}
+
+#chartero-data-status-bar li {
+    list-style: none;
+    margin-right: 6px;
+}
+
+#chartero-data-info {
+    text-align: justify;
+    overflow: hidden;
 }
 
 body {
