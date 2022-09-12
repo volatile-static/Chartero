@@ -118,9 +118,34 @@ Zotero.Chartero = new function () {
         const pane = document.getElementById('zotero-item-pane-content');
         const frame = document.getElementById('chartero-data-viewer');
         pane.selectedPanel = frame;
-        
+
         await setReadingData();
         frame.contentWindow.postMessage(noteItem.getNote(), '*');
+    }
+
+    function selectLibrary(id) {
+    }
+
+    function selectCollection(collection) {
+        const items = collection.getChildItems();
+        for (const i of items) {
+            // Zotero.log(i.id);
+        }
+    }
+
+    function selectSearch(search) {
+    }
+
+    this.onCollectionSel = function () {
+        const row = ZoteroPane.getCollectionTreeRow();
+        if (row.isLibrary(false))
+            selectLibrary(row.ref.libraryID)
+        else if (row.isCollection())
+            selectCollection(row.ref)
+        else if (row.isSearch())
+            selectSearch(row.ref)
+        else {         
+        }
     }
 
     this.onItemSelect = async function () {
@@ -138,7 +163,7 @@ Zotero.Chartero = new function () {
             if (tabbox.selectedTab.id != 'chartero-item-tab')
                 return;
         }
-        
+
         const item = await hasRead(items[0]);
         if (item)
             updateTabPanel(item);
@@ -201,7 +226,8 @@ Zotero.Chartero = new function () {
 
         // https://github.com/dcartertod/zotero-plugins
         Zotero.uiReadyPromise.then(() => {
-            ZoteroPane.itemsView.onSelect.addListener(this.onItemSelect)
+            ZoteroPane.itemsView.onSelect.addListener(this.onItemSelect);
+            ZoteroPane.collectionsView.onSelect.addListener(this.onCollectionSel);
         });
         tabbox.addEventListener("command", (e) => {
             if (e.target.id == "chartero-item-tab")

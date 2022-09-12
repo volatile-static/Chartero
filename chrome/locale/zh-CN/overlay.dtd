@@ -2,8 +2,3 @@
 <!ENTITY chartero.dashboard.noHistory "该条目暂无浏览历史">
 <!ENTITY chartero.dashboard "仪表盘">
 <!ENTITY chartero.toolbarbutton.tip "刷新阅读进度">
-<!ENTITY chartero.readingProgressBox.tip "浏览过的页面与总页数之比">
-<!ENTITY chartero.readingProgressBox.label "阅读进度：">
-<!ENTITY chartero.readingProgressBox.label.read "已读">
-<!ENTITY chartero.readingProgressBox.label.total "页 / 共">
-<!ENTITY chartero.readingProgressBox.label.pages "页">

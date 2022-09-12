@@ -6,15 +6,15 @@
   <title>Chartero sidebar tab panel iframe.</title>
   <link rel="stylesheet" href="chrome://chartero/skin/jquery/jquery-ui.css" />
   <link rel="stylesheet" href="tabpanel.css" />
-  
+
   <script src="../jQuery/jQuery.js"></script>
   <script src="../jQuery/jquery-ui.js"></script>
-  <script src="../jQuery/slimscroll.js"></script>
   <script src="../highcharts/highcharts.js"></script>
   <script src="../highcharts/modules/exporting.js"></script>
   <script src="../highcharts/modules/export-data.js"></script>
   <script src="../highcharts/modules/offline-exporting.js"></script>
   <script src="../highcharts/themes/dark-unica.js"></script>
+  <script src="chrome://zotero/content/include.js"></script>
   <script src="../history.js"></script>
 </head>
 
@@ -44,7 +44,20 @@
       <h3>页码-时长图</h3>
       <div id="page-time-chart" class="accordion-chart"></div>
       <h3>阅读时长趋势</h3>
-      <div id="date-time-chart" class="accordion-chart"></div>
+        <!-- <div class="accordion-tool-bar">
+          <form>
+            <fieldset>
+              <div id="date-time-radio">
+                <input type="radio" id="month" name="project">
+                <label for="month">月</label>
+           
+                <input type="radio" id="day" name="project" checked="checked">
+                <label for="day">天</label>
+              </div>
+            </fieldset>
+          </form>
+        </div> -->
+        <div id="date-time-chart" class="accordion-chart"></div>
     </div>
   </div>
 

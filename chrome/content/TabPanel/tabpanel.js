@@ -1,3 +1,4 @@
+const localeStr = require('chrome://chartero/locale/tabpanel.json');
 var chartPageTime, chartDateTime;
 
 function setReadingProgress(read, total) {
@@ -67,22 +68,23 @@ function initCharts() {
       borderRadius: 6,
       type: 'bar',  // 指定图表的类型，默认是折线图（line）
     },
-    title: { text: '每页阅读时长' }, // 标题
+    title: { text: localeStr['pageTimeTitle'] }, // 标题
     credits: { enabled: false },
     xAxis: {},
     yAxis: {
-      title: { text: '秒' }  // y 轴标题
+      title: { text: localeStr['seconds'] }  // y 轴标题
     },
     series: [{}]
   };
   // 图表初始化函数
   chartPageTime = Highcharts.chart('page-time-chart', options);
 
-  options.title.text = '每日阅读时长';
-  options.xAxis = { title: { text: '日期' } };
-  options.yAxis.title.text = '秒';
+  options.title.text = localeStr['dateTimeTitle'];
+  options.xAxis = { title: { text: localeStr['date'] } };
+  options.yAxis.title.text = localeStr['seconds'];
   options.chart.type = 'line';
   chartDateTime = Highcharts.chart('date-time-chart', options);
+  // $('#date-time-radio').controlgroup();
 }
 
 function handler(event) {
@@ -96,6 +98,10 @@ window.addEventListener('DOMContentLoaded', () => {
   $('#accordion').accordion({
     heightStyle: "content",
     collapsible: true
+  });
+  $('#reading-progress-container').tooltip({ 
+    content: localeStr['readingProgressTip'],
+    items: 'p'
   });
   initCharts();
   window.addEventListener('message', handler, false);

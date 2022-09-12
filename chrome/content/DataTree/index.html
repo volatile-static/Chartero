@@ -14,22 +14,23 @@
   <script src="../jQuery/jstree.js"></script>
   <script src="chrome://zotero/content/include.js"> </script>
   <script src="../history.js"></script>
+  <script src="./copyhelper.js"></script>
 </head>
 
 <body>
   <div id="chartero-data-status-bar">
     <span id="chartero-data-info"></span>
     <ul class="ui-widget ui-helper-clearfix">
-      <li id="tool-button-collapse" class="ui-state-default ui-corner-all" title="折叠">
+      <li id="tool-button-collapse" class="ui-state-default ui-corner-all" key="collapse">
         <span class="ui-icon ui-icon-minusthick"></span>
       </li>
-      <li id="tool-button-copy" class="ui-state-default ui-corner-all" title="复制到剪贴板">
+      <li id="tool-button-copy" class="ui-state-default ui-corner-all" key="copy">
         <span class="ui-icon ui-icon-copy"></span>
       </li>
-      <li id="tool-button-delete" class="ui-state-default ui-corner-all">
+      <li id="tool-button-delete" class="ui-state-default ui-corner-all" key="delete">
         <span class="ui-icon ui-icon-trash"></span>
       </li>
-      <li id="tool-button-import" class="ui-state-default ui-corner-all">
+      <li id="tool-button-import" class="ui-state-default ui-corner-all" key="import">
         <span class="ui-icon ui-icon-folder-open"></span>
       </li>
     </ul>

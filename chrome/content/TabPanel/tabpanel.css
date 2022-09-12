@@ -86,6 +86,7 @@
 .accordion-chart {
     padding: 1px !important;
     align-content: stretch;
+    z-index: -1;
 }
 
 #reading-progress-container {
@@ -145,4 +146,15 @@
     justify-content: center;
     margin: 15px 0 1% 0;
     flex-direction: column;
+}
+
+.accordion-tool-bar {
+    position:absolute;
+    z-index: 10;
+    left: -20px;
+    transform: scale(0.6);
+}
+
+.accordion-tool-bar fieldset {
+    border-style: none;
 }

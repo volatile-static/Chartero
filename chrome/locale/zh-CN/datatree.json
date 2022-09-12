@@ -1,0 +1,8 @@
+{
+    "collapse": "全部折叠",
+    "copy": "复制到剪贴板",
+    "delete": "删除本条记录",
+    "import": "从JSON导入",
+    "period": "扫描间隔:",
+    "details": "Select a node for details."
+}
