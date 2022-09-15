@@ -1,8 +1,8 @@
 Zotero.Chartero = new function () {
-    var readingHistory;  // 统计数据
+    // this.readingHistory = new HistoryLibrary(1);  // 统计数据
+    var readingHistory;
     var scanPeriod, savePeriod;  // 定时器时间间隔
     var noteItem;  // 存储数据的笔记条目
-    var dashboardChart;  // 仪表盘图表对象
     var isReaderActive;
 
     // 根据当前打开的标签页获取阅读器对象
@@ -283,4 +283,18 @@ Zotero.Chartero = new function () {
             }
         }
     };
+
+    this.newTab = function () {
+        let { id, container } = Zotero_Tabs.add({
+            type: "library",
+            title: "Chartero",
+            data: {},
+            select: true,
+            onClose: undefined,
+        });
+        let f = document.createElement('iframe');
+        f.setAttribute('src', 'chrome://chartero/content/Overview/index.html');
+        container.appendChild(f);
+              
+    }
 }

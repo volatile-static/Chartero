@@ -102,9 +102,21 @@ function handler(event) {
     };
     $('#chartero-data-tree').jstree('destroy');  // 清空上次画的树
     $('#chartero-data-tree').on('changed.jstree', onSelect).jstree(histree);
-    $("li").each(function() {
+    $("li").each(function () {
         $(this).attr('title', localeStr[$(this).attr('key')]);
     });
+}
+
+function importJSON() {
+    let prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+        .getService(Components.interfaces.nsIPromptService);
+    let check = { value: false };                  
+    let input = { value: "{}" };                  
+
+    let his = new HistoryLibrary(1);
+    if (prompts.prompt(null, "Chartero", "Paste your JSON here.", input, null, check))
+        his.mergeJSON(JSON.parse(input.value));
+
 }
 
 function initToolButton() {
@@ -137,9 +149,10 @@ function initToolButton() {
             $('#chartero-data-tree').jstree('close_all');
         }
     );
+    $('#tool-button-import').click(importJSON);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
     initToolButton();
     window.addEventListener('message', handler, false);
-})
+});

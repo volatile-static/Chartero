@@ -24,6 +24,7 @@
 2. 笔记里原有的数据会覆盖第一次保存前的数据（[setReadingData](./chrome/content/chartero.js)）
 4. 改变窗口宽度时侧边栏不能同时缩放（最大化还原后）
 5. 日期时长趋势偶尔不显示当天记录
+6. note item右键作为数据/合并
 ### features
 3. 不同标签的条目数与阅读时长饼图
 4. 文件库的甘特图
@@ -101,6 +102,10 @@ Zotero.Items.get(ZoteroPane.itemsView.getRow(2).id)
         </treeitem>
     </treechildren>
 </tree>
+```
+
+```js
+
 ```
 
 ## 致谢
