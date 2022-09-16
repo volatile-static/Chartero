@@ -28,7 +28,7 @@ function plotPageTime(history, title) {
   for (let i = min; i <= max; ++i) {
     categories.push(i);
     if (history.p[i])
-      data.push(page_getTotalSeconds(history.p[i]))
+      data.push(history.p[i].getTotalSeconds())
     else
       data.push(0);
   }
@@ -40,15 +40,15 @@ function plotPageTime(history, title) {
 }
 
 function plotDateTime(history, title) {
-  const firstTime = item_firstTime(history);
-  const lastTime = item_lastTime(history);
+  const firstTime = history.firstTime();
+  const lastTime = history.lastTime();
   const categories = new Array();
   const data = new Array();
   
   // 遍历每天
   for (let i = firstTime; i <= lastTime; i += 86400) {
     categories.push((new Date(i * 1000)).toLocaleDateString());
-    data.push(item_getDateTime(history, i * 1000));
+    data.push(history.getDateTime(i * 1000));
   }
   chartDateTime.xAxis[0].setCategories(categories, false);
   chartDateTime.series[0].update({
@@ -88,7 +88,8 @@ function initCharts() {
 }
 
 function handler(event) {
-  const history = event.data.history;
+  const history = new HistoryItem();
+  history.mergeJSON(event.data.history);
   setReadingProgress(Object.keys(history.p).length, history.n);
   plotPageTime(history, event.data.title);
   plotDateTime(history, event.data.title);

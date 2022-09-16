@@ -50,6 +50,8 @@ function genTreeView() {
 
     for (const it in readingHistory.items) {  // 遍历条目节点
         const parent = Zotero.Items.get(it).parentItem;
+        if (!parent)
+            continue;
         const item = {
             icon: iconMap[parent.itemType],
             text: parent.getField('title'),  // .parent
@@ -107,18 +109,6 @@ function handler(event) {
     });
 }
 
-function importJSON() {
-    let prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-        .getService(Components.interfaces.nsIPromptService);
-    let check = { value: false };                  
-    let input = { value: "{}" };                  
-
-    let his = new HistoryLibrary(1);
-    if (prompts.prompt(null, "Chartero", "Paste your JSON here.", input, null, check))
-        his.mergeJSON(JSON.parse(input.value));
-
-}
-
 function initToolButton() {
     $("#chartero-data-status-bar li").tooltip();
     $("#chartero-data-status-bar li").hover(
@@ -149,7 +139,9 @@ function initToolButton() {
             $('#chartero-data-tree').jstree('close_all');
         }
     );
-    $('#tool-button-import').click(importJSON);
+    $('#tool-button-import').click(function () {
+        window.parent.postMessage(null, '*');
+    });
 }
 
 window.addEventListener('DOMContentLoaded', () => {
