@@ -43,7 +43,10 @@
 ```js
 const items = ZoteroPane.getSelectedItems();
 ```
-
+- 由key获取条目
+```js
+Zotero.Items.getByLibraryAndKey(1, 'CQ48G5LG')
+```
 - 根据当前打开的标签页获取阅读器对象:
 ```js
 Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
