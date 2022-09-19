@@ -135,7 +135,7 @@ function initToolButton() {
     $("#tool-button-copy").click(
         function () {
             new CopyHelper().addText(rawJson, 'text/unicode').copy();
-            // Zotero.Chartero.showError('Raw JSON copied.');
+            Zotero.Chartero.showMessage('Raw JSON copied.', 'accept');
         }
     );
     $("#tool-button-collapse").click(

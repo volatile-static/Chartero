@@ -4,11 +4,14 @@ Zotero.Chartero = new function () {
     var noteItem;  // 存储数据的笔记条目
     var isReaderActive;
 
-    function showError(msg) {
+    this.showMessage = function(msg, ico) {
         const popMsg = new Zotero.ProgressWindow();
         popMsg.changeHeadline('', 'chrome://chartero/skin/icon.png', 'Chartero');
         popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
-        let prog = new popMsg.ItemProgress('chrome://zotero/skin/cross.png', msg);
+        const path = typeof ico === 'string' ? 
+            'chrome://chartero/skin/' + ico + '.png' : 
+            'chrome://zotero/skin/cross.png';
+        let prog = new popMsg.ItemProgress(path, msg);
         prog.setProgress(100);
         popMsg.show();
         popMsg.startCloseTimer(6666);
@@ -46,7 +49,7 @@ Zotero.Chartero = new function () {
             return;
         }
 
-        showError('No history found!');
+        this.showMessage('No history found!', 'exclamation');
         // 新建条目
         noteItem = new Zotero.Item('note');
         let item = new Zotero.Item('computerProgram');
@@ -207,6 +210,7 @@ Zotero.Chartero = new function () {
             this.readingHistory.mergeJSON(JSON.parse(input.value));
             noteItem.setNote(JSON.stringify(this.readingHistory));
             noteItem.saveTx();
+            this.showMessage('History saved!', 'information');
         }
     }
 
@@ -273,20 +277,26 @@ Zotero.Chartero = new function () {
     };
 
     this.refreshItemsProgress = async function () {
+        await setReadingData();
+        const raw = noteItem.getNote();
+        const his = new HistoryLibrary(1);  // TODO: this.readingHistory
+        his.mergeJSON(JSON.parse(raw)); 
         ZoteroPane.itemsView.collapseAllRows();  // 附件上不显示
 
+        let flag = false;
         for (let i = 0; i < ZoteroPane.itemsView.rowCount; ++i) {
             const title = $(`#item-tree-main-default-row-${i}`).find('.title');
-            const topID = ZoteroPane.itemsView.getRow(i).id;  // 第i行item的id
-            const item = Zotero.Items.get(topID);
-
+            const item = Zotero.Items.getByLibraryAndKey(
+                his.lib,
+                ZoteroPane.itemsView.getRow(i).ref.key  // 第i行item的key
+            );
+            
             if (!item.isRegularItem())
                 continue;
             const pdf = await hasRead(item);  // 是否读过
             if (!pdf)
                 continue;
-                
-            const history = this.readingHistory.items[pdf.id];
+            const history = his.items[pdf.key];
             const readPages = Object.keys(history.p).length;
             const p = Math.round(readPages * 1000 / history.n / 10);  // 百分比，整数
 
@@ -309,7 +319,10 @@ Zotero.Chartero = new function () {
                 default:
                     break;
             }
+            flag = true;
         }
+        if (!flag)
+            this.showMessage('No history found in items pane.', 'exclamation');
     };
 
     this.newTab = function () {
