@@ -200,6 +200,7 @@ Zotero.Chartero = new function () {
         },
     };
 
+    // 弹出对话框输入JSON合并到原有历史记录
     function messageHandler() {
         let prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
             .getService(Components.interfaces.nsIPromptService);
@@ -207,10 +208,20 @@ Zotero.Chartero = new function () {
         let input = { value: "{}" };
 
         if (prompts.prompt(null, "Chartero", "Paste your JSON here.", input, null, check)) {
-            this.readingHistory.mergeJSON(JSON.parse(input.value));
+            try {
+                const obj = JSON.parse(input.value);
+                this.readingHistory.mergeJSON(obj);
+            } catch (error) {
+                Zotero.debug(error);
+                if (error instanceof SyntaxError)
+                    Zotero.Chartero.showMessage('Invalid JSON!');  // why not this.?
+                else if (typeof error === 'string')
+                    Zotero.Chartero.showMessage(error);
+                return;
+            }
             noteItem.setNote(JSON.stringify(this.readingHistory));
             noteItem.saveTx();
-            this.showMessage('History saved!', 'information');
+            Zotero.Chartero.showMessage('History saved!', 'information');
         }
     }
 

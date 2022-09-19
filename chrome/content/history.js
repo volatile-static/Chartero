@@ -38,7 +38,7 @@ class HistoryPage {
 }
 
 class HistoryItem {
-    constructor(total) {
+    constructor(total = 0) {
         this.n = total;
         this.p = {};
     }
@@ -51,7 +51,7 @@ class HistoryItem {
                     this.p[i] = new HistoryPage();
                 Object.assign(this.p[i].t, json.p[i].t);
             }
-        }
+        } else throw 'Item parse failed!';
     }
 
     firstTime() {
@@ -64,7 +64,7 @@ class HistoryItem {
     lastTime() {
         let result = 0;
         for (const page in this.p)
-            result = Math.max(result, item.p[page].lastTime());
+            result = Math.max(result, this.p[page].lastTime());
         return result;
     }
 
@@ -84,13 +84,13 @@ class HistoryItem {
 }
 
 class HistoryLibrary {
-    constructor(id) {
+    constructor(id = 1) {
         this.lib = id;
         this.items = {};
     }
     mergeJSON(json) {
         if (!json.lib)
-            return;
+            throw 'No library ID!';
         this.lib = json.lib;
         for (const k in json.items) {
             if (!this.items[k])
