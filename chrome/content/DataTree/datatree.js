@@ -18,14 +18,14 @@ function onSelect(event, data) {
     switch (selected.data.type) {
         case 'item':
             const read = selected.children.length;
-            const total = readingHistory.items[selected.data.id].n;
+            const total = readingHistory.items[selected.data.key].n;
             $('#chartero-data-info').html('已读' + read + '页 / 共' + total + '页');
             break;
 
         case 'page':
             const parent = data.instance.get_node(selected.parent);
-            const his = readingHistory.items[parent.data.id];
-            const s = page_getTotalSeconds(his.p[selected.data.page]);
+            const his = readingHistory.items[parent.data.key];
+            const s = his.p[selected.data.page].getTotalSeconds();
             $('#chartero-data-info').html('第' + selected.data.page + '页读了' + s + '秒');
             break;
 
@@ -49,15 +49,17 @@ function genTreeView() {
     };
 
     for (const it in readingHistory.items) {  // 遍历条目节点
-        const parent = Zotero.Items.get(it).parentItem;
+        const parent = Zotero.Items.getByLibraryAndKey(
+            readingHistory.lib, it
+        ).parentItem;
         if (!parent)
             continue;
         const item = {
             icon: iconMap[parent.itemType],
-            text: parent.getField('title'),  // .parent
+            text: parent.getField('title'),  
             data: {
                 type: 'item',
-                id: it
+                key: it
             },
             children: []
         };
@@ -90,9 +92,10 @@ function genTreeView() {
 
 function handler(event) {
     rawJson = event.data;
-    readingHistory = JSON.parse(event.data);
-    if (!readingHistory)
+    const obj = JSON.parse(event.data);
+    if (!obj)
         return;
+    readingHistory.mergeJSON(obj);
     const histree = {
         core: {
             check_callback: true,
@@ -132,6 +135,7 @@ function initToolButton() {
     $("#tool-button-copy").click(
         function () {
             new CopyHelper().addText(rawJson, 'text/unicode').copy();
+            Zotero.Chartero.showMessage('Raw JSON copied.', 'accept');
         }
     );
     $("#tool-button-collapse").click(
@@ -147,4 +151,5 @@ function initToolButton() {
 window.addEventListener('DOMContentLoaded', () => {
     initToolButton();
     window.addEventListener('message', handler, false);
+    readingHistory = new HistoryLibrary(1);
 });
