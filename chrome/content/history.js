@@ -92,10 +92,10 @@ class HistoryLibrary {
         if (!json.lib)
             return;
         this.lib = json.lib;
-        for (const i in json.items) {
-            if (!this.items[i])
-                this.items[i] = new HistoryItem(0);
-            this.items[i].mergeJSON(json.items[i]);
+        for (const k in json.items) {
+            if (!this.items[k])
+                this.items[k] = new HistoryItem(0);
+            this.items[k].mergeJSON(json.items[k]);
         }
     }
 }
