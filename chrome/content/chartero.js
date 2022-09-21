@@ -49,7 +49,7 @@ Zotero.Chartero = new function () {
             return;
         }
 
-        this.showMessage('No history found!', 'exclamation');
+        Zotero.Chartero.showMessage('No history found!', 'exclamation');
         // 新建条目
         noteItem = new Zotero.Item('note');
         let item = new Zotero.Item('computerProgram');
