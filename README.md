@@ -21,11 +21,10 @@
 但Chartero插件本身不存在任何访问网络的行为。
 ## TODO
 ### bugs
-2. 笔记里原有的数据会覆盖第一次保存前的数据（[setReadingData](./chrome/content/chartero.js)）
 4. 改变窗口宽度时侧边栏不能同时缩放（最大化还原后）
 5. 日期时长趋势偶尔不显示当天记录
 6. note item右键作为数据/合并
-7. refresh items history(static)
+7. 具有多个PDF的条目逻辑问题
 ### features
 3. 不同标签的条目数与阅读时长饼图
 4. 文件库的甘特图
@@ -44,7 +43,10 @@
 ```js
 const items = ZoteroPane.getSelectedItems();
 ```
-
+- 由key获取条目
+```js
+Zotero.Items.getByLibraryAndKey(1, 'CQ48G5LG')
+```
 - 根据当前打开的标签页获取阅读器对象:
 ```js
 Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
@@ -64,11 +66,13 @@ var item = new Zotero.Item('computerProgram');
 item.setType(Zotero.ItemTypes.getID('note'));
 ```
 
-- 获取某行条目(load from row?)
+- 获取某行条目
 ```js
-Zotero.Items.get(ZoteroPane.itemsView.getRow(2).id)
+ZoteroPane.itemsView.getRow(2).ref
 ```
-- tree
+<details>
+<summary>tree</summary>
+
 ```xml
  <tree enableColumnDrag="true" flex="1" id="chartero-data-tree">
     <treecols>
@@ -105,9 +109,7 @@ Zotero.Items.get(ZoteroPane.itemsView.getRow(2).id)
 </tree>
 ```
 
-```js
-
-```
+</details>
 
 ## 致谢
 [windingwind](https://github.com/windingwind)同学是
