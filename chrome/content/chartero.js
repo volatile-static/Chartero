@@ -2,7 +2,12 @@ Zotero.Chartero = new function () {
     this.readingHistory = false;  // 统计数据
     var scanPeriod, savePeriod;  // 定时器时间间隔
     var noteItem;  // 存储数据的笔记条目
-    var isReaderActive;
+    const state = {
+        active: false,
+        page: 0,
+        count: 0,
+        position: 0
+    };
 
     this.showMessage = function(msg, ico) {
         const popMsg = new Zotero.ProgressWindow();
@@ -96,8 +101,25 @@ Zotero.Chartero = new function () {
 
     this.scanSched = function () {
         const reader = getReader();
-        if (!isReaderActive || !reader)
+        if (!state.active || !reader)
             return;  // 没在阅读中
+        // 获取当前页码
+        const pageIndex = reader.state.pageIndex;
+
+        if (pageIndex == state.page) {
+            if (reader.state.top == state.position)
+                ++state.count;
+            else {
+                state.position = reader.state.top;
+                state.count = 0;
+            }
+        } else {
+            state.page = pageIndex;
+            state.count = 0;
+        }
+        if (state.count > 60)
+            return;  // 离开了
+
         if (!this.readingHistory)
             this.readingHistory = new HistoryLibrary(Zotero.Libraries.userLibraryID);
 
@@ -108,8 +130,6 @@ Zotero.Chartero = new function () {
             const total = reader._iframeWindow.eval('PDFViewerApplication.pdfViewer.pagesCount');
             item = new HistoryItem(total);
         }
-        // 获取当前页码
-        const pageIndex = reader.state.pageIndex;
         let page = item.p[pageIndex];
         if (!page)  // 新页码
             page = new HistoryPage();
@@ -259,10 +279,10 @@ Zotero.Chartero = new function () {
 
         window.addEventListener('message', messageHandler, false);
         window.addEventListener('activate', () => {
-            isReaderActive = true;
+            state.active = true;
         }, true);
         window.addEventListener('deactivate', () => {
-            isReaderActive = false;
+            state.active = false;
         }, true);
 
         $("#zotero-items-splitter").mouseup(this.onResize);
@@ -346,7 +366,7 @@ Zotero.Chartero = new function () {
         });
         let f = document.createElement('iframe');
         f.setAttribute('src', 'chrome://chartero/content/Overview/index.html');
+        f.setAttribute('flex', 1);
         container.appendChild(f);
-
     }
 }
