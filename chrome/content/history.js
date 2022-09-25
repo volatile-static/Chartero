@@ -94,7 +94,7 @@ class HistoryItem {
     // 计算阅读进度百分比
     getProgress(k = 1, d = 2) {
         const p = k * this.getRead() / this.n;
-        return p.toFixed(d);
+        return Number(p.toFixed(d));
     }
 }
 

@@ -151,7 +151,7 @@ Zotero.Chartero = new function () {
             title: item.getField('title')
         }, '*');
     }
-
+    
     async function showDataTree() {
         const pane = document.getElementById('zotero-item-pane-content');
         const frame = document.getElementById('chartero-data-viewer');
@@ -368,5 +368,7 @@ Zotero.Chartero = new function () {
         f.setAttribute('src', 'chrome://chartero/content/Overview/index.html');
         f.setAttribute('flex', 1);
         container.appendChild(f);
+
+        return f;
     }
 }

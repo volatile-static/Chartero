@@ -1,0 +1,14 @@
+@charset "utf-8";
+
+iframe {
+    overflow: visible;
+    width: 100%;
+    background-color: dimgrey;
+}
+
+.chart-layout {
+    height: 500px;
+    width: fill;
+    overflow: visible;
+    display: flex;
+}

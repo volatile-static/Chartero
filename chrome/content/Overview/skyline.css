@@ -1,0 +1,59 @@
+@charset "utf-8";
+
+.day-block {
+    border: solid 1px #007418;
+    border-radius: 20%;
+    transition: all 0.2s;
+}
+
+.day-block:hover {
+    box-shadow: 0 0 2px;
+}
+
+#block-container {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(7, 1fr);
+    grid-template-columns: repeat(53, 1fr);
+    grid-gap: 2px;
+    padding: 2px;
+    height: 88px;
+    width: 640px;
+    position: absolute;
+    top: 16px;
+    left: 38px;
+}
+
+#week-layout {
+    display: block;
+    position: absolute;
+    width: 36px;
+    top: 20px;
+    left: 0;
+}
+
+#week-layout > p {
+    display: block;
+    text-align: right;
+    margin: 9px 0 0;
+}
+
+.skyline-label {
+    font-size: 12px;
+    text-overflow: ellipsis;
+}
+
+#month-layout {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    position: absolute;
+    left: 36px;
+    top: 0;
+    width: 642px;
+}
+
+#month-layout > p {
+    display: block;
+    margin: 0;
+}

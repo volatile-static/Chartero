@@ -7,17 +7,26 @@
 
     <link rel="stylesheet" href="chrome://chartero/skin/jquery/jquery-ui.css" />
     <link rel="stylesheet" href="overview.css" />
-
-    <script src="../jQuery/jQuery.js"></script>
-    <script src="../jQuery/jquery-ui.js"></script>
-    <script src="../jQuery/jstree.js"></script>
-    <script src="chrome://zotero/content/include.js"> </script>
-    <script src="../history.js"></script>
+    <script type="text/javascript" src="../jQuery/jQuery.js"></script>
+    <script type="text/javascript" src="../jQuery/jquery-ui.js"></script>
+    <script type="text/javascript" src="../highcharts/highcharts.js"></script>
+    <script type="text/javascript" src="../highcharts/modules/exporting.js"></script>
+    <script type="text/javascript" src="../highcharts/modules/export-data.js"></script>
+    <script type="text/javascript" src="../highcharts/modules/offline-exporting.js"></script>
+    <script type="text/javascript" src="../highcharts/themes/dark-unica.js"></script>
+    <script type="text/javascript" src="../history.js"></script>
+    <script type="text/javascript" src="chrome://zotero/content/include.js"></script>
 </head>
 
 <body>
-
-    <script src="overview.js"></script>
+    <div class="chart-layout">
+        <iframe src="timeline.html" id="timeline-frame"></iframe>
+    </div>
+    <div class="chart-layout">
+        <iframe src="skyline.html" id="skyline-frame"></iframe>
+    </div>
+    
+    <script type="text/javascript" src="overview.js"></script>
 </body>
 
 </html>
