@@ -54,6 +54,7 @@ class HistoryItem {
         } else throw 'Item parse failed!';
     }
 
+    // 找到第一次阅读的时间（秒）
     firstTime() {
         let result = 9999999999;
         for (const page in this.p)
@@ -61,6 +62,7 @@ class HistoryItem {
         return result;
     }
 
+    // 找到最后一次阅读的时间（秒）
     lastTime() {
         let result = 0;
         for (const page in this.p)
@@ -68,6 +70,7 @@ class HistoryItem {
         return result;
     }
 
+    // 计算这一天阅读的时间（秒）
     getDateTime(time) {
         let result = 0;
         for (const page in this.p)
@@ -75,11 +78,23 @@ class HistoryItem {
         return result;
     }
 
+    // 一共读了多少秒
     getTotalSeconds() {
         let result = 0;
         for (const page in this.p)
             result += this.p[page].getTotalSeconds();
         return result;
+    }
+
+    // 一共读了多少页
+    getRead() {
+        return Object.keys(this.p).length;
+    }
+
+    // 计算阅读进度百分比
+    getProgress(k = 1, d = 2) {
+        const p = k * this.getRead() / this.n;
+        return p.toFixed(d);
     }
 }
 
@@ -88,6 +103,7 @@ class HistoryLibrary {
         this.lib = id;
         this.items = {};
     }
+    
     mergeJSON(json) {
         if (!json.lib)
             throw 'No library ID!';
@@ -97,5 +113,26 @@ class HistoryLibrary {
                 this.items[k] = new HistoryItem(0);
             this.items[k].mergeJSON(json.items[k]);
         }
+    }
+
+    firstTime() {
+        let result = 9999999999;
+        for (const it in this.items)
+            result = Math.min(result, this.items[it].firstTime());
+        return result;
+    }
+
+    lastTime() {
+        let result = 0;
+        for (const it in this.items)
+            result = Math.max(result, this.items[it].lastTime());
+        return result;
+    }
+
+    getDateTime(time) {
+        let result = 0;
+        for (const it in this.items)
+            result += this.items[it].getDateTime(new Date(time));
+        return result;
     }
 }

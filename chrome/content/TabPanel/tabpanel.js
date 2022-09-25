@@ -1,14 +1,12 @@
 const localeStr = require('chrome://chartero/locale/tabpanel.json');
 var chartPageTime, chartDateTime;
 
-function setReadingProgress(read, total) {
-  // 计算阅读进度百分比
-  const p = Math.round(read * 1000 / total / 10);
-  // alert(`${read} ${total} ${p}`)
+function setReadingProgress(his) {
+  const p = his.getProgress(100, 2);
   $('.wave-change').animate({ top: 40 - p });
   $('#reading-progress-label').html(p + '%');
-  $('#reading-pages').html(read);
-  $('#reading-total').html(total);
+  $('#reading-pages').html(his.getRead());
+  $('#reading-total').html(his.n);
 }
 
 function plotPageTime(history, title) {
@@ -90,7 +88,7 @@ function initCharts() {
 function handler(event) {
   const history = new HistoryItem();
   history.mergeJSON(event.data.history);
-  setReadingProgress(Object.keys(history.p).length, history.n);
+  setReadingProgress(history);
   plotPageTime(history, event.data.title);
   plotDateTime(history, event.data.title);
 }
