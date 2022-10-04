@@ -9,12 +9,12 @@ Zotero.Chartero = new function () {
         position: 0
     };
 
-    this.showMessage = function(msg, ico) {
+    this.showMessage = function (msg, ico) {
         const popMsg = new Zotero.ProgressWindow();
         popMsg.changeHeadline('', 'chrome://chartero/skin/icon.png', 'Chartero');
         popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
-        const path = typeof ico === 'string' ? 
-            'chrome://chartero/skin/' + ico + '.png' : 
+        const path = typeof ico === 'string' ?
+            'chrome://chartero/skin/' + ico + '.png' :
             'chrome://zotero/skin/cross.png';
         let prog = new popMsg.ItemProgress(path, msg);
         prog.setProgress(100);
@@ -99,6 +99,14 @@ Zotero.Chartero = new function () {
         }
     }
 
+    function scrollThumbnailView(page) {
+        const reader = getReader();
+        const viewer = 'PDFViewerApplication.pdfSidebar.pdfThumbnailViewer'
+        const scroll = '.scrollThumbnailIntoView(10)';
+        const layout = reader._iframeWindow.document.getElementById('thumbnailView');
+        layout.getElementsByTagName('a')[page].scrollIntoView();
+    }
+
     this.scanSched = function () {
         const reader = getReader();
         if (!state.active || !reader)
@@ -141,6 +149,8 @@ Zotero.Chartero = new function () {
         // 写入全局变量，等待保存
         item.p[pageIndex] = page;
         this.readingHistory.items[key] = item;
+
+        scrollThumbnailView(pageIndex);
     };
 
     function updateTabPanel(item) {
@@ -151,7 +161,7 @@ Zotero.Chartero = new function () {
             title: item.getField('title')
         }, '*');
     }
-    
+
     async function showDataTree() {
         const pane = document.getElementById('zotero-item-pane-content');
         const frame = document.getElementById('chartero-data-viewer');
@@ -311,7 +321,7 @@ Zotero.Chartero = new function () {
         await setReadingData();
         const raw = noteItem.getNote();
         const his = new HistoryLibrary(1);  // TODO: this.readingHistory
-        his.mergeJSON(JSON.parse(raw)); 
+        his.mergeJSON(JSON.parse(raw));
         ZoteroPane.itemsView.collapseAllRows();  // 附件上不显示
 
         let flag = false;
@@ -354,6 +364,7 @@ Zotero.Chartero = new function () {
         }
         if (!flag)
             this.showMessage('No history found in items pane.', 'exclamation');
+        this.newTab();
     };
 
     this.newTab = function () {
@@ -365,6 +376,7 @@ Zotero.Chartero = new function () {
             onClose: undefined,
         });
         let f = document.createElement('iframe');
+        f.id = 'overviewFrame';
         f.setAttribute('src', 'chrome://chartero/content/Overview/index.html');
         f.setAttribute('flex', 1);
         container.appendChild(f);

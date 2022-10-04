@@ -35,6 +35,22 @@ class HistoryPage {
                 result += this.t[i];
         return result;
     }
+    
+    getDayTime(day) {
+        let result = 0;
+        for (const i in this.t)
+            if (day == new Date(i * 1000).getDay())
+                result += this.t[i];
+        return result;
+    }
+    
+    getHourTime(hour) {
+        let result = 0;
+        for (const i in this.t)
+            if (hour == new Date(i * 1000).getHours())
+                result += this.t[i];
+        return result;
+    }
 }
 
 class HistoryItem {
@@ -75,6 +91,22 @@ class HistoryItem {
         let result = 0;
         for (const page in this.p)
             result += this.p[page].getDateTime(new Date(time));
+        return result;
+    }
+    
+    // 计算周几读了多久(0~6)
+    getDayTime(day) {
+        let result = 0;
+        for (const page in this.p)
+            result += this.p[page].getDayTime(day);
+        return result;
+    }
+    
+    // 计算这个小时读了多久(0~23)
+    getHourTime(hour) {
+        let result = 0;
+        for (const page in this.p)
+            result += this.p[page].getHourTime(hour);
         return result;
     }
 

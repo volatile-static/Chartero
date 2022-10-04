@@ -94,27 +94,14 @@ function update() {
             const per = normalize(arr[arr.length - 1], arr[0], readingS);
             $(block).css('background-color', getColor(1 - per));
         } else
-            $(block).css('background-color', 'gray');
-        // block.attr('title', getDate(i, j).toLocaleDateString()
-        //     + getTimeStr(readingS));
-        // $(block).tooltip({
-        //     items: '.day-block', 
-        //     position: {
-        //         my: "left top",
-        //         at: "left bottom",
-        //         using: function (position, feedback) {
-        //             $(this).css(position);
-        //             Zotero.debug(position);
-        //             Zotero.debug(feedback);
-        //             $("<div>")
-        //                 .addClass("arrow")
-        //                 .addClass(feedback.vertical)
-        //                 .addClass(feedback.horizontal)
-        //                 .appendTo(this);
-        //         }
-        //     },
-        //     content: getDate(i, j).toLocaleDateString() + getTimeStr(readingS)
-        // });
+            $(block).css('background-color', '#161b22');
+        // $(block).click(() => Zotero.Chartero.showMessage(
+        //     getDate(i, j).toLocaleDateString(Zotero.locale) + getTimeStr(readingS),
+        //     'information'
+        // ));
+        $(block).attr('data-tooltip', 
+            getDate(i, j).toLocaleDateString() + getTimeStr(readingS));
+        $(block).attr('data-flow', 'top');
     });
 }
 

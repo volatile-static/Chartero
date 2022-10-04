@@ -26,10 +26,7 @@
 6. note item右键作为数据/合并
 7. 具有多个PDF的条目逻辑问题
 ### features
-3. 不同标签的条目数与阅读时长饼图
-4. 文件库的甘特图
 5. 文件库阅读时长top10
-7. skyline
 9. 平滑滚动条
 
 ## 参与贡献
@@ -70,6 +67,14 @@ item.setType(Zotero.ItemTypes.getID('note'));
 ```js
 ZoteroPane.itemsView.getRow(2).ref
 ```
+
+- 跳转到某条批注
+```js
+const reader = Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
+const annotations = Zotero.Items.get(reader.itemID).getAnnotations();
+reader.navigate({annotationKey: annotations[0].key});
+```
+
 <details>
 <summary>tree</summary>
 

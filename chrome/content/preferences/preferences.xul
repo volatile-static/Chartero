@@ -2,7 +2,9 @@
 <?xml-stylesheet href="chrome://chartero/skin/preferences.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://chartero/locale/overlay.dtd">
 
-<overlay id="chartero-preferences" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml">
+<overlay id="chartero-preferences" 
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+         xmlns:html="http://www.w3.org/1999/xhtml">
 
   <prefwindow id="zotero-prefs"> 
 

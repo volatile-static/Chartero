@@ -10,6 +10,10 @@
     <script type="text/javascript" src="../jQuery/jQuery.js"></script>
     <script type="text/javascript" src="../jQuery/jquery-ui.js"></script>
     <script type="text/javascript" src="../highcharts/highcharts.js"></script>
+    <script type="text/javascript" src="../highcharts/modules/gantt.js"></script>
+    <script type="text/javascript" src="../highcharts/modules/variable-pie.js"></script>
+    <script type="text/javascript" src="../highcharts/modules/wordcloud.js"></script>
+    <script type="text/javascript" src="../highcharts/modules/drilldown.js"></script>
     <script type="text/javascript" src="../highcharts/modules/exporting.js"></script>
     <script type="text/javascript" src="../highcharts/modules/export-data.js"></script>
     <script type="text/javascript" src="../highcharts/modules/offline-exporting.js"></script>
@@ -19,13 +23,33 @@
 </head>
 
 <body>
-    <div class="chart-layout">
-        <iframe src="timeline.html" id="timeline-frame"></iframe>
+    <div class="charts-container">
+
+        <div class="chart-layout">
+            <div id="item-chart"></div>
+        </div>
+
+        <div class="chart-layout">
+            <div id="pie-chart"></div>
+        </div>
+
+        <div class="chart-layout">
+            <div id="wordcloud-chart"></div>
+        </div>
+
+        <div class="chart-layout">
+            <div id="schedule-chart"></div>
+        </div>
+
+        <div class="chart-layout timeline">
+            <div id="gantt-chart"></div>
+        </div>
+        
+        <div class="chart-layout skyline">
+            <iframe src="skyline.html" id="skyline-frame"></iframe>
+        </div>
     </div>
-    <div class="chart-layout">
-        <iframe src="skyline.html" id="skyline-frame"></iframe>
-    </div>
-    
+
     <script type="text/javascript" src="overview.js"></script>
 </body>
 

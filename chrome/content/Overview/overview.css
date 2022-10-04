@@ -1,14 +1,48 @@
 @charset "utf-8";
 
 iframe {
-    overflow: visible;
+    overflow: hidden;
     width: 100%;
-    background-color: dimgrey;
+    background-color: transparent;
 }
 
 .chart-layout {
-    height: 500px;
-    width: fill;
-    overflow: visible;
-    display: flex;
+    overflow: hidden;
+    margin: 10px;
+    transition: all 1s;
+}
+
+.chart-layout:hover {
+    box-shadow: 0 0 6px rebeccapurple;
+}
+
+.charts-container {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    grid-template-rows: 1fr 112px auto max-content;
+    gap: 10px 10px;
+    grid-template-areas:
+        ". ."
+        "skyline skyline"
+        ". ."
+        "timeline timeline";
+    justify-content: center;
+    /* align-items: stretch;
+    align-content: stretch; */
+    background-color: #0d1117;
+}
+
+.skyline {
+    grid-area: skyline;
+    width: 690px;
+    height: 112px;
+    align-self: center;
+    justify-self: center;
+}
+
+.timeline {
+    grid-area: timeline;
+    align-self: center;
+    justify-self: center;
+    width: calc(100% - 20px);
 }
