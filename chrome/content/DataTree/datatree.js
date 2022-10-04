@@ -126,8 +126,7 @@ function initToolButton() {
         function () {
             $(this).addClass("ui-state-active");
         }
-    );
-    $("#chartero-data-status-bar li").mouseup(
+    ).mouseup(
         function () {
             $(this).removeClass("ui-state-active");
         }
