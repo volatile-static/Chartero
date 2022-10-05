@@ -198,6 +198,11 @@ Zotero.Chartero = new function () {
 
     this.onItemSelect = async function () {
         const items = ZoteroPane.getSelectedItems();
+        const menu = document.getElementById('itemmenu-as-data');
+        const is_a_note = items.length === 1 && items[0].isNote();
+
+        menu.setAttribute('hidden', !is_a_note);
+        menu.setAttribute('disabled', !is_a_note);
 
         if (items.length != 1)
             return;  // TODO: 多合一绘图
@@ -364,7 +369,6 @@ Zotero.Chartero = new function () {
         }
         if (!flag)
             this.showMessage('No history found in items pane.', 'exclamation');
-        this.newTab();
     };
 
     this.newTab = function () {
@@ -380,7 +384,11 @@ Zotero.Chartero = new function () {
         f.setAttribute('src', 'chrome://chartero/content/Overview/index.html');
         f.setAttribute('flex', 1);
         container.appendChild(f);
-
         return f;
+    }
+
+    this.setHistoryData = function () {
+        Zotero.Prefs.set("chartero.dataKey", ZoteroPane.getSelectedItems()[0].key);
+        setReadingData();
     }
 }

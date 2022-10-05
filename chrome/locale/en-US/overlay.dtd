@@ -1,3 +1,4 @@
 <!ENTITY chartero.dashboard.noHistory "该条目暂无浏览历史">
 <!ENTITY chartero.dashboard "Dashboard">
 <!ENTITY chartero.toolbarbutton.tip "Refresh reading progress">
+<!ENTITY chartero.asdata "Set as Chartero history data">

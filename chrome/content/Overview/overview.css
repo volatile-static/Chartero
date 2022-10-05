@@ -1,19 +1,27 @@
 @charset "utf-8";
 
+body {
+    margin: 0;
+}
+
 iframe {
     overflow: hidden;
     width: 100%;
     background-color: transparent;
+    border: none;
 }
 
 .chart-layout {
     overflow: hidden;
     margin: 10px;
-    transition: all 1s;
+    transition: all 0.6s;
+    border-radius: 6px;
+    transform: scale(0.9);
 }
 
 .chart-layout:hover {
-    box-shadow: 0 0 6px rebeccapurple;
+    box-shadow: 0 0 12px rebeccapurple;
+    transform: scale(1);
 }
 
 .charts-container {
@@ -30,6 +38,7 @@ iframe {
     /* align-items: stretch;
     align-content: stretch; */
     background-color: #0d1117;
+    padding: 20px;
 }
 
 .skyline {

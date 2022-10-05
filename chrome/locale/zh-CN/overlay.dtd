@@ -2,3 +2,4 @@
 <!ENTITY chartero.dashboard.noHistory "该条目暂无浏览历史">
 <!ENTITY chartero.dashboard "仪表盘">
 <!ENTITY chartero.toolbarbutton.tip "刷新阅读进度">
+<!ENTITY chartero.asdata "设为Chartero历史记录">

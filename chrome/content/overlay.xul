@@ -8,11 +8,18 @@
 
     <hbox id="zotero-items-toolbar">
         <spacer flex="1"/>
-		<toolbarbutton id="chartero-toolbar-button" class="zotero-tb-button"  
-            tooltiptext="&chartero.toolbarbutton.tip;" 
-            oncommand="Zotero.Chartero.refreshItemsProgress();"/>
+		<toolbarbutton id="chartero-toolbar-button" class="zotero-tb-button" type="menu" tooltiptext="Chartero">
+            <menupopup>
+                <menuitem label="&chartero.toolbarbutton.tip;" oncommand="Zotero.Chartero.refreshItemsProgress();"/>
+                <menuitem label="Overview" oncommand="Zotero.Chartero.newTab();"/>
+            </menupopup>
+        </toolbarbutton>
         <toolbarseparator/>
     </hbox>
+
+    <menupopup id="zotero-itemmenu">
+        <menuitem id="itemmenu-as-data" class="menuitem-iconic" label="&chartero.asdata;" oncommand="Zotero.Chartero.setHistoryData();"/>
+    </menupopup>
 
     <deck id="zotero-item-pane-content">
         <tabbox id="zotero-view-tabbox">
