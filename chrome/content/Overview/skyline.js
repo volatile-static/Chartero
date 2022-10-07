@@ -95,10 +95,10 @@ function update() {
             $(block).css('background-color', getColor(1 - per));
         } else
             $(block).css('background-color', '#161b22');
-        // $(block).click(() => Zotero.Chartero.showMessage(
-        //     getDate(i, j).toLocaleDateString(Zotero.locale) + getTimeStr(readingS),
-        //     'information'
-        // ));
+        $(block).click(() => Zotero.Chartero.showMessage(
+            getDate(i, j).toLocaleDateString(Zotero.locale) + getTimeStr(readingS),
+            'information'
+        ));
         $(block).attr('data-tooltip', 
             getDate(i, j).toLocaleDateString() + getTimeStr(readingS));
         $(block).attr('data-flow', 'top');

@@ -13,7 +13,6 @@ iframe {
 
 .chart-layout {
     overflow: hidden;
-    margin: 10px;
     transition: all 0.6s;
     border-radius: 6px;
     transform: scale(0.9);
@@ -26,17 +25,14 @@ iframe {
 
 .charts-container {
     display: grid;
-    grid-template-columns: 0.8fr 1.2fr;
-    grid-template-rows: 1fr 112px auto max-content;
-    gap: 10px 10px;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto 112px max-content;
     grid-template-areas:
         ". ."
-        "skyline skyline"
         ". ."
+        "skyline skyline"
         "timeline timeline";
-    justify-content: center;
-    /* align-items: stretch;
-    align-content: stretch; */
     background-color: #0d1117;
     padding: 20px;
 }
@@ -45,13 +41,24 @@ iframe {
     grid-area: skyline;
     width: 690px;
     height: 112px;
-    align-self: center;
     justify-self: center;
 }
 
 .timeline {
     grid-area: timeline;
-    align-self: center;
-    justify-self: center;
     width: calc(100% - 20px);
 }
+
+/* 
+.chart-layout:nth-child(2) {
+    max-width: 500px;
+}
+
+.chart-layout:nth-child(3) {
+    max-width: 390px;
+}
+
+.chart-layout:nth-child(4) {
+    max-width: 660px;
+} 
+*/

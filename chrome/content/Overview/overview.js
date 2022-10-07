@@ -23,6 +23,69 @@ function forEachItem(fun) {
             fun(item);
 }
 
+async function drawBubbleChart() {
+    const series = new Array();
+    for (const k in readingHistory.items) {
+        const item = getItemByKey(k);
+        let p = Zotero.Collections.getCollectionsContainingItems([item.parentID]);
+        const collection = (await p)[0] || {};
+        const s = series.find(s => s.name === collection.name)
+        const data = {
+            name: item.getField('title'),
+            value: readingHistory.items[k].getTotalSeconds()
+        };
+        if (s)
+            s.data.push(data);
+        else
+            series.push({
+                name: collection.name || '未分类',
+                data: [data]
+            });
+    }
+    Highcharts.chart('item-chart', {
+        chart: {
+            type: 'packedbubble'
+        },
+        title: {
+            text: 'Items'
+        },
+        tooltip: {
+            useHTML: true,
+            pointFormat: '{point.name}<br/><b>{point.value}</b>s'
+        },
+        plotOptions: {
+            packedbubble: {
+                minSize: '20%',
+                maxSize: '160%',
+                zMin: 0,
+                zMax: 1000,
+                draggable: true,
+                allowPointSelect: true,
+                layoutAlgorithm: {
+                    splitSeries: false,
+                    dragBetweenSeries: true,
+                    gravitationalConstant: 0.02
+                },
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}',
+                    filter: {
+                        property: 'y',
+                        operator: '>',
+                        value: 250
+                    },
+                    style: {
+                        color: 'black',
+                        textOutline: 'none',
+                        fontWeight: 'normal'
+                    }
+                }
+            }
+        },
+        series
+    });
+}
+
 function drawPieChart() {
     const data = new Array(), series = new Array();
     for (const collection of collections) {
@@ -57,6 +120,7 @@ function drawPieChart() {
     Highcharts.chart('pie-chart', {
         chart: { type: 'variablepie' },
         title: { text: '总阅读时长占比' },
+        subtitle: { text: 'Click pies for details.' },
         series: [{
             minPointSize: 10,
             innerSize: '20%',
@@ -66,7 +130,8 @@ function drawPieChart() {
             data
         }],
         drilldown: { series }
-    });
+    }, chart => $('#pie-chart').mouseenter(() =>
+        chart.series[0].animate(false)));
 }
 
 function drawWordCloud() {
@@ -84,16 +149,20 @@ function drawWordCloud() {
                 })
         }
     });
+    const s = {
+        type: 'wordcloud',
+        name: 'Total Time',
+        maxFontSize: 26,
+        minFontSize: 8,
+        data: data.filter(i => i.weight > 0)
+    };
     Highcharts.chart('wordcloud-chart', {
-        series: [{
-            type: 'wordcloud',
-            name: 'Total Time',
-            maxFontSize: 26,
-            minFontSize: 8,
-            data: data.filter(i => i.weight > 0)
-        }],
+        series: [s],
         title: { text: '标签词云图' }
-    });
+    }, chart => $('#wordcloud-chart').mouseenter(() => {
+        chart.series[0].remove(false);
+        chart.addSeries(s);
+    }));
 }
 
 function drawScheduleChart() {
@@ -114,6 +183,8 @@ function drawScheduleChart() {
         for (let i = 0; i < 7; ++i)
             weekData[i] = his.getDayTime(i) + (weekData[i] || 0);
     });
+    const weekS = { name: 'week', data: weekData, type: 'column' },
+        hourS = { name: 'hour', data: hourData, type: 'line', xAxis: 1 };
     Highcharts.chart('schedule-chart', {
         title: { text: '作息规律统计' },
         xAxis: [
@@ -123,11 +194,17 @@ function drawScheduleChart() {
         yAxis: {
             title: { text: 'seconds' }
         },
-        series: [
-            { name: 'week', data: weekData, type: 'column' },
-            { name: 'hour', data: hourData, type: 'line', xAxis: 1 }
-        ]
-    });
+        tooltip: { valueSuffix: ' s' },
+        plotOptions: {
+            line: { marker: { enabled: false } }
+        },
+        series: [weekS, hourS]
+    }, chart => $('#schedule-chart').mouseenter(() => {
+        chart.series[0].remove(false);
+        chart.series[0].remove(false);
+        chart.addSeries(weekS);
+        chart.addSeries(hourS);
+    }));
 }
 
 function drawGantt() {
@@ -139,6 +216,7 @@ function drawGantt() {
             end: readingHistory.items[k].lastTime() * 1000,
             completed: readingHistory.items[k].getProgress()
         });
+    const s = { name: 'library name', data };
     Highcharts.ganttChart('gantt-chart', {
         title: { text: '时间线' },
         navigator: {
@@ -154,11 +232,12 @@ function drawGantt() {
             enabled: true,
             selected: 0
         },
-        series: [{
-            name: 'library name',
-            data
-        }]
-    });
+        plotOptions: { series: { minPointLength: 5 } },
+        series: [s]
+    }, chart => $('#gantt-chart').mouseenter(() => {
+        chart.series[0].remove(false);
+        chart.addSeries(s);
+    }));
 }
 
 function initCharts() {
@@ -172,6 +251,7 @@ function initCharts() {
     drawGantt();
     drawPieChart();
     drawWordCloud();
+    drawBubbleChart();
     drawScheduleChart();
 }
 
