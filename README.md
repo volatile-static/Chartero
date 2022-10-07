@@ -130,6 +130,8 @@ reader.navigate({annotationKey: annotations[0].key});
 
 </details>
 
+https://gitee.com/const_volatile/chartero/blob/master/chrome/content/chartero.js#L28
+
 ## 致谢
 [windingwind](https://github.com/windingwind)同学是
 [pdf-translate](https://github.com/windingwind/zotero-pdf-translate)
