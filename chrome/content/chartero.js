@@ -99,14 +99,6 @@ Zotero.Chartero = new function () {
         }
     }
 
-    function scrollThumbnailView(page) {
-        const reader = getReader();
-        const viewer = 'PDFViewerApplication.pdfSidebar.pdfThumbnailViewer'
-        const scroll = '.scrollThumbnailIntoView(10)';
-        const layout = reader._iframeWindow.document.getElementById('thumbnailView');
-        layout.getElementsByTagName('a')[page].scrollIntoView();
-    }
-
     this.scanSched = function () {
         const reader = getReader();
         if (!state.active || !reader)
@@ -149,8 +141,6 @@ Zotero.Chartero = new function () {
         // 写入全局变量，等待保存
         item.p[pageIndex] = page;
         this.readingHistory.items[key] = item;
-
-        scrollThumbnailView(pageIndex);
     };
 
     function updateTabPanel(item) {
@@ -224,14 +214,29 @@ Zotero.Chartero = new function () {
             $('#chartero-item-deck').attr('selectedIndex', 0);
     }
 
+    function scrollThumbnailView() {
+        const reader = getReader();
+        // const viewer = 'PDFViewerApplication.pdfSidebar.pdfThumbnailViewer'
+        // const scroll = '.scrollThumbnailIntoView(10)';    const reader = getReader();
+        const layout = reader._iframeWindow.document.getElementById('thumbnailView');
+        alert(layout);
+        layout.getElementsByTagName('a')[reader.state.pageIndex].scrollIntoView();
+    }
+
     this.notifierCallback = {
-        // Check new added item, and adds meta data.
         notify: async function (event, type, ids, extraData) {
-            Zotero.log("////////////////////////////////////notify chartero");
-            Zotero.log(event);
-            Zotero.log(ids);
-            Zotero.log(type);
-            Zotero.log(extraData);
+            if (event === 'select' && type === 'tab') {
+                const reader = getReader();
+                if (!reader) return;
+                const viewer = reader._iframeWindow.document.getElementById('viewer');
+                viewer.removeEventListener('mouseup', scrollThumbnailView, false);
+                viewer.addEventListener('mouseup', scrollThumbnailView, false);
+            }
+            // Zotero.log("////////////////////////////////////notify chartero");
+            // Zotero.log(event);
+            // Zotero.log(ids);
+            // Zotero.log(type);
+            // Zotero.debug(extraData);
         },
     };
 
@@ -308,7 +313,7 @@ Zotero.Chartero = new function () {
             ZoteroPane.itemsView.onSelect.addListener(this.onItemSelect);
             ZoteroPane.collectionsView.onSelect.addListener(this.onCollectionSel);
         });
-        tabbox.addEventListener("command", (e) => {
+        tabbox.addEventListener("command", e => {
             if (e.target.id == "chartero-item-tab")
                 this.onItemSelect();
         });
@@ -336,7 +341,7 @@ Zotero.Chartero = new function () {
                 his.lib,
                 ZoteroPane.itemsView.getRow(i).ref.key  // 第i行item的key
             );
-            
+
             if (!item.isRegularItem())
                 continue;
             const pdf = await hasRead(item);  // 是否读过

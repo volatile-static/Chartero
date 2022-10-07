@@ -11,10 +11,8 @@
 ### 数据存储位置
 浏览历史的原始数据以JSON格式保存在一条笔记条目中，
 你可以移动他，但不要更改笔记的内容。
-> 当Chartero无法自动识别到该条目时，请[手动获取笔记的ID](#常用调试代码)并保存至
-[C盘的Zotero首选项](https://www.zotero.org/support/kb/profile_directory)中。
 ## 教程或文档
-1. [插件安装](https://zotero.yuque.com/staff-gkhviy/zotero/addons) 
+1. [插件安装](https://zotero.yuque.com/docs/share/6681cf35-55cb-4940-8cb5-ec1db0790099) 
 2. [插件开发](https://zotero.yuque.com/books/share/8d230829-6004-4934-b4c6-685a7001bfa0)
 ## 隐私
 您的浏览历史将以**明文**形式存储在一个笔记条目中，并可随Zotero数据库同步至云端，
@@ -23,11 +21,11 @@
 ### bugs
 4. 改变窗口宽度时侧边栏不能同时缩放（最大化还原后）
 5. 日期时长趋势偶尔不显示当天记录
-6. note item右键作为数据/合并
 7. 具有多个PDF的条目逻辑问题
+8. 热力图提示遮挡
 ### features
-5. 文件库阅读时长top10
 9. 平滑滚动条
+10. 优化甘特图标题
 
 ## 参与贡献
 > *欢迎PR！*
@@ -36,6 +34,7 @@
 - 使用开源脚本[HighCharts](https://www.highcharts.com.cn/)进行各种图表的绘制
 - 采用了[jQuery](https://jquery.com/)库简化代码
 ### 常用调试代码
+> [Zotero本地配置](https://www.zotero.org/support/kb/profile_directory)
 - 获取当前选择的条目：
 ```js
 const items = ZoteroPane.getSelectedItems();
@@ -119,5 +118,6 @@ reader.navigate({annotationKey: annotations[0].key});
 ## 致谢
 [windingwind](https://github.com/windingwind)同学是
 [pdf-translate](https://github.com/windingwind/zotero-pdf-translate)
-与[better-notes](https://github.com/windingwind/zotero-better-notes)
+与
+[better-notes](https://github.com/windingwind/zotero-better-notes)
 等热门插件的作者，他在本插件的开发过程中提供了巨大的帮助。
