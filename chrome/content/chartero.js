@@ -228,7 +228,6 @@ Zotero.Chartero = new function () {
         // const viewer = 'PDFViewerApplication.pdfSidebar.pdfThumbnailViewer'
         // const scroll = '.scrollThumbnailIntoView(10)';    const reader = getReader();
         const layout = reader._iframeWindow.document.getElementById('thumbnailView');
-        alert(layout);
         layout.getElementsByTagName('a')[reader.state.pageIndex].scrollIntoView();
     }
 
