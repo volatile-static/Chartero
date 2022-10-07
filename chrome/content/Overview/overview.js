@@ -97,6 +97,7 @@ function drawPieChart() {
             z: items.reduce((sum, item) =>
                 sum + getTimeByKey(item.key), 0)  // 从0开始加
         });
+
         series.push({
             name: collection.name,
             id: collection.name,
@@ -216,6 +217,7 @@ function drawGantt() {
             end: readingHistory.items[k].lastTime() * 1000,
             completed: readingHistory.items[k].getProgress()
         });
+
     const s = { name: 'library name', data };
     Highcharts.ganttChart('gantt-chart', {
         title: { text: '时间线' },
@@ -248,11 +250,16 @@ function initCharts() {
         },
         credits: { enabled: false }
     });
-    drawGantt();
-    drawPieChart();
-    drawWordCloud();
-    drawBubbleChart();
-    drawScheduleChart();
+    try {
+        drawGantt();
+        drawPieChart();
+        drawWordCloud();
+        drawBubbleChart();
+        drawScheduleChart();
+    } catch (e) {
+        Zotero.debug(e);
+        Zotero.Chartero.showMessage('不兼容的旧版记录，请前往数据可视化页面清理！');
+    }
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {

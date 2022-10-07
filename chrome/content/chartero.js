@@ -2,13 +2,14 @@ Zotero.Chartero = new function () {
     this.readingHistory = false;  // 统计数据
     var scanPeriod, savePeriod;  // 定时器时间间隔
     var noteItem;  // 存储数据的笔记条目
-    const state = {
+    const state = {  // 用来防止挂机
         active: false,
         page: 0,
         count: 0,
         position: 0
     };
 
+    // 右下角显示弹出消息
     this.showMessage = function (msg, ico) {
         const popMsg = new Zotero.ProgressWindow();
         popMsg.changeHeadline('', 'chrome://chartero/skin/icon.png', 'Chartero');
@@ -82,6 +83,7 @@ Zotero.Chartero = new function () {
         Zotero.Prefs.set("chartero.dataKey", noteItem.key);
     }
 
+    // 若读过则返回PDF条目
     async function hasRead(item) {
         await setReadingData();  // 加载浏览历史
         var pdf = await item.getBestAttachment();
@@ -91,6 +93,7 @@ Zotero.Chartero = new function () {
             return pdf;
     }
 
+    // 保存浏览记录
     this.saveSched = async function () {
         await setReadingData();
         if (getReader()) {  // 将数据存入笔记条目
@@ -99,6 +102,7 @@ Zotero.Chartero = new function () {
         }
     }
 
+    // 记录浏览历史
     this.scanSched = function () {
         const reader = getReader();
         if (!state.active || !reader)
@@ -143,6 +147,7 @@ Zotero.Chartero = new function () {
         this.readingHistory.items[key] = item;
     };
 
+    // 右侧边栏的仪表盘
     function updateTabPanel(item) {
         $('#chartero-item-deck').attr('selectedIndex', 1);
         let f = document.getElementById('chartero-data-iframe');
@@ -152,6 +157,7 @@ Zotero.Chartero = new function () {
         }, '*');
     }
 
+    // 数据可视化
     async function showDataTree() {
         const pane = document.getElementById('zotero-item-pane-content');
         const frame = document.getElementById('chartero-data-viewer');
@@ -174,6 +180,7 @@ Zotero.Chartero = new function () {
     function selectSearch(search) {
     }
 
+    // 以后用来画组合图
     this.onCollectionSel = function () {
         const row = ZoteroPane.getCollectionTreeRow();
         if (row.isLibrary(false))
@@ -186,6 +193,7 @@ Zotero.Chartero = new function () {
         }
     }
 
+    // 条目列表中所选条目改变
     this.onItemSelect = async function () {
         const items = ZoteroPane.getSelectedItems();
         const menu = document.getElementById('itemmenu-as-data');
@@ -214,6 +222,7 @@ Zotero.Chartero = new function () {
             $('#chartero-item-deck').attr('selectedIndex', 0);
     }
 
+    // 滚动阅读器缩略图
     function scrollThumbnailView() {
         const reader = getReader();
         // const viewer = 'PDFViewerApplication.pdfSidebar.pdfThumbnailViewer'
@@ -225,10 +234,11 @@ Zotero.Chartero = new function () {
 
     this.notifierCallback = {
         notify: async function (event, type, ids, extraData) {
-            if (event === 'select' && type === 'tab') {
+            if (event === 'select' && type === 'tab') {  // 选择标签页
                 const reader = getReader();
                 if (!reader) return;
                 const viewer = reader._iframeWindow.document.getElementById('viewer');
+                // 防止重复添加
                 viewer.removeEventListener('mouseup', scrollThumbnailView, false);
                 viewer.addEventListener('mouseup', scrollThumbnailView, false);
             }
@@ -240,8 +250,25 @@ Zotero.Chartero = new function () {
         },
     };
 
+    this.cleanHistory = function (history) {
+        let count = 0;
+        for (k in history.items)
+            if (!Zotero.Items.getByLibraryAndKey(history.lib, k)) {
+                delete history.items[k];
+                ++count;
+            }
+        noteItem.setNote(JSON.stringify(history));
+        noteItem.saveTx();
+        this.showMessage('清理了' + count + '条记录！', 'accept');
+    }
+
     // 弹出对话框输入JSON合并到原有历史记录
-    function messageHandler() {
+    function messageHandler(event) {
+        if (event.data === 'delete')
+            Zotero.Chartero.cleanHistory(this.readingHistory);
+        if (event.data !== 'import')
+            return;
+
         let prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
             .getService(Components.interfaces.nsIPromptService);
         let check = { value: false };
@@ -296,8 +323,10 @@ Zotero.Chartero = new function () {
             },
             false
         );
-
+        // 从iframe传上来的
         window.addEventListener('message', messageHandler, false);
+
+        // 防挂机用的 
         window.addEventListener('activate', () => {
             state.active = true;
         }, true);
@@ -327,6 +356,7 @@ Zotero.Chartero = new function () {
         this.initEvents();
     };
 
+    // 刷新条目列表中的阅读进度标记
     this.refreshItemsProgress = async function () {
         await setReadingData();
         const raw = noteItem.getNote();
@@ -376,6 +406,7 @@ Zotero.Chartero = new function () {
             this.showMessage('No history found in items pane.', 'exclamation');
     };
 
+    // 打开overview页面
     this.newTab = function () {
         let { id, container } = Zotero_Tabs.add({
             type: "library",
@@ -392,6 +423,7 @@ Zotero.Chartero = new function () {
         return f;
     }
 
+    // 设置笔记条目
     this.setHistoryData = function () {
         Zotero.Prefs.set("chartero.dataKey", ZoteroPane.getSelectedItems()[0].key);
         setReadingData();

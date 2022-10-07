@@ -143,7 +143,10 @@ function initToolButton() {
         }
     );
     $('#tool-button-import').click(function () {
-        window.parent.postMessage(null, '*');
+        window.parent.postMessage('import', '*');
+    });
+    $('#tool-button-delete').click(function () {
+        window.parent.postMessage('delete', '*');
     });
 }
 

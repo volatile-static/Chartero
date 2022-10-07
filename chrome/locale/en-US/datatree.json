@@ -1,7 +1,7 @@
 {
     "collapse": "Collapse all",
     "copy": "Copy to clipboard",
-    "delete": "删除本条记录",
+    "delete": "delete invalid data",
     "import": "import JSON",
     "period": "Scan period:",
     "details": "Select a node for details."
