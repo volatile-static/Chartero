@@ -408,6 +408,10 @@ Zotero.Chartero = new function () {
 
     // 打开overview页面
     this.newTab = function () {
+        if (!noteItem) {
+            Zotero.Chartero.showMessage('No history found!');
+            return;
+        }
         let { id, container } = Zotero_Tabs.add({
             type: "library",
             title: "Chartero",

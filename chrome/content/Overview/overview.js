@@ -250,27 +250,26 @@ function initCharts() {
         },
         credits: { enabled: false }
     });
-    try {
-        drawGantt();
-        drawPieChart();
-        drawWordCloud();
-        drawBubbleChart();
-        drawScheduleChart();
-    } catch (e) {
-        Zotero.debug(e);
-        Zotero.Chartero.showMessage('不兼容的旧版记录，请前往数据可视化页面清理！');
-    }
+    drawGantt();
+    drawPieChart();
+    drawWordCloud();
+    drawBubbleChart();
+    drawScheduleChart();
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {
     if (event.target.URL.indexOf('index') > 0) {
         const noteKey = Zotero.Prefs.get("chartero.dataKey");
         const noteItem = Zotero.Items.getByLibraryAndKey(1, noteKey);
-        readingHistory.mergeJSON(JSON.parse(noteItem.getNote()));
-        initCharts();
-    } else if (event.target.URL.indexOf('skyline') > 0) {
+        try {
+            readingHistory.mergeJSON(JSON.parse(noteItem.getNote()));
+            initCharts();
+        } catch (e) {
+            Zotero.debug(e);
+            Zotero.Chartero.showMessage('不兼容的旧版记录，请前往数据可视化页面清理！');
+        }
+    } else if (event.target.URL.indexOf('skyline') > 0)
         document.getElementById('skyline-frame').contentWindow.postMessage({
             history: readingHistory
         }, '*');
-    }
 });
