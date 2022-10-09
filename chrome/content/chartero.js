@@ -228,7 +228,6 @@ Zotero.Chartero = new function () {
         // const viewer = 'PDFViewerApplication.pdfSidebar.pdfThumbnailViewer'
         // const scroll = '.scrollThumbnailIntoView(10)';    const reader = getReader();
         const layout = reader._iframeWindow.document.getElementById('thumbnailView');
-        alert(layout);
         layout.getElementsByTagName('a')[reader.state.pageIndex].scrollIntoView();
     }
 
@@ -250,7 +249,12 @@ Zotero.Chartero = new function () {
         },
     };
 
-    this.cleanHistory = function (history) {
+    this.cleanHistory = async function (history) {
+        await setReadingData();
+        const raw = noteItem.getNote();  // 清理笔记中xml标签
+        const json = JSON.parse(raw.replace(/<\/?\w+>/g, ''));
+        history.mergeJSON(json);
+        
         let count = 0;
         for (k in history.items)
             if (!Zotero.Items.getByLibraryAndKey(history.lib, k)) {

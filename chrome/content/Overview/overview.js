@@ -29,7 +29,7 @@ async function drawBubbleChart() {
         const item = getItemByKey(k);
         let p = Zotero.Collections.getCollectionsContainingItems([item.parentID]);
         const collection = (await p)[0] || {};
-        const s = series.find(s => s.name === collection.name)
+        const s = series.find(s => s.name === (collection.name || localeStr.unfiled))
         const data = {
             name: item.getField('title'),
             value: readingHistory.items[k].getTotalSeconds()
@@ -38,7 +38,7 @@ async function drawBubbleChart() {
             s.data.push(data);
         else
             series.push({
-                name: collection.name || '未分类',
+                name: collection.name || localeStr.unfiled,
                 data: [data]
             });
     }
