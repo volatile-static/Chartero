@@ -1,0 +1,11 @@
+#viewImages::before {
+    background-image: url("chrome://chartero/skin/icon@16px.png");
+    display: inline-block;
+    vertical-align: top;
+    width: 16px;
+    height: 16px;
+    content: "";
+}
+html[dir="rtl"] #viewImages.toolbarButton::before {
+    transform: scaleX(-1);
+}

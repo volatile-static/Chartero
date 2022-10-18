@@ -215,11 +215,80 @@ Zotero.Chartero = new function () {
                 return;
         }
 
+
         const item = await hasRead(items[0]);
+
+        if (item) {
+            fileURL = item.getLocalFileURL();
+            pdfjsLib.getDocument(fileURL).promise.then(function (doc) {
+                doc.getPage(1).then(function (pdfPage) {
+                    const windoc = window[0].document;
+                    const viewport = pdfPage.getViewport({ scale: 1 });
+                    pdfPage.getOperatorList().then(opList => {
+                        var svgGfx = new pdfjsLib.SVGGraphics(pdfPage.commonObjs, pdfPage.objs);
+                        return svgGfx.getSVG(opList, viewport);
+                    }).then(svg => {
+                        const urlArr = Array.prototype.map.call(
+                            svg.getElementsByTagName('svg:image'),
+                            i => i.getAttribute('xlink:href')
+                        );
+                        for (const url of urlArr) {
+                            const img = windoc.createElement('img');
+                            img.setAttribute('src', url);
+                            windoc.body.appendChild(img);
+                        }
+                    });
+
+                })
+            })
+
+        }
+
         if (item)
             updateTabPanel(item);
         else // 没有PDF附件或者还没读过
             $('#chartero-item-deck').attr('selectedIndex', 0);
+    }
+
+    function addImagesPreviewer(reader) {
+        const readoc = reader._iframeWindow.document;
+        if (readoc.getElementById('viewImages'))
+            return;
+        const btn = readoc.createElement('button'),
+            style = readoc.createElement('link'),
+            view = readoc.createElement('div'),
+            left = readoc.querySelector('#toolbarSidebarLeft #viewAnnotations'),
+            cont = readoc.getElementById('sidebarContent');
+
+        style.setAttribute('rel', 'stylesheet');
+        style.setAttribute('href', 'chrome://chartero/skin/reader.css');
+        readoc.head.appendChild(style);
+        view.id = 'imagesView';
+        cont.appendChild(view);
+
+        btn.id = 'viewImages';
+        btn.setAttribute('class', 'toolbarButton');
+        btn.setAttribute('title', 'All images');
+        btn.setAttribute('tabindex', '-1');
+        $(btn).html('<span>All images</span>');
+        $(left).after(btn);
+
+        const btns = readoc.getElementById('toolbarSidebarLeft').getElementsByTagName('button');
+        for (const btn of btns)
+            $(btn).click(function () {
+                if (this.id === 'viewImages') {
+                    reader._iframeWindow.eval('PDFViewerApplication.pdfSidebar.active = 6;');
+                    for (const b of btns)
+                        b.classList.toggle('toggled', false);
+                    for (const v of cont.children)
+                        v.classList.toggle('hidden', true);
+                    this.classList.toggle('toggled', true);
+                    view.classList.toggle('hidden', false);
+                } else {
+                    readoc.getElementById('viewImages').classList.toggle('toggled', false);
+                    view.classList.toggle('hidden', true);
+                }
+            })
     }
 
     // 滚动阅读器缩略图
@@ -233,13 +302,16 @@ Zotero.Chartero = new function () {
 
     this.notifierCallback = {
         notify: async function (event, type, ids, extraData) {
-            if (event === 'select' && type === 'tab') {  // 选择标签页
+            if (type === 'tab' && event === 'select') {  // 选择标签页
                 const reader = getReader();
-                if (!reader) return;
+                if (!reader || !reader._iframeWindow)
+                    return;
                 const viewer = reader._iframeWindow.document.getElementById('viewer');
                 // 防止重复添加
                 viewer.removeEventListener('mouseup', scrollThumbnailView, false);
                 viewer.addEventListener('mouseup', scrollThumbnailView, false);
+
+                addImagesPreviewer(reader);
             }
             // Zotero.log("////////////////////////////////////notify chartero");
             // Zotero.log(event);
@@ -254,7 +326,7 @@ Zotero.Chartero = new function () {
         const raw = noteItem.getNote();  // 清理笔记中xml标签
         const json = JSON.parse(raw.replace(/<\/?\w+>/g, ''));
         history.mergeJSON(json);
-        
+
         let count = 0;
         for (k in history.items)
             if (!Zotero.Items.getByLibraryAndKey(history.lib, k)) {
@@ -358,6 +430,8 @@ Zotero.Chartero = new function () {
     this.init = async function () {
         this.initPrefs();
         this.initEvents();
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            "resource://zotero/pdf-reader/pdf.worker.js";
     };
 
     // 刷新条目列表中的阅读进度标记
@@ -435,5 +509,9 @@ Zotero.Chartero = new function () {
     this.setHistoryData = function () {
         Zotero.Prefs.set("chartero.dataKey", ZoteroPane.getSelectedItems()[0].key);
         setReadingData();
+    }
+
+    this.dev = function () {
+
     }
 }
