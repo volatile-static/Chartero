@@ -293,7 +293,7 @@ Zotero.Chartero = new function () {
                 }
                 const hr = readoc.createElement('hr');
                 hr.setAttribute('class', 'hr-text');
-                hr.setAttribute('data-content', pdfPage._pageIndex + 1);  // 页码
+                hr.setAttribute('data-content', pdfPage._pageIndex + 1);  // 页码分割线
                 view.appendChild(hr);
             });
         }

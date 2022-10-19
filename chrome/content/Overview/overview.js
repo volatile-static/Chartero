@@ -7,9 +7,10 @@ function getItemByKey(key) {
 }
 
 function getItemHistory(key) {
-    return Object.entries(readingHistory.items).find(pair =>
-        getItemByKey(pair[0]).parentItem.key === key  // 有阅读记录
-    )
+    return Object.entries(readingHistory.items).find(pair => {
+        const it = getItemByKey(pair[0]);
+        return it.parentItem ? it.parentItem.key === key : false // 有阅读记录
+    })
 }
 
 function getTimeByKey(key) {
@@ -27,6 +28,8 @@ async function drawBubbleChart() {
     const series = new Array();
     for (const k in readingHistory.items) {
         const item = getItemByKey(k);
+        if (!item.parentID)
+            continue;  // TODO: display?
         let p = Zotero.Collections.getCollectionsContainingItems([item.parentID]);
         const collection = (await p)[0] || {};
         const s = series.find(s => s.name === (collection.name || localeStr.unfiled))
@@ -265,6 +268,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
             readingHistory.mergeJSON(JSON.parse(noteItem.getNote()));
             initCharts();
         } catch (e) {
+            console.log(e);
             Zotero.debug(e);
             Zotero.Chartero.showMessage('不兼容的旧版记录，请前往数据可视化页面清理！');
         }
