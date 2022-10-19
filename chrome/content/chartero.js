@@ -523,6 +523,37 @@ Zotero.Chartero = new function () {
         setReadingData();
     }
 
+    this.buildRecentMenu = async function () {
+        await setReadingData();
+        const raw = noteItem.getNote();
+        const his = new HistoryLibrary(1);  // TODO: this.readingHistory
+        his.mergeJSON(JSON.parse(raw));
+
+        let items = new Array();
+        for (const i in his.items)
+            items.push({
+                key: i,
+                lastTime: his.items[i].lastTime()
+            })
+        items = items.sort((a, b) => a.lastTime < b.lastTime).map(i => i.key);
+        
+        let menu = document.getElementById('menupopup-open-recent');
+        // Remove all nodes so we can regenerate
+        while (menu.hasChildNodes())
+            menu.removeChild(menu.firstChild);
+
+        for (let i = 0; i < 10 && i < items.length; ++i) {
+            const name = Zotero.Items.getByLibraryAndKey(his.lib, items[i]).getField('title');
+            let menuitem = document.createElement('menuitem');
+            menuitem.setAttribute('label', name);
+            menuitem.setAttribute('tooltiptext', name);
+            menuitem.addEventListener('command', function() {
+Zotero.log(i);
+            }, false);
+            menu.appendChild(menuitem);
+        }
+    }
+
     this.dev = function () {
 
     }

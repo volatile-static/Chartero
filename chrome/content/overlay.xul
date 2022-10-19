@@ -21,6 +21,12 @@
         <menuitem id="itemmenu-as-data" class="menuitem-iconic" label="&chartero.asdata;" oncommand="Zotero.Chartero.setHistoryData();"/>
     </menupopup>
 
+    <menupopup id="menu_FilePopup">
+        <menu id="itemmenu-open-recent" label="Open recent" insertafter="menu_transferFromPDF">
+            <menupopup id="menupopup-open-recent" onpopupshowing="Zotero.Chartero.buildRecentMenu();"/>
+        </menu>
+    </menupopup>
+
     <deck id="zotero-item-pane-content">
         <tabbox id="zotero-view-tabbox">
             <tabs id="zotero-editpane-tabs">
