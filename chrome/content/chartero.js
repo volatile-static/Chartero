@@ -218,31 +218,6 @@ Zotero.Chartero = new function () {
 
         const item = await hasRead(items[0]);
 
-        if (item) {
-            fileURL = item.getLocalFileURL();
-            pdfjsLib.getDocument(fileURL).promise.then(function (doc) {
-                doc.getPage(1).then(function (pdfPage) {
-                    const windoc = window[0].document;
-                    const viewport = pdfPage.getViewport({ scale: 1 });
-                    pdfPage.getOperatorList().then(opList => {
-                        var svgGfx = new pdfjsLib.SVGGraphics(pdfPage.commonObjs, pdfPage.objs);
-                        return svgGfx.getSVG(opList, viewport);
-                    }).then(svg => {
-                        const urlArr = Array.prototype.map.call(
-                            svg.getElementsByTagName('svg:image'),
-                            i => i.getAttribute('xlink:href')
-                        );
-                        for (const url of urlArr) {
-                            const img = windoc.createElement('img');
-                            img.setAttribute('src', url);
-                            windoc.body.appendChild(img);
-                        }
-                    });
-
-                })
-            })
-
-        }
 
         if (item)
             updateTabPanel(item);
@@ -264,6 +239,7 @@ Zotero.Chartero = new function () {
         style.setAttribute('href', 'chrome://chartero/skin/reader.css');
         readoc.head.appendChild(style);
         view.id = 'imagesView';
+        view.setAttribute('class', 'hidden');
         cont.appendChild(view);
 
         btn.id = 'viewImages';
@@ -289,6 +265,28 @@ Zotero.Chartero = new function () {
                     view.classList.toggle('hidden', true);
                 }
             })
+        const fileURL = Zotero.Items.get(reader.itemID).getLocalFileURL();
+        pdfjsLib.getDocument(fileURL).promise.then(function (doc) {
+            for (let i = 0; i < doc.numPages; ++i)
+                doc.getPage(i).then(function (pdfPage) {
+                    pdfPage.getOperatorList().then(opList => {
+                        var svgGfx = new pdfjsLib.SVGGraphics(pdfPage.commonObjs, pdfPage.objs);
+                        return svgGfx.getSVG(opList, pdfPage.getViewport({ scale: 1 }));
+                    }).then(svg => {
+                        const urlArr = Array.prototype.map.call(
+                            svg.getElementsByTagName('svg:image'),
+                            i => i.getAttribute('xlink:href')
+                        );
+                        for (const url of urlArr) {
+                            const img = readoc.createElement('img');
+                            img.setAttribute('src', url);
+                            img.setAttribute('class', 'previewImg');
+                            view.appendChild(img);
+                            console.log(img.height, img.width);
+                        }
+                    });
+                })
+        })
     }
 
     // 滚动阅读器缩略图
@@ -302,9 +300,10 @@ Zotero.Chartero = new function () {
 
     this.notifierCallback = {
         notify: async function (event, type, ids, extraData) {
-            if (type === 'tab' && event === 'select') {  // 选择标签页
-                const reader = getReader();
-                if (!reader || !reader._iframeWindow)
+            if (type === 'tab' && event === 'select' && extraData[ids[0]].type == 'reader') {  // 选择标签页
+                const reader = Zotero.Reader.getByTabID(ids[0]);
+                await reader._initPromise;
+                if (!reader)
                     return;
                 const viewer = reader._iframeWindow.document.getElementById('viewer');
                 // 防止重复添加
@@ -317,7 +316,6 @@ Zotero.Chartero = new function () {
             // Zotero.log(event);
             // Zotero.log(ids);
             // Zotero.log(type);
-            // Zotero.debug(extraData);
         },
     };
 
