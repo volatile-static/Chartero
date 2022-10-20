@@ -246,10 +246,18 @@ function drawGantt() {
 }
 
 function initCharts() {
+    var numCharts = 0;
     Highcharts.setOptions({
         chart: {
             borderRadius: 6,
-            style: { fontFamily: '' }
+            style: { fontFamily: '' },
+            events: {
+                load: function () {
+                    if (++numCharts > 4)
+                        Zotero.hideZoteroPaneOverlays();
+                    Zotero.updateZoteroPaneProgressMeter(numCharts * 20);
+                }
+            }
         },
         credits: { enabled: false }
     });

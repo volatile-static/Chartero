@@ -497,11 +497,13 @@ Zotero.Chartero = new function () {
     };
 
     // 打开overview页面
-    this.newTab = function () {
+    this.newTab = async function () {
         if (!noteItem) {
             Zotero.Chartero.showMessage('No history found!');
             return;
         }
+        Zotero.showZoteroPaneProgressMeter('努力画图中……', true);
+        await setReadingData();  // TODO: 不好使
         let { id, container } = Zotero_Tabs.add({
             type: "library",
             title: "Chartero",
