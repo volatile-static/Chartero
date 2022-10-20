@@ -543,12 +543,13 @@ Zotero.Chartero = new function () {
             menu.removeChild(menu.firstChild);
 
         for (let i = 0; i < 10 && i < items.length; ++i) {
-            const name = Zotero.Items.getByLibraryAndKey(his.lib, items[i]).getField('title');
-            let menuitem = document.createElement('menuitem');
+            const it = Zotero.Items.getByLibraryAndKey(his.lib, items[i]),
+             name = it.getField('title'),
+             menuitem = document.createElement('menuitem');
             menuitem.setAttribute('label', name);
             menuitem.setAttribute('tooltiptext', name);
             menuitem.addEventListener('command', function() {
-Zotero.log(i);
+                ZoteroPane.viewAttachment(it.id);
             }, false);
             menu.appendChild(menuitem);
         }
