@@ -214,11 +214,6 @@ Zotero.Chartero = new function () {
             if (tabbox.selectedTab.id != 'chartero-item-tab')
                 return;
         }
-
-        let r = items[0].getRelationsByPredicate(Zotero.Relations.relatedItemPredicate);
-        console.log(r);
-        Zotero.URI.getURIItem(r[0]).then(o => console.log(o));
-
         const item = await hasRead(items[0]);
         if (item)
             updateTabPanel(item);
@@ -543,7 +538,7 @@ Zotero.Chartero = new function () {
                 lastTime: his.items[i].lastTime()
             })
         items = items.sort((a, b) => a.lastTime < b.lastTime).map(i => i.key);
-        
+
         let menu = document.getElementById('menupopup-open-recent');
         // Remove all nodes so we can regenerate
         while (menu.hasChildNodes())
@@ -551,11 +546,15 @@ Zotero.Chartero = new function () {
 
         for (let i = 0; i < 10 && i < items.length; ++i) {
             const it = Zotero.Items.getByLibraryAndKey(his.lib, items[i]),
-             name = it.getField('title'),
-             menuitem = document.createElement('menuitem');
+                parent = Zotero.Items.get(it.parentID || it.id),
+                name = it.getField('title'),
+                style = `list-style-image: url('${parent.getImageSrc()}');`,
+                menuitem = document.createElement('menuitem');
+            menuitem.setAttribute('class', 'menuitem-iconic');
+            menuitem.setAttribute('style', style);
             menuitem.setAttribute('label', name);
             menuitem.setAttribute('tooltiptext', name);
-            menuitem.addEventListener('command', function() {
+            menuitem.addEventListener('command', function () {
                 ZoteroPane.viewAttachment(it.id);
             }, false);
             menu.appendChild(menuitem);
@@ -563,6 +562,6 @@ Zotero.Chartero = new function () {
     }
 
     this.dev = function () {
-
+        Zotero.Items.getAll(1, true).then(i => console.log(i))
     }
 }

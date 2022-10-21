@@ -1,5 +1,4 @@
 const localeStr = require('chrome://chartero/locale/datatree.json');
-const iconMap = require('chrome://chartero/content/DataTree/iconmap.json');
 
 var rawJson = "{}";
 var readingHistory;
@@ -55,7 +54,7 @@ function genTreeView() {
         if (!parent)
             continue;
         const item = {
-            icon: iconMap[parent.itemType],
+            icon: parent.getImageSrc().replace('@2x', ''),
             text: parent.getField('title'),  
             data: {
                 type: 'item',
