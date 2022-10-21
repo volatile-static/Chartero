@@ -99,9 +99,13 @@ function update() {
             getDate(i, j).toLocaleDateString(Zotero.locale) + getTimeStr(readingS),
             'information'
         ));
-        $(block).attr('data-tooltip', 
+        $(block).attr('data-tooltip',
             getDate(i, j).toLocaleDateString() + getTimeStr(readingS));
-        $(block).attr('data-flow', 'top');
+
+        let dir = i < 5 ? 'right' :
+                  i > 45 ? 'left' :
+                  j < 2 ? 'bottom' : 'top';
+        $(block).attr('data-flow', dir);
     });
 }
 

@@ -214,6 +214,11 @@ Zotero.Chartero = new function () {
             if (tabbox.selectedTab.id != 'chartero-item-tab')
                 return;
         }
+
+        let r = items[0].getRelationsByPredicate(Zotero.Relations.relatedItemPredicate);
+        console.log(r);
+        Zotero.URI.getURIItem(r[0]).then(o => console.log(o));
+
         const item = await hasRead(items[0]);
         if (item)
             updateTabPanel(item);
