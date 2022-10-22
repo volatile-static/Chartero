@@ -24,13 +24,41 @@ function forEachItem(fun) {
             fun(item);
 }
 
+async function drawNetwork() {
+    let items = await Zotero.Items.getAll(readingHistory.lib, true);
+    items = items.filter(it => it.relatedItems.length > 0);
+    const data = new Array();
+    for (it of items)
+        for (r of it.relatedItems)
+            data.push([it.key, r])
+
+    Highcharts.addEvent(
+        Highcharts.seriesTypes.networkgraph,
+        'afterSetOptions',
+        function (e) {
+            const colors = Highcharts.getOptions().colors;
+            console.log(e.options.nodes, colors);
+        }
+    );
+    Highcharts.chart('item-chart', {
+        title: { text: '条目关系网' },
+        plotOptions: {
+            networkgraph: {
+                keys: ['from', 'to'],
+                layoutAlgorithm: { enableSimulation: true }
+            }
+        },
+        chart: { type: 'networkgraph' },
+        series: [{ showInLegend: true, data }, { showInLegend: true, data }]
+    });
+}
+
 async function drawBubbleChart() {
     const series = new Array();
     for (const k in readingHistory.items) {
         const item = getItemByKey(k);
         if (!item.parentID)
             continue;  // TODO: display?
-        console.log(Zotero.Items.get(item.parentID).relatedItems);
 
         let p = Zotero.Collections.getCollectionsContainingItems([item.parentID]);
         const collection = (await p)[0] || {};
@@ -93,7 +121,7 @@ async function drawBubbleChart() {
 
 async function drawPieChart() {
     const data = new Array(), series = new Array();
-    function process(arr, item) {
+    function process(arr, item) {  // 将item的数组转换为饼图数据
         const tags = item.getTags().map(t => t.tag);  // 标签字符串的数组
         const time = getTimeByKey(item.key);
         for (const tag of tags) {
@@ -124,6 +152,8 @@ async function drawPieChart() {
             data: items.reduce(process, [])
         });
     }
+
+    // 添加未分类条目
     let items = await Zotero.Items.getAll(readingHistory.lib, true);
     items = items.filter(it =>
         it.isRegularItem() && it.getCollections().length === 0
@@ -153,12 +183,16 @@ async function drawPieChart() {
         if (others[1] > 0)
             s.data.push(others);
     }
-    console.log(series, data);
     Highcharts.chart('pie-chart', {
         chart: { type: 'variablepie' },
         title: { text: '总阅读时长占比' },
         subtitle: { text: 'Click pies for details.' },
+        plotOptions: {
+            pie: { allowPointSelect: true },
+            variablepie: { allowPointSelect: true }
+        },
         series: [{
+            cursor: 'pointer',
             minPointSize: 10,
             innerSize: '20%',
             zMin: 0,
@@ -283,22 +317,30 @@ function initCharts() {
     Highcharts.setOptions({
         chart: {
             borderRadius: 6,
-            style: { fontFamily: '' },
-            events: {
-                load: function () {
-                    if (++numCharts > 4)
-                        Zotero.hideZoteroPaneOverlays();
-                    Zotero.updateZoteroPaneProgressMeter(numCharts * 20);
+            style: { fontFamily: '' }
+        },
+        plotOptions: {
+            series: {
+                events: {
+                    afterAnimate: function () {
+                        if (numCharts > 5)
+                            return;
+                        else if (++numCharts == 5)  // 添加图表记得改！
+                            Zotero.hideZoteroPaneOverlays();
+                        // else
+                        //     Zotero.updateZoteroPaneProgressMeter(numCharts * 20);
+                    }
                 }
             }
         },
         credits: { enabled: false }
     });
     drawGantt();
+    drawNetwork();
     drawPieChart();
     drawWordCloud();
-    drawBubbleChart();
     drawScheduleChart();
+    // drawBubbleChart();
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {
@@ -310,8 +352,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
             initCharts();
         } catch (e) {
             console.log(e);
-            Zotero.debug(e);
-            Zotero.Chartero.showMessage('不兼容的旧版记录，请前往数据可视化页面清理！');
+            Zotero.hideZoteroPaneOverlays();
+            Zotero.Chartero.showMessage('不兼容的记录格式，请前往数据可视化页面清理！');
         }
     } else if (event.target.URL.indexOf('skyline') > 0)
         document.getElementById('skyline-frame').contentWindow.postMessage({

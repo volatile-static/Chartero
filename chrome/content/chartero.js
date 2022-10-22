@@ -502,7 +502,7 @@ Zotero.Chartero = new function () {
             Zotero.Chartero.showMessage('No history found!');
             return;
         }
-        Zotero.showZoteroPaneProgressMeter('努力画图中……', true);
+        Zotero.showZoteroPaneProgressMeter('努力画图中……');
         await setReadingData();  // TODO: 不好使
         let { id, container } = Zotero_Tabs.add({
             type: "library",
