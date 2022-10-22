@@ -25,31 +25,71 @@ function forEachItem(fun) {
 }
 
 async function drawNetwork() {
-    let items = await Zotero.Items.getAll(readingHistory.lib, true);
-    items = items.filter(it => it.relatedItems.length > 0);
-    const data = new Array();
+    const data = new Array(),
+        colors = Highcharts.getOptions().colors,
+        allItems = await Zotero.Items.getAll(readingHistory.lib, true),
+        items = allItems.filter(it => it.relatedItems.length > 0),
+        topItems = allItems.filter(it => it.isRegularItem()),
+        tags = topItems.map(i => i.getTags().map(t => t.tag)),
+        nodes1 = new Object(),
+        data1 = new Array();
     for (it of items)
         for (r of it.relatedItems)
-            data.push([it.key, r])
+            data.push([it.key, r]);
 
-    Highcharts.addEvent(
-        Highcharts.seriesTypes.networkgraph,
-        'afterSetOptions',
-        function (e) {
-            const colors = Highcharts.getOptions().colors;
-            console.log(e.options.nodes, colors);
-        }
-    );
+    for (let i = 0; i < topItems.length; ++i)
+        if (tags[i].length > 0)
+            for (let j = 0; j < i; ++j) {
+                const intersection = tags[i].filter(t => tags[j].includes(t));
+                if (intersection.length > 0) {
+                    data1.push({
+                        from: i,
+                        to: j,
+                        width: intersection.length * 2
+                    });
+                    nodes1[i] = nodes1[j] = true;
+                }
+            }
     Highcharts.chart('item-chart', {
         title: { text: '条目关系网' },
         plotOptions: {
             networkgraph: {
-                keys: ['from', 'to'],
-                layoutAlgorithm: { enableSimulation: true }
+                layoutAlgorithm: {
+                    enableSimulation: true
+                }
             }
         },
         chart: { type: 'networkgraph' },
-        series: [{ showInLegend: true, data }, { showInLegend: true, data }]
+        series: [{
+            name: '关联文献',
+            showInLegend: true,
+            nodes: items.map(it => {
+                return {
+                    id: it.key,
+                    marker: {
+                        symbol: 'circle',
+                        radius: Math.max(Math.sqrt(getTimeByKey(it.key)), 5)
+                    },
+                    name: it.getField('title')
+                }
+            }),
+            data
+        }, {
+            name: '共同标签',
+            showInLegend: true,
+            data: data1,
+            nodes: Object.keys(nodes1).map(i => {
+                return {
+                    id: parseInt(i),
+                    marker: {
+                        symbol: 'circle',
+                        radius: Math.max(Math.sqrt(getTimeByKey(topItems[i].key)), 5)
+                    },
+                    color: colors[i % colors.length],
+                    name: topItems[i].getField('title')
+                };
+            })
+        }]
     });
 }
 
