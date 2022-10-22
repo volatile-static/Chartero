@@ -30,6 +30,8 @@ async function drawBubbleChart() {
         const item = getItemByKey(k);
         if (!item.parentID)
             continue;  // TODO: display?
+        console.log(Zotero.Items.get(item.parentID).relatedItems);
+
         let p = Zotero.Collections.getCollectionsContainingItems([item.parentID]);
         const collection = (await p)[0] || {};
         const s = series.find(s => s.name === (collection.name || localeStr.unfiled))
@@ -89,8 +91,22 @@ async function drawBubbleChart() {
     });
 }
 
-function drawPieChart() {
+async function drawPieChart() {
     const data = new Array(), series = new Array();
+    function process(arr, item) {
+        const tags = item.getTags().map(t => t.tag);  // 标签字符串的数组
+        const time = getTimeByKey(item.key);
+        for (const tag of tags) {
+            const fan = arr.find(i => i[0] === tag);  // 0代表名字
+            if (fan) {  // 该标签已记录
+                ++fan[1];  // 1代表弧度
+                fan[2] += time;  // 2代表厚度
+            }
+            else
+                arr.push(new Array(tag, 1, time));
+        }
+        return arr;
+    }
     for (const collection of collections) {
         const items = collection.getChildItems();
         data.push({
@@ -105,22 +121,39 @@ function drawPieChart() {
             name: collection.name,
             id: collection.name,
             type: data[data.length - 1].z > 0 ? 'variablepie' : 'pie',
-            data: items.reduce((arr, item) => {
-                const tags = item.getTags().map(t => t.tag);  // 标签字符串的数组
-                const time = getTimeByKey(item.key);
-                for (const tag of tags) {
-                    const fan = arr.find(i => i[0] === tag);  // 0代表名字
-                    if (fan) {  // 该标签已记录
-                        ++fan[1];  // 1代表弧度
-                        fan[2] += time;  // 2代表厚度
-                    }
-                    else
-                        arr.push(new Array(tag, 1, time));
-                }
-                return arr;
-            }, [])
+            data: items.reduce(process, [])
         });
     }
+    let items = await Zotero.Items.getAll(readingHistory.lib, true);
+    items = items.filter(it =>
+        it.isRegularItem() && it.getCollections().length === 0
+    );
+    const tottim = items.reduce((sum, item) => sum + getTimeByKey(item.key), 0);
+    data.push({
+        name: localeStr.unfiled,
+        drilldown: 'unfiled',
+        y: items.length,
+        z: tottim
+    });
+    series.push({
+        name: localeStr.unfiled,
+        id: 'unfiled',
+        type: tottim > 0 ? 'variablepie' : 'pie',
+        data: items.reduce(process, [])
+    })
+    for (const s of series) {
+        const others = [
+            'others',
+            s.data.reduce((prev, curr) =>
+                prev += (curr[1] == 1 && curr[2] == 0), 0
+            ),  // 只出现一次且没读过的标签个数
+            0
+        ];
+        s.data = s.data.filter(i => i[1] != 1 || i[2] != 0);
+        if (others[1] > 0)
+            s.data.push(others);
+    }
+    console.log(series, data);
     Highcharts.chart('pie-chart', {
         chart: { type: 'variablepie' },
         title: { text: '总阅读时长占比' },
