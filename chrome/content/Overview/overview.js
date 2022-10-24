@@ -45,7 +45,7 @@ async function drawNetwork() {
                     data1.push({
                         from: i,
                         to: j,
-                        width: intersection.length * 2
+                        width: Math.min(intersection.length * 2, 9)
                     });
                     nodes1[i] = nodes1[j] = true;
                 }
@@ -68,7 +68,7 @@ async function drawNetwork() {
                     id: it.key,
                     marker: {
                         symbol: 'circle',
-                        radius: Math.max(Math.sqrt(getTimeByKey(it.key)), 5)
+                        radius: Math.min(Math.max(Math.sqrt(getTimeByKey(it.key)), 5), 60)
                     },
                     name: it.getField('title')
                 }
