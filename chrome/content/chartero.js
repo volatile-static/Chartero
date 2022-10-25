@@ -547,7 +547,7 @@ Zotero.Chartero = new function () {
         for (let i = 0; i < 10 && i < items.length; ++i) {
             const it = Zotero.Items.getByLibraryAndKey(his.lib, items[i]),
                 parent = Zotero.Items.get(it.parentID || it.id),
-                name = it.getField('title'),
+                name = parent.getField('title'),
                 style = `list-style-image: url('${parent.getImageSrc()}');`,
                 menuitem = document.createElement('menuitem');
             menuitem.setAttribute('class', 'menuitem-iconic');
