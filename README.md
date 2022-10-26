@@ -1,5 +1,4 @@
 # Chartero
-[【征求意见】显示pdf文件名还是条目标题？](https://github.com/volatile-static/Chartero/discussions/16)
 ## 简介
 记录Zotero内置阅读器的浏览历史并通过各种图形呈现出来，方便读者对过去一段时间内学习过程的复盘与回顾。
 ## 使用说明
@@ -42,17 +41,19 @@
 10. 刚打开就overview会获取不到history
 11. **干扰feed的添加**  #7
 12. 图表时间本地化 #14
+13. **阅读group条目后无法overview**
 ### features
 9. 平滑滚动条
 10. 优化甘特图标题【用作者？年份？
 11. 自动搜索/手动新建
-13. 优化词云图动画
+13. 优化词云图动画&添加series所有批注
 14. 统一两个定时器周期
 15. 仪表盘显示文献图谱 / 图表交互（跳转） #2
 16. 图片右键添加至笔记  #6
-17. 设置网络图中需排除的标签 / 合并气泡图 / 区分当前条目
+17. 网络图合并气泡图 / 区分当前条目(仪表盘)
 18. 双击在文献库中查看
 19. 限制图片长宽比例与最小像素，忽略扫描版
+20. 首选项设置需排除的标签
 
 ## 参与贡献
 > *欢迎PR！*
@@ -83,6 +84,10 @@ box.tabs.append(tab);
 box.tabpanels.append(panel);
 ```
 
+- 注释所在的pdf：annotationText
+```js
+Zotero.Items.getAll(1).then(i => i.filter(t => t.isAnnotation())[0].parentItem);
+```
 - 修改条目类型：
 ```js
 var item = new Zotero.Item('computerProgram');

@@ -96,7 +96,10 @@ function handler(event) {
 window.addEventListener('DOMContentLoaded', () => {
   $('#accordion').accordion({
     heightStyle: "content",
-    collapsible: true
+    collapsible: true,
+    activate: function (event, ui) {
+      ui.newPanel && $(ui.newPanel).highcharts().reflow();
+    }
   });
   $('#reading-progress-container').tooltip({ 
     content: localeStr['readingProgressTip'],
