@@ -245,7 +245,7 @@ async function drawPieChart() {
         chart.series[0].animate(false)));
 }
 
-function drawWordCloud() {
+async function drawWordCloud() {
     const data = new Array();
     forEachItem(item => {
         for (tag of item.getTags()) {
@@ -260,20 +260,57 @@ function drawWordCloud() {
                 })
         }
     });
-    const s = {
-        type: 'wordcloud',
-        name: 'Total Time',
-        maxFontSize: 26,
-        minFontSize: 8,
-        data: data.filter(i => i.weight > 0)
-    };
+    const allItems = await Zotero.Items.getAll(readingHistory.lib),
+        allAnnotations = allItems.filter(it => it.isAnnotation()),
+        allAnnotationText = allAnnotations.map(a => a.annotationText),
+        s0 = {
+            type: 'wordcloud',
+            name: 'Total Time',
+            showInLegend: true,
+            maxFontSize: 26,
+            minFontSize: 8,
+            data: data.filter(i => i.weight > 0)
+        }, s1 = {
+            type: 'wordcloud',
+            name: 'Annotation',
+            showInLegend: true,
+            visible: false,
+            maxFontSize: 26,
+            minFontSize: 8,
+            data: allAnnotationText.reduce((dat, txt) => {
+                if (!txt)
+                    return dat;
+                txt.split(/[^a-z]/g).filter(w => w.length > 3).forEach(word => {
+                    const obj = dat.find(i => i.name === word);
+                    if (obj)
+                        ++obj.weight;
+                    else
+                        dat.push({
+                            name: word,
+                            weight: 1
+                        })
+                });
+                return dat;
+            }, []).sort((a, b) => b.weight - a.weight).slice(0, 60)
+        };
     Highcharts.chart('wordcloud-chart', {
-        series: [s],
+        series: [s0, s1],
         title: { text: '标签词云图' }
-    }, chart => $('#wordcloud-chart').mouseenter(() => {
-        chart.series[0].remove(false);
-        chart.addSeries(s);
-    }));
+    }, chart => {
+        $('#wordcloud-chart').mouseenter(() => {
+            chart.series[1].remove(false);
+            chart.series[0].remove(false);
+            chart.addSeries(s0);
+            chart.addSeries(s1);
+        });
+        Highcharts.addEvent(
+            Highcharts.seriesTypes.wordcloud,
+            'legendItemClick',
+            function (e) {
+                chart.series[chart.series[1] == e.target ? 0 : 1].setVisible();
+            }
+        );
+    });
 }
 
 function drawScheduleChart() {

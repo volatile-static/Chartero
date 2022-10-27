@@ -2,6 +2,14 @@ function ms2s(ms) {  // convert milliseconds to seconds
     return parseInt(ms / 1000);
 }
 
+function s2hour(s) {
+    return {
+        second: s % 60,
+        minute: parseInt(s / 60) % 60,
+        hour: parseInt(s / 3600)
+    }
+}
+
 class HistoryPage {
     constructor() {
         this.t = {};

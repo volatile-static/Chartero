@@ -56,9 +56,14 @@ function getColor(per) { // 计算rgb中的一种颜色
 function getTimeStr(s) {
     if (s == 0)
         return '：当天没有阅读';
-    let result = '：阅读';
-    // 
-    if (s)
+    const t = s2hour(s);
+    let result = '：阅读了';
+    
+    if (t.hour)
+        result += t.hour + '小时 ';
+    if (t.minute)
+        result += t.minute + '分钟';
+    else 
         result += s + '秒';
     return result;
 }
