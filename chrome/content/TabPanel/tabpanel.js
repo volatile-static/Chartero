@@ -66,6 +66,7 @@ function initCharts() {
       borderRadius: 6,
       type: 'bar',  // 指定图表的类型，默认是折线图（line）
     },
+    legend: { enabled: false },
     title: { text: localeStr['pageTimeTitle'] }, // 标题
     credits: { enabled: false },
     xAxis: {},
