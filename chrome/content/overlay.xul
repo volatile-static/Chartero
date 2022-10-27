@@ -22,7 +22,7 @@
     </menupopup>
 
     <menupopup id="menu_FilePopup">
-        <menu id="itemmenu-open-recent" label="Open recent" insertafter="menu_transferFromPDF">
+        <menu id="itemmenu-open-recent" label="&chartero.recent;" insertafter="menu_transferFromPDF">
             <menupopup id="menupopup-open-recent" onpopupshowing="Zotero.Chartero.buildRecentMenu();"/>
         </menu>
     </menupopup>

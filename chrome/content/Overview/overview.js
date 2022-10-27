@@ -307,7 +307,8 @@ function drawScheduleChart() {
         },
         tooltip: { valueSuffix: ' s' },
         plotOptions: {
-            line: { marker: { enabled: false } }
+            line: { marker: { enabled: false } },
+            column: { borderRadius: 2 }
         },
         series: [weekS, hourS]
     }, chart => $('#schedule-chart').mouseenter(() => {
@@ -363,9 +364,9 @@ function initCharts() {
             series: {
                 events: {
                     afterAnimate: function () {
-                        if (numCharts > 5)
+                        if (numCharts > 2)
                             return;
-                        else if (++numCharts == 5)  // 添加图表记得改！
+                        else if (++numCharts == 2)  // 添加图表记得改！
                             Zotero.hideZoteroPaneOverlays();
                         // else
                         //     Zotero.updateZoteroPaneProgressMeter(numCharts * 20);

@@ -422,14 +422,12 @@ Zotero.Chartero = new function () {
             state.active = false;
         }, true);
 
-        $("#zotero-items-splitter").mouseup(this.onResize);
-        const tabbox = document.getElementById("zotero-view-tabbox");
-
         // https://github.com/dcartertod/zotero-plugins
         Zotero.uiReadyPromise.then(() => {
             ZoteroPane.itemsView.onSelect.addListener(this.onItemSelect);
             ZoteroPane.collectionsView.onSelect.addListener(this.onCollectionSel);
         });
+        const tabbox = document.getElementById("zotero-view-tabbox");
         tabbox.addEventListener("command", e => {
             if (e.target.id == "chartero-item-tab")
                 this.onItemSelect();

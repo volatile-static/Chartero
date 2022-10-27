@@ -3,3 +3,4 @@
 <!ENTITY chartero.toolbarbutton.overview "Overview">
 <!ENTITY chartero.toolbarbutton.tip "Refresh reading progress">
 <!ENTITY chartero.asdata "Set as Chartero history data">
+<!ENTITY chartero.recent "Open recent">
