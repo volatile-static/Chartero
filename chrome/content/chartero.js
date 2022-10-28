@@ -1,6 +1,7 @@
 Zotero.Chartero = new function () {
     this.readingHistory = false;  // 统计数据
     var scanPeriod, savePeriod;  // 定时器时间间隔
+    var scanInt, saveInt;  // 
     var noteItem;  // 存储数据的笔记条目
     const state = {  // 用来防止挂机
         active: false,
@@ -387,14 +388,14 @@ Zotero.Chartero = new function () {
             scanPeriod = 10000;
             Zotero.Prefs.set("chartero.scanPeriod", scanPeriod);
         }
-        setInterval(this.scanSched, scanPeriod);
+        scanInt = setInterval(this.scanSched, scanPeriod);
 
         savePeriod = Zotero.Prefs.get("chartero.savePeriod");
         if (!savePeriod) {
             savePeriod = 16000;
             Zotero.Prefs.set("chartero.savePeriod", savePeriod);
         }
-        setInterval(this.saveSched, savePeriod);
+        saveInt = setInterval(this.saveSched, savePeriod);
     }
 
     this.initEvents = function () {
@@ -416,9 +417,16 @@ Zotero.Chartero = new function () {
 
         // 防挂机用的 
         window.addEventListener('activate', () => {
+            if (!scanInt && !saveInt) {
+                scanInt = setInterval(this.scanSched, scanPeriod);
+                saveInt = setInterval(this.saveSched, savePeriod);
+            }
             state.active = true;
         }, true);
         window.addEventListener('deactivate', () => {
+            clearInterval(scanInt);
+            clearInterval(saveInt);
+            scanInt = saveInt = null;
             state.active = false;
         }, true);
 
