@@ -48,7 +48,6 @@
 
         <iframe id="chartero-data-viewer" flex="1" src="chrome://chartero/content/DataTree/index.html"/>
     </deck>
-    <script src="resource://zotero/pdf-reader/pdf.js"></script>
     <script src="chrome://zotero/content/include.js" type="application/javascript"/> 
     <script src="chrome://chartero/content/history.js" type="application/javascript"/> 
     <script src="chrome://chartero/content/include.js" type="application/javascript"/>

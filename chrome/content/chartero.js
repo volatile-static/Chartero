@@ -227,81 +227,9 @@ Zotero.Chartero = new function () {
         const readoc = reader._iframeWindow.document;  // read-doc
         if (readoc.getElementById('viewImages'))
             return;  // 已经加过了
-        const btn = readoc.createElement('button'),
-            style = readoc.createElement('link'),
-            view = readoc.createElement('div'),
-            left = readoc.querySelector('#toolbarSidebarLeft #viewAnnotations'),  // TODO：right
-            cont = readoc.getElementById('sidebarContent');
-
-        style.setAttribute('rel', 'stylesheet');
-        style.setAttribute('href', 'chrome://chartero/skin/reader.css');
-        readoc.head.appendChild(style);
-
-        view.id = 'imagesView';
-        view.setAttribute('class', 'hidden');
-        cont.appendChild(view);
-
-        btn.id = 'viewImages';
-        btn.setAttribute('class', 'toolbarButton');
-        btn.setAttribute('title', 'All images');  // TODO：locale
-        btn.setAttribute('tabindex', '-1');
-        $(btn).html('<span>All images</span>');
-        $(left).after(btn);
-
-        const btns = readoc.getElementById('toolbarSidebarLeft').getElementsByTagName('button');
-        for (const btn of btns)  // 给每个标签页按钮添加单击事件用于更新标签页选择状态
-            $(btn).click(function () {
-                if (this.id === 'viewImages') {
-                    // 随便给个序号得了……
-                    reader._iframeWindow.eval('PDFViewerApplication.pdfSidebar.active = 6;');
-                    for (const b of btns)
-                        b.classList.toggle('toggled', false);
-                    for (const v of cont.children)
-                        v.classList.toggle('hidden', true);
-                    this.classList.toggle('toggled', true);
-                    view.classList.toggle('hidden', false);
-                } else {  // 其他标签页有内置的事件在工作，无需干涉
-                    readoc.getElementById('viewImages').classList.toggle('toggled', false);
-                    view.classList.toggle('hidden', true);
-                }
-            })
-        const fileURL = Zotero.Items.get(reader.itemID).getLocalFileURL();  // PDF文件地址
-
-        function renderImagesInPage(pdfPage) {
-            pdfPage.getOperatorList().then(opList => {
-                var svgGfx = new pdfjsLib.SVGGraphics(pdfPage.commonObjs, pdfPage.objs);
-                return svgGfx.getSVG(opList, pdfPage.getViewport({ scale: 1 }));
-            }).then(svg => {
-                const urlArr = Array.prototype.map.call(
-                    svg.getElementsByTagName('svg:image'),
-                    i => i.getAttribute('xlink:href')
-                );  // 获取所有图片的链接
-                if (urlArr.length < 1)
-                    return;
-                for (const url of urlArr) {
-                    const img = readoc.createElement('img'),
-                        a = readoc.createElement('a'),
-                        e = reader._iframeWindow.eval,
-                        linkService = 'PDFViewerApplication.pdfThumbnailViewer.linkService';
-
-                    img.setAttribute('src', url);
-                    img.setAttribute('class', 'previewImg');
-                    img.onclick = function () {  // 点击跳转
-                        e(`${linkService}.goToPage(${pdfPage._pageIndex + 1})`);
-                        return false;
-                    };
-                    view.appendChild(img);
-                }
-                const hr = readoc.createElement('hr');
-                hr.setAttribute('class', 'hr-text');
-                hr.setAttribute('data-content', pdfPage._pageIndex + 1);  // 页码分割线
-                view.appendChild(hr);
-            });
-        }
-        pdfjsLib.getDocument(fileURL).promise.then(doc => {
-            for (let i = 0; i < doc.numPages; ++i)
-                doc.getPage(i).then(renderImagesInPage);
-        });
+        const scr = readoc.createElement('script');
+        scr.src = 'chrome://chartero/content/reader.js';
+        readoc.head.appendChild(scr);
     }
 
     // 滚动阅读器缩略图
@@ -320,12 +248,12 @@ Zotero.Chartero = new function () {
                 await reader._initPromise;
                 if (!reader)
                     return;
+                addImagesPreviewer(reader);
+
                 const viewer = reader._iframeWindow.document.getElementById('viewer');
                 // 防止重复添加
                 viewer.removeEventListener('mouseup', scrollThumbnailView, false);
                 viewer.addEventListener('mouseup', scrollThumbnailView, false);
-
-                addImagesPreviewer(reader);
             }
             // Zotero.log("////////////////////////////////////notify chartero");
             // Zotero.log(event);
@@ -448,8 +376,6 @@ Zotero.Chartero = new function () {
     this.init = async function () {
         this.initPrefs();
         this.initEvents();
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-            "resource://zotero/pdf-reader/pdf.worker.js";
     };
 
     // 刷新条目列表中的阅读进度标记
