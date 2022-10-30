@@ -39,7 +39,6 @@
 7. 具有多个PDF的条目逻辑问题
 9. 偶现同步冲突的问题
 10. 刚打开就overview会获取不到history
-11. **干扰feed的添加**  #7
 12. 图表时间本地化 #14
 13. **阅读group条目后无法overview**
 ### features
