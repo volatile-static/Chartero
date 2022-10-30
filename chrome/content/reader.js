@@ -74,6 +74,13 @@ async function process() {
                 linkService.goToPage(pageIdx);
                 return false;
             };
+            img.ondblclick = function () {
+                const canvas = document.createElement('canvas');
+                canvas.width = this.naturalWidth;
+                canvas.height = this.naturalHeight;
+                canvas.getContext('2d').drawImage(this, 0, 0);
+                zoteroCopyImage(canvas.toDataURL());
+            }
             view.appendChild(img);
         }
         const hr = document.createElement('hr');

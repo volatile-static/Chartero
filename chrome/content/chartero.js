@@ -132,7 +132,7 @@ Zotero.Chartero = new function () {
         let item = this.readingHistory.items[key];
         if (!item) {  // 新文件
             // 获取总页数
-            const total = reader._iframeWindow.eval('PDFViewerApplication.pdfViewer.pagesCount');
+            const total = reader._iframeWindow.wrappedJSObject.PDFViewerApplication.pdfDocument.numPages;
             item = new HistoryItem(total);
         }
         let page = item.p[pageIndex];
