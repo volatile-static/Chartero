@@ -62,7 +62,15 @@ async function drawNetwork() {
         chart: { type: 'networkgraph' },
         series: [{
             name: '关联文献',
-            showInLegend: true,
+            showInLegend: true, 
+            point: {
+                events: {
+                    click: function (event) {
+                        if (event.ctrlKey)
+                            Zotero.Chartero.viewItemInLib(getItemByKey(this.id).id);
+                    }
+                }
+            },
             nodes: items.map(it => {
                 return {
                     id: it.key,

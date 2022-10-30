@@ -70,6 +70,7 @@ async function process() {
                 linkService = PDFViewerApplication.pdfViewer.linkService;
             img.setAttribute('src', url);
             img.setAttribute('class', 'previewImg');
+            img.setAttribute('title', '双击复制图片');
             img.onclick = function () {  // 点击跳转
                 linkService.goToPage(pageIdx);
                 return false;

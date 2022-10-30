@@ -279,6 +279,11 @@ Zotero.Chartero = new function () {
         this.showMessage('清理了' + count + '条记录！', 'accept');
     }
 
+    this.viewItemInLib = function (itemID) {
+        Zotero_Tabs.select('zotero-pane');
+        ZoteroPane.selectItem(itemID);
+    } 
+
     // 弹出对话框输入JSON合并到原有历史记录
     function messageHandler(event) {
         if (event.data === 'delete')
