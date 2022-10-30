@@ -42,7 +42,7 @@ function plotDateTime(history, title) {
   const lastTime = history.lastTime();
   const categories = new Array();
   const data = new Array();
-  
+
   // 遍历每天
   for (let i = firstTime; i <= lastTime; i += 86400) {
     categories.push((new Date(i * 1000)).toLocaleDateString());
@@ -99,10 +99,11 @@ window.addEventListener('DOMContentLoaded', () => {
     heightStyle: "content",
     collapsible: true,
     activate: function (event, ui) {
-      ui.newPanel && $(ui.newPanel).highcharts().reflow();
+      ui.newPanel && $(ui.newPanel).highcharts() &&
+        $(ui.newPanel).highcharts().reflow();
     }
   });
-  $('#reading-progress-container').tooltip({ 
+  $('#reading-progress-container').tooltip({
     content: localeStr['readingProgressTip'],
     items: 'p'
   });
