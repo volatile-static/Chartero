@@ -81,6 +81,7 @@ async function process() {
                 canvas.height = this.naturalHeight;
                 canvas.getContext('2d').drawImage(this, 0, 0);
                 zoteroCopyImage(canvas.toDataURL());
+                // Zotero.Chartero.showMessage('Image was copied to clipboard!', 'accept');
             }
             view.appendChild(img);
         }

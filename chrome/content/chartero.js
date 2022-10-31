@@ -435,12 +435,12 @@ Zotero.Chartero = new function () {
 
     // 打开overview页面
     this.newTab = async function () {
+        await setReadingData();  
         if (!noteItem) {
             Zotero.Chartero.showMessage('No history found!');
             return;
         }
         Zotero.showZoteroPaneProgressMeter('努力画图中……');
-        await setReadingData();  // TODO: 不好使
         let { id, container } = Zotero_Tabs.add({
             type: "library",
             title: "Chartero",
@@ -498,7 +498,7 @@ Zotero.Chartero = new function () {
         }
     }
 
-    this.dev = function () {
-        Zotero.Items.getAll(1, true).then(i => console.log(i))
+    this.dev = async function () {
+        return await Zotero.Items.getAll(1, true);
     }
 }
