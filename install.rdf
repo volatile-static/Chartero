@@ -11,7 +11,7 @@
     <!-- 扩展的元数据。 --> 
     <em:iconURL>chrome://chartero/skin/icon.png</em:iconURL>
     <em:optionsURL>chrome://chartero/content/overlay.xul</em:optionsURL>
-    <em:updateURL>https://github.com/volatile-static/Chartero/blob/master/update.rdf</em:updateURL>
+    <em:updateURL>https://gitee.com/const_volatile/chartero/blob/master/update.rdf</em:updateURL>
     <em:multiprocessCompatible>true</em:multiprocessCompatible>
     
     <em:localized>
