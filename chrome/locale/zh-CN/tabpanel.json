@@ -1,7 +1,11 @@
 {
     "pageTimeTitle": "每页阅读时长",
     "seconds": "秒",
+    "minutes": "分",
+    "hours": "小时",
     "dateTimeTitle": "每日阅读时长",
     "date": "日期",
-    "readingProgressTip": "浏览过的页面与总页数之比"
+    "time": "时长",
+    "readingProgressTip": "浏览过的页面与总页数之比",
+    "pagenum": "页码"
 }

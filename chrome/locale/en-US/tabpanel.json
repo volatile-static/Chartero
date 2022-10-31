@@ -1,7 +1,11 @@
 {
     "pageTimeTitle": "reading per page",
-    "seconds": "seconds",
+    "seconds": "s",
+    "minutes": "min",
+    "hours": "h",
     "dateTimeTitle": "reading per day",
     "date": "date",
-    "readingProgressTip": "浏览过的页面与总页数之比"
+    "time": "time",
+    "readingProgressTip": "浏览过的页面与总页数之比",
+    "pagenum": "page number"
 }

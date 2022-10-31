@@ -69,9 +69,24 @@ function initCharts() {
     legend: { enabled: false },
     title: { text: localeStr['pageTimeTitle'] }, // 标题
     credits: { enabled: false },
-    xAxis: {},
+    xAxis: {title:{text:localeStr['pagenum']}},
     yAxis: {
-      title: { text: localeStr['seconds'] }  // y 轴标题
+      labels: {
+        formatter: function () {
+          const tim = s2hour(this.value);
+          let lbl = '';
+          if (tim.hour)
+            lbl = tim.hour + localeStr['hours'];
+          if (tim.minute)
+            lbl += tim.minute + localeStr['minutes'];
+          if (lbl.length < 1)
+            lbl = this.value + localeStr['seconds'];
+          else if (!tim.hour && tim.second)
+            lbl += tim.second + localeStr['seconds'];
+          return lbl;
+        }
+      },
+      title: { text: localeStr['time'] }  // y 轴标题
     },
     series: [{}]
   };
@@ -79,11 +94,9 @@ function initCharts() {
   chartPageTime = Highcharts.chart('page-time-chart', options);
 
   options.title.text = localeStr['dateTimeTitle'];
-  options.xAxis = { title: { text: localeStr['date'] } };
-  options.yAxis.title.text = localeStr['seconds'];
+  options.xAxis.title.text=localeStr['date'];
   options.chart.type = 'line';
   chartDateTime = Highcharts.chart('date-time-chart', options);
-  // $('#date-time-radio').controlgroup();
 }
 
 function handler(event) {

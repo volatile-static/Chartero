@@ -41,7 +41,7 @@ for (const btn of btns)  // 给每个标签页按钮添加单击事件用于更�
         }
     }
 
-async function process() {
+async function loadAllImagesIntoSidebar() {
     let scanCnt = 0;
     await PDFViewerApplication.pdfViewer.pagesPromise;
     
@@ -81,7 +81,6 @@ async function process() {
                 canvas.height = this.naturalHeight;
                 canvas.getContext('2d').drawImage(this, 0, 0);
                 zoteroCopyImage(canvas.toDataURL());
-                // Zotero.Chartero.showMessage('Image was copied to clipboard!', 'accept');
             }
             view.appendChild(img);
         }
@@ -95,4 +94,4 @@ async function process() {
     }
 }
 // 添加所有图片 延迟100ms防止阻塞主页面加载
-PDFViewerApplication.pdfLoadingTask.promise.then(doc => setTimeout(process, 100));
+PDFViewerApplication.pdfLoadingTask.promise.then(doc => setTimeout(loadAllImagesIntoSidebar, 100));

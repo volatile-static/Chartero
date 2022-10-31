@@ -28,6 +28,8 @@ html[dir="rtl"] #viewImages.toolbarButton::before {
     border: 1px solid gray;
     margin: 10px;
     transition: all 0.6s;
+    overflow: hidden;
+    cursor: pointer;
 }
 
 .previewImg:hover {
