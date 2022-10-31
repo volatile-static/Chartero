@@ -1,7 +1,7 @@
 Zotero.Chartero = new function () {
     this.readingHistory = false;  // 统计数据
     var scanPeriod, savePeriod;  // 定时器时间间隔
-    var scanInt, saveInt;  // 
+    var scanInt, saveInt;  // 回调函数ID，用于暂停记录
     var noteItem;  // 存储数据的笔记条目
     const state = {  // 用来防止挂机
         active: false,
@@ -128,11 +128,14 @@ Zotero.Chartero = new function () {
         if (!this.readingHistory)
             this.readingHistory = new HistoryLibrary(Zotero.Libraries.userLibraryID);
 
-        const key = Zotero.Items.get(reader.itemID).key;
+        const it = Zotero.Items.get(reader.itemID), key = it.key;
+        if (it.libraryID != this.readingHistory.lib)
+            return;  // 暂时不处理群组文献
         let item = this.readingHistory.items[key];
         if (!item) {  // 新文件
             // 获取总页数
-            const total = reader._iframeWindow.wrappedJSObject.PDFViewerApplication.pdfDocument.numPages;
+            const total = reader._iframeWindow.wrappedJSObject
+                .PDFViewerApplication.pdfDocument.numPages;
             item = new HistoryItem(total);
         }
         let page = item.p[pageIndex];
@@ -282,7 +285,7 @@ Zotero.Chartero = new function () {
     this.viewItemInLib = function (itemID) {
         Zotero_Tabs.select('zotero-pane');
         ZoteroPane.selectItem(itemID);
-    } 
+    }
 
     // 弹出对话框输入JSON合并到原有历史记录
     function messageHandler(event) {
@@ -435,7 +438,7 @@ Zotero.Chartero = new function () {
 
     // 打开overview页面
     this.newTab = async function () {
-        await setReadingData();  
+        await setReadingData();
         if (!noteItem) {
             Zotero.Chartero.showMessage('No history found!');
             return;
