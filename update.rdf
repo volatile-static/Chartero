@@ -2,7 +2,7 @@
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <!-- 指出扩展的ID。该ID应该是一个Email格式的字符串，或者是一个GUID。注意，使用Email的作用是保证该ID的唯一性，并不要求这个Email地址是有效的。必填。 -->
-    <rdf:Description about="urn:mozilla:extension:jasminum@linxzh.com">
+    <rdf:Description about="urn:mozilla:extension:chartero@volatile.static">
         <em:updates>
             <rdf:Seq>
                 <rdf:li>
