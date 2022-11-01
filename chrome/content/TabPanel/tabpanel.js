@@ -69,7 +69,7 @@ function initCharts() {
     legend: { enabled: false },
     title: { text: localeStr['pageTimeTitle'] }, // 标题
     credits: { enabled: false },
-    xAxis: {title:{text:localeStr['pagenum']}},
+    xAxis: { title: { text: localeStr['pagenum'] } },
     yAxis: {
       labels: {
         formatter: function () {
@@ -94,7 +94,7 @@ function initCharts() {
   chartPageTime = Highcharts.chart('page-time-chart', options);
 
   options.title.text = localeStr['dateTimeTitle'];
-  options.xAxis.title.text=localeStr['date'];
+  options.xAxis.title.text = localeStr['date'];
   options.chart.type = 'line';
   chartDateTime = Highcharts.chart('date-time-chart', options);
 }

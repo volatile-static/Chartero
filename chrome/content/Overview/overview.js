@@ -62,7 +62,7 @@ async function drawNetwork() {
         chart: { type: 'networkgraph' },
         series: [{
             name: '关联文献',
-            showInLegend: true, 
+            showInLegend: true,
             point: {
                 events: {
                     click: function (event) {
@@ -368,13 +368,13 @@ function drawGantt() {
     const data = new Array();
     for (k in readingHistory.items)
         data.push({
-            name: getItemByKey(k).getField('title'),  // 
+            name: (getItemByKey(k).parentItem || getItemByKey(k)).getField('title'),  // 
             start: readingHistory.items[k].firstTime() * 1000,
             end: readingHistory.items[k].lastTime() * 1000,
             completed: readingHistory.items[k].getProgress()
         });
 
-    const s = { name: 'library name', data };
+    const s = { name: Zotero.Libraries._cache[readingHistory.lib].name, data };
     Highcharts.ganttChart('gantt-chart', {
         title: { text: '时间线' },
         navigator: {
@@ -388,6 +388,22 @@ function drawGantt() {
         yAxis: { labels: { overflow: 'allow' } },
         rangeSelector: {
             enabled: true,
+            buttons: [{
+                type: 'month',
+                count: 1,
+                text: localeStr['month'],
+                title: 'View 1 month'
+            }, {
+                type: 'week',
+                count: 1,
+                text: localeStr['week'],
+                title: 'View 1 week'
+            }, {
+                type: 'year',
+                count: 1,
+                text: localeStr['year'],
+                title: 'View 1 year'
+            }],
             selected: 0
         },
         plotOptions: { series: { minPointLength: 5 } },
@@ -399,8 +415,17 @@ function drawGantt() {
 }
 
 function initCharts() {
+    if (Zotero.locale == 'zh-CN') {  // 添加汉化代码
+        const chinese = document.createElement('script');
+        chinese.src = 'chrome://chartero/content/highcharts/zh_CN.js';
+        document.head.appendChild(chinese);
+    }
     var numCharts = 0;
     Highcharts.setOptions({
+        time: {
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            useUTC: false
+        },
         chart: {
             borderRadius: 6,
             style: { fontFamily: '' }
@@ -422,11 +447,11 @@ function initCharts() {
         credits: { enabled: false }
     });
     drawGantt();
-    drawNetwork();
+    // drawNetwork();
     drawPieChart();
     drawWordCloud();
     drawScheduleChart();
-    // drawBubbleChart();
+    drawBubbleChart();
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {
