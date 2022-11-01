@@ -1,5 +1,6 @@
 const localeStr = require('chrome://chartero/locale/tabpanel.json');
-var chartPageTime, chartDateTime;
+var chartPageTime, chartDateTime, chartNetwork;
+var selectedID;
 
 function setReadingProgress(his) {
   const p = his.getProgress(100, 2);
@@ -55,11 +56,39 @@ function plotDateTime(history, title) {
   });
 }
 
-function plotNetwork(history) {
-
+function plotNetwork(item) {
+  const data = new Array(), nodes = new Object(), edges = new Object();
+  function dfs(it) {
+    nodes[it.key] = true;  // 访问该节点
+    for (key of it.relatedItems) {
+      const t = Zotero.Items.getByLibraryAndKey(1, key);  // 1
+      if (!edges[`${t.id},${it.id}`])  // 已经有反向边了
+        data.push([it.id, t.id]);
+      edges[`${it.id},${t.id}`] = true;  // 加边
+      if (!nodes[key])
+        dfs(t);
+    }
+  }
+  dfs(item);
+  chartNetwork.series[0].update({
+    nodes: Object.keys(nodes).map(key => {
+      const it = Zotero.Items.getByLibraryAndKey(1, key);  // 1
+      return {
+        name: it.getField('title'),
+        id: it.id,
+        // color: it.id == selectedID ? 'red' : undefined
+      }
+    }),
+    data
+  });
+  console.log(chartNetwork.series[0].nodes);
 }
 
 function initCharts() {
+  Highcharts.setOptions({
+    chart: { style: { fontFamily: "" } },
+    credits: { enabled: false },
+  });
   // 图表配置
   let options = {
     chart: {
@@ -72,7 +101,6 @@ function initCharts() {
     },
     legend: { enabled: false },
     title: { text: localeStr['pageTimeTitle'] }, // 标题
-    credits: { enabled: false },
     xAxis: { title: { text: localeStr['pagenum'] } },
     yAxis: {
       labels: {
@@ -101,15 +129,44 @@ function initCharts() {
   options.xAxis.title.text = localeStr['date'];
   options.chart.type = 'line';
   chartDateTime = Highcharts.chart('date-time-chart', options);
+
+  // chartNetwork = Highcharts.chart('network-chart', {
+  //   title: { text: undefined },
+  //   plotOptions: {
+  //     networkgraph: {
+  //       layoutAlgorithm: {
+  //         enableSimulation: true
+  //       }
+  //     }
+  //   },
+  //   series: [{
+  //     type: 'networkgraph',
+  //     name: '关联文献',
+  //     showInLegend: true,
+  //     point: {
+  //       events: {
+  //         click: function (event) {
+  //           if (event.ctrlKey) {
+  //             Zotero.Chartero.viewItemInLib(this.id);
+  //             // selectedID = this.id;
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }]
+  // });
 }
 
 function handler(event) {
-  const history = new HistoryItem();
+  // selectedID = event.data.id;
+  const history = new HistoryItem(),
+    item = Zotero.Items.get(event.data.id),
+    title = item.getField('title');
   history.mergeJSON(event.data.history);
   setReadingProgress(history);
-  plotPageTime(history, event.data.title);
-  plotDateTime(history, event.data.title);
-  console.log(event, event.data, event.target);
+  plotPageTime(history, title);
+  plotDateTime(history, title);
+  // plotNetwork(item);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
