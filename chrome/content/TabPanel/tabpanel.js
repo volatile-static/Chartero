@@ -55,6 +55,10 @@ function plotDateTime(history, title) {
   });
 }
 
+function plotNetwork(history) {
+
+}
+
 function initCharts() {
   // 图表配置
   let options = {
@@ -105,6 +109,7 @@ function handler(event) {
   setReadingProgress(history);
   plotPageTime(history, event.data.title);
   plotDateTime(history, event.data.title);
+  console.log(event, event.data, event.target);
 }
 
 window.addEventListener('DOMContentLoaded', () => {

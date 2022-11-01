@@ -1,4 +1,3 @@
-initPref = function () {
-    Zotero.log("chartero prefs init...");
-    
+initCharteroPref = function () {
+    console.log('chartero prefs init:', this);
 };

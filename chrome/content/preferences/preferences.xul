@@ -11,9 +11,9 @@
     <prefpane id="zotero-prefpane-chartero" 
               insertafter="zotero-prefpane-advanced" 
               label="Chartero"
-              image="chrome://chartero/skin/icon.png"
-              onpaneload="initPref();">
-      <preferences>
+              image="chrome://chartero/skin/icon32.png"
+              onpaneload="initCharteroPref();">
+      <preferences id="zotero-preferences-chartero">
           <preference id="pref-chartero-scan-period" name="extensions.zotero.chartero.scanPeriod" type="int"/>
           <preference id="pref-chartero-save-period" name="extensions.zotero.chartero.savePeriod" type="int"/>
       </preferences>
@@ -33,7 +33,7 @@
       </vbox>
     </prefpane>
 
-    <script type="application/javascript" src="chrome://zotero/content/include.js"/>
-    <script type="application/javascript" src="chrome://chartero/content/preferences.js"/>
+    <!-- <script type="application/javascript" src="chrome://zotero/content/include.js"/> -->
+    <script type="application/javascript" src="chrome://chartero/content/preferences/preferences.js"/>
   </prefwindow>
 </overlay>
