@@ -91,7 +91,7 @@ async function plotNetwork(item) {
   const minTime = totalTimes[0], maxTime = totalTimes[totalTimes.length - 1];
 
   for (const key in k2t)
-    k2t[key] = (k2t[key] - minTime) / (maxTime - minTime + 1) * 39 + 20;
+    k2t[key] = Math.abs((k2t[key] - minTime) / (maxTime - minTime + 1)) * 39 + 20;
 
   while (chartNetwork.series.length > 0)
     chartNetwork.series[0].remove(false);  // 删除原有序列
@@ -113,17 +113,17 @@ async function plotNetwork(item) {
       return {
         name: it.getField('title'),
         id: it.id,
-        color: it.id == item.id ? 'red' : undefined,
         marker: {
-          symbol: `url(${it.getImageSrc()})`,
-          width: k2t[it.key],
-          height: k2t[it.key]
+          radius: k2t[it.key]
+          // symbol: `url(${it.getImageSrc()})`,
+          // width: k2t[it.key],
+          // height: k2t[it.key]
         },
-        dataLabels: {
-          enabled: it.id == item.id,
-          format: '当前条目'
-        },
-        mass: k2t[it.key],
+        // dataLabels: {
+        //   enabled: it.id == item.id,
+        //   format: '当前条目'
+        // },
+        // mass: k2t[it.key],
         selected: it.id == item.id  // 突出显示当前条目
       };
     }),
