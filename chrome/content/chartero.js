@@ -156,8 +156,8 @@ Zotero.Chartero = new function () {
         $('#chartero-item-deck').attr('selectedIndex', 1);
         let f = document.getElementById('chartero-data-iframe');
         f.contentWindow.postMessage({
-            history: this.readingHistory.items[item.key],  // 当前条目的浏览历史
-            id: (item.parentItem || item).id
+            history: this.readingHistory,  // 当前条目的浏览历史
+            id: item.id
         }, '*');
     }
 

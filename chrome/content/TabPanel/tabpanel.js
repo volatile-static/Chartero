@@ -1,6 +1,12 @@
 const localeStr = require('chrome://chartero/locale/tabpanel.json');
-var chartPageTime, chartDateTime, chartNetwork;
-var selectedID;
+var chartPageTime, chartDateTime, chartNetwork, readingHistory = new HistoryLibrary();
+
+async function getHis(parent) {  // 获取顶层条目的阅读总时长
+  const pdf = await parent.getBestAttachment();
+  return pdf && pdf.isPDFAttachment() &&
+    readingHistory.items[pdf.key] &&
+    readingHistory.items[pdf.key].getTotalSeconds();
+}
 
 function setReadingProgress(his) {
   const p = his.getProgress(100, 2);
@@ -56,7 +62,7 @@ function plotDateTime(history, title) {
   });
 }
 
-function plotNetwork(item) {
+async function plotNetwork(item) {
   const data = new Array(), nodes = new Object(), edges = new Object();
   function dfs(it) {
     nodes[it.key] = true;  // 访问该节点
@@ -66,22 +72,63 @@ function plotNetwork(item) {
         data.push([it.id, t.id]);
       edges[`${it.id},${t.id}`] = true;  // 加边
       if (!nodes[key])
-        dfs(t);
+        dfs(t);  // 递归
     }
   }
+  if (!item)
+    return;
   dfs(item);
-  chartNetwork.series[0].update({
-    nodes: Object.keys(nodes).map(key => {
-      const it = Zotero.Items.getByLibraryAndKey(1, key);  // 1
+
+  console.log(nodes, edges);
+  const items = Object.keys(nodes).map(key => Zotero.Items.getByLibraryAndKey(1, key));
+  let totalTimes = [], k2t = {};
+  for (const it of items) {
+    const his = await getHis(it);
+    totalTimes.push(his || 0);
+    k2t[it.key] = his || 0;
+  }
+  totalTimes = totalTimes.sort();
+  const minTime = totalTimes[0], maxTime = totalTimes[totalTimes.length - 1];
+
+  for (const key in k2t)
+    k2t[key] = (k2t[key] - minTime) / (maxTime - minTime + 1) * 39 + 20;
+
+  while (chartNetwork.series.length > 0)
+    chartNetwork.series[0].remove(false);  // 删除原有序列
+
+  chartNetwork.addSeries({
+    type: 'networkgraph',
+    name: '关联文献',
+    // showInLegend: true,
+    point: {
+      events: {
+        click: function (event) {
+          if (event.ctrlKey)
+            Zotero.Chartero.viewItemInLib(this.id);
+        }
+      }
+    },
+    link: { width: 6 },
+    nodes: items.map(it => {
       return {
         name: it.getField('title'),
         id: it.id,
-        // color: it.id == selectedID ? 'red' : undefined
-      }
+        color: it.id == item.id ? 'red' : undefined,
+        marker: {
+          symbol: `url(${it.getImageSrc()})`,
+          width: k2t[it.key],
+          height: k2t[it.key]
+        },
+        dataLabels: {
+          enabled: it.id == item.id,
+          format: '当前条目'
+        },
+        mass: k2t[it.key],
+        selected: it.id == item.id  // 突出显示当前条目
+      };
     }),
     data
   });
-  console.log(chartNetwork.series[0].nodes);
 }
 
 function initCharts() {
@@ -130,43 +177,28 @@ function initCharts() {
   options.chart.type = 'line';
   chartDateTime = Highcharts.chart('date-time-chart', options);
 
-  // chartNetwork = Highcharts.chart('network-chart', {
-  //   title: { text: undefined },
-  //   plotOptions: {
-  //     networkgraph: {
-  //       layoutAlgorithm: {
-  //         enableSimulation: true
-  //       }
-  //     }
-  //   },
-  //   series: [{
-  //     type: 'networkgraph',
-  //     name: '关联文献',
-  //     showInLegend: true,
-  //     point: {
-  //       events: {
-  //         click: function (event) {
-  //           if (event.ctrlKey) {
-  //             Zotero.Chartero.viewItemInLib(this.id);
-  //             // selectedID = this.id;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }]
-  // });
+  chartNetwork = Highcharts.chart('network-chart', {
+    title: { text: undefined },
+    subtitle: { text: 'Ctrl+单击 跳转' },
+    plotOptions: {
+      networkgraph: {
+        layoutAlgorithm: {
+          enableSimulation: true
+        }
+      }
+    }
+  });
 }
 
 function handler(event) {
-  // selectedID = event.data.id;
-  const history = new HistoryItem(),
-    item = Zotero.Items.get(event.data.id),
-    title = item.getField('title');
-  history.mergeJSON(event.data.history);
+  readingHistory.mergeJSON(event.data.history);
+  const item = Zotero.Items.get(event.data.id),
+    history = readingHistory.items[item.key],
+    title = (item.parentItem || item).getField('title');
   setReadingProgress(history);
   plotPageTime(history, title);
   plotDateTime(history, title);
-  // plotNetwork(item);
+  plotNetwork(item.parentItem);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
