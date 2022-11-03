@@ -389,16 +389,17 @@ Zotero.Chartero = new function () {
     // 刷新条目列表中的阅读进度标记
     this.refreshItemsProgress = async function () {
         await setReadingData();
-        const raw = noteItem.getNote();
-        const his = new HistoryLibrary(1);  // TODO: this.readingHistory
-        his.mergeJSON(JSON.parse(raw));
+        if (!this.readingHistory) {
+            this.readingHistory = new HistoryLibrary(1);  
+            this.readingHistory.mergeJSON(JSON.parse(noteItem.getNote()));
+        }
         ZoteroPane.itemsView.collapseAllRows();  // 附件上不显示
 
         let flag = false;
         for (let i = 0; i < ZoteroPane.itemsView.rowCount; ++i) {
             const title = $(`#item-tree-main-default-row-${i}`).find('.title');
             const item = Zotero.Items.getByLibraryAndKey(
-                his.lib,
+                this.readingHistory.lib,
                 ZoteroPane.itemsView.getRow(i).ref.key  // 第i行item的key
             );
 
@@ -407,7 +408,7 @@ Zotero.Chartero = new function () {
             const pdf = await hasRead(item);  // 是否读过
             if (!pdf)
                 continue;
-            const history = his.items[pdf.key];
+            const history = this.readingHistory.items[pdf.key];
             const readPages = Object.keys(history.p).length;
             const p = Math.round(readPages * 1000 / history.n / 10);  // 百分比，整数
 
