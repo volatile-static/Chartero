@@ -96,7 +96,6 @@ async function plotNetwork(item) {
 
   for (const key in k2t)
     k2t[key] = Math.abs((k2t[key] - minTime) / (maxTime - minTime + 1) + 0.1) * 39 + 20;
-
   while (chartNetwork.series.length > 0)
     chartNetwork.series[0].remove(false);  // 删除原有序列
 
@@ -118,7 +117,7 @@ async function plotNetwork(item) {
         name: it.getField('title'),
         id: it.id,
         marker: {
-          radius: k2t[it.key]
+          radius: Math.min(k2t[it.key], window.innerWidth / 6)
           // symbol: `url(${it.getImageSrc()})`,
           // width: k2t[it.key],
           // height: k2t[it.key]
