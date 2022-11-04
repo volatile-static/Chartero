@@ -2,10 +2,14 @@ const localeStr = require('chrome://chartero/locale/tabpanel.json');
 var chartPageTime, chartDateTime, chartNetwork, readingHistory = new HistoryLibrary();
 
 async function getHis(parent) {  // 获取顶层条目的阅读总时长
-  const pdf = await parent.getBestAttachment();
-  return pdf && pdf.isPDFAttachment() &&
-    readingHistory.items[pdf.key] &&
-    readingHistory.items[pdf.key].getTotalSeconds();
+  let key = parent.key;
+  if (parent.isRegularItem()) {
+    const pdf = await parent.getBestAttachment();
+    if (pdf && pdf.isPDFAttachment())
+      key = pdf.key;
+  }
+  return readingHistory.items[key] &&
+    readingHistory.items[key].getTotalSeconds();
 }
 
 function setReadingProgress(his) {
@@ -91,7 +95,7 @@ async function plotNetwork(item) {
   const minTime = totalTimes[0], maxTime = totalTimes[totalTimes.length - 1];
 
   for (const key in k2t)
-    k2t[key] = Math.abs((k2t[key] - minTime) / (maxTime - minTime + 1)) * 39 + 20;
+    k2t[key] = Math.abs((k2t[key] - minTime) / (maxTime - minTime + 1) + 0.1) * 39 + 20;
 
   while (chartNetwork.series.length > 0)
     chartNetwork.series[0].remove(false);  // 删除原有序列
@@ -119,11 +123,6 @@ async function plotNetwork(item) {
           // width: k2t[it.key],
           // height: k2t[it.key]
         },
-        // dataLabels: {
-        //   enabled: it.id == item.id,
-        //   format: '当前条目'
-        // },
-        // mass: k2t[it.key],
         selected: it.id == item.id  // 突出显示当前条目
       };
     }),
@@ -181,9 +180,11 @@ function initCharts() {
     title: { text: undefined },
     subtitle: { text: 'Ctrl+单击 跳转' },
     plotOptions: {
+      series: { shadow: true },
       networkgraph: {
         layoutAlgorithm: {
-          enableSimulation: true
+          enableSimulation: true,
+          initialPositions: 'random'
         }
       }
     }
