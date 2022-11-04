@@ -55,7 +55,7 @@ function genTreeView() {
             continue;
         const item = {
             icon: parent.getImageSrc().replace('@2x', ''),
-            text: parent.getField('title'),  
+            text: parent.getField('title'),
             data: {
                 type: 'item',
                 key: it
@@ -132,8 +132,17 @@ function initToolButton() {
     );
     $("#tool-button-copy").click(
         function () {
-            new CopyHelper().addText(rawJson, 'text/unicode').copy();
-            Zotero.Chartero.showMessage('Raw JSON copied.', 'accept');
+            const noteKey = Zotero.Prefs.get("chartero.dataKey");
+            if (noteKey) {
+                const noteItem = 
+                    Zotero.Items.getByLibraryAndKey(readingHistory.lib, noteKey);
+                if (noteItem) {
+                    new CopyHelper().addText(noteItem.getNote(), 'text/unicode').copy();
+                    Zotero.Chartero.showMessage('Raw JSON copied.', 'accept');
+                    return;
+                }
+            }
+            Zotero.Chartero.showMessage('Pelease reload Zotero!');
         }
     );
     $("#tool-button-collapse").click(
