@@ -6,6 +6,7 @@
     "dateTimeTitle": "reading per day",
     "date": "date",
     "time": "time",
+    "networkTitle": "relative items",
     "readingProgressTip": "浏览过的页面与总页数之比",
     "pagenum": "page number"
 }

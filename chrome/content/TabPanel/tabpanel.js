@@ -83,7 +83,6 @@ async function plotNetwork(item) {
     return;
   dfs(item);
 
-  console.log(nodes, edges);
   const items = Object.keys(nodes).map(key => Zotero.Items.getByLibraryAndKey(1, key));
   let totalTimes = [], k2t = {};
   for (const it of items) {
@@ -91,11 +90,12 @@ async function plotNetwork(item) {
     totalTimes.push(his || 0);
     k2t[it.key] = his || 0;
   }
-  totalTimes = totalTimes.sort();
+  totalTimes = totalTimes.sort((a, b) => a - b);
   const minTime = totalTimes[0], maxTime = totalTimes[totalTimes.length - 1];
 
-  for (const key in k2t)
-    k2t[key] = Math.abs((k2t[key] - minTime) / (maxTime - minTime + 1) + 0.1) * 39 + 20;
+  for (const key in k2t)  // 计算每个圆圈的大小
+    k2t[key] = Math.abs((k2t[key] - minTime) / (maxTime - minTime + 1) + 0.1)
+      * 50 / items.length + 20;
   while (chartNetwork.series.length > 0)
     chartNetwork.series[0].remove(false);  // 删除原有序列
 
@@ -133,6 +133,11 @@ function initCharts() {
   Highcharts.setOptions({
     chart: { style: { fontFamily: "" } },
     credits: { enabled: false },
+    exporting: {
+      buttons: { 
+        contextButton: { menuItems: ['viewFullscreen'] }
+      }
+    }
   });
   // 图表配置
   let options = {
@@ -145,7 +150,7 @@ function initCharts() {
       type: 'bar',  // 指定图表的类型，默认是折线图（line）
     },
     legend: { enabled: false },
-    title: { text: localeStr['pageTimeTitle'] }, // 标题
+    title: { text: undefined },  // 标题
     xAxis: { title: { text: localeStr['pagenum'] } },
     yAxis: {
       labels: {
@@ -170,7 +175,6 @@ function initCharts() {
   // 图表初始化函数
   chartPageTime = Highcharts.chart('page-time-chart', options);
 
-  options.title.text = localeStr['dateTimeTitle'];
   options.xAxis.title.text = localeStr['date'];
   options.chart.type = 'line';
   chartDateTime = Highcharts.chart('date-time-chart', options);
@@ -202,12 +206,18 @@ function handler(event) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  $('#page-time-title').text(localeStr.pageTimeTitle);
+  $('#date-time-title').text(localeStr.dateTimeTitle);
+  $('#network-title').text(localeStr.networkTitle);
+
   $('#accordion').accordion({
     heightStyle: "content",
     collapsible: true,
     activate: function (event, ui) {
-      ui.newPanel && $(ui.newPanel).highcharts() &&
-        $(ui.newPanel).highcharts().reflow();
+      const chart = ui.newPanel && $(ui.newPanel).highcharts() &&
+        $(ui.newPanel).highcharts();
+      chart && chart.reflow();
+      chart && chart.setSize(null);
     }
   });
   $('#reading-progress-container').tooltip({
@@ -216,4 +226,10 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   initCharts();
   window.addEventListener('message', handler, false);
+  window.addEventListener('resize', function () {
+    for (const chart of Highcharts.charts) {
+      chart.setSize(null, Math.max(620, window.innerHeight) - 320);
+      chart.reflow();
+    }
+  }, false);
 })

@@ -7,13 +7,13 @@
             <rdf:Seq>
                 <rdf:li>
                     <rdf:Description>
-                        <em:version>1.2.4</em:version>
+                        <em:version>1.2.5</em:version>
                         <em:targetApplication>
                             <rdf:Description>
                                 <em:id>zotero@chnm.gmu.edu</em:id>
                                 <em:minVersion>6.0.0</em:minVersion>
                                 <em:maxVersion>6.*</em:maxVersion>
-                                <em:updateLink>https://gitee.com/const_volatile/chartero/releases/download/1.2.4/Chartero.xpi</em:updateLink>
+                                <em:updateLink>https://gitee.com/const_volatile/chartero/releases/download/1.2.5/Chartero.xpi</em:updateLink>
                             </rdf:Description>
                         </em:targetApplication> 
 
@@ -22,7 +22,7 @@
                                 <em:id>juris-m@juris-m.github.io</em:id>
                                 <em:minVersion>5.0</em:minVersion>
                                 <em:maxVersion>*</em:maxVersion>
-                                <em:updateLink>https://gitee.com/const_volatile/chartero/releases/download/1.2.4/Chartero.xpi</em:updateLink>
+                                <em:updateLink>https://gitee.com/const_volatile/chartero/releases/download/1.2.5/Chartero.xpi</em:updateLink>
                             </rdf:Description>
                         </em:targetApplication>
                     </rdf:Description>

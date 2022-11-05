@@ -141,26 +141,32 @@ async function drawBubbleChart() {
                 zMin: 0,
                 zMax: 1000,
                 draggable: true,
-                allowPointSelect: true,
+                // allowPointSelect: true,
                 layoutAlgorithm: {
-                    splitSeries: false,
-                    dragBetweenSeries: true,
+                    // splitSeries: false,
                     gravitationalConstant: 0.02
                 },
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.name}',
-                    filter: {
-                        property: 'y',
-                        operator: '>',
-                        value: 250
-                    },
-                    style: {
-                        color: 'black',
-                        textOutline: 'none',
-                        fontWeight: 'normal'
-                    }
-                }
+                // dataLabels: {
+                    // enabled: true,
+                    // // format: '{point.name}',
+                    // formatter: function () {
+                    //     console.log(this.key, this.radius);
+                    //     alert(1);
+                    //     return this.point.radius * 2 < this.key.length ? '' : point.name;
+                    // },
+                    // inside: true,
+                    // shadow: true
+                    // filter: {
+                    //     property: 'y',
+                    //     operator: '>',
+                    //     value: 250
+                    // },
+                    // style: {
+                    //     color: 'black',
+                    //     textOutline: 'none',
+                    //     fontWeight: 'normal'
+                    // }
+                // }
             }
         },
         series
@@ -232,7 +238,10 @@ async function drawPieChart() {
             s.data.push(others);
     }
     Highcharts.chart('pie-chart', {
-        chart: { type: 'variablepie' },
+        chart: {
+            type: 'variablepie',
+            animation: { easing: undefined } 
+        },
         title: { text: '总阅读时长占比' },
         subtitle: { text: 'Click pies for details.' },
         plotOptions: {
@@ -427,7 +436,19 @@ function initCharts() {
             useUTC: false
         },
         chart: {
-            borderRadius: 6,
+            borderRadius: 6, 
+            animation: {
+                duration: 1500,
+                easing: pos => {
+                    if ((pos) < (1 / 2.75)) 
+                        return (7.5625 * pos * pos);
+                    if (pos < (2 / 2.75)) 
+                        return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+                    if (pos < (2.5 / 2.75)) 
+                        return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+                    return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+                }
+            },
             style: { fontFamily: '' }
         },
         plotOptions: {
@@ -441,7 +462,8 @@ function initCharts() {
                         // else
                         //     Zotero.updateZoteroPaneProgressMeter(numCharts * 20);
                     }
-                }
+                },
+                shadow: true
             }
         },
         credits: { enabled: false }

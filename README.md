@@ -39,101 +39,22 @@
 9. 偶现同步冲突的问题
 ### features
 9. 平滑滚动条
-10. 优化甘特图标题【用作者？年份？
 11. 自动搜索/手动新建
 20. 首选项设置需排除的标签
+21. 点击加载更多图片
+## [FAQ](https://gitee.com/const_volatile/chartero/issues?assignee_id=&author_id=&branch=&collaborator_ids=&issue_search=&label_ids=180755057&label_text=faq&milestone_id=&priority=&private_issue=&program_id=&project_id=const_volatile%2Fchartero&project_type=&scope=&single_label_id=&single_label_text=&sort=&state=closed&target_project=)
 
+- 不兼容的记录格式:
+    1. https://gitee.com/const_volatile/chartero/issues/I5Z8CE
+    2. https://github.com/volatile-static/Chartero/issues/20
+- [不小心删除记录文件](https://gitee.com/const_volatile/chartero/issues/I5WNBI)
+- [Zotero本地配置](https://www.zotero.org/support/kb/profile_directory)
 ## 参与贡献
 > *欢迎PR！*
 ### 软件架构
 - 本插件采用纯js编写，无需搭建任何开发环境
 - 使用开源脚本[HighCharts](https://www.highcharts.com.cn/)进行各种图表的绘制
 - 采用了[jQuery](https://jquery.com/)库简化代码
-### 常用调试代码
-> [Zotero本地配置](https://www.zotero.org/support/kb/profile_directory)
-- 获取当前选择的条目：
-```js
-const items = ZoteroPane.getSelectedItems();
-```
-- 由key获取条目
-```js
-Zotero.Items.getByLibraryAndKey(1, 'CQ48G5LG')
-```
-- 根据当前打开的标签页获取阅读器对象:
-```js
-Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
-```
-
-- 动态添加阅读器侧边栏的选项卡：
-```js
-const cont = document.getElementById(`${Zotero_Tabs.selectedID}-context`);
-const box = cont.querySelector("tabbox");
-box.tabs.append(tab);
-box.tabpanels.append(panel);
-```
-
-- 注释所在的pdf：annotationText
-```js
-Zotero.Items.getAll(1).then(i => i.filter(t => t.isAnnotation())[0].parentItem);
-```
-- 修改条目类型：
-```js
-var item = new Zotero.Item('computerProgram');
-item.setType(Zotero.ItemTypes.getID('note'));
-```
-
-- 获取某行条目
-```js
-ZoteroPane.itemsView.getRow(2).ref
-```
-
-- 跳转到某条批注
-```js
-const reader = Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
-const annotations = Zotero.Items.get(reader.itemID).getAnnotations();
-reader.navigate({annotationKey: annotations[0].key});
-```
-
-<details>
-<summary>tree</summary>
-
-```xml
- <tree enableColumnDrag="true" flex="1" id="chartero-data-tree">
-    <treecols>
-        <treecol id="chartero-data-treecol-k" flex="2" label="" primary="true"/>
-        <split class="tree-splitter"/>
-        <treecol id="chartero-data-treecol-v" flex="1" label="阅读进度"/>
-    </treecols>
-    <treechildren>
-        <treeitem container="true">
-            <treerow>
-                <treecell label="Bo"/>
-                <treecell label="Bo"/>
-            </treerow>
-            <treechildren>
-        <treeitem container="true">
-            <treerow>
-                <treecell label="Bo"/>
-                <treecell label="Carpenter" />
-            </treerow>
-            <treechildren>
-            </treechildren>
-        </treeitem>
-        <treeitem container="true">
-            <treerow>
-                <treecell label="Bo"/>
-                <treecell label="Carpenter" />
-            </treerow>
-            <treechildren>
-            </treechildren>
-        </treeitem>
-            </treechildren>
-        </treeitem>
-    </treechildren>
-</tree>
-```
-
-</details>
 
 ## 致谢
 [windingwind](https://github.com/windingwind)同学是

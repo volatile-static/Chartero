@@ -6,6 +6,7 @@
     "dateTimeTitle": "每日阅读时长",
     "date": "日期",
     "time": "时长",
+    "networkTitle": "关联文献网",
     "readingProgressTip": "浏览过的页面与总页数之比",
     "pagenum": "页码"
 }
