@@ -53,6 +53,7 @@
     2. https://github.com/volatile-static/Chartero/issues/20
 - [不小心删除记录文件](https://gitee.com/const_volatile/chartero/issues/I5WNBI)
 - [Zotero本地配置](https://www.zotero.org/support/kb/profile_directory)
+- [记录丢失](https://github.com/volatile-static/Chartero/issues/20#issuecomment-1304697609)
 ## 参与贡献
 > *欢迎PR！*
 ### 软件架构
