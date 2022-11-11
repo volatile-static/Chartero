@@ -39,6 +39,7 @@
 但Chartero插件本身不存在任何访问网络的行为。
 ## TODO
 ### bugs
+6. 导致某些pdf会报out of memory：![输入图片说明](doc/image.png)
 7. 具有多个PDF的条目逻辑问题
 9. 偶现同步冲突的问题
 ### features
