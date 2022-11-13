@@ -149,6 +149,16 @@ Zotero.Chartero = new function () {
         // 写入全局变量，等待保存
         item.p[pageIndex] = page;
         this.readingHistory.items[key] = item;
+
+        const dashboard = document.getElementById(
+            'chartero-real-time-dashboard-' + Zotero_Tabs.selectedID
+        ), panel = dashboard.parentElement;
+        dashboard &&
+            panel.parentElement.selectedPanel == panel &&
+            dashboard.contentWindow.postMessage({
+                history: this.readingHistory,  // 当前条目的浏览历史
+                id: it.id
+            }, '*');
     };
 
     // 右侧边栏的仪表盘
@@ -157,7 +167,7 @@ Zotero.Chartero = new function () {
         let f = document.getElementById('chartero-data-iframe');
         f.contentWindow.postMessage({
             history: this.readingHistory,  // 当前条目的浏览历史
-            id: item.id
+            id: reader.itemID
         }, '*');
     }
 
@@ -235,6 +245,25 @@ Zotero.Chartero = new function () {
         readoc.head.appendChild(scr);
     }
 
+    // 给阅读器右侧边栏添加仪表盘
+    function addReaderDashboard(id) {
+        const cont = document.getElementById(id + '-context'),
+            box = cont.querySelector('tabbox');
+        if (!box) return;
+        const tab = document.createElement('tab'),
+            panel = document.createElement('tabpanel'),
+            iframe = document.createElement('iframe');
+
+        tab.setAttribute('label', '仪表盘');
+        iframe.src = 'chrome://chartero/content/TabPanel/index.html';
+        iframe.id = 'chartero-real-time-dashboard-' + id;
+        iframe.setAttribute('flex', '1');
+
+        panel.appendChild(iframe);
+        box.tabs.append(tab);
+        box.tabpanels.append(panel);
+    }
+
     // 滚动阅读器缩略图
     function scrollThumbnailView() {
         const reader = getReader();
@@ -252,6 +281,7 @@ Zotero.Chartero = new function () {
                 if (!reader)
                     return;
                 addImagesPreviewer(reader);
+                addReaderDashboard(ids[0]);
 
                 const viewer = reader._iframeWindow.document.getElementById('viewer');
                 // 防止重复添加
@@ -390,7 +420,7 @@ Zotero.Chartero = new function () {
     this.refreshItemsProgress = async function () {
         await setReadingData();
         if (!this.readingHistory) {
-            this.readingHistory = new HistoryLibrary(1);  
+            this.readingHistory = new HistoryLibrary(1);
             this.readingHistory.mergeJSON(JSON.parse(noteItem.getNote()));
         }
         ZoteroPane.itemsView.collapseAllRows();  // 附件上不显示
