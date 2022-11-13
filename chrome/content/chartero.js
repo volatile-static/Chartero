@@ -167,7 +167,7 @@ Zotero.Chartero = new function () {
         let f = document.getElementById('chartero-data-iframe');
         f.contentWindow.postMessage({
             history: this.readingHistory,  // 当前条目的浏览历史
-            id: reader.itemID
+            id: item.id
         }, '*');
     }
 
