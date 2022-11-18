@@ -249,7 +249,8 @@ Zotero.Chartero = new function () {
     function addReaderDashboard(id) {
         const cont = document.getElementById(id + '-context'),
             box = cont.querySelector('tabbox');
-        if (!box) return;
+        if (!box || box.querySelector('#chartero-real-time-dashboard-' + id)) 
+            return;
         const tab = document.createElement('tab'),
             panel = document.createElement('tabpanel'),
             iframe = document.createElement('iframe');
