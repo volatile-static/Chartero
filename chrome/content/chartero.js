@@ -106,7 +106,7 @@ Zotero.Chartero = new function () {
     // 记录浏览历史
     this.scanSched = function () {
         const reader = getReader();
-        if (!state.active || !reader)
+        if (!state.active || !reader || !reader.state)
             return;  // 没在阅读中
         // 获取当前页码
         const pageIndex = reader.state.pageIndex;

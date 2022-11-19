@@ -22,6 +22,26 @@ html[dir="rtl"] #viewImages.toolbarButton::before {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    padding-bottom: 6px;
+}
+
+#imagesView #btnLoadMore {
+    display: none;
+    border: 1px solid limegreen;
+    background-color: palegreen;
+    transition: all 0.2s;
+    padding: 2px;
+    margin: 6px;
+    max-height: 20px;
+    cursor: pointer;
+}
+
+#imagesView #btnLoadMore:hover {
+    background-color: greenyellow;
+}
+
+#imagesView #btnLoadMore:active {
+    background-color: green;
 }
 
 .previewImg {

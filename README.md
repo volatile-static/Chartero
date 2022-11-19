@@ -39,14 +39,13 @@
 但Chartero插件本身不存在任何访问网络的行为。
 ## TODO
 ### bugs
-6. 导致某些pdf会报out of memory：![输入图片说明](doc/image.png)
 7. 具有多个PDF的条目逻辑问题
 9. 偶现同步冲突的问题
 10. 苹果系统偶现Overview标签页导致窗口标题显示错位
 ### features
 11. 自动搜索/手动新建
 20. 首选项设置需排除的标签
-21. 点击加载更多图片
+21. 图片加载动画
 ## [FAQ](https://gitee.com/const_volatile/chartero/issues?assignee_id=&author_id=&branch=&collaborator_ids=&issue_search=&label_ids=180755057&label_text=faq&milestone_id=&priority=&private_issue=&program_id=&project_id=const_volatile%2Fchartero&project_type=&scope=&single_label_id=&single_label_text=&sort=&state=closed&target_project=)
 
 - 不兼容的记录格式:
