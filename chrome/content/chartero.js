@@ -237,6 +237,26 @@ Zotero.Chartero = new function () {
 
     // 给阅读器左侧边栏添加图片预览
     function addImagesPreviewer(reader) {
+        reader._iframeWindow.wrappedJSObject.charteroProgressmeter = () => {
+            const popMsg = new Zotero.ProgressWindow();
+            popMsg.changeHeadline('', 'chrome://chartero/skin/icon.png', 'Chartero');
+            popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
+            let prog = new popMsg.ItemProgress(
+                'chrome://chartero/skin/accept.png',
+                'Loading more images...'
+            );
+            popMsg.show();
+            return function (percentage, page) {
+                if (percentage >= 100) {
+                    prog.setProgress(100);
+                    prog.setText('Images loaded!');
+                    popMsg.startCloseTimer(2333);
+                } else {
+                    prog.setProgress(percentage);
+                    prog.setText('Scanning images in page ' + (page || 0));
+                }
+            };
+        }
         const readoc = reader._iframeWindow.document;  // read-doc
         if (readoc.getElementById('viewImages'))
             return;  // 已经加过了
@@ -249,7 +269,7 @@ Zotero.Chartero = new function () {
     function addReaderDashboard(id) {
         const cont = document.getElementById(id + '-context'),
             box = cont.querySelector('tabbox');
-        if (!box || box.querySelector('#chartero-real-time-dashboard-' + id)) 
+        if (!box || box.querySelector('#chartero-real-time-dashboard-' + id))
             return;
         const tab = document.createElement('tab'),
             panel = document.createElement('tabpanel'),

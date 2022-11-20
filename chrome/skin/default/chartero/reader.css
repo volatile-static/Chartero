@@ -27,6 +27,7 @@ html[dir="rtl"] #viewImages.toolbarButton::before {
 
 #imagesView #btnLoadMore {
     display: none;
+    border-radius: 6%;
     border: 1px solid limegreen;
     background-color: palegreen;
     transition: all 0.2s;
@@ -38,6 +39,7 @@ html[dir="rtl"] #viewImages.toolbarButton::before {
 
 #imagesView #btnLoadMore:hover {
     background-color: greenyellow;
+    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
 #imagesView #btnLoadMore:active {

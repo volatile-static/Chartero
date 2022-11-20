@@ -45,7 +45,6 @@
 ### features
 11. 自动搜索/手动新建
 20. 首选项设置需排除的标签
-21. 图片加载动画
 ## [FAQ](https://gitee.com/const_volatile/chartero/issues?assignee_id=&author_id=&branch=&collaborator_ids=&issue_search=&label_ids=180755057&label_text=faq&milestone_id=&priority=&private_issue=&program_id=&project_id=const_volatile%2Fchartero&project_type=&scope=&single_label_id=&single_label_text=&sort=&state=closed&target_project=)
 
 - 不兼容的记录格式:
