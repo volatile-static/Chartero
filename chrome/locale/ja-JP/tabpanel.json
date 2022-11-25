@@ -1,0 +1,12 @@
+{
+    "pageTimeTitle": "毎ページの読む時間",
+    "seconds": "秒",
+    "minutes": "分",
+    "hours": "時間",
+    "dateTimeTitle": "毎日の読む時間",
+    "date": "日付",
+    "time": "時刻",
+    "networkTitle": "文献サイトを関連する",
+    "readingProgressTip": "閲覧ページ数/総閲覧ページ数",
+    "pagenum": "ページ"
+}
