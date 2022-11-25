@@ -7,3 +7,4 @@ overlay chrome://zotero/content/preferences/preferences.xul chrome://chartero/co
 
 locale chartero en-US chrome/locale/en-US/
 locale chartero zh-CN chrome/locale/zh-CN/
+locale chartero ja-JP chrome/locale/ja-JP/
