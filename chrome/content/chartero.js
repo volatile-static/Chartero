@@ -437,7 +437,68 @@ Zotero.Chartero = new function () {
         this.initEvents();
     };
 
-    // 刷新条目列表中的阅读进度标记
+    // render title progress
+    this.renderProgress = function(primaryCell, history) {
+        // Use this function to create an element, otherwise the style will not take effect
+        let createElement = (name) => document.createElementNS("http://www.w3.org/1999/xhtml", name)
+        // render the read progress
+        primaryCell.style = `
+            position: relative;
+            box-sizing: border-box;
+        `
+        let progressNode = createElement("span")
+        progressNode.setAttribute("class", "zotero-style-progress")
+        // setting - opacity
+        progressNode.style = `
+            position: absolute;
+            left: 3.25em;
+            top: 0;
+            width: 90%;
+            height: 100%;
+            opacity: .7;
+            z-index: 1;
+        `
+        primaryCell.appendChild(progressNode)
+        // prevent occlusion
+        primaryCell.querySelector(".cell-text").style.zIndex = 2
+        // analysis history data
+        const total = history.n
+        const pageObj = history.p
+        const pageTimeObj = {}
+        let maxSec = 0
+        let s = 0
+        let n = 0
+        for (let i of Object.keys(pageObj)) {
+            let _s = 0
+            Object.values(pageObj[i]["t"]).forEach(t=>_s+=t)
+            pageTimeObj[parseInt(i)] = _s
+            maxSec = _s > maxSec ? _s : maxSec 
+            s += _s
+            n += 1
+        }
+        Zotero.debug(pageTimeObj)
+        const meanSec = s / n
+        maxSec = meanSec + (maxSec - meanSec) * .5
+        // setting - minSec
+        const minSec = 30
+        const pct = 1 / total * 100
+        console.log(pct)
+        for (let i=0; i<total; i++) {
+            // pageSpan represent a page, color opacity represent the length of read time
+            let pageSpan = createElement("span")
+            let alpha = (pageTimeObj[i] || 0) / (maxSec > minSec ? maxSec : minSec)
+            // setting - background-color
+            pageSpan.style = `
+                width: ${pct}%;
+                height: 100%;
+                background-color: rgba(90, 193, 189, ${alpha < 1 ? alpha : 1});
+                display: inline-block;
+            `
+            progressNode.appendChild(pageSpan);
+        }
+    }
+
+    // 显示- 阅读高能进度条
     this.refreshItemsProgress = async function () {
         await setReadingData();
         if (!this.readingHistory) {
@@ -448,7 +509,11 @@ Zotero.Chartero = new function () {
 
         let flag = false;
         for (let i = 0; i < ZoteroPane.itemsView.rowCount; ++i) {
-            const title = $(`#item-tree-main-default-row-${i}`).find('.title');
+            const primaryCell = document.querySelector(`#item-tree-main-default-row-${i} .primary`);
+            // 这里如果文献很多，有滚动条的，primaryCell可能是null
+            if (!primaryCell) 
+                continue;
+            console.log(i, primaryCell)
             const item = Zotero.Items.getByLibraryAndKey(
                 this.readingHistory.lib,
                 ZoteroPane.itemsView.getRow(i).ref.key  // 第i行item的key
@@ -459,30 +524,10 @@ Zotero.Chartero = new function () {
             const pdf = await hasRead(item);  // 是否读过
             if (!pdf)
                 continue;
-            const history = this.readingHistory.items[pdf.key];
-            const readPages = Object.keys(history.p).length;
-            const p = Math.round(readPages * 1000 / history.n / 10);  // 百分比，整数
 
-            switch (parseInt(p / 25)) {
-                case 0:  // 小于25%
-                    title.after('🔴');
-                    break;
-                case 1:  // 25% ~ 50%
-                    title.after('🟠');
-                    break;
-                case 2:  // 50% ~ 75%
-                    title.after('🟡');
-                    break;
-                case 3:  // 75% ~ 99%
-                    title.after('🟢');
-                    break;
-                case 4:  // 100%（页数多时可能有一两页没读）
-                    title.after('💯');
-                    break;
-                default:
-                    break;
-            }
-            flag = true;
+            const history = this.readingHistory.items[pdf.key];
+            this.renderProgress(primaryCell, history)
+            flag = true
         }
         if (!flag)
             this.showMessage('No history found in items pane.', 'exclamation');
