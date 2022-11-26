@@ -438,7 +438,7 @@ Zotero.Chartero = new function () {
     };
 
     // render title progress
-    this.renderProgress = function(primaryCell, history) {
+    function renderProgress(primaryCell, history) {
         // Use this function to create an element, otherwise the style will not take effect
         let createElement = (name) => document.createElementNS("http://www.w3.org/1999/xhtml", name)
         // render the read progress
@@ -470,20 +470,20 @@ Zotero.Chartero = new function () {
         let n = 0
         for (let i of Object.keys(pageObj)) {
             let _s = 0
-            Object.values(pageObj[i]["t"]).forEach(t=>_s+=t)
+            Object.values(pageObj[i]["t"]).forEach(t => _s += t)
             pageTimeObj[parseInt(i)] = _s
-            maxSec = _s > maxSec ? _s : maxSec 
+            maxSec = _s > maxSec ? _s : maxSec
             s += _s
             n += 1
         }
-        Zotero.debug(pageTimeObj)
+        // Zotero.debug(pageTimeObj)
         const meanSec = s / n
         maxSec = meanSec + (maxSec - meanSec) * .5
         // setting - minSec
         const minSec = 30
         const pct = 1 / total * 100
         console.log(pct)
-        for (let i=0; i<total; i++) {
+        for (let i = 0; i < total; i++) {
             // pageSpan represent a page, color opacity represent the length of read time
             let pageSpan = createElement("span")
             let alpha = (pageTimeObj[i] || 0) / (maxSec > minSec ? maxSec : minSec)
@@ -510,24 +510,21 @@ Zotero.Chartero = new function () {
         let flag = false;
         for (let i = 0; i < ZoteroPane.itemsView.rowCount; ++i) {
             const primaryCell = document.querySelector(`#item-tree-main-default-row-${i} .primary`);
-            // 这里如果文献很多，有滚动条的，primaryCell可能是null
-            if (!primaryCell) 
-                continue;
-            console.log(i, primaryCell)
+            if (!primaryCell)
+                continue;  // 这里如果文献很多，有滚动条的，primaryCell可能是null
+                
             const item = Zotero.Items.getByLibraryAndKey(
                 this.readingHistory.lib,
                 ZoteroPane.itemsView.getRow(i).ref.key  // 第i行item的key
             );
-
             if (!item.isRegularItem())
                 continue;
             const pdf = await hasRead(item);  // 是否读过
             if (!pdf)
                 continue;
-
             const history = this.readingHistory.items[pdf.key];
-            this.renderProgress(primaryCell, history)
-            flag = true
+            renderProgress(primaryCell, history);
+            flag = true;
         }
         if (!flag)
             this.showMessage('No history found in items pane.', 'exclamation');
