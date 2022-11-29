@@ -338,6 +338,20 @@ Zotero.Chartero = new function () {
         ZoteroPane.selectItem(itemID);
     }
 
+    this.viewDataTree = function () {
+        if (!noteItem) {
+            const noteKey = Zotero.Prefs.get("chartero.dataKey");
+            if (noteKey)   // 这里是真的没有还是没加载出来？
+                noteItem = Zotero.Items.getByLibraryAndKey(
+                    Zotero.Libraries.userLibraryID,  // 哪个libraries？
+                    noteKey
+                );
+            else
+                this.showMessage('History not found!');
+        }
+        noteItem && this.viewItemInLib(noteItem.id);
+    }
+
     // 弹出对话框输入JSON合并到原有历史记录
     function messageHandler(event) {
         if (event.data === 'delete')
@@ -470,7 +484,7 @@ Zotero.Chartero = new function () {
         let n = 0
         for (let i of Object.keys(pageObj)) {
             let _s = 0
-            Object.values(pageObj[i]["t"]).forEach(t => _s += t)
+            Object.values(pageObj[i].t).forEach(t => _s += t)
             pageTimeObj[parseInt(i)] = _s
             maxSec = _s > maxSec ? _s : maxSec
             s += _s
@@ -482,7 +496,6 @@ Zotero.Chartero = new function () {
         // setting - minSec
         const minSec = 30
         const pct = 1 / total * 100
-        console.log(pct)
         for (let i = 0; i < total; i++) {
             // pageSpan represent a page, color opacity represent the length of read time
             let pageSpan = createElement("span")
@@ -512,18 +525,17 @@ Zotero.Chartero = new function () {
             const primaryCell = document.querySelector(`#item-tree-main-default-row-${i} .primary`);
             if (!primaryCell)
                 continue;  // 这里如果文献很多，有滚动条的，primaryCell可能是null
-                
+
             const item = Zotero.Items.getByLibraryAndKey(
                 this.readingHistory.lib,
                 ZoteroPane.itemsView.getRow(i).ref.key  // 第i行item的key
             );
-            if (!item.isRegularItem())
+            if (!item || !item.isRegularItem())
                 continue;
             const pdf = await hasRead(item);  // 是否读过
-            if (!pdf)
+            if (!pdf || !this.readingHistory.items[pdf.key])
                 continue;
-            const history = this.readingHistory.items[pdf.key];
-            renderProgress(primaryCell, history);
+            renderProgress(primaryCell, this.readingHistory.items[pdf.key]);
             flag = true;
         }
         if (!flag)
