@@ -67,11 +67,14 @@ function plotDateTime(history, title) {
 }
 
 async function plotNetwork(item) {
+  Zotero.debug({key:item.key, relate:item.relatedItems,his:await getHis(item)});
   const data = new Array(), nodes = new Object(), edges = new Object();
   function dfs(it) {
     nodes[it.key] = true;  // 访问该节点
     for (key of it.relatedItems) {
       const t = Zotero.Items.getByLibraryAndKey(1, key);  // 1
+      if (!t)
+        continue;
       if (!edges[`${t.id},${it.id}`])  // 已经有反向边了
         data.push([it.id, t.id]);
       edges[`${it.id},${t.id}`] = true;  // 加边
@@ -134,8 +137,15 @@ function initCharts() {
     chart: { style: { fontFamily: "" } },
     credits: { enabled: false },
     exporting: {
+      menuItemDefinitions: {
+        downloadSVG: {
+          onclick: function () {
+            Zotero.Chartero.saveSVG(this.getSVGForExport());
+          }
+        }
+      },
       buttons: { 
-        contextButton: { menuItems: ['viewFullscreen'] }
+        contextButton: { menuItems: ['viewFullscreen', 'downloadSVG'] }
       }
     }
   });

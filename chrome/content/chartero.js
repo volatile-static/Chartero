@@ -607,6 +607,19 @@ Zotero.Chartero = new function () {
         }
     }
 
+    this.saveSVG = function (str) {
+        const fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(
+            Components.interfaces.nsIFilePicker
+        );
+        fp.init(window, 'Chartero', Components.interfaces.nsIFilePicker.modeSave);
+        fp.appendFilter('矢量图', '*.svg');
+        fp.open(event => {
+            if (event == Components.interfaces.nsIFilePicker.returnOK ||
+                event == Components.interfaces.nsIFilePicker.returnReplace) 
+                Zotero.File.putContents(new FileUtils.File(fp.file.path + '.svg'), str);
+        });
+    }
+
     this.dev = async function () {
         return await Zotero.Items.getAll(1, true);
     }

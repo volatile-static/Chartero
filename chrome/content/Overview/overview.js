@@ -124,12 +124,8 @@ async function drawBubbleChart() {
             });
     }
     Highcharts.chart('item-chart', {
-        chart: {
-            type: 'packedbubble'
-        },
-        title: {
-            text: 'Items'
-        },
+        chart: { type: 'packedbubble' },
+        title: { text: localeStr.itemChartTitle },
         tooltip: {
             useHTML: true,
             pointFormat: '{point.name}<br/><b>{point.value}</b>s'
@@ -147,25 +143,25 @@ async function drawBubbleChart() {
                     gravitationalConstant: 0.02
                 },
                 // dataLabels: {
-                    // enabled: true,
-                    // // format: '{point.name}',
-                    // formatter: function () {
-                    //     console.log(this.key, this.radius);
-                    //     alert(1);
-                    //     return this.point.radius * 2 < this.key.length ? '' : point.name;
-                    // },
-                    // inside: true,
-                    // shadow: true
-                    // filter: {
-                    //     property: 'y',
-                    //     operator: '>',
-                    //     value: 250
-                    // },
-                    // style: {
-                    //     color: 'black',
-                    //     textOutline: 'none',
-                    //     fontWeight: 'normal'
-                    // }
+                // enabled: true,
+                // // format: '{point.name}',
+                // formatter: function () {
+                //     console.log(this.key, this.radius);
+                //     alert(1);
+                //     return this.point.radius * 2 < this.key.length ? '' : point.name;
+                // },
+                // inside: true,
+                // shadow: true
+                // filter: {
+                //     property: 'y',
+                //     operator: '>',
+                //     value: 250
+                // },
+                // style: {
+                //     color: 'black',
+                //     textOutline: 'none',
+                //     fontWeight: 'normal'
+                // }
                 // }
             }
         },
@@ -240,7 +236,7 @@ async function drawPieChart() {
     Highcharts.chart('pie-chart', {
         chart: {
             type: 'variablepie',
-            animation: { easing: undefined } 
+            animation: { easing: undefined }
         },
         title: { text: '总阅读时长占比' },
         subtitle: { text: 'Click pies for details.' },
@@ -436,15 +432,15 @@ function initCharts() {
             useUTC: false
         },
         chart: {
-            borderRadius: 6, 
+            borderRadius: 6,
             animation: {
                 duration: 1500,
                 easing: pos => {
-                    if ((pos) < (1 / 2.75)) 
+                    if ((pos) < (1 / 2.75))
                         return (7.5625 * pos * pos);
-                    if (pos < (2 / 2.75)) 
+                    if (pos < (2 / 2.75))
                         return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
-                    if (pos < (2.5 / 2.75)) 
+                    if (pos < (2.5 / 2.75))
                         return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
                     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
                 }
@@ -464,6 +460,20 @@ function initCharts() {
                     }
                 },
                 shadow: true
+            }
+        },
+        exporting: {
+            menuItemDefinitions: {
+                downloadSVG: {
+                    onclick: function () {
+                        Zotero.Chartero.saveSVG(this.getSVGForExport());
+                    }
+                }
+            },
+            buttons: {
+                contextButton: { 
+                    menuItems: ['viewFullscreen', 'printChart', 'downloadSVG'] 
+                }
             }
         },
         credits: { enabled: false }
@@ -487,6 +497,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
             console.log(e);
             Zotero.hideZoteroPaneOverlays();
             Zotero.Chartero.showMessage('不兼容的记录格式，请前往数据可视化页面清理！');
+            Zotero.Chartero.viewDataTree();
         }
     } else if (event.target.URL.indexOf('skyline') > 0)
         document.getElementById('skyline-frame').contentWindow.postMessage({
