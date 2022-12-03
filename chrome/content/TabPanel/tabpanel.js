@@ -67,7 +67,6 @@ function plotDateTime(history, title) {
 }
 
 async function plotNetwork(item) {
-  Zotero.debug({key:item.key, relate:item.relatedItems,his:await getHis(item)});
   const data = new Array(), nodes = new Object(), edges = new Object();
   function dfs(it) {
     nodes[it.key] = true;  // 访问该节点

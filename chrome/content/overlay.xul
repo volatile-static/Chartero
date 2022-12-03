@@ -10,7 +10,7 @@
         <spacer flex="1"/>
 		<toolbarbutton id="chartero-toolbar-button" class="zotero-tb-button" type="menu" tooltiptext="Chartero">
             <menupopup>
-                <menuitem label="&chartero.toolbarbutton.tip;" oncommand="Zotero.Chartero.refreshItemsProgress();"/>
+                <menuitem id="chartero-tool-menu-toggle-progress" label="显示高能进度条" oncommand="Zotero.Chartero.toggleProgressmeter();"/>
                 <menuitem label="&chartero.toolbarbutton.overview;" oncommand="Zotero.Chartero.newTab();"/>
             </menupopup>
         </toolbarbutton>

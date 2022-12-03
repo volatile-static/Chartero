@@ -1,5 +1,6 @@
 Zotero.Chartero = new function () {
     this.readingHistory = false;  // 统计数据
+    var showReadingProgress = false;  // 是否在条目标题下显示高能进度条
     var scanPeriod, savePeriod;  // 定时器时间间隔
     var scanInt, saveInt;  // 回调函数ID，用于暂停记录
     var noteItem;  // 存储数据的笔记条目
@@ -31,57 +32,54 @@ Zotero.Chartero = new function () {
 
     // 在第一次保存数据前准备好笔记条目
     async function setReadingData() {
-        if (noteItem)
-            return;  // 已经加载过了
+        if (this.readingHistory)
+            return this.readingHistory;  // 已经加载过了
+        if (!noteItem) {
+            const noteKey = Zotero.Prefs.get("chartero.dataKey");
+            if (noteKey)   // 这里是真的没有还是没加载出来？
+                noteItem = Zotero.Items.getByLibraryAndKey(
+                    Zotero.Libraries.userLibraryID,  // 哪个libraries？
+                    noteKey
+                );
+            else {  // 新建条目
+                Zotero.Chartero.showMessage('No history found!', 'exclamation');
+                noteItem = new Zotero.Item('note');
+                let item = new Zotero.Item('computerProgram');
 
-        const noteKey = Zotero.Prefs.get("chartero.dataKey");
-        if (noteKey)   // 这里是真的没有还是没加载出来？
-            noteItem = Zotero.Items.getByLibraryAndKey(
-                Zotero.Libraries.userLibraryID,  // 哪个libraries？
-                noteKey
-            );
+                item.setField('title', 'Chartero');
+                item.setField('programmingLanguage', 'JSON');
+                item.setField('abstractNote', 'Chartero记录的浏览历史数据。请勿删除本条目！（可以移动、改名）');
+                item.setField('url', 'https://github.com/volatile-static');
+                item.setCreators([
+                    {
+                        fieldMode: 1,
+                        lastName: "Chartero",
+                        creatorType: "contributor"
+                    },
+                    {
+                        creatorType: "programmer",
+                        firstName: "volatile",
+                        lastName: "static"
+                    }
+                ]);
+                noteItem.parentID = await item.saveTx();  // 作为附件
 
-        if (!this.readingHistory)
-            this.readingHistory = new HistoryLibrary(Zotero.Libraries.userLibraryID);
-
-        if (noteItem) {  // 合并已有数据
-            try {
-                var history = JSON.parse(noteItem.getNote());
-            } catch (error) {
-                if (error instanceof SyntaxError)
-                    history = {};
-                Zotero.debug(error);
+                noteItem.setNote(JSON.stringify(this.readingHistory));
+                await noteItem.saveTx();
+                Zotero.Prefs.set("chartero.dataKey", noteItem.key);
             }
-            this.readingHistory.mergeJSON(history);
-            return;
         }
-
-        Zotero.Chartero.showMessage('No history found!', 'exclamation');
-        // 新建条目
-        noteItem = new Zotero.Item('note');
-        let item = new Zotero.Item('computerProgram');
-
-        item.setField('title', 'Chartero');
-        item.setField('programmingLanguage', 'JSON');
-        item.setField('abstractNote', 'Chartero记录的浏览历史数据。请勿删除本条目！（可以移动、改名）');
-        item.setField('url', 'https://github.com/volatile-static');
-        item.setCreators([
-            {
-                fieldMode: 1,
-                lastName: "Chartero",
-                creatorType: "contributor"
-            },
-            {
-                creatorType: "programmer",
-                firstName: "volatile",
-                lastName: "static"
-            }
-        ]);
-        noteItem.parentID = await item.saveTx();  // 作为附件
-
-        noteItem.setNote(JSON.stringify(this.readingHistory));
-        await noteItem.saveTx();
-        Zotero.Prefs.set("chartero.dataKey", noteItem.key);
+        this.readingHistory = new HistoryLibrary(Zotero.Libraries.userLibraryID);
+        try {  // 合并已有数据
+            var history = JSON.parse(noteItem.getNote());
+        } catch (error) {
+            if (error instanceof SyntaxError)
+                history = {};
+            this.showMessage('数据格式错误！');
+        } finally {
+            this.readingHistory.mergeJSON(history);
+            return this.readingHistory;
+        }
     }
 
     // 若读过则返回PDF条目
@@ -104,7 +102,7 @@ Zotero.Chartero = new function () {
     }
 
     // 记录浏览历史
-    this.scanSched = function () {
+    this.scanSched = async function () {
         const reader = getReader();
         if (!state.active || !reader || !reader.state)
             return;  // 没在阅读中
@@ -125,9 +123,7 @@ Zotero.Chartero = new function () {
         if (state.count > 60)
             return;  // 离开了
 
-        if (!this.readingHistory)
-            this.readingHistory = new HistoryLibrary(Zotero.Libraries.userLibraryID);
-
+        await setReadingData();
         const it = Zotero.Items.get(reader.itemID), key = it.key;
         if (it.libraryID != this.readingHistory.lib)
             return;  // 暂时不处理群组文献
@@ -171,6 +167,94 @@ Zotero.Chartero = new function () {
         }, '*');
     }
 
+    // 显示- 阅读高能进度条
+    async function refreshItemsProgress() {
+        function renderProgress(primaryCell, history) {  // 渲染标题下的高能进度条
+            // Use this function to create an element, otherwise the style will not take effect
+            let createElement = name => document.createElementNS("http://www.w3.org/1999/xhtml", name)
+            // render the read progress
+            primaryCell.style = `
+                position: relative;
+                box-sizing: border-box;
+            `
+            let progressNode = createElement("span")
+            progressNode.setAttribute("class", "zotero-style-progress")
+            // setting - opacity
+            progressNode.style = `
+                position: absolute;
+                left: 3.25em;
+                top: 0;
+                width: 90%;
+                height: 100%;
+                opacity: .7;
+                z-index: 1;
+            `
+            primaryCell.appendChild(progressNode)
+            // prevent occlusion
+            primaryCell.querySelector(".cell-text").style.zIndex = 2
+            // analysis history data
+            const total = history.n, pageObj = history.p, pageTimeObj = {}
+            let maxSec = 0, s = 0, n = 0
+            for (let i of Object.keys(pageObj)) {
+                let _s = 0
+                Object.values(pageObj[i].t).forEach(t => _s += t)
+                pageTimeObj[parseInt(i)] = _s
+                maxSec = _s > maxSec ? _s : maxSec
+                s += _s
+                n += 1
+            }
+            // Zotero.debug(pageTimeObj)
+            const meanSec = s / n
+            maxSec = meanSec + (maxSec - meanSec) * .5
+            // setting - minSec
+            const minSec = 30, pct = 1 / total * 100
+            for (let i = 0; i < total; i++) {
+                // pageSpan represent a page, color opacity represent the length of read time
+                let pageSpan = createElement("span"),
+                    alpha = (pageTimeObj[i] || 0) / (maxSec > minSec ? maxSec : minSec)
+                // setting - background-color
+                pageSpan.style = `
+                    width: ${pct}%;
+                    height: 100%;
+                    background-color: rgba(90, 193, 189, ${alpha < 1 ? alpha : 1});
+                    display: inline-block;
+                `
+                progressNode.appendChild(pageSpan);
+            }
+        }
+        if (!showReadingProgress)
+            return;
+        this.readingHistory = await setReadingData();
+        // ZoteroPane.itemsView.collapseAllRows();  // 附件上不显示
+
+        for (let i = 0; i < ZoteroPane.itemsView.rowCount; ++i) {
+            const primaryCell = document.querySelector(`#item-tree-main-default-row-${i} .primary`);
+            if (!primaryCell || primaryCell.querySelector(".zotero-style-progress"))
+                continue;  // 这里如果文献很多，有滚动条的，primaryCell可能是null
+
+            const item = Zotero.Items.getByLibraryAndKey(
+                this.readingHistory.lib,
+                ZoteroPane.itemsView.getRow(i).ref.key  // 第i行item的key
+            );
+            if (!item || !item.isRegularItem())
+                continue;
+            const pdf = await hasRead(item);  // 是否读过
+            if (!pdf || !this.readingHistory.items[pdf.key])
+                continue;
+            renderProgress(primaryCell, this.readingHistory.items[pdf.key]);
+        }
+    };
+
+    this.toggleProgressmeter = function () {
+        const tree = ZoteroPane.itemsView.tree._jsWindow.targetElement;
+        tree.onscroll = refreshItemsProgress;
+        showReadingProgress = !showReadingProgress;
+        $('#chartero-tool-menu-toggle-progress').attr(
+            'label',
+            showReadingProgress ? '隐藏高能进度条' : '显示高能进度条'
+        );
+    }
+
     // 数据可视化
     async function showDataTree() {
         const pane = document.getElementById('zotero-item-pane-content');
@@ -209,12 +293,13 @@ Zotero.Chartero = new function () {
 
     // 条目列表中所选条目改变
     this.onItemSelect = async function () {
-        const items = ZoteroPane.getSelectedItems();
-        const menu = document.getElementById('itemmenu-as-data');
-        const is_a_note = items.length === 1 && items[0].isNote();
+        const items = ZoteroPane.getSelectedItems(),
+            menu = document.getElementById('itemmenu-as-data'),
+            is_a_note = items.length === 1 && items[0].isNote();
 
         menu.setAttribute('hidden', !is_a_note);
         menu.setAttribute('disabled', !is_a_note);
+        refreshItemsProgress();
 
         if (items.length != 1)
             return;  // TODO: 多合一绘图
@@ -451,97 +536,6 @@ Zotero.Chartero = new function () {
         this.initEvents();
     };
 
-    // render title progress
-    function renderProgress(primaryCell, history) {
-        // Use this function to create an element, otherwise the style will not take effect
-        let createElement = (name) => document.createElementNS("http://www.w3.org/1999/xhtml", name)
-        // render the read progress
-        primaryCell.style = `
-            position: relative;
-            box-sizing: border-box;
-        `
-        let progressNode = createElement("span")
-        progressNode.setAttribute("class", "zotero-style-progress")
-        // setting - opacity
-        progressNode.style = `
-            position: absolute;
-            left: 3.25em;
-            top: 0;
-            width: 90%;
-            height: 100%;
-            opacity: .7;
-            z-index: 1;
-        `
-        primaryCell.appendChild(progressNode)
-        // prevent occlusion
-        primaryCell.querySelector(".cell-text").style.zIndex = 2
-        // analysis history data
-        const total = history.n
-        const pageObj = history.p
-        const pageTimeObj = {}
-        let maxSec = 0
-        let s = 0
-        let n = 0
-        for (let i of Object.keys(pageObj)) {
-            let _s = 0
-            Object.values(pageObj[i].t).forEach(t => _s += t)
-            pageTimeObj[parseInt(i)] = _s
-            maxSec = _s > maxSec ? _s : maxSec
-            s += _s
-            n += 1
-        }
-        // Zotero.debug(pageTimeObj)
-        const meanSec = s / n
-        maxSec = meanSec + (maxSec - meanSec) * .5
-        // setting - minSec
-        const minSec = 30
-        const pct = 1 / total * 100
-        for (let i = 0; i < total; i++) {
-            // pageSpan represent a page, color opacity represent the length of read time
-            let pageSpan = createElement("span")
-            let alpha = (pageTimeObj[i] || 0) / (maxSec > minSec ? maxSec : minSec)
-            // setting - background-color
-            pageSpan.style = `
-                width: ${pct}%;
-                height: 100%;
-                background-color: rgba(90, 193, 189, ${alpha < 1 ? alpha : 1});
-                display: inline-block;
-            `
-            progressNode.appendChild(pageSpan);
-        }
-    }
-
-    // 显示- 阅读高能进度条
-    this.refreshItemsProgress = async function () {
-        await setReadingData();
-        if (!this.readingHistory) {
-            this.readingHistory = new HistoryLibrary(1);
-            this.readingHistory.mergeJSON(JSON.parse(noteItem.getNote()));
-        }
-        ZoteroPane.itemsView.collapseAllRows();  // 附件上不显示
-
-        let flag = false;
-        for (let i = 0; i < ZoteroPane.itemsView.rowCount; ++i) {
-            const primaryCell = document.querySelector(`#item-tree-main-default-row-${i} .primary`);
-            if (!primaryCell)
-                continue;  // 这里如果文献很多，有滚动条的，primaryCell可能是null
-
-            const item = Zotero.Items.getByLibraryAndKey(
-                this.readingHistory.lib,
-                ZoteroPane.itemsView.getRow(i).ref.key  // 第i行item的key
-            );
-            if (!item || !item.isRegularItem())
-                continue;
-            const pdf = await hasRead(item);  // 是否读过
-            if (!pdf || !this.readingHistory.items[pdf.key])
-                continue;
-            renderProgress(primaryCell, this.readingHistory.items[pdf.key]);
-            flag = true;
-        }
-        if (!flag)
-            this.showMessage('No history found in items pane.', 'exclamation');
-    };
-
     // 打开overview页面
     this.newTab = async function () {
         await setReadingData();
@@ -572,16 +566,13 @@ Zotero.Chartero = new function () {
     }
 
     this.buildRecentMenu = async function () {
-        await setReadingData();
-        const raw = noteItem.getNote();
-        const his = new HistoryLibrary(1);  // TODO: this.readingHistory
-        his.mergeJSON(JSON.parse(raw));
-
+        this.readingHistory = await setReadingData();
+        console.debug(this.readingHistory);
         let items = new Array();
-        for (const i in his.items)
+        for (const i in this.readingHistory.items)
             items.push({
                 key: i,
-                lastTime: his.items[i].lastTime()
+                lastTime: this.readingHistory.items[i].lastTime()
             })
         items = items.sort((a, b) => a.lastTime < b.lastTime).map(i => i.key);
 
@@ -591,7 +582,7 @@ Zotero.Chartero = new function () {
             menu.removeChild(menu.firstChild);
 
         for (let i = 0; i < 10 && i < items.length; ++i) {
-            const it = Zotero.Items.getByLibraryAndKey(his.lib, items[i]),
+            const it = Zotero.Items.getByLibraryAndKey(this.readingHistory.lib, items[i]),
                 parent = Zotero.Items.get(it.parentID || it.id),
                 name = parent.getField('title'),
                 style = `list-style-image: url('${parent.getImageSrc()}');`,
@@ -615,7 +606,7 @@ Zotero.Chartero = new function () {
         fp.appendFilter('矢量图', '*.svg');
         fp.open(event => {
             if (event == Components.interfaces.nsIFilePicker.returnOK ||
-                event == Components.interfaces.nsIFilePicker.returnReplace) 
+                event == Components.interfaces.nsIFilePicker.returnReplace)
                 Zotero.File.putContents(new FileUtils.File(fp.file.path + '.svg'), str);
         });
     }
