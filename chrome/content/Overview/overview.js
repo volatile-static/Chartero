@@ -260,22 +260,39 @@ async function drawPieChart() {
 
 async function drawWordCloud() {
     const data = new Array();
-    forEachItem(item => {
-        for (tag of item.getTags()) {
-            const obj = data.find(i => i.name === tag.tag);
-            const tim = getTimeByKey(item.key);
+    // forEachItem(item => {
+    //     for (tag of item.getTags()) {
+    //         const obj = data.find(i => i.name === tag.tag);
+    //         const tim = getTimeByKey(item.key);
+    //         if (obj)
+    //             obj.weight += tim;
+    //         else
+    //             data.push({
+    //                 name: tag.tag,
+    //                 weight: tim
+    //             })
+    //     }
+    // });
+    const getData = text => text.reduce((dat, txt) => {
+        if (!txt)
+            return dat;
+        txt.split(/[^a-z]/g).filter(w => w.length > 3).forEach(word => {
+            const obj = dat.find(i => i.name === word);
             if (obj)
-                obj.weight += tim;
+                ++obj.weight;
             else
-                data.push({
-                    name: tag.tag,
-                    weight: tim
+                dat.push({
+                    name: word,
+                    weight: 1
                 })
-        }
-    });
-    const allItems = await Zotero.Items.getAll(readingHistory.lib),
+        });
+        return dat;
+    }, []).sort((a, b) => b.weight - a.weight).slice(0, 60),
+        allItems = await Zotero.Items.getAll(readingHistory.lib),
         allAnnotations = allItems.filter(it => it.isAnnotation()),
         allAnnotationText = allAnnotations.map(a => a.annotationText),
+        allTops = allItems.filter(it => it.isRegularItem()),
+        allTitles = allTops.map(it => it.getField('title')),
         s0 = {
             type: 'wordcloud',
             name: 'Total Time',
@@ -290,30 +307,24 @@ async function drawWordCloud() {
             visible: false,
             maxFontSize: 26,
             minFontSize: 8,
-            data: allAnnotationText.reduce((dat, txt) => {
-                if (!txt)
-                    return dat;
-                txt.split(/[^a-z]/g).filter(w => w.length > 3).forEach(word => {
-                    const obj = dat.find(i => i.name === word);
-                    if (obj)
-                        ++obj.weight;
-                    else
-                        dat.push({
-                            name: word,
-                            weight: 1
-                        })
-                });
-                return dat;
-            }, []).sort((a, b) => b.weight - a.weight).slice(0, 60)
+            data: getData(allAnnotationText)
+        }, s2 = {
+            type: 'wordcloud',
+            name: 'Title',
+            showInLegend: true,
+            // visible: false,
+            maxFontSize: 26,
+            minFontSize: 8,
+            data: getData(allTitles)
         };
     Highcharts.chart('wordcloud-chart', {
-        series: [s0, s1],
-        title: { text: '标签词云图' }
+        series: [s2, s1],
+        title: { text: '标题词云图' }
     }, chart => {
         $('#wordcloud-chart').mouseenter(() => {
             chart.series[1].remove(false);
             chart.series[0].remove(false);
-            chart.addSeries(s0);
+            chart.addSeries(s2);
             chart.addSeries(s1);
         });
         Highcharts.addEvent(
@@ -471,8 +482,8 @@ function initCharts() {
                 }
             },
             buttons: {
-                contextButton: { 
-                    menuItems: ['viewFullscreen', 'printChart', 'downloadSVG'] 
+                contextButton: {
+                    menuItems: ['viewFullscreen', 'printChart', 'downloadSVG']
                 }
             }
         },
