@@ -151,10 +151,17 @@ function initCharts() {
           onclick: function () {
             Zotero.Chartero.saveSVG(this.getSVGForExport());
           }
+        },
+        downloadJPEG: {
+          onclick: function () {
+            copySVG2JPG(this.getSVGForExport());
+            Zotero.Chartero.showMessage('Image copied!', 'information');
+          },
+          text: 'Copy jpeg'
         }
       },
       buttons: { 
-        contextButton: { menuItems: ['viewFullscreen', 'downloadSVG'] }
+        contextButton: { menuItems: ['viewFullscreen', 'downloadSVG', 'downloadJPEG'] }
       }
     }
   });

@@ -462,9 +462,9 @@ function initCharts() {
             series: {
                 events: {
                     afterAnimate: function () {
-                        if (numCharts > 2)
+                        if (numCharts > 16)
                             return;
-                        else if (++numCharts == 2)  // 添加图表记得改！
+                        else if (++numCharts == 16)  // 添加图表记得改！
                             Zotero.hideZoteroPaneOverlays();
                         // else
                         //     Zotero.updateZoteroPaneProgressMeter(numCharts * 20);
@@ -479,11 +479,18 @@ function initCharts() {
                     onclick: function () {
                         Zotero.Chartero.saveSVG(this.getSVGForExport());
                     }
+                },
+                downloadJPEG: {
+                    onclick: function () {
+                        copySVG2JPG(this.getSVGForExport());
+                        Zotero.Chartero.showMessage('Image copied!', 'information');
+                    },
+                    text: 'Copy jpeg'
                 }
             },
             buttons: {
                 contextButton: {
-                    menuItems: ['viewFullscreen', 'printChart', 'downloadSVG']
+                    menuItems: ['viewFullscreen', 'printChart', 'downloadSVG', 'downloadJPEG']
                 }
             }
         },

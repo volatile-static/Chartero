@@ -592,6 +592,7 @@ Zotero.Chartero = new function () {
         }
     }
 
+    // 保存字符串形式的svg
     this.saveSVG = function (str) {
         const fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(
             Components.interfaces.nsIFilePicker
@@ -603,6 +604,11 @@ Zotero.Chartero = new function () {
                 event == Components.interfaces.nsIFilePicker.returnReplace)
                 Zotero.File.putContents(new FileUtils.File(fp.file.path + '.svg'), str);
         });
+    }
+
+    // 将字符串形式的svg复制为位图
+    this.copyJpeg = function (str) {
+        console.debug(window, this, str, document, URL);
     }
 
     this.dev = async function () {
