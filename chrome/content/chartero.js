@@ -171,14 +171,10 @@ Zotero.Chartero = new function () {
     async function refreshItemsProgress() {
         function renderProgress(primaryCell, history) {  // 渲染标题下的高能进度条
             // Use this function to create an element, otherwise the style will not take effect
-            let createElement = name => document.createElementNS("http://www.w3.org/1999/xhtml", name)
-            // render the read progress
-            primaryCell.style = `
-                position: relative;
-                box-sizing: border-box;
-            `
-            let progressNode = createElement("span")
-            progressNode.setAttribute("class", "zotero-style-progress")
+            const createElement = name =>
+                document.createElementNS("http://www.w3.org/1999/xhtml", name),
+                progressNode = createElement("span");
+            progressNode.setAttribute("class", "zotero-style-progress");
             // setting - opacity
             progressNode.style = `
                 position: absolute;
@@ -188,40 +184,42 @@ Zotero.Chartero = new function () {
                 height: 100%;
                 opacity: .7;
                 z-index: 1;
-            `
-            primaryCell.appendChild(progressNode)
+            `;
+            // render the read progress
+            primaryCell.style = `
+                position: relative;
+                box-sizing: border-box;
+            `;
+            primaryCell.appendChild(progressNode);
             // prevent occlusion
-            primaryCell.querySelector(".cell-text").style.zIndex = 2
+            primaryCell.querySelector(".cell-text").style.zIndex = 2;
+
             // analysis history data
-            const total = history.n, pageObj = history.p, pageTimeObj = {}
-            let maxSec = 0, s = 0, n = 0
-            for (let i of Object.keys(pageObj)) {
-                let _s = 0
-                Object.values(pageObj[i].t).forEach(t => _s += t)
-                pageTimeObj[parseInt(i)] = _s
-                maxSec = _s > maxSec ? _s : maxSec
-                s += _s
-                n += 1
+            const total = history.n, pageTimeObj = {};
+            let maxSec = 0;
+            for (const i in history.p) {
+                pageTimeObj[i] = history.p[i].getTotalSeconds();
+                maxSec = Math.max(maxSec, pageTimeObj[i]);
             }
-            // Zotero.debug(pageTimeObj)
-            const meanSec = s / n
-            maxSec = meanSec + (maxSec - meanSec) * .5
-            // setting - minSec
-            const minSec = 30, pct = 1 / total * 100
+            const meanSec = history.getTotalSeconds() / history.getRead(),
+                minSec = 30, pct = 100 / total;  // setting - minSec
+            maxSec = meanSec + (maxSec - meanSec) / 2;  // 最大不透明度75%
+
             for (let i = 0; i < total; i++) {
                 // pageSpan represent a page, color opacity represent the length of read time
-                let pageSpan = createElement("span"),
-                    alpha = (pageTimeObj[i] || 0) / (maxSec > minSec ? maxSec : minSec)
+                const pageSpan = createElement("span"),
+                    alpha = (pageTimeObj[i] || 0) / (maxSec > minSec ? maxSec : minSec);
                 // setting - background-color
                 pageSpan.style = `
                     width: ${pct}%;
                     height: 100%;
                     background-color: rgba(90, 193, 189, ${alpha < 1 ? alpha : 1});
                     display: inline-block;
-                `
+                `;
                 progressNode.appendChild(pageSpan);
             }
         }
+
         if (!showReadingProgress)
             return;
         this.readingHistory = await setReadingData();
@@ -245,14 +243,22 @@ Zotero.Chartero = new function () {
         }
     };
 
+    // 切换显示/隐藏阅读进度
     this.toggleProgressmeter = function () {
-        const tree = ZoteroPane.itemsView.tree._jsWindow.targetElement;
-        tree.onscroll = refreshItemsProgress;
-        showReadingProgress = !showReadingProgress;
+        showReadingProgress = !showReadingProgress;  // toggle flag
         $('#chartero-tool-menu-toggle-progress').attr(
             'label',
             showReadingProgress ? '隐藏高能进度条' : '显示高能进度条'
         );
+        const tree = ZoteroPane.itemsView.tree._jsWindow.targetElement;
+        if (showReadingProgress) {
+            tree.addEventListener('scroll', refreshItemsProgress);
+            refreshItemsProgress();
+        }
+        else {
+            tree.removeEventListener('scroll', refreshItemsProgress);
+            $('.zotero-style-progress').remove();
+        }
     }
 
     // 数据可视化
@@ -418,22 +424,10 @@ Zotero.Chartero = new function () {
         this.showMessage('清理了' + count + '条记录！', 'accept');
     }
 
-    this.viewItemInLib = function (itemID) {
-        Zotero_Tabs.select('zotero-pane');
-        ZoteroPane.selectItem(itemID);
-    }
+    this.viewItemInLib = itemID => ZoteroPane.selectItem(itemID);
 
-    this.viewDataTree = function () {
-        if (!noteItem) {
-            const noteKey = Zotero.Prefs.get("chartero.dataKey");
-            if (noteKey)   // 这里是真的没有还是没加载出来？
-                noteItem = Zotero.Items.getByLibraryAndKey(
-                    Zotero.Libraries.userLibraryID,  // 哪个libraries？
-                    noteKey
-                );
-            else
-                this.showMessage('History not found!');
-        }
+    this.viewDataTree = async function () {
+        await setReadingData();
         noteItem && this.viewItemInLib(noteItem.id);
     }
 
