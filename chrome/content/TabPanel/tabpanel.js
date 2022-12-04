@@ -12,6 +12,16 @@ async function getHis(parent) {  // 获取顶层条目的阅读总时长
     readingHistory.items[key].getTotalSeconds();
 }
 
+function setNotesSummary(ids) {
+  const notes = ids.map(i => Zotero.Items.get(i)),
+    text = notes.reduce(
+      (prev, curr) => prev += curr.getNote().replace(/<[^<>]+>/g, ''), 
+      ''),
+    len = text.replace(/\s/g, '').length;
+  $('#reading-notes').html(ids.length);
+  $('#reading-notes-size').html(len);
+}
+
 function setReadingProgress(his) {
   const p = his.getProgress(100, 2);
   $('.wave-change').animate({ top: 40 - p });
@@ -209,6 +219,7 @@ function handler(event) {
     history = readingHistory.items[item.key],
     title = (item.parentItem || item).getField('title');
   setReadingProgress(history);
+  setNotesSummary(item.parentItem.getNotes());
   plotPageTime(history, title);
   plotDateTime(history, title);
   plotNetwork(item.parentItem);

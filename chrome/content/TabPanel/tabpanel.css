@@ -120,7 +120,7 @@
     padding: 10px 10px 20px 0;
 }
 
-#reading-progress-lable {
+#reading-progress-lable, #reading-notes-lable {
     flex-direction: row;
     display: flex !important;
     justify-content: flex-start;
