@@ -506,7 +506,7 @@ function initCharts() {
 
 window.addEventListener('DOMContentLoaded', (event) => {
     if (event.target.URL.indexOf('index') > 0) {
-        const noteKey = Zotero.Prefs.get("chartero.dataKey");
+        const noteKey = Zotero.Prefs.get('chartero.dataKey');
         const noteItem = Zotero.Items.getByLibraryAndKey(1, noteKey);
         try {
             readingHistory.mergeJSON(JSON.parse(noteItem.getNote()));
@@ -522,3 +522,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
             history: readingHistory
         }, '*');
 });
+
+window.addEventListener('unload', () => {
+    Zotero.hideZoteroPaneOverlays();
+}, false);
