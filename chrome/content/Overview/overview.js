@@ -489,12 +489,12 @@ function initCharts() {
         },
         credits: { enabled: false }
     });
-    drawGantt();
-    // drawNetwork();
-    drawPieChart();
-    drawWordCloud();
     drawScheduleChart();
     drawBubbleChart();
+    drawWordCloud();
+    drawPieChart();
+    drawGantt();
+    // drawNetwork();
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {
