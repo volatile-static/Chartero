@@ -114,10 +114,14 @@
     margin: 0 0 0 2%;
     overflow-x: visible;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: start;
     align-items: baseline;
     display: flex !important;
     padding: 10px 10px 20px 0;
+}
+
+#reading-progress-info h3 {
+    margin: 0;
 }
 
 #reading-progress-lable, #reading-notes-lable {
@@ -127,6 +131,7 @@
     justify-self: left;
     align-items: baseline;
     padding: 0;
+    margin-top: 6px;
 }
 
 .reading-progress-item {
