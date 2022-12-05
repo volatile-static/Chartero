@@ -1,0 +1,56 @@
+{
+    "weekdays": [
+        "Sun.",
+        "Mon.",
+        "Tue.",
+        "Wed.",
+        "Thu.",
+        "Fri.",
+        "Sat."
+    ],
+    "copyPNG": "Copy PNG to clipboard",
+    "imageCopied": "Image has been copied to clipboard",
+    "seconds": "s",
+    "minutes": "min",
+    "hours": "h",
+    "date": "date",
+    "time": "time",
+    "readingProgressTip": "pages already read / pages in total",
+    "pagenum": "page number",
+    "unfiled": "unfiled",
+    "itemChartTitle": "items read",
+    "pdfAnnotation": "PDF annotation",
+    "itemTitle": "item title",
+    "readingProgress": "reading progress",
+    "chartTitle": {
+        "pie": "Percentage of total reading time",
+        "pieSub": "Click pies for details.",
+        "wordcloud": "Title word cloud",
+        "gantt": "Timeline",
+        "schedule": "Work & Rest patterns",
+        "dateTime": "reading time per day",
+        "pageTime": "reading time per page",
+        "network": "research network",
+        "networkSub": "Ctrl+Left Click to jump"
+    },
+
+    "noHistoryFound": "No history found!",
+    "jsonParseError": "JSON data format error!",
+    "readingProgressmeter": {
+        "hide": "hide reading progressmeter",
+        "show": "show reading progressmeter"
+    },
+    "loadingImages": "Loading more images...",
+    "imagesLoaded": "Images loaded!",
+    "dashboard": "dashboard",
+    "historySaved": "History saved!",
+    "drawInProgress": "Draw in progress……",
+    "svg": "svg",
+
+    "collapse": "Collapse all",
+    "copy": "Copy to clipboard",
+    "delete": "delete invalid data",
+    "import": "import JSON",
+    "period": "Scan period:",
+    "details": "Select a node for details."
+}
