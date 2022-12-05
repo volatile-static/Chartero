@@ -37,8 +37,8 @@
     "noHistoryFound": "履歴が見つかりません!",
     "jsonParseError": "データフォーマットエラー！",
     "readingProgressmeter": {
-        "hide": "プログレスバーを隠す",
-        "show": "プログレスバーを表示"
+        "hide": "ヒートバーを隠す",
+        "show": "ヒートバーを表示"
     },
     "loadingImages": "さらに画像を読み込んでいます...",
     "imagesLoaded": "画像がロードされました！",

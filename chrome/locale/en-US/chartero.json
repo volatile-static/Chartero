@@ -21,34 +21,34 @@
     "itemChartTitle": "items read",
     "pdfAnnotation": "PDF annotation",
     "itemTitle": "item title",
-    "readingProgress": "reading progress",
+    "readingProgress": "Reading Progress",
     "chartTitle": {
         "pie": "Percentage of total reading time",
         "pieSub": "Click pies for details.",
         "wordcloud": "Title word cloud",
         "gantt": "Timeline",
         "schedule": "Work & Rest patterns",
-        "dateTime": "reading time per day",
-        "pageTime": "reading time per page",
-        "network": "research network",
+        "dateTime": "Reading Time per Day",
+        "pageTime": "Reading Time per Page",
+        "network": "Research Network",
         "networkSub": "Ctrl+Left Click to jump"
     },
 
     "noHistoryFound": "No history found!",
     "jsonParseError": "JSON data format error!",
     "readingProgressmeter": {
-        "hide": "hide reading progressmeter",
-        "show": "show reading progressmeter"
+        "hide": "hide reading heat bar",
+        "show": "show reading heat bar"
     },
     "loadingImages": "Loading more images...",
     "imagesLoaded": "Images loaded!",
     "dashboard": "dashboard",
     "historySaved": "History saved!",
-    "drawInProgress": "Draw in progress……",
+    "drawInProgress": "Progressing……",
     "svg": "svg",
 
-    "collapse": "Collapse all",
-    "copy": "Copy to clipboard",
+    "collapse": "collapse all",
+    "copy": "copy to clipboard",
     "delete": "delete invalid data",
     "import": "import JSON",
     "period": "Scan period:",
