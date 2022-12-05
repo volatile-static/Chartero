@@ -1,4 +1,4 @@
-const localeStr = require('chrome://chartero/locale/tabpanel.json');
+const localeStr = require('chrome://chartero/locale/chartero.json');
 var chartPageTime, chartDateTime, chartNetwork, readingHistory = new HistoryLibrary();
 
 async function getHis(parent) {  // 获取顶层条目的阅读总时长
@@ -113,7 +113,7 @@ async function plotNetwork(item) {
 
   chartNetwork.addSeries({
     type: 'networkgraph',
-    name: '关联文献',
+    name: localeStr.chartTitle.network,
     // showInLegend: true,
     point: {
       events: {
@@ -142,6 +142,9 @@ async function plotNetwork(item) {
 }
 
 function initCharts() {
+  Highcharts.setOptions(
+    require('chrome://chartero/content/highcharts/zh_CN.json')
+  );
   Highcharts.setOptions({
     chart: { style: { fontFamily: "" } },
     credits: { enabled: false },
@@ -155,9 +158,9 @@ function initCharts() {
         downloadJPEG: {
           onclick: function () {
             copySVG2JPG(this.getSVGForExport());
-            Zotero.Chartero.showMessage('Image copied!', 'information');
+            Zotero.Chartero.showMessage(localeStr.imageCopied, 'information');
           },
-          text: 'Copy jpeg'
+          text: localeStr.copyPNG
         }
       },
       buttons: { 
@@ -177,7 +180,7 @@ function initCharts() {
     },
     legend: { enabled: false },
     title: { text: undefined },  // 标题
-    xAxis: { title: { text: localeStr['pagenum'] } },
+    xAxis: { title: { text: localeStr.pagenum } },
     yAxis: {
       labels: {
         formatter: function () {
@@ -207,7 +210,7 @@ function initCharts() {
 
   chartNetwork = Highcharts.chart('network-chart', {
     title: { text: undefined },
-    subtitle: { text: 'Ctrl+单击 跳转' },
+    subtitle: { text: localeStr.networkSub },
     plotOptions: {
       series: { shadow: true },
       networkgraph: {
@@ -233,9 +236,10 @@ function handler(event) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  $('#page-time-title').text(localeStr.pageTimeTitle);
-  $('#date-time-title').text(localeStr.dateTimeTitle);
-  $('#network-title').text(localeStr.networkTitle);
+  $('#page-time-title').text(localeStr.chartTitle.pageTime);
+  $('#date-time-title').text(localeStr.chartTitle.dateTime);
+  $('#network-title').text(localeStr.chartTitle.network);
+  $('#reading-progress-title').text(localeStr.readingProgress);
 
   $('#accordion').accordion({
     heightStyle: "content",

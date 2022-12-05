@@ -1,6 +1,4 @@
-const localeStr = require('chrome://chartero/locale/datatree.json');
-
-var rawJson = "{}";
+const localeStr = require('chrome://chartero/locale/chartero.json');
 var readingHistory;
 
 function onSelect(event, data) {
@@ -90,7 +88,6 @@ function genTreeView() {
 }
 
 function handler(event) {
-    rawJson = event.data;
     const obj = JSON.parse(event.data);
     if (!obj)
         return;

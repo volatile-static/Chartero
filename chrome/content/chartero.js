@@ -1,4 +1,5 @@
 Zotero.Chartero = new function () {
+    const localeStr = require('chrome://chartero/locale/chartero.json');
     this.readingHistory = false;  // 统计数据
     var showReadingProgress = false;  // 是否在条目标题下显示高能进度条
     var scanPeriod, savePeriod;  // 定时器时间间隔
@@ -42,7 +43,7 @@ Zotero.Chartero = new function () {
                     noteKey
                 );
             else {  // 新建条目
-                Zotero.Chartero.showMessage('No history found!', 'exclamation');
+                Zotero.Chartero.showMessage(localeStr.noHistoryFound, 'exclamation');
                 noteItem = new Zotero.Item('note');
                 let item = new Zotero.Item('computerProgram');
 
@@ -75,7 +76,7 @@ Zotero.Chartero = new function () {
         } catch (error) {
             if (error instanceof SyntaxError)
                 history = {};
-            this.showMessage('数据格式错误！');
+            this.showMessage(localeStr.jsonParseError);
         } finally {
             this.readingHistory.mergeJSON(history);
             return this.readingHistory;
@@ -226,7 +227,8 @@ Zotero.Chartero = new function () {
         // ZoteroPane.itemsView.collapseAllRows();  // 附件上不显示
 
         for (let i = 0; i < ZoteroPane.itemsView.rowCount; ++i) {
-            const primaryCell = document.querySelector(`#item-tree-main-default-row-${i} .primary`);
+            const primaryCell =
+                document.querySelector(`#item-tree-main-default-row-${i} .primary`);
             if (!primaryCell || primaryCell.querySelector(".zotero-style-progress"))
                 continue;  // 这里如果文献很多，有滚动条的，primaryCell可能是null
 
@@ -248,7 +250,9 @@ Zotero.Chartero = new function () {
         showReadingProgress = !showReadingProgress;  // toggle flag
         $('#chartero-tool-menu-toggle-progress').attr(
             'label',
-            showReadingProgress ? '隐藏高能进度条' : '显示高能进度条'
+            showReadingProgress ?
+                localeStr.readingProgressmeter.hide :
+                localeStr.readingProgressmeter.show
         );
         const tree = ZoteroPane.itemsView.tree._jsWindow.targetElement;
         if (showReadingProgress) {
@@ -334,13 +338,13 @@ Zotero.Chartero = new function () {
             popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
             let prog = new popMsg.ItemProgress(
                 'chrome://chartero/skin/accept.png',
-                'Loading more images...'
+                localeStr.loadingImages
             );
             popMsg.show();
             return function (percentage, page) {
                 if (percentage >= 100) {
                     prog.setProgress(100);
-                    prog.setText('Images loaded!');
+                    prog.setText(localeStr.imagesLoaded);
                     popMsg.startCloseTimer(2333);
                 } else {
                     prog.setProgress(percentage);
@@ -366,7 +370,7 @@ Zotero.Chartero = new function () {
             panel = document.createElement('tabpanel'),
             iframe = document.createElement('iframe');
 
-        tab.setAttribute('label', '仪表盘');
+        tab.setAttribute('label', localeStr.dashboard);
         iframe.src = 'chrome://chartero/content/TabPanel/index.html';
         iframe.id = 'chartero-real-time-dashboard-' + id;
         iframe.setAttribute('flex', '1');
@@ -450,14 +454,14 @@ Zotero.Chartero = new function () {
             } catch (error) {
                 Zotero.debug(error);
                 if (error instanceof SyntaxError)
-                    Zotero.Chartero.showMessage('Invalid JSON!');  // why not this.?
+                    Zotero.Chartero.showMessage(localeStr.jsonParseError);  // why not this.?
                 else if (typeof error === 'string')
                     Zotero.Chartero.showMessage(error);
                 return;
             }
             noteItem.setNote(JSON.stringify(this.readingHistory));
             noteItem.saveTx();
-            Zotero.Chartero.showMessage('History saved!', 'information');
+            Zotero.Chartero.showMessage(localeStr.historySaved, 'information');
         }
     }
 
@@ -534,10 +538,10 @@ Zotero.Chartero = new function () {
     this.newTab = async function () {
         await setReadingData();
         if (!noteItem) {
-            Zotero.Chartero.showMessage('No history found!');
+            Zotero.Chartero.showMessage(localeStr.noHistoryFound);
             return;
         }
-        Zotero.showZoteroPaneProgressMeter('努力画图中……');
+        Zotero.showZoteroPaneProgressMeter(localeStr.drawInProgress);
         let { id, container } = Zotero_Tabs.add({
             type: "library",
             title: "Chartero",
@@ -598,7 +602,7 @@ Zotero.Chartero = new function () {
             Components.interfaces.nsIFilePicker
         );
         fp.init(window, 'Chartero', Components.interfaces.nsIFilePicker.modeSave);
-        fp.appendFilter('矢量图', '*.svg');
+        fp.appendFilter(localeStr.svg, '*.svg');
         fp.open(event => {
             if (event == Components.interfaces.nsIFilePicker.returnOK ||
                 event == Components.interfaces.nsIFilePicker.returnReplace)

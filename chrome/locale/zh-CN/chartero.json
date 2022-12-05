@@ -1,0 +1,56 @@
+{
+    "weekdays": [
+        "周日",
+        "周一",
+        "周二",
+        "周三",
+        "周四",
+        "周五",
+        "周六"
+    ],
+    "copyPNG": "复制图表",
+    "imageCopied": "图片已复制到剪贴板",
+    "seconds": "秒",
+    "minutes": "分",
+    "hours": "小时",
+    "date": "日期",
+    "time": "时长",
+    "readingProgressTip": "浏览过的页面与总页数之比",
+    "pagenum": "页码",
+    "unfiled": "未分类",
+    "itemChartTitle": "读过的条目",
+    "pdfAnnotation": "PDF注释",
+    "itemTitle": "条目标题",
+    "readingProgress": "阅读进度",
+    "chartTitle": {
+        "pie": "总阅读时长占比",
+        "pieSub": "Click pies for details.",
+        "wordcloud": "标题词云图",
+        "gantt": "时间线",
+        "schedule": "作息规律统计",
+        "dateTime": "每日阅读时长",
+        "pageTime": "每页阅读时长",
+        "network": "关联文献网",
+        "networkSub": "Ctrl+单击 跳转"
+    },
+
+    "noHistoryFound": "No history found!",
+    "jsonParseError": "数据格式错误！",
+    "readingProgressmeter": {
+        "hide": "隐藏高能进度条",
+        "show": "显示高能进度条"
+    },
+    "loadingImages": "Loading more images...",
+    "imagesLoaded": "Images loaded!",
+    "dashboard": "仪表盘",
+    "historySaved": "History saved!",
+    "drawInProgress": "努力画图中……",
+    "svg": "矢量图",
+
+    "collapse": "全部折叠",
+    "copy": "复制到剪贴板",
+    "delete": "删除无效记录",
+    "import": "从JSON导入",
+    "period": "扫描间隔:",
+    "details": "Select a node for details."
+}

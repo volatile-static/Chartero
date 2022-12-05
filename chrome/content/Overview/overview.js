@@ -1,4 +1,4 @@
-const localeStr = require('chrome://chartero/locale/overview.json');
+const localeStr = require('chrome://chartero/locale/chartero.json');
 const readingHistory = new HistoryLibrary();
 const collections = Zotero.Collections.getByLibrary(readingHistory.lib, true);
 
@@ -238,8 +238,8 @@ async function drawPieChart() {
             type: 'variablepie',
             animation: { easing: undefined }
         },
-        title: { text: '总阅读时长占比' },
-        subtitle: { text: 'Click pies for details.' },
+        title: { text: localeStr.chartTitle.pie },
+        subtitle: { text: localeStr.chartTitle.pieSub },
         plotOptions: {
             pie: { allowPointSelect: true },
             variablepie: { allowPointSelect: true }
@@ -302,7 +302,7 @@ async function drawWordCloud() {
             data: data.filter(i => i.weight > 0)
         }, s1 = {
             type: 'wordcloud',
-            name: 'Annotation',
+            name: localeStr.pdfAnnotation,
             showInLegend: true,
             visible: false,
             maxFontSize: 26,
@@ -310,7 +310,7 @@ async function drawWordCloud() {
             data: getData(allAnnotationText)
         }, s2 = {
             type: 'wordcloud',
-            name: 'Title',
+            name: localeStr.itemTitle,
             showInLegend: true,
             // visible: false,
             maxFontSize: 26,
@@ -319,7 +319,7 @@ async function drawWordCloud() {
         };
     Highcharts.chart('wordcloud-chart', {
         series: [s2, s1],
-        title: { text: '标题词云图' }
+        title: { text: localeStr.chartTitle.wordcloud }
     }, chart => {
         $('#wordcloud-chart').mouseenter(() => {
             chart.series[1].remove(false);
@@ -338,11 +338,9 @@ async function drawWordCloud() {
 }
 
 function drawScheduleChart() {
-    const hourData = new Array(24), hourCategories = new Array();
-    const weekData = new Array(7),
-        weekCategories = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-    for (let i = 0; i < 23; ++i)
-        hourCategories.push(i);
+    const hourData = new Array(24),
+        hourCategories = new Array(24).map((val, idx) => val = idx),
+        weekData = new Array(7);
 
     forEachItem(item => {
         let his = getItemHistory(item.key);
@@ -358,13 +356,13 @@ function drawScheduleChart() {
     const weekS = { name: 'week', data: weekData, type: 'column' },
         hourS = { name: 'hour', data: hourData, type: 'line', xAxis: 1 };
     Highcharts.chart('schedule-chart', {
-        title: { text: '作息规律统计' },
+        title: { text: localeStr.chartTitle.schedule },
         xAxis: [
-            { opposite: true, categories: weekCategories, crosshair: true },
+            { opposite: true, categories: localeStr.weekdays, crosshair: true },
             { opposite: false, categories: hourCategories }
         ],
         yAxis: {
-            title: { text: 'seconds' }
+            title: { text: localeStr.seconds }
         },
         tooltip: { valueSuffix: ' s' },
         plotOptions: {
@@ -392,7 +390,7 @@ function drawGantt() {
 
     const s = { name: Zotero.Libraries._cache[readingHistory.lib].name, data };
     Highcharts.ganttChart('gantt-chart', {
-        title: { text: '时间线' },
+        title: { text: localeStr.chartTitle.gantt },
         navigator: {
             enabled: true,
             liveRedraw: true,
@@ -402,26 +400,7 @@ function drawGantt() {
             }
         },
         yAxis: { labels: { overflow: 'allow' } },
-        rangeSelector: {
-            enabled: true,
-            buttons: [{
-                type: 'month',
-                count: 1,
-                text: localeStr['month'],
-                title: 'View 1 month'
-            }, {
-                type: 'week',
-                count: 1,
-                text: localeStr['week'],
-                title: 'View 1 week'
-            }, {
-                type: 'year',
-                count: 1,
-                text: localeStr['year'],
-                title: 'View 1 year'
-            }],
-            selected: 0
-        },
+        rangeSelector: { enabled: true },
         plotOptions: { series: { minPointLength: 5 } },
         series: [s]
     }, chart => $('#gantt-chart').mouseenter(() => {
@@ -431,12 +410,10 @@ function drawGantt() {
 }
 
 function initCharts() {
-    if (Zotero.locale == 'zh-CN') {  // 添加汉化代码
-        const chinese = document.createElement('script');
-        chinese.src = 'chrome://chartero/content/highcharts/zh_CN.js';
-        document.head.appendChild(chinese);
-    }
     var numCharts = 0;
+    Highcharts.setOptions(
+        require('chrome://chartero/content/highcharts/zh_CN.json')
+    );  // 添加汉化代码
     Highcharts.setOptions({
         time: {
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -466,8 +443,6 @@ function initCharts() {
                             return;
                         else if (++numCharts == 16)  // 添加图表记得改！
                             Zotero.hideZoteroPaneOverlays();
-                        // else
-                        //     Zotero.updateZoteroPaneProgressMeter(numCharts * 20);
                     }
                 },
                 shadow: true
@@ -483,9 +458,9 @@ function initCharts() {
                 downloadJPEG: {
                     onclick: function () {
                         copySVG2JPG(this.getSVGForExport());
-                        Zotero.Chartero.showMessage('Image copied!', 'information');
+                        Zotero.Chartero.showMessage(localeStr.imageCopied, 'information');
                     },
-                    text: 'Copy jpeg'
+                    text: localeStr.copyPNG
                 }
             },
             buttons: {
