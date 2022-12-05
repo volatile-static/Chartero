@@ -411,9 +411,10 @@ function drawGantt() {
 
 function initCharts() {
     var numCharts = 0;
-    Highcharts.setOptions(
-        require('chrome://chartero/content/highcharts/zh_CN.json')
-    );  // 添加汉化代码
+    if (Zotero.locale == 'zh-CN' || Zotero.locale == 'ja-JP')
+        Highcharts.setOptions(
+            require('chrome://chartero/content/highcharts/zh_CN.json')
+        );  // 添加汉化代码
     Highcharts.setOptions({
         time: {
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -439,9 +440,9 @@ function initCharts() {
             series: {
                 events: {
                     afterAnimate: function () {
-                        if (numCharts > 16)
+                        if (numCharts > 6)
                             return;
-                        else if (++numCharts == 16)  // 添加图表记得改！
+                        else if (++numCharts == 6)  // 添加图表记得改！
                             Zotero.hideZoteroPaneOverlays();
                     }
                 },

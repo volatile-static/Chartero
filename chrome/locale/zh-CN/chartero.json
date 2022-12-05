@@ -24,7 +24,7 @@
     "readingProgress": "阅读进度",
     "chartTitle": {
         "pie": "总阅读时长占比",
-        "pieSub": "Click pies for details.",
+        "pieSub": "点击扇形了解更多",
         "wordcloud": "标题词云图",
         "gantt": "时间线",
         "schedule": "作息规律统计",
@@ -34,16 +34,16 @@
         "networkSub": "Ctrl+单击 跳转"
     },
 
-    "noHistoryFound": "No history found!",
+    "noHistoryFound": "没有历史记录！",
     "jsonParseError": "数据格式错误！",
     "readingProgressmeter": {
         "hide": "隐藏高能进度条",
         "show": "显示高能进度条"
     },
-    "loadingImages": "Loading more images...",
-    "imagesLoaded": "Images loaded!",
+    "loadingImages": "加载更多…",
+    "imagesLoaded": "图片加载完成！",
     "dashboard": "仪表盘",
-    "historySaved": "History saved!",
+    "historySaved": "记录保存成功！",
     "drawInProgress": "努力画图中……",
     "svg": "矢量图",
 
@@ -52,5 +52,5 @@
     "delete": "删除无效记录",
     "import": "从JSON导入",
     "period": "扫描间隔:",
-    "details": "Select a node for details."
+    "details": "单击结点显示详情"
 }

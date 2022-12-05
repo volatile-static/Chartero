@@ -15,7 +15,7 @@ async function getHis(parent) {  // 获取顶层条目的阅读总时长
 function setNotesSummary(ids) {
   const notes = ids.map(i => Zotero.Items.get(i)),
     text = notes.reduce(
-      (prev, curr) => prev += curr.getNote().replace(/<[^<>]+>/g, ''), 
+      (prev, curr) => prev += curr.getNote().replace(/<[^<>]+>/g, ''),
       ''),
     len = text.replace(/\s/g, '').length;
   $('#reading-notes').html(ids.length);
@@ -142,9 +142,10 @@ async function plotNetwork(item) {
 }
 
 function initCharts() {
-  Highcharts.setOptions(
-    require('chrome://chartero/content/highcharts/zh_CN.json')
-  );
+  if (Zotero.locale == 'zh-CN' || Zotero.locale == 'ja-JP')
+    Highcharts.setOptions(
+      require('chrome://chartero/content/highcharts/zh_CN.json')
+    );
   Highcharts.setOptions({
     chart: { style: { fontFamily: "" } },
     credits: { enabled: false },
@@ -163,7 +164,7 @@ function initCharts() {
           text: localeStr.copyPNG
         }
       },
-      buttons: { 
+      buttons: {
         contextButton: { menuItems: ['viewFullscreen', 'downloadSVG', 'downloadJPEG'] }
       }
     }
