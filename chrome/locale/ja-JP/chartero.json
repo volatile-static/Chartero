@@ -1,0 +1,56 @@
+{
+    "weekdays": [
+        "日曜日",
+        "月曜日",
+        "火曜日",
+        "水曜日",
+        "木曜日",
+        "金曜日",
+        "土曜日"
+    ],
+    "copyPNG": "クリップボードにコピー",
+    "imageCopied": "PNGをコピーした",
+    "seconds": "秒",
+    "minutes": "分",
+    "hours": "時間",
+    "date": "日付",
+    "time": "時刻",
+    "readingProgressTip": "閲覧ページ数/総ページ数",
+    "pagenum": "ページ",
+    "unfiled": "未分類",
+    "itemChartTitle": "読んだアイテム",
+    "pdfAnnotation": "PDF注釈",
+    "itemTitle": "アイテムタイトル",
+    "readingProgress": "読み進捗状況",
+    "chartTitle": {
+        "pie": "総読み時間に対する割合",
+        "pieSub": "詳しくはパイをクリック。",
+        "wordcloud": "タイトルワードクラウド",
+        "gantt": "タイムライン",
+        "schedule": "スケジュール統計",
+        "dateTime": "毎日の読み時間",
+        "pageTime": "毎ページの読み時間",
+        "network": "文献関連ネットワーク",
+        "networkSub": "Ctrl+クリック ジャンプ"
+    },
+
+    "noHistoryFound": "履歴が見つかりません!",
+    "jsonParseError": "データフォーマットエラー！",
+    "readingProgressmeter": {
+        "hide": "プログレスバーを隠す",
+        "show": "プログレスバーを表示"
+    },
+    "loadingImages": "さらに画像を読み込んでいます...",
+    "imagesLoaded": "画像がロードされました！",
+    "dashboard": "ダッシュボード",
+    "historySaved": "履歴が保存されました！",
+    "drawInProgress": "画像を描こうとしている…",
+    "svg": "ベクトル イラスト",
+
+    "collapse": "すべて折りたたむ",
+    "copy": "クリップボードにコピー",
+    "delete": "無効な記録を削除",
+    "import": "JSONからインポートする",
+    "period": "スキャン間隔:",
+    "details": "ノードを選択すると詳細が表示されます。"
+}
