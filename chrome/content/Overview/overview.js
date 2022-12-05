@@ -276,7 +276,7 @@ async function drawWordCloud() {
     const getData = text => text.reduce((dat, txt) => {
         if (!txt)
             return dat;
-        txt.split(/[^a-z]/g).filter(w => w.length > 3).forEach(word => {
+        txt.split(/\W/g).filter(w => w.length > 3).forEach(word => {
             const obj = dat.find(i => i.name === word);
             if (obj)
                 ++obj.weight;
