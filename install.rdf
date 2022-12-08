@@ -6,7 +6,7 @@
     <!-- 指出扩展的ID。该ID应该是一个Email格式的字符串，或者是一个GUID。注意，使用Email的作用是保证该ID的唯一性，并不要求这个Email地址是有效的。必填。 -->
     <em:id>chartero@volatile.static</em:id>
     <!-- 指出插件的版本号。必填。 -->
-    <em:version>1.3.1</em:version>
+    <em:version>1.3.2</em:version>
 
     <!-- 扩展的元数据。 --> 
     <em:iconURL>chrome://chartero/skin/icon.png</em:iconURL>
