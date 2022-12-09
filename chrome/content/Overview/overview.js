@@ -399,6 +399,49 @@ function drawGantt() {
                 max: Object.keys(readingHistory.items).length
             }
         },
+        exporting: {
+            menuItemDefinitions: {
+                startAscending: {
+                    text: localeStr.ganttMenu.startAscending
+                },
+                startDescending: {
+                    text: localeStr.ganttMenu.startDescending
+                },
+                endAscending: {
+                    text: localeStr.ganttMenu.endAscending
+                },
+                endDescending: {
+                    text: localeStr.ganttMenu.endDescending
+                },
+                incomplete: {
+                    text: localeStr.ganttMenu.incomplete
+                },
+                completed: {
+                    text: localeStr.ganttMenu.completed
+                },
+                month: {
+                    text: localeStr.ganttMenu.month
+                },
+                week: {
+                    text: localeStr.ganttMenu.week
+                },
+                day: {
+                    text: localeStr.ganttMenu.day
+                }
+            },
+            buttons: {
+                sortButton: {
+                    symbol: 'menu',
+                    text: localeStr.sort,
+                    menuItems: ['startAscending', 'startDescending', 'endAscending', 'endDescending']
+                },
+                filterButton: {
+                    symbol: 'menu',
+                    text: localeStr.filter,
+                    menuItems: ['incomplete', 'completed', 'month', 'week', 'day']
+                },
+            }
+        },
         yAxis: { labels: { overflow: 'allow' } },
         rangeSelector: { enabled: true },
         plotOptions: { series: { minPointLength: 5 } },
