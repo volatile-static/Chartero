@@ -53,7 +53,9 @@
 - 不兼容的记录格式:
     1. https://gitee.com/const_volatile/chartero/issues/I5Z8CE
     2. https://github.com/volatile-static/Chartero/issues/20
-- [不小心删除记录文件](https://gitee.com/const_volatile/chartero/issues/I5WNBI)
+- 不小心删除记录文件:
+    1. https://gitee.com/const_volatile/chartero/issues/I5WNBI
+    2. https://www.bilibili.com/video/BV1r8411G7ot
 - [Zotero本地配置](https://www.zotero.org/support/kb/profile_directory)
 - [记录丢失](https://github.com/volatile-static/Chartero/issues/20#issuecomment-1304697609)
 ## 参与贡献
