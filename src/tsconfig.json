@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "./",
+    "typing",
+    "../node_modules/zotero-types"
+  ],
+  "exclude": [
+    "../builds",
+    "../addon"
+  ]
+}

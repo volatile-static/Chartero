@@ -1,0 +1,41 @@
+{
+  "name": "chartero",
+  "addonName": "Chartero",
+  "addonID": "chartero@volatile.static",
+  "addonRef": "Chartero",
+  "version": "2.0.0",
+  "description": "一个好看的Zotero插件",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "node ./template/build.js",
+    "start": "node ./template/start.js",
+    "stop": "node ./template/stop.js",
+    "prerestart": "npm run build",
+    "restart": "node ./template/restart.js",
+    "release": "release-it",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitee.com/const_volatile/chartero.git"
+  },
+  "author": "volatile static",
+  "license": "AGPL-2.0-or-later",
+  "bugs": {
+    "url": "https://gitee.com/const_volatile/chartero/issues"
+  },
+  "homepage": "https://gitee.com/const_volatile/chartero",
+  "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
+  "updaterdf": "https://raw.githubusercontent.com/volatile-static/Chartero/master/update.json",
+  "dependencies": {
+    "compressing": "^1.5.1",
+    "esbuild": "^0.15.16",
+    "highcharts": "^10.3.2",
+    "replace-in-file": "^6.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.20",
+    "release-it": "^15.5.1",
+    "zotero-types": "^0.1.0"
+  }
+}
