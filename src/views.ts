@@ -1,10 +1,10 @@
 import Addon from "./addon";
 import AddonModule from "./module";
-const { addonRef } = require("../package.json");
+import { addonRef } from "../package.json";
 
 class AddonViews extends AddonModule {
   // You can store some element in the object attributes
-  private progressWindowIcon: object;
+  private progressWindowIcon: anyObj;
 
   constructor(parent: Addon) {
     super(parent);
@@ -15,55 +15,22 @@ class AddonViews extends AddonModule {
     };
   }
 
-  public initViews() {
-    // You can init the UI elements that
-    // cannot be initialized with overlay.xul
-    this._Addon.Utils.Tool.log("Initializing UI");
-    const menuIcon = "chrome://chartero/content/icons/icon32.png";
-    // item menuitem with icon
-    this._Addon.Utils.UI.insertMenuItem("item", {
-      tag: "menuitem",
-      id: "zotero-itemmenu-addontemplate-test",
-      label: "chartero: Menuitem",
-      oncommand: "alert('Hello World! Default Menuitem.')",
-      icon: menuIcon,
-    });
-    // item menupopup with sub-menuitems
-    this._Addon.Utils.UI.insertMenuItem(
-      "item",
-      {
-        tag: "menu",
-        label: "Addon Template: Menupopup",
-        subElementOptions: [
-          {
-            tag: "menuitem",
-            label: "Addon Template",
-            oncommand: "alert('Hello World! Sub Menuitem.')",
-          },
-        ],
-      },
-      "before",
-      this._Addon.Zotero.getMainWindow().document.querySelector(
-        "#zotero-itemmenu-addontemplate-test"
-      )
-    );
-    this._Addon.Utils.UI.insertMenuItem("menuFile", {
-      tag: "menuseparator",
-    });
-    // menu->File menuitem
-    this._Addon.Utils.UI.insertMenuItem("menuFile", {
-      tag: "menuitem",
-      label: "Addon Template: File Menuitem",
-      oncommand: "alert('Hello World! File Menuitem.')",
-    });
+  initViews() {
+    // register style sheet
+    const styles = this._Addon.toolkit.UI.createElement(document, 'link', 'html') as HTMLLinkElement;
+    styles.type = 'text/css';
+    styles.rel = 'stylesheet';
+    styles.href = 'chrome://chartero/content/zoteroPane.css';
+    document.documentElement.appendChild(styles);
+    
   }
 
-  public unInitViews() {
-    this._Addon.Utils.Tool.log("Uninitializing UI");
-    this._Addon.Utils.UI.removeAddonElements();
+  unInitViews() {
+    this._Addon.toolkit.Tool.log("Uninstalling Chartero...");
+    this._Addon.toolkit.UI.removeAddonElements();
   }
 
-  public showProgressWindow(
+  showProgressWindow(
     header: string,
     context: string,
     type: string = "default",

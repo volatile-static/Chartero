@@ -7,10 +7,11 @@
   "description": "一个好看的Zotero插件",
   "main": "src/index.js",
   "scripts": {
-    "build": "node ./template/build.js",
+    "build-dev": "cross-env NODE_ENV=development node ./template/build.js",
+    "build": "cross-env NODE_ENV=production node ./template/build.js",
     "start": "node ./template/start.js",
     "stop": "node ./template/stop.js",
-    "prerestart": "npm run build",
+    "prerestart": "npm run build-dev",
     "restart": "node ./template/restart.js",
     "release": "release-it",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -28,14 +29,16 @@
   "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
   "updaterdf": "https://raw.githubusercontent.com/volatile-static/Chartero/master/update.json",
   "dependencies": {
-    "compressing": "^1.5.1",
-    "esbuild": "^0.15.16",
+    "compressing": "^1.6.3",
+    "esbuild": "^0.15.18",
     "highcharts": "^10.3.2",
-    "replace-in-file": "^6.3.2"
+    "replace-in-file": "^6.3.5",
+    "zotero-plugin-toolkit": "^0.0.12"
   },
   "devDependencies": {
-    "@types/node": "^18.7.20",
-    "release-it": "^15.5.1",
-    "zotero-types": "^0.1.0"
+    "@types/node": "^18.11.18",
+    "cross-env": "^7.0.3",
+    "release-it": "^15.6.0",
+    "zotero-types": "^0.1.2"
   }
 }

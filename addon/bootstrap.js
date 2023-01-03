@@ -59,10 +59,22 @@ async function waitForZotero() {
   await Zotero.initializationPromise;
 }
 
-function install(data, reason) {}
+function install(data, reason) { }
 
 async function startup({ id, version, resourceURI, rootURI }, reason) {
   await waitForZotero();
+
+  if (Zotero.platformMajorVersion >= 102) {
+    var aomStartup = Components.classes[
+      "@mozilla.org/addons/addon-manager-startup;1"
+    ].getService(Components.interfaces.amIAddonManagerStartup);
+    var manifestURI = Services.io.newURI(rootURI + "manifest.json");
+    chromeHandle = aomStartup.registerChrome(manifestURI, [
+      ["locale", "__addonRef__", "en-US", rootURI + "chrome/locale/en-US/"],
+      ["locale", "__addonRef__", "zh-CN", rootURI + "chrome/locale/zh-CN/"],
+      ["content", "__addonRef__", rootURI + "chrome/content/"]
+    ]);
+  }
 
   // String 'rootURI' introduced in Zotero 7
   if (!rootURI) {
@@ -80,21 +92,9 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
   };
 
   Services.scriptloader.loadSubScript(
-    `${rootURI}/chrome/content/scripts/index.js`,
+    `${rootURI}/chrome/content/scripts/Chartero.js`,
     ctx
   );
-
-  if (Zotero.platformMajorVersion >= 102) {
-    var aomStartup = Components.classes[
-      "@mozilla.org/addons/addon-manager-startup;1"
-    ].getService(Components.interfaces.amIAddonManagerStartup);
-    var manifestURI = Services.io.newURI(rootURI + "manifest.json");
-    chromeHandle = aomStartup.registerChrome(manifestURI, [
-      ["content", "__addonRef__", rootURI + "chrome/content/"],
-      ["locale", "__addonRef__", "en-US", rootURI + "chrome/locale/en-US/"],
-      ["locale", "__addonRef__", "zh-CN", rootURI + "chrome/locale/zh-CN/"],
-    ]);
-  }
 }
 
 function shutdown({ id, version, resourceURI, rootURI }, reason) {
@@ -112,7 +112,7 @@ function shutdown({ id, version, resourceURI, rootURI }, reason) {
     .getService(Components.interfaces.nsIStringBundleService)
     .flushBundles();
 
-  Cu.unload(`${rootURI}/chrome/content/scripts/index.js`);
+  Cu.unload(`${rootURI}/chrome/content/scripts/Chartero.js`);
 
   if (chromeHandle) {
     chromeHandle.destruct();
@@ -120,4 +120,4 @@ function shutdown({ id, version, resourceURI, rootURI }, reason) {
   }
 }
 
-function uninstall(data, reason) {}
+function uninstall(data, reason) { }

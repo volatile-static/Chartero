@@ -89,7 +89,9 @@ async function main() {
   const buildDir = "builds";
 
   console.log(
-    `[Build] BUILD_DIR=${buildDir}, VERSION=${version}, BUILD_TIME=${buildTime}`
+    `[Build] BUILD_DIR=${buildDir}, VERSION=${version}, BUILD_TIME=${buildTime}, ENV=${[
+      process.env.NODE_ENV,
+    ]}`
   );
 
   clearFolder(buildDir);
@@ -102,9 +104,12 @@ async function main() {
   await esbuild
     .build({
       entryPoints: [path.join(buildDir, "../src/index.ts")],
+      define: {
+        __env__: process.env.NODE_ENV,
+      },
       bundle: true,
       // Entry should be the same as addon/chrome/content/overlay.xul
-      outfile: path.join(buildDir, "addon/chrome/content/scripts/index.js"),
+      outfile: path.join(buildDir, "addon/chrome/content/scripts/Chartero.js"),
       // minify: true,
     })
     .catch(() => process.exit(1));

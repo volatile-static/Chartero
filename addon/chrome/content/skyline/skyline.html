@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Chartero Skyline</title>
+<script type="text/javascript" src="../jQuery/jQuery.js"></script> 
+<script type="text/javascript" src="../jQuery/jquery-ui.js"></script> 
+<script type="text/javascript" src="../highcharts/highcharts.js"></script> 
+<script type="text/javascript" src="../highcharts/modules/exporting.js"></script> 
+<script type="text/javascript" src="../highcharts/modules/export-data.js"></script> 
+<script type="text/javascript" src="../highcharts/modules/offline-exporting.js"></script> 
+<script type="text/javascript" src="../highcharts/themes/dark-unica.js"></script> 
+<script type="text/javascript" src="chrome://zotero/content/include.js"></script>
+<script type="text/javascript" src="../history.js"></script>
+<link href="../jQuery/jquery-ui.css" rel="stylesheet" type="text/css">
+<link href="skyline.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<div id="skyline-layout">
+    <div id="week-layout">
+        <p class="skyline-label">Mon</p>
+        <p class="skyline-label">Wed</p>
+        <p class="skyline-label" data-tooltip="Tooltip help here!" data-flow="top">Fri</p>
+    </div>
+    <div id="month-layout">
+        <p class="skyline-label" id="month-label-0"></p>
+        <p class="skyline-label" id="month-label-1"></p>
+        <p class="skyline-label" id="month-label-2"></p>
+        <p class="skyline-label" id="month-label-3"></p>
+        <p class="skyline-label" id="month-label-4"></p>
+        <p class="skyline-label" id="month-label-5"></p>
+        <p class="skyline-label" id="month-label-6"></p>
+        <p class="skyline-label" id="month-label-7"></p>
+        <p class="skyline-label" id="month-label-8"></p>
+        <p class="skyline-label" id="month-label-9"></p>
+        <p class="skyline-label" id="month-label-10"></p>
+        <p class="skyline-label" id="month-label-11"></p>
+        <p class="skyline-label" id="month-label-12"></p>
+    </div>
+    <div id="block-container"> </div>
+</div>
+<script type="text/javascript" src="skyline.js"></script>
+</body>
+</html>
