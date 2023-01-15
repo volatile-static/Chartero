@@ -1,30 +1,55 @@
-import ZoteroToolkit from "zotero-plugin-toolkit";
-import AddonEvents from "./events";
-import AddonPrefs from "./prefs";
-import AddonViews from "./views";
+import * as toolBase from "zotero-plugin-toolkit/dist/basic";
+import { MenuManager } from "zotero-plugin-toolkit/dist/managers/menu";
+import { PreferencePaneManager } from "zotero-plugin-toolkit/dist/managers/preferencePane";
+import { ItemTreeManager } from "zotero-plugin-toolkit/dist/managers/itemTree";
+import { LibraryTabPanelManager } from "zotero-plugin-toolkit/dist/managers/libraryTabPanel";
+import { ReaderTabPanelManager } from "zotero-plugin-toolkit/dist/managers/readerTabPanel";
+import { ReaderTool } from "zotero-plugin-toolkit/dist/tools/reader";
+import { UITool } from "zotero-plugin-toolkit/dist/tools/ui";
+import { addonName } from "../package.json";
+import { onInit } from "./events";
+import prefsPaneDoc from "./modules/prefs";
 
-class Addon {
-  Zotero: _ZoteroConstructable;
-  events: AddonEvents;
-  views: AddonViews;
-  prefs: AddonPrefs;
-  locale: anyObj;
-  toolkit: ZoteroToolkit;
-  rootURI: string;  // root path to access the resources
-  development: boolean;
+export class CharteroToolkit extends toolBase.BasicTool {
+  readonly menu: MenuManager;
+  readonly column: ItemTreeManager;
+  readonly libTab: LibraryTabPanelManager;
+  readonly prefPane: PreferencePaneManager;
+  readonly readerTab: ReaderTabPanelManager;
+  readonly reader: ReaderTool;
+  readonly ui: UITool;
 
   constructor() {
-    // @ts-ignore
-    this.rootURI = rootURI;
-    const development = true, production = false;
-    // @ts-ignore
-    this.development = __env__;  // The env will be replaced after esbuild
-
-    this.toolkit = new ZoteroToolkit();
-    this.events = new AddonEvents(this);
-    this.views = new AddonViews(this);
-    this.prefs = new AddonPrefs(this);
+    super();
+    if (!__dev__) {
+      this.basicOptions.log.prefix = `[${addonName}]`;
+      this.basicOptions.log.disableConsole = true;
+    }
+    this.menu = new MenuManager(this);
+    this.prefPane = new PreferencePaneManager(this);
+    this.column = new ItemTreeManager(this);
+    this.libTab = new LibraryTabPanelManager(this);
+    this.readerTab = new ReaderTabPanelManager(this);
+    this.reader = new ReaderTool(this);
+    this.ui = new UITool(this);
   }
 }
 
-export default Addon;
+export class Addon {
+  constructor() {
+    onInit();
+  }
+
+  unload() {
+    toolBase.unregister(toolkit);
+    delete Zotero.Chartero;
+  }
+
+  loadPreferencesPane(win: Window) {
+    toolkit.ui.appendElement(
+      prefsPaneDoc(),
+      win.document.getElementById('zotero-prefpane-' + addonName)!
+    );
+    toolkit.log('Preferences Pane loaded!');
+  }
+}

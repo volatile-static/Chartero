@@ -1,17 +1,15 @@
-import Addon from "./addon";
+import { Addon, CharteroToolkit } from "./addon";
 
-/**
- * Globals: bootstrap.js > ctx
- * const ctx = {
-    Zotero,
-    rootURI,
-    window,
-    document: window.document,
-    ZoteroPane: Zotero.getActiveZoteroPane(),
-  };
- */
 if (!Zotero.Chartero) {
+  //@ts-ignore
+  toolkit = new CharteroToolkit();
+  try {
+    //@ts-ignore
+    localeStr = JSON.parse(
+      Zotero.File.getContentsFromURL('chrome://chartero/locale/chartero.json')
+    );
+  } catch (error) {
+    toolkit.log('Locale load failed:', error);
+  }
   Zotero.Chartero = new Addon();
-  // @ts-ignore
-  Zotero.Chartero.events.onInit();
 }

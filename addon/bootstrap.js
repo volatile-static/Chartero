@@ -59,8 +59,6 @@ async function waitForZotero() {
   await Zotero.initializationPromise;
 }
 
-function install(data, reason) { }
-
 async function startup({ id, version, resourceURI, rootURI }, reason) {
   await waitForZotero();
 
@@ -89,12 +87,17 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
     window,
     document: window.document,
     ZoteroPane: Zotero.getActiveZoteroPane(),
+    Zotero_Tabs: window.Zotero_Tabs
   };
-
-  Services.scriptloader.loadSubScript(
-    `${rootURI}/chrome/content/scripts/Chartero.js`,
-    ctx
-  );
+  window.console.debug('~~~~~~ Chartero startup ~~~~~~');
+  try {
+    Services.scriptloader.loadSubScript(
+      `${rootURI}/chrome/content/scripts/Chartero.js`,
+      ctx
+    );
+  } catch (error) {
+    window.console.debug(error);
+  }
 }
 
 function shutdown({ id, version, resourceURI, rootURI }, reason) {
@@ -106,7 +109,7 @@ function shutdown({ id, version, resourceURI, rootURI }, reason) {
       Components.interfaces.nsISupports
     ).wrappedJSObject;
   }
-  Zotero.Chartero.events.onUnInit(Zotero);
+  Zotero.Chartero && Zotero.Chartero.unload();
 
   Cc["@mozilla.org/intl/stringbundle;1"]
     .getService(Components.interfaces.nsIStringBundleService)
@@ -119,5 +122,3 @@ function shutdown({ id, version, resourceURI, rootURI }, reason) {
     chromeHandle = null;
   }
 }
-
-function uninstall(data, reason) { }

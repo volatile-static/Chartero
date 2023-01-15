@@ -1,6 +1,8 @@
 const { execSync } = require("child_process");
-const { killZotero } = require("../zotero-cmd.json");
+const { killZotero, startZotero6 } = require("../zotero-cmd.json");
 
 try {
   execSync(killZotero);
 } catch (e) {}
+
+execSync(startZotero6);

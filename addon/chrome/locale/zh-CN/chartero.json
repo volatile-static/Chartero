@@ -65,5 +65,15 @@
     "delete": "删除无效记录",
     "import": "从JSON导入",
     "period": "扫描间隔:",
-    "details": "单击结点显示详情"
+    "details": "单击结点显示详情",
+    "overview": "文库总览",
+    "recent": "最近在读",
+
+    "prefs": {
+        "scheduleTitle": "记录",
+        "scheduleScanPeriod": "数据扫描周期：",
+        "scheduleSavePeriod": "数据保存周期：",
+        "storageTitle": "存储",
+        "plotTitle": "画图"
+    }
 }

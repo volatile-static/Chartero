@@ -7,12 +7,11 @@
   "description": "一个好看的Zotero插件",
   "main": "src/index.js",
   "scripts": {
-    "build-dev": "cross-env NODE_ENV=development node ./template/build.js",
-    "build": "cross-env NODE_ENV=production node ./template/build.js",
-    "start": "node ./template/start.js",
-    "stop": "node ./template/stop.js",
-    "prerestart": "npm run build-dev",
-    "restart": "node ./template/restart.js",
+    "build-dev": "cross-env NODE_ENV=development node ./tools/build.js",
+    "build": "cross-env NODE_ENV=production node ./tools/build.js",
+    "restart6": "node ./tools/restart6.js",
+    "restart7": "node ./tools/restart7.js",
+    "restart": "npm run build-dev && npm run restart7",
     "release": "release-it",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -33,12 +32,12 @@
     "esbuild": "^0.15.18",
     "highcharts": "^10.3.2",
     "replace-in-file": "^6.3.5",
-    "zotero-plugin-toolkit": "^0.0.12"
+    "zotero-plugin-toolkit": "file:E:/zotero/zotero-plugin-toolkit",
+    "zotero-types": "file:E:/zotero/zotero-types"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",
     "cross-env": "^7.0.3",
-    "release-it": "^15.6.0",
-    "zotero-types": "^0.1.2"
+    "release-it": "^15.6.0"
   }
 }

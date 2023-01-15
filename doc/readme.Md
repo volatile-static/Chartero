@@ -8,6 +8,8 @@
 - 图表采用[Highcharts](https://www.npmjs.com/package/highcharts)生成
 - 欲参考纯JavaScript版本请[切换分支](https://gitee.com/const_volatile/chartero/tree/js_overlay/)
 
-### 软件架构
+### 依赖关系
+- iframes <- charts
+- index.ts <- addon.ts <- events.ts <- modules
 
 ### API

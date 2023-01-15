@@ -98,21 +98,33 @@ async function main() {
 
   copyFolderRecursiveSync("addon", buildDir);
 
-  copyFileSync("template/update-template.json", "template/update.json");
-  copyFileSync("template/update-template.rdf", "template/update.rdf");
+  copyFileSync("tools/update-template.json", "tools/update.json");
+  copyFileSync("tools/update-template.rdf", "tools/update.rdf");
 
-  await esbuild
-    .build({
+  await Promise.all([
+    esbuild.build({
       entryPoints: [path.join(buildDir, "../src/index.ts")],
       define: {
-        __env__: process.env.NODE_ENV,
+        __dev__: process.env.NODE_ENV == 'development',
       },
       bundle: true,
-      // Entry should be the same as addon/chrome/content/overlay.xul
-      outfile: path.join(buildDir, "addon/chrome/content/scripts/Chartero.js"),
-      // minify: true,
+      outfile: path.join(buildDir, "addon/chrome/content/scripts/Chartero.js")
+    }),
+    esbuild.build({
+      entryPoints: [
+        path.join(buildDir, "../src/iframes/overview.ts"),
+        path.join(buildDir, "../src/iframes/dashboard.ts"),
+        path.join(buildDir, "../src/modules/highcharts.ts")
+      ],
+      outdir: path.join(buildDir, "addon/chrome/content/scripts/"),
+      entryNames: '[name]',
+      bundle: true,
+      minify: process.env.NODE_ENV != 'development'
     })
-    .catch(() => process.exit(1));
+  ]).catch(reason => {
+    console.log("[Build] Error: ", reason);
+    process.exit(1);
+  });
 
   console.log("[Build] Run esbuild OK");
 

@@ -5,12 +5,12 @@
     "noImplicitThis": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "allowJs": true
   },
   "include": [
     "./",
-    "../node_modules/zotero-types",
-    "../node_modules/highcharts"
+    "../node_modules/zotero-types"
   ],
-  "exclude": []
+  "exclude": ["iframes"]
 }

@@ -7,9 +7,32 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Restart",
+            "name": "dev",
             "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "restart"],
+            "runtimeArgs": [
+                "run",
+                "restart"
+            ],
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "z7",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "restart7"
+            ],
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "z6",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "restart6"
+            ],
         }
     ]
 }
