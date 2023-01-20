@@ -87,7 +87,10 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
     window,
     document: window.document,
     ZoteroPane: Zotero.getActiveZoteroPane(),
-    Zotero_Tabs: window.Zotero_Tabs
+    Zotero_Tabs: window.Zotero_Tabs,
+    // React: window.React,
+    // ReactDOM: window.ReactDOM,
+    // console: window.console
   };
   window.console.debug('~~~~~~ Chartero startup ~~~~~~');
   try {

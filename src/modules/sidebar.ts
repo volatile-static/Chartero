@@ -1,5 +1,4 @@
 
-
 function renderDashboard(panel: XUL.TabPanel) {
     if (panel.childElementCount)  // 已经有元素了
         return;

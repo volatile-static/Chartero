@@ -9,7 +9,6 @@ export function copySVG2JPG(svg: string) {
         canvas.height = img.height;
         canvas.width = img.width;
         ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-        console.debug(ctx);
         new ClibpoardHelper().addImage(canvas.toDataURL('image/png')).copy();
     };
     img.src = URL.createObjectURL(new window.Blob([svg], {
@@ -17,13 +16,15 @@ export function copySVG2JPG(svg: string) {
     }));
 }
 
-export async function saveSVG(svg:string) {
-    const result = await new FilePickerHelper(
-        localeStr.loadingImages,
-        "save",
-        [[localeStr.svg, "*.svg"]]
-      ).open();
-    Zotero.File.putContents(new FileUtils.File(result + '.svg'), svg);
+export async function saveSVG(svg: string) {
+    //@ts-ignore
+    const fileUtils = Zotero.getMainWindow().FileUtils,
+        result = await new FilePickerHelper(
+            localeStr.loadingImages,
+            "save",
+            [[localeStr.svg, "*.svg"]]
+        ).open();
+    result && Zotero.File.putContents(new fileUtils.File(result + '.svg'), svg);
 }
 
 export function showMessage(msg: string, icon: string) {

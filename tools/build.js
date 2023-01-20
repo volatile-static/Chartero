@@ -112,9 +112,9 @@ async function main() {
     }),
     esbuild.build({
       entryPoints: [
-        path.join(buildDir, "../src/iframes/overview.ts"),
-        path.join(buildDir, "../src/iframes/dashboard.ts"),
-        path.join(buildDir, "../src/modules/highcharts.ts")
+        path.join(buildDir, "../src/iframes/overview.tsx"),
+        path.join(buildDir, "../src/iframes/dashboard.tsx"),
+        path.join(buildDir, "../src/modules/highcharts.tsx")
       ],
       outdir: path.join(buildDir, "addon/chrome/content/scripts/"),
       entryNames: '[name]',

@@ -33,6 +33,20 @@ export function onInit() {
     ZoteroPane.collectionsView.onSelect.addListener(onCollectionSelect);
   });
   registerPanels();
+
+  // const id = Zotero.Notifier.registerObserver({
+  //   notify: (
+  //     event: _ZoteroTypes.Notifier.Event,
+  //     type: _ZoteroTypes.Notifier.Type,
+  //     ids: string[],
+  //     extraData: _ZoteroTypes.anyObj
+  //   ) => {
+  //     if (!Zotero.Chartero)
+  //       Zotero.Notifier.unregisterObserver(id);
+  //     toolkit.log(event, type, ids, extraData);
+  //   }
+  // }, ['tab', 'file', 'item']);
+  toolkit.history.register({ numPages: true }, [r => ({ d: { f: 2 } }), r => ({ d: { g: 3 } })])
   toolkit.log('Chartero initialized successfully!');
 }
 

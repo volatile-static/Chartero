@@ -1,4 +1,5 @@
 import * as toolBase from "zotero-plugin-toolkit/dist/basic";
+import HistoryManager from "zotero-plugin-toolkit/dist/managers/readingHistory";
 import { MenuManager } from "zotero-plugin-toolkit/dist/managers/menu";
 import { PreferencePaneManager } from "zotero-plugin-toolkit/dist/managers/preferencePane";
 import { ItemTreeManager } from "zotero-plugin-toolkit/dist/managers/itemTree";
@@ -13,6 +14,7 @@ import prefsPaneDoc from "./modules/prefs";
 export class CharteroToolkit extends toolBase.BasicTool {
   readonly menu: MenuManager;
   readonly column: ItemTreeManager;
+  readonly history: HistoryManager;
   readonly libTab: LibraryTabPanelManager;
   readonly prefPane: PreferencePaneManager;
   readonly readerTab: ReaderTabPanelManager;
@@ -30,6 +32,7 @@ export class CharteroToolkit extends toolBase.BasicTool {
     this.column = new ItemTreeManager(this);
     this.libTab = new LibraryTabPanelManager(this);
     this.readerTab = new ReaderTabPanelManager(this);
+    this.history = new HistoryManager(this);
     this.reader = new ReaderTool(this);
     this.ui = new UITool(this);
   }
