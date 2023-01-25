@@ -1,5 +1,5 @@
 import * as toolBase from "zotero-plugin-toolkit/dist/basic";
-import HistoryManager from "zotero-plugin-toolkit/dist/managers/readingHistory";
+import HistoryManager from "zotero-reading-history";
 import { MenuManager } from "zotero-plugin-toolkit/dist/managers/menu";
 import { PreferencePaneManager } from "zotero-plugin-toolkit/dist/managers/preferencePane";
 import { ItemTreeManager } from "zotero-plugin-toolkit/dist/managers/itemTree";
@@ -9,7 +9,7 @@ import { ReaderTool } from "zotero-plugin-toolkit/dist/tools/reader";
 import { UITool } from "zotero-plugin-toolkit/dist/tools/ui";
 import { addonName } from "../package.json";
 import { onInit } from "./events";
-import prefsPaneDoc from "./modules/prefs";
+// import prefsPaneDoc from "./modules/prefs";
 
 export class CharteroToolkit extends toolBase.BasicTool {
   readonly menu: MenuManager;
@@ -32,7 +32,7 @@ export class CharteroToolkit extends toolBase.BasicTool {
     this.column = new ItemTreeManager(this);
     this.libTab = new LibraryTabPanelManager(this);
     this.readerTab = new ReaderTabPanelManager(this);
-    this.history = new HistoryManager(this);
+    this.history = new HistoryManager(this, { numPages: true });
     this.reader = new ReaderTool(this);
     this.ui = new UITool(this);
   }
@@ -44,15 +44,16 @@ export class Addon {
   }
 
   unload() {
+    toolkit.history.disable();
     toolBase.unregister(toolkit);
     delete Zotero.Chartero;
   }
 
   loadPreferencesPane(win: Window) {
-    toolkit.ui.appendElement(
-      prefsPaneDoc(),
-      win.document.getElementById('zotero-prefpane-' + addonName)!
-    );
+    // toolkit.ui.appendElement(
+    //   prefsPaneDoc(),
+    //   win.document.getElementById('zotero-prefpane-' + addonName)!
+    // );
     toolkit.log('Preferences Pane loaded!');
   }
 }

@@ -9,6 +9,8 @@
   "scripts": {
     "build-dev": "cross-env NODE_ENV=development node ./tools/build.js",
     "build": "cross-env NODE_ENV=production node ./tools/build.js",
+    "build-prod": "concurrently -c auto npm:build npm:tsc",
+    "tsc": "tsc --noEmit -p src",
     "restart6": "node ./tools/restart6.js",
     "restart7": "node ./tools/restart7.js",
     "restart": "npm run build-dev && npm run restart7",
@@ -28,18 +30,25 @@
   "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
   "updaterdf": "https://raw.githubusercontent.com/volatile-static/Chartero/master/update.json",
   "dependencies": {
-    "compressing": "^1.6.3",
-    "esbuild": "^0.15.18",
-    "highcharts": "^10.3.2",
-    "replace-in-file": "^6.3.5",
-    "zotero-plugin-toolkit": "file:E:/zotero/zotero-plugin-toolkit",
-    "zotero-types": "file:E:/zotero/zotero-types"
+    "antd": "^5.1.6",
+    "highcharts": "^10.3.3",
+    "highcharts-react-official": "^3.1.0",
+    "react-dom": "^18.2.0",
+    "react-parallax-tilt": "^1.7.90",
+    "zotero-plugin-toolkit": "1.0.7",
+    "zotero-reading-history": "file:../zotero-plugin-toolkit",
+    "zotero-types": "file:../zotero-types"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
+    "compressing": "^1.7.0",
+    "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
-    "release-it": "^15.6.0"
+    "esbuild": "^0.15.18",
+    "minimist": "^1.2.7",
+    "release-it": "^15.6.0",
+    "replace-in-file": "^6.3.5"
   }
 }

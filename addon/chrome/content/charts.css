@@ -1,7 +1,4 @@
-#chartero-toolbar-button {
-	list-style-image: url("chrome://chartero/content/icons/icon@16px.png");
-}
-/* .parallax-effect-glare-scale {
+.parallax-effect-glare-scale {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -14,11 +11,12 @@
     border-radius: 20px;
     margin-left: 200px;
     transform-style: preserve-3d;
-} 
-.chartero-inner-element {
+}
+
+.inner-element {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     transform: translateZ(90px);
-}*/
+}

@@ -1,95 +1,96 @@
-function networkOptions(): Highcharts.Options {
-  return {
-      title: {
-          text: 'U.S Solar Employment Growth by Job Category, 2010-2020'
-      },
-      subtitle: {
-          text: 'Source: <a href="https://irecusa.org/programs/solar-jobs-census/" target="_blank">IREC</a>'
-      },
-      yAxis: {
-          title: {
-              text: 'Number of Employees'
-          }
-      },
-      xAxis: {
-          accessibility: {
-              rangeDescription: 'Range: 2010 to 2020'
-          }
-      },
-      legend: {
-          layout: 'vertical',
-          align: 'right',
-          verticalAlign: 'middle'
-      },
+import React from "../modules/dummy/react";
+import ReactDOM from "../modules/dummy/reactdom";
+import Highcharts from "../modules/highcharts";
+import HighchartsReact from 'highcharts-react-official';
+import networkOptions from "../charts/network";
+import Tilt from 'react-parallax-tilt';
+import { Button } from 'antd';
 
-      plotOptions: {
-          series: {
-              label: {
-                  connectorAllowed: false
-              },
-              pointStart: 2010
-          }
-      },
-
-      series: [{
-          name: 'Installation & Developers',
-          data: [43934, 48656, 65165, 81827, 112143, 142383,
-              171533, 165174, 155157, 161454, 154610]
-      } as Highcharts.SeriesOptionsType, {
-          name: 'Manufacturing',
-          data: [24916, 37941, 29742, 29851, 32490, 30282,
-              38121, 36885, 33726, 34243, 31050]
-      } as Highcharts.SeriesOptionsType, {
-          name: 'Sales & Distribution',
-          data: [11744, 30000, 16005, 19771, 20185, 24377,
-              32147, 30912, 29243, 29213, 25663]
-      } as Highcharts.SeriesOptionsType, {
-          name: 'Operations & Maintenance',
-          data: [null, null, null, null, null, null, null,
-              null, 11164, 11218, 10077]
-      } as Highcharts.SeriesOptionsType, {
-          name: 'Other',
-          data: [21908, 5548, 8105, 11248, 8989, 11816, 18274,
-              17300, 13053, 11906, 10073]
-      } as Highcharts.SeriesOptionsType],
-
-      responsive: {
-          rules: [{
-              condition: {
-                  maxWidth: 5000
-              },
-              chartOptions: {
-                  legend: {
-                      layout: 'horizontal',
-                      align: 'center',
-                      verticalAlign: 'bottom'
-                  }
-              }
-          }]
-      }
-
-  }
-}
-
-const App = (props: HighchartsReact.Props) => {
-
-  const chartComponentRef = React.useRef<HighchartsReact.RefObject>(null);
-
-  return (
-    <HighchartsReact
-      highcharts={Highcharts}
-      options={networkOptions()}
-      ref={chartComponentRef}
-      {...props}
-    />
-  );
+const App: React.FC = (props: HighchartsReact.Props) => {
+    const chartComponentRef = React.useRef<HighchartsReact.RefObject>(null);
+    const innerStyle:React.CSSProperties={
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        transform: 'translateZ(90px)',
+    },outterStyle:React.CSSProperties={
+        display: 'flex',
+        'flexDirection': 'column',
+        'justifyContent': 'center',
+        'alignItems': 'center',
+        width: '800px',
+        height: '500px',
+        'backgroundColor': '#505053',
+        color: 'white',
+        border: '5px solid black',
+        'borderRadius': '20px',
+        'marginLeft': '200px',
+        'transformStyle': 'preserve-3d',
+    } ;
+    function onClk(params:any) {
+        toolkit.log(params);
+        
+    }
+    return (
+        <div>
+            <Button type="primary" onClick={onClk}>Primary Button</Button>
+            <Tilt
+                style={{
+                    backgroundColor:'#505053',
+        width: '800px',
+        height: '500px',
+        'borderRadius': '20px',
+        'marginLeft': '200px',
+        border: '5px solid black',
+                    transformStyle:'preserve-3d'
+                }}
+                tiltReverse={true}
+                perspective={500}
+                glareEnable={true}
+                glareMaxOpacity={0.45}
+                scale={1.02}
+            >
+                <div style={{transform: 'translateZ(20px)'}}>
+                    <HighchartsReact
+                        highcharts={Highcharts}
+                        options={networkOptions()}
+                        ref={chartComponentRef}
+                        callback={onClk}
+                        {...props}
+                    />
+                </div>
+            </Tilt>
+        </div>
+    );
 };
-// Render your App component into the #root element of the document.
 
-window.addEventListener('DOMContentLoaded', (e: Event) => {
-  try {
-    ReactDOM.render(<App />, document.getElementById('root'));
-  } catch (error) {
-    console.debug(error);
-  }
-});
+export default function RenderOverview(root: HTMLDivElement) {
+    try {
+        // const p = ReactDOM.createPortal(<App />, root);
+        // toolkit.log(p);
+        ReactDOM.render(<App />, root);
+    } catch (error) {
+        toolkit.log(error);
+    }
+}
+// function IFrame({ children }) {
+//     const [ref, setRef] = React.useState();
+//     const container = ref?.contentDocument?.body;
+//        const c= container && ReactDOM.createPortal(children, container);
+//     toolkit.log(container,c);
+  
+//     return (<div>{c}
+//       <iframe title="iframe" ref={setRef}>
+        
+//       </iframe></div>
+//     );
+//   }
+  
+//   function MyComponent() {
+//     return (
+//       <>
+//         <h1>Hello CodeSandbox</h1>
+//       </>
+//     );
+//   }

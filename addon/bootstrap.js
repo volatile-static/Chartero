@@ -81,22 +81,27 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
 
   const window = Zotero.getMainWindow();
   // Global variables for plugin code
-  const ctx = {
-    Zotero,
-    rootURI,
-    window,
-    document: window.document,
-    ZoteroPane: Zotero.getActiveZoteroPane(),
-    Zotero_Tabs: window.Zotero_Tabs,
-    // React: window.React,
-    // ReactDOM: window.ReactDOM,
-    // console: window.console
-  };
+
+  // const ctx = {
+  //   Zotero,
+  //   rootURI,
+  //   window,
+  //   document: window.document,
+  //   ZoteroPane: Zotero.getActiveZoteroPane(),
+  //   Zotero_Tabs: window.Zotero_Tabs,
+  //   require: window.require,
+  //   React: window.React,
+  //   ReactDOM: window.ReactDOM,
+  //   navigator: window.navigator,
+  //   requestAnimationFrame:window.requestAnimationFrame,
+  //   CustomEvent:window.CustomEvent,
+  //   console: window.console
+  // };
   window.console.debug('~~~~~~ Chartero startup ~~~~~~');
   try {
     Services.scriptloader.loadSubScript(
       `${rootURI}/chrome/content/scripts/Chartero.js`,
-      ctx
+      window
     );
   } catch (error) {
     window.console.debug(error);
@@ -125,3 +130,6 @@ function shutdown({ id, version, resourceURI, rootURI }, reason) {
     chromeHandle = null;
   }
 }
+
+function install(data) {}
+function uninstall() {}

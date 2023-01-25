@@ -1,5 +1,6 @@
 import { addonName, addonID } from '../package.json';
 import registerPanels from './modules/sidebar';
+import RenderOverview from "./iframes/overview";
 
 /**
  * 初始化插件时调用
@@ -8,8 +9,9 @@ export function onInit() {
   toolkit.log('Initializing Chartero addon...');
   toolkit.prefPane.register({  // 注册设置面板
     pluginID: addonID,
-    src: rootURI + 'chrome/content/preferences.xhtml',
+    src: `chrome://${addonName}/content/preferences.xhtml`,
     image: `chrome://${addonName}/content/icons/icon32.png`,
+    scripts: [`chrome://${addonName}/content/scripts/prefs.js`],
     label: 'Chartero'
   });
   toolkit.ui.appendElement({  // 加载样式文件
@@ -46,7 +48,6 @@ export function onInit() {
   //     toolkit.log(event, type, ids, extraData);
   //   }
   // }, ['tab', 'file', 'item']);
-  toolkit.history.register({ numPages: true }, [r => ({ d: { f: 2 } }), r => ({ d: { g: 3 } })])
   toolkit.log('Chartero initialized successfully!');
 }
 
@@ -56,14 +57,28 @@ function onToolButtonCommand(_: Event) {
     title: 'Chartero',
     select: true
   });
-  toolkit.ui.appendElement({
-    tag: 'iframe',
-    namespace: 'xul',
-    attributes: {
-      flex: 1,
-      src: `chrome://${addonName}/content/overview.html`
-    }
+  // const fr = toolkit.ui.appendElement({
+  //   tag: 'iframe',
+  //   namespace: 'xul',
+  //   attributes: {
+  //     flex: 1,
+  //     src: `chrome://${addonName}/content/overview.html`
+  //   }
+  // }, container) as HTMLIFrameElement;
+  const b = toolkit.ui.appendElement({
+    tag: 'head',
+    namespace: 'html'
+  }, document.documentElement);
+  toolkit.log(b);
+  const root = toolkit.ui.appendElement({
+    tag: 'html:div',
+    namespace: 'html',
+    attributes: { flex: 1 }
   }, container);
+  RenderOverview(root as HTMLDivElement);
+  // fr.contentWindow?.addEventListener('DOMContentLoaded', (e: Event) => {
+  //   RenderOverview(fr.contentDocument!.getElementById('root') as HTMLDivElement)
+  // });
 }
 
 function onItemSelect() {

@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "ES2016",
+    "target": "ESNext",
     "jsx": "react",
     "noImplicitThis": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
+    "skipLibCheck": true,
     "resolveJsonModule": true,
     "allowJs": true
   },

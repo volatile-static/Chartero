@@ -54,7 +54,9 @@ function networkOptions(): Options {
             data: [21908, 5548, 8105, 11248, 8989, 11816, 18274,
                 17300, 13053, 11906, 10073]
         }],
-
+        chart:{
+            backgroundColor : 'rgba(0,0,0,0)'
+        },
         responsive: {
             rules: [{
                 condition: {
