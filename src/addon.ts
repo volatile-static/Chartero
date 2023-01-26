@@ -9,7 +9,6 @@ import { ReaderTool } from "zotero-plugin-toolkit/dist/tools/reader";
 import { UITool } from "zotero-plugin-toolkit/dist/tools/ui";
 import { addonName } from "../package.json";
 import { onInit } from "./events";
-// import prefsPaneDoc from "./modules/prefs";
 
 export class CharteroToolkit extends toolBase.BasicTool {
   readonly menu: MenuManager;
@@ -50,10 +49,7 @@ export class Addon {
   }
 
   loadPreferencesPane(win: Window) {
-    // toolkit.ui.appendElement(
-    //   prefsPaneDoc(),
-    //   win.document.getElementById('zotero-prefpane-' + addonName)!
-    // );
+    // renderPrefsPane(win.document.getElementById('zotero-prefpane-Chartero') as HTMLDivElement);
     toolkit.log('Preferences Pane loaded!');
   }
 }

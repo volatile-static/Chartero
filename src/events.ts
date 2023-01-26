@@ -1,28 +1,35 @@
 import { addonName, addonID } from '../package.json';
 import registerPanels from './modules/sidebar';
-import RenderOverview from "./iframes/overview";
+import renderOverview from "./iframes/overview";
 
 /**
  * 初始化插件时调用
  */
 export function onInit() {
+  const document = toolkit.getGlobal('document');
+  toolkit.log(document, window, window.window);
+
   toolkit.log('Initializing Chartero addon...');
   toolkit.prefPane.register({  // 注册设置面板
     pluginID: addonID,
     src: `chrome://${addonName}/content/preferences.xhtml`,
     image: `chrome://${addonName}/content/icons/icon32.png`,
-    scripts: [`chrome://${addonName}/content/scripts/prefs.js`],
+    // scripts: [`chrome://${addonName}/content/scripts/prefs.js`],
     label: 'Chartero'
   });
+  // toolkit.ui.appendElement(  // 某些React组件需要head节点
+  //   { tag: 'head' },
+  //   document.documentElement
+  // );
   toolkit.ui.appendElement({  // 加载样式文件
     tag: 'link',
     directAttributes: {
       type: 'text/css',
       rel: 'stylesheet',
-      href: `chrome://${addonName}/content/zoteroPane.css`,
+      href: `chrome://${addonName}/content/chartero.css`,
     }
   }, document.documentElement);
-  document.getElementById('zotero-items-toolbar')?.appendChild( // 添加工具栏按钮
+  document.getElementById('zotero-collections-toolbar')?.appendChild( // 添加工具栏按钮
     toolkit.ui.createElement(document, 'toolbarbutton', {
       id: 'chartero-toolbar-button',
       classList: ['zotero-tb-button'],
@@ -57,6 +64,7 @@ function onToolButtonCommand(_: Event) {
     title: 'Chartero',
     select: true
   });
+  // const w = toolkit.ui.appendElement({ tag: 'div' }, container);
   // const fr = toolkit.ui.appendElement({
   //   tag: 'iframe',
   //   namespace: 'xul',
@@ -64,21 +72,18 @@ function onToolButtonCommand(_: Event) {
   //     flex: 1,
   //     src: `chrome://${addonName}/content/overview.html`
   //   }
-  // }, container) as HTMLIFrameElement;
-  const b = toolkit.ui.appendElement({
-    tag: 'head',
-    namespace: 'html'
-  }, document.documentElement);
-  toolkit.log(b);
+  // }, w) as HTMLIFrameElement;
+  // fr.contentWindow?.addEventListener('DOMContentLoaded', () => {
+
+  //   const root = fr.contentDocument?.getElementById('root');
+  // });
+
   const root = toolkit.ui.appendElement({
     tag: 'html:div',
     namespace: 'html',
     attributes: { flex: 1 }
   }, container);
-  RenderOverview(root as HTMLDivElement);
-  // fr.contentWindow?.addEventListener('DOMContentLoaded', (e: Event) => {
-  //   RenderOverview(fr.contentDocument!.getElementById('root') as HTMLDivElement)
-  // });
+    renderOverview(root as HTMLDivElement);
 }
 
 function onItemSelect() {

@@ -101,70 +101,14 @@ async function main() {
   copyFileSync("tools/update-template.json", "tools/update.json");
   copyFileSync("tools/update-template.rdf", "tools/update.rdf");
 
-  await Promise.all([
-    esbuild.build({
-      target:'firefox60',
-      entryPoints: [path.join(buildDir, "../src/index.ts")],
-      define: {
-        __dev__: process.env.NODE_ENV == 'development',
-      },
-      bundle: true,
-        external: ['react', 'react-dom'],
-      outfile: path.join(buildDir, "addon/chrome/content/scripts/Chartero.js")
-    }),
-    // esbuild.build({
-    //   target:'firefox60',
-    //   entryPoints: [
-    //     path.join(buildDir, "../src/iframes/overview.tsx"),
-    //     path.join(buildDir, "../src/iframes/dashboard.tsx"),
-    //     path.join(buildDir, "../src/modules/highcharts.tsx")
-    //   ],
-    //   outdir: path.join(buildDir, "addon/chrome/content/scripts/"),
-    //   entryNames: '[name]',
-    //   external: ['react', 'react-dom'],
-    //   banner: {
-    //     js: `if (typeof require == "undefined") {
-    //           Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-    //             .getService(Components.interfaces.mozIJSSubScriptLoader)
-    //             .loadSubScript('resource://zotero/require.js');
-    //         }`
-    //   },
-    //   bundle: true,
-    //   minify: process.env.NODE_ENV != 'development'
-    // }),
-    esbuild.build({
-      target:'firefox60',
-      entryPoints: [
-        path.join(buildDir, "../src/modules/prefs.tsx")
-      ],
-      outdir: path.join(buildDir, "addon/chrome/content/scripts/"),
-      entryNames: '[name]',
-      bundle: true,
-      minify: process.env.NODE_ENV != 'development'
-    }),
-    // esbuild.build({
-    //   target:'firefox60',
-    //   entryPoints: [
-    //     path.join(buildDir, "../src/iframes/lib.ts")
-    //   ],
-    //   outdir: path.join(buildDir, "addon/chrome/content/scripts/"),
-    //   entryNames: '[name]',
-    //   bundle: true,
-    //   // format:'esm',
-    //   minify: process.env.NODE_ENV != 'development'
-    // }),
-    // esbuild.build({
-    //   target:'firefox60',
-    //   entryPoints: [
-    //     path.join(buildDir, "../src/iframes/test.ts")
-    //   ],
-    //   outdir: path.join(buildDir, "addon/chrome/content/scripts/"),
-    //   entryNames: '[name]',
-    //   bundle: true,
-    //   // format:'cjs',
-    //   minify: process.env.NODE_ENV != 'development'
-    // })
-  ]).catch(() => process.exit(1));
+  esbuild.build({
+    target: 'firefox60',
+    entryPoints: [path.join(buildDir, "../src/index.ts")],
+    define: { __dev__: process.env.NODE_ENV == 'development' },
+    bundle: true,
+    external: ['react', 'react-dom'],
+    outfile: path.join(buildDir, "addon/chrome/content/scripts/Chartero.js")
+  }).catch(() => process.exit(1));
 
   console.log("[Build] Run esbuild OK");
 

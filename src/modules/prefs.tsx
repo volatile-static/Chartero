@@ -1,9 +1,11 @@
-import { Button } from 'antd';
+import React from "./dummy/react";
+import ReactDOM from "./dummy/reactdom";
+import { Button, Transfer } from 'antd';
+import type { TransferDirection } from 'antd/es/transfer';
 import 'antd/dist/reset.css';
 
-window.CharteroPrefPaneLoad=function() {
-    const React = require('react'), ReactDOM = require('react-dom');
-    ReactDOM.render(<Main />, document.getElementById('zotero-prefpane-Chartero'));
+export default function (root: HTMLDivElement) {
+    ReactDOM.render(<Main />, root);
 
     function Main() {
         return (

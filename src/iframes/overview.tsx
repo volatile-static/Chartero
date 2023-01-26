@@ -4,46 +4,79 @@ import Highcharts from "../modules/highcharts";
 import HighchartsReact from 'highcharts-react-official';
 import networkOptions from "../charts/network";
 import Tilt from 'react-parallax-tilt';
-import { Button } from 'antd';
+import { Button, Transfer } from 'antd';
+import type { TransferDirection } from 'antd/es/transfer';
+
+interface RecordType {
+    key: string;
+    title: string;
+    description: string;
+    chosen: boolean;
+}
 
 const App: React.FC = (props: HighchartsReact.Props) => {
+    const [mockData, setMockData] = React.useState<RecordType[]>([]);
+    const [targetKeys, setTargetKeys] = React.useState<string[]>([]);
     const chartComponentRef = React.useRef<HighchartsReact.RefObject>(null);
-    const innerStyle:React.CSSProperties={
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        transform: 'translateZ(90px)',
-    },outterStyle:React.CSSProperties={
-        display: 'flex',
-        'flexDirection': 'column',
-        'justifyContent': 'center',
-        'alignItems': 'center',
-        width: '800px',
-        height: '500px',
-        'backgroundColor': '#505053',
-        color: 'white',
-        border: '5px solid black',
-        'borderRadius': '20px',
-        'marginLeft': '200px',
-        'transformStyle': 'preserve-3d',
-    } ;
-    function onClk(params:any) {
+    function onClk(params: any) {
         toolkit.log(params);
-        
+
     }
+    const getMock = () => {
+        const tempTargetKeys = [];
+        const tempMockData = [];
+        for (let i = 0; i < 20; i++) {
+            const data = {
+                key: i.toString(),
+                title: `content${i + 1}`,
+                description: `description of content${i + 1}`,
+                chosen: i % 2 === 0,
+            };
+            if (data.chosen) {
+                tempTargetKeys.push(data.key);
+            }
+            tempMockData.push(data);
+        }
+        setMockData(tempMockData);
+        setTargetKeys(tempTargetKeys);
+    };
+
+    React.useEffect(() => {
+        getMock();
+    }, []);
+
+    const filterOption = (inputValue: string, option: RecordType) =>
+        option.description.indexOf(inputValue) > -1;
+
+    const handleChange = (newTargetKeys: string[]) => {
+        setTargetKeys(newTargetKeys);
+    };
+
+    const handleSearch = (dir: TransferDirection, value: string) => {
+        console.log('search:', dir, value);
+    };
     return (
         <div>
             <Button type="primary" onClick={onClk}>Primary Button</Button>
+            <Transfer
+                dataSource={mockData}
+                showSearch
+                filterOption={filterOption}
+                targetKeys={targetKeys}
+                onChange={handleChange}
+                onSearch={handleSearch}
+                render={(item) => item.title}
+            />
             <Tilt
                 style={{
-                    backgroundColor:'#505053',
-        width: '800px',
-        height: '500px',
-        'borderRadius': '20px',
-        'marginLeft': '200px',
-        border: '5px solid black',
-                    transformStyle:'preserve-3d'
+                    display: 'flex',
+                    backgroundColor: '#505053',
+                    width: '800px',
+                    height: '500px',
+                    'borderRadius': '20px',
+                    'marginLeft': '200px',
+                    border: '5px solid black',
+                    transformStyle: 'preserve-3d'
                 }}
                 tiltReverse={true}
                 perspective={500}
@@ -51,7 +84,7 @@ const App: React.FC = (props: HighchartsReact.Props) => {
                 glareMaxOpacity={0.45}
                 scale={1.02}
             >
-                <div style={{transform: 'translateZ(20px)'}}>
+                <div style={{ transform: 'translateZ(20px)' }}>
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={networkOptions()}
@@ -65,32 +98,19 @@ const App: React.FC = (props: HighchartsReact.Props) => {
     );
 };
 
-export default function RenderOverview(root: HTMLDivElement) {
+export default function (root: HTMLDivElement) {
     try {
-        // const p = ReactDOM.createPortal(<App />, root);
-        // toolkit.log(p);
-        ReactDOM.render(<App />, root);
+        ReactDOM.render(<App />, root, () => {
+            Array.prototype.forEach.call(
+                document.querySelector('head')?.children,
+                (e: Element) => {
+                    toolkit.log(e);
+                    root.ownerDocument.documentElement.appendChild(e);
+                }
+            );
+            // toolkit.log(root.ownerDocument.head, par.ownerDocument.querySelector('head'));
+        });
     } catch (error) {
         toolkit.log(error);
     }
 }
-// function IFrame({ children }) {
-//     const [ref, setRef] = React.useState();
-//     const container = ref?.contentDocument?.body;
-//        const c= container && ReactDOM.createPortal(children, container);
-//     toolkit.log(container,c);
-  
-//     return (<div>{c}
-//       <iframe title="iframe" ref={setRef}>
-        
-//       </iframe></div>
-//     );
-//   }
-  
-//   function MyComponent() {
-//     return (
-//       <>
-//         <h1>Hello CodeSandbox</h1>
-//       </>
-//     );
-//   }

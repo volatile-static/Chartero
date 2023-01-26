@@ -79,32 +79,41 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
     rootURI = resourceURI.spec;
   }
 
-  const window = Zotero.getMainWindow();
-  // Global variables for plugin code
+  const window = Zotero.getMainWindow(),
+    fr = window.document.createElement('iframe');
+  fr.style.display = 'none';
+  window.document.documentElement.appendChild(fr);
 
-  // const ctx = {
-  //   Zotero,
-  //   rootURI,
-  //   window,
-  //   document: window.document,
-  //   ZoteroPane: Zotero.getActiveZoteroPane(),
-  //   Zotero_Tabs: window.Zotero_Tabs,
-  //   require: window.require,
-  //   React: window.React,
-  //   ReactDOM: window.ReactDOM,
-  //   navigator: window.navigator,
-  //   requestAnimationFrame:window.requestAnimationFrame,
-  //   CustomEvent:window.CustomEvent,
-  //   console: window.console
-  // };
+  // const ctx = { document: Zotero.Utilities.Internal.getDOMDocument() };
+  Zotero.Utilities.Internal.assignProps(fr.contentWindow, window, [
+    'Zotero',
+    'Zotero_Tabs',
+    'ZoteroPane',
+    'ZoteroItemPane',
+    'ZoteroContextPane',
+    'Zotero_File_Interface',
+    // 'setTimeout',
+    // 'clearTimeout',
+    // 'setInterval',
+    // 'clearInterval',
+    // 'requestAnimationFrame',
+    'React',
+    'ReactDOM',
+    'window',
+    // 'fetch',
+    // 'navigator',
+    // 'screen',
+    // 'console',
+    'require',
+  ]);
   window.console.debug('~~~~~~ Chartero startup ~~~~~~');
   try {
     Services.scriptloader.loadSubScript(
       `${rootURI}/chrome/content/scripts/Chartero.js`,
-      window
+      fr.contentWindow
     );
   } catch (error) {
-    window.console.debug(error);
+    window.console.debug(error.message, error.location);
   }
 }
 
@@ -131,5 +140,5 @@ function shutdown({ id, version, resourceURI, rootURI }, reason) {
   }
 }
 
-function install(data) {}
-function uninstall() {}
+function install(data) { }
+function uninstall() { }
