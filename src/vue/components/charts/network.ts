@@ -1,4 +1,4 @@
-import { Options } from "highcharts";
+import type { Options } from "highcharts";
 
 function networkOptions(): Options {
     return {

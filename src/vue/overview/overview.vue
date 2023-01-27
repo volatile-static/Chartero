@@ -1,0 +1,112 @@
+<script setup lang="ts">
+import "tdesign-vue-next/es/style/index.css";
+import { Button as TButton, Transfer as TTransfer } from 'tdesign-vue-next';
+</script>
+
+<script lang="ts">
+import { ref } from 'vue';
+
+const list:any = [];
+for (let i = 0; i < 20; i++) {
+  list.push({
+    value: i.toString(),
+    label: `内容${i + 1}`,
+  });
+}
+
+const targetValue = ref([]);
+export default {
+  data() {
+    return {
+      chartOptions: {
+        title: {
+          text: "Gantt Chart with Progress Indicators"
+        },
+        xAxis: {
+          min: Date.UTC(2014, 10, 17),
+          max: Date.UTC(2014, 10, 30)
+        },
+
+        series: [
+          {
+            name: "Project 1",
+            data: [
+              {
+                name: "Start prototype",
+                start: Date.UTC(2014, 10, 18),
+                end: Date.UTC(2014, 10, 25),
+                completed: 0.25
+              },
+              {
+                name: "Test prototype",
+                start: Date.UTC(2014, 10, 27),
+                end: Date.UTC(2014, 10, 29)
+              },
+              {
+                name: "Develop",
+                start: Date.UTC(2014, 10, 20),
+                end: Date.UTC(2014, 10, 25),
+                completed: {
+                  amount: 0.12,
+                  fill: "#fa0"
+                }
+              },
+              {
+                name: "Run acceptance tests",
+                start: Date.UTC(2014, 10, 23),
+                end: Date.UTC(2014, 10, 26)
+              }
+            ]
+          }
+        ]
+      }
+    };
+  },
+  methods:{
+    onClk(){
+      toolkit.log(this)
+    }
+  }
+};
+</script>
+
+<template>
+  <header>
+    <t-transfer v-model="targetValue" theme="primary" :data="list" :search="true" />
+    <div>
+
+      <t-button theme="primary" variant="base">2填充按钮</t-button>
+      <t-button theme="success" variant="outline">描边按钮</t-button>
+      <t-button theme="warning" variant="dashed">虚框按钮</t-button>
+      <t-button theme="default" variant="text" @click="onClk">文字按钮</t-button>
+
+
+    </div>
+    <div style="display:flex;">
+      <highcharts :constructor-type="'ganttChart'" class="hc" :options="chartOptions" ref="chart"></highcharts>
+    </div>
+  </header>
+
+</template>
+
+<style scoped>
+header {
+  line-height: 1.5;
+  max-height: 100vh;
+}
+
+@media (min-width: 1024px) {
+  header {
+    display: flex;
+    place-items: center;
+    padding-right: calc(var(--section-gap) / 2);
+  }
+
+  header .wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+}
+</style>

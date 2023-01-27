@@ -3,13 +3,13 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "build-dev",
+			"script": "build-vite",
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
 			"problemMatcher": [],
-			"label": "npm: build-dev",
+			"label": "Vue",
 			"detail": "cross-env NODE_ENV=development node ./tools/build.js"
 		}
 	]

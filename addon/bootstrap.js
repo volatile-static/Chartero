@@ -68,9 +68,10 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
     ].getService(Components.interfaces.amIAddonManagerStartup);
     var manifestURI = Services.io.newURI(rootURI + "manifest.json");
     chromeHandle = aomStartup.registerChrome(manifestURI, [
-      ["locale", "__addonRef__", "en-US", rootURI + "chrome/locale/en-US/"],
-      ["locale", "__addonRef__", "zh-CN", rootURI + "chrome/locale/zh-CN/"],
-      ["content", "__addonRef__", rootURI + "chrome/content/"]
+      ["locale", "__addonName__", "en-US", rootURI + "chrome/locale/en-US/"],
+      ["locale", "__addonName__", "zh-CN", rootURI + "chrome/locale/zh-CN/"],
+      ["locale", "__addonName__", "ja-JP", rootURI + "chrome/locale/ja-JP/"],
+      ["content", "__addonName__", rootURI + "chrome/content/"],
     ]);
   }
 
@@ -96,7 +97,7 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
       ctx
     );
   } catch (error) {
-    window.console.debug(error);
+    window.console.debug(error.message, error.location);
   }
 }
 

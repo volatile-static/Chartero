@@ -1,19 +1,15 @@
 const esbuild = require("esbuild");
-const compressing = require("compressing");
 const path = require("path");
 const fs = require("fs");
 const process = require("process");
 const replace = require("replace-in-file");
 const {
-  name,
   author,
   description,
   homepage,
   releasepage,
   updaterdf,
-  addonName,
-  addonID,
-  addonRef,
+  config,
   version,
 } = require("../package.json");
 
@@ -103,23 +99,13 @@ async function main() {
 
   await Promise.all([
     esbuild.build({
-      entryPoints: [path.join(buildDir, "../src/index.ts")],
+      target: 'firefox60',
+      entryPoints: [path.join(buildDir, "../src/bootstrap/index.ts")],
       define: {
         __dev__: process.env.NODE_ENV == 'development',
       },
       bundle: true,
       outfile: path.join(buildDir, "addon/chrome/content/scripts/Chartero.js")
-    }),
-    esbuild.build({
-      entryPoints: [
-        path.join(buildDir, "../src/iframes/overview.ts"),
-        path.join(buildDir, "../src/iframes/dashboard.ts"),
-        path.join(buildDir, "../src/modules/highcharts.ts")
-      ],
-      outdir: path.join(buildDir, "addon/chrome/content/scripts/"),
-      entryNames: '[name]',
-      bundle: true,
-      minify: process.env.NODE_ENV != 'development'
     })
   ]).catch(reason => {
     console.log("[Build] Error: ", reason);
@@ -150,7 +136,6 @@ async function main() {
       /__updaterdf__/g,
       /__addonName__/g,
       /__addonID__/g,
-      /__addonRef__/g,
       /__buildVersion__/g,
       /__buildTime__/g,
     ],
@@ -160,9 +145,8 @@ async function main() {
       homepage,
       releasepage,
       updaterdf,
-      addonName,
-      addonID,
-      addonRef,
+      config.addonName,
+      config.addonID,
       version,
       buildTime,
     ],
@@ -181,18 +165,12 @@ async function main() {
 
   console.log("[Build] Addon prepare OK");
 
-  compressing.zip.compressDir(
-    path.join(buildDir, "addon"),
-    path.join(buildDir, `${name}.xpi`),
-    {
-      ignoreBase: true,
-    }
-  );
-
-  console.log("[Build] Addon pack OK");
   console.log(
     `[Build] Finished in ${(new Date().getTime() - t.getTime()) / 1000} s.`
   );
 }
 
-main();
+main().catch(err => {
+  console.log(err);
+  process.exit(1);
+});

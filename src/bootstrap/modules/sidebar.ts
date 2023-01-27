@@ -1,17 +1,16 @@
-
-
 function renderDashboard(panel: XUL.TabPanel) {
     if (panel.childElementCount)  // 已经有元素了
         return;
-    toolkit.ui.appendElement({
+    const dashboard = toolkit.ui.appendElement({
         tag: 'iframe',
         namespace: 'xul',
         skipIfExists: true,
         attributes: {
             flex: 1,
-            src: 'chrome://chartero/content/dashboard.html'
+            src: 'chrome://chartero/content/dashboard/index.html'
         }
-    }, panel);
+    }, panel) as HTMLIFrameElement;
+    (dashboard.contentWindow as any).toolkit = toolkit;
 }
 
 /**
@@ -19,11 +18,11 @@ function renderDashboard(panel: XUL.TabPanel) {
  */
 export default function registerPanels() {
     toolkit.readerTab.register(
-        localeStr.dashboard,
+        toolkit.locale.dashboard,
         (panel?: XUL.TabPanel) => panel && renderDashboard(panel)
     );
     toolkit.libTab.register(
-        localeStr.dashboard,
+        toolkit.locale.dashboard,
         (panel: XUL.TabPanel) => renderDashboard(panel)
     );
     toolkit.reader.addReaderTabPanelDeckObserver(addImagesPreviewer);
@@ -38,12 +37,12 @@ async function addImagesPreviewer() {
         return;
     (reader._iframeWindow as any).wrappedJSObject.charteroProgressmeter = () => {
         const popMsg = new Zotero.ProgressWindow(),
-            locale = localeStr.imagesLoaded;
+            locale = toolkit.locale.imagesLoaded;
         popMsg.changeHeadline('', 'chrome://chartero/content/icons/icon.png', 'Chartero');
         popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
         let prog = new popMsg.ItemProgress(
             'chrome://chartero/content/icons/accept.png',
-            localeStr.loadingImages
+            toolkit.locale.loadingImages
         );
         popMsg.show();
         return function (percentage: number, page: number) {

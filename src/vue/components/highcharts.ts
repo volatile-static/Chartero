@@ -9,17 +9,10 @@ import HC_offlineExporting from 'highcharts/modules/offline-exporting';
 HC_offlineExporting(Highcharts);
 import HC_dark from 'highcharts/themes/dark-unica';
 HC_dark(Highcharts);
-import { copySVG2JPG, saveSVG, showMessage } from './utils';
-import * as zh_CN from '../iframes/zh_CN.json'
+import { copySVG2JPG, saveSVG, showMessage } from '../../bootstrap/modules/utils';
+import * as zh_CN from './zh_CN.json'
 
-//@ts-ignore
-window.Zotero = parent.Zotero;
-//@ts-ignore
-window.localeStr = JSON.parse(
-    Zotero.File.getContentsFromURL('chrome://chartero/locale/chartero.json')
-);
-
-if (Zotero.locale == 'zh-CN' || Zotero.locale == 'ja-JP')
+if (toolkit.getGlobal('Zotero').locale == 'zh-CN' || toolkit.getGlobal('Zotero').locale == 'ja-JP')
     Highcharts.setOptions(zh_CN as Highcharts.Options);
 
 Highcharts.setOptions({
@@ -56,9 +49,9 @@ Highcharts.setOptions({
             downloadJPEG: {
                 onclick: function () {
                     copySVG2JPG(this.getSVGForExport());
-                    showMessage(localeStr.imageCopied, 'information');
+                    showMessage(toolkit.locale.imageCopied, 'information');
                 },
-                text: localeStr.copyPNG
+                text: toolkit.locale.copyPNG
             }
         },
         buttons: {
@@ -69,6 +62,5 @@ Highcharts.setOptions({
     },
     credits: { enabled: false }
 });
-window.Highcharts = Highcharts;
 
 export default Highcharts;
