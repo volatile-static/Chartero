@@ -1,17 +1,14 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "ESNext",
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "allowJs": true
-  },
-  "include": [
-    "./",
-    "../../node_modules/zotero-types"
-  ],
-  "exclude": []
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "ESNext",
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "allowJs": true
+    },
+    "include": ["./", "../../node_modules/zotero-types"],
+    "exclude": []
 }

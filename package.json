@@ -15,6 +15,7 @@
         "restart6": "node ./tools/restart6.js",
         "restart7": "node ./tools/restart7.js",
         "restart": "npm run build-dev && npm run build-vite && npm run restart7",
+        "bootstrap": "npm run build-dev && npm run restart7",
         "pack": "node ./tools/pack.js",
         "release": "release-it",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -32,13 +33,17 @@
     "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
     "updaterdf": "https://raw.githubusercontent.com/volatile-static/Chartero/master/update.json",
     "dependencies": {
+        "compromise": "^14.8.2",
+        "compromise-stats": "^0.1.0",
         "highcharts": "^10.3.3",
         "highcharts-vue": "^1.4.0",
-        "tdesign-vue-next": "^1.0.4",
-        "zotero-plugin-toolkit": "^1.1.2"
+        "segmentit": "^2.0.3",
+        "tdesign-vue-next": "^1.0.5",
+        "zotero-plugin-toolkit": "^1.1.11",
+        "zotero-reading-history": "file:../zotero-plugin-toolkit"
     },
     "devDependencies": {
-        "@types/node": "^18.11.18",
+        "@types/node": "^18.11.19",
         "@vitejs/plugin-vue": "^4.0.0",
         "@vue/tsconfig": "^0.1.3",
         "compressing": "^1.7.0",
@@ -52,10 +57,10 @@
         "replace-in-file": "^6.3.5",
         "unplugin-auto-import": "^0.12.2",
         "unplugin-vue-components": "^0.22.12",
-        "vite": "^4.0.4",
+        "vite": "^4.1.1",
         "vue": "^3.2.45",
         "vue-tsc": "^1.0.24",
-        "zotero-types": "^1.0.6"
+        "zotero-types": "^1.0.8"
     },
     "eslintConfig": {
         "extends": [
@@ -66,6 +71,8 @@
         "*.{d.ts}": "prettier --write ./**.d.ts"
     },
     "prettier": {
-        "tabWidth": 4
+        "tabWidth": 4,
+        "singleQuote": true,
+        "arrowParens": "avoid"
     }
 }

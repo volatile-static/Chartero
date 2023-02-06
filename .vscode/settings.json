@@ -1,8 +1,8 @@
 {
-    "cSpell.words": [
-        "tdesign",
-        "unplugin"
-    ],
+    "cSpell.words": ["tdesign", "unplugin"],
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }

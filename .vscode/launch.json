@@ -1,5 +1,5 @@
 {
-    // 使用 IntelliSense 了解相关属性。 
+    // 使用 IntelliSense 了解相关属性。
     // 悬停以查看现有属性的描述。
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
@@ -7,32 +7,30 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "bootstrap",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "bootstrap"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "dev",
             "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run",
-                "restart"
-            ],
+            "runtimeArgs": ["run", "restart"]
         },
         {
             "type": "node",
             "request": "launch",
             "name": "z7",
             "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run",
-                "restart7"
-            ],
+            "runtimeArgs": ["run", "restart7"]
         },
         {
             "type": "node",
             "request": "launch",
             "name": "z6",
             "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run",
-                "restart6"
-            ],
+            "runtimeArgs": ["run", "restart6"]
         }
     ]
 }

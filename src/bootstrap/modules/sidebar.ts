@@ -1,15 +1,19 @@
 function renderDashboard(panel: XUL.TabPanel) {
-    if (panel.childElementCount)  // 已经有元素了
+    if (panel.childElementCount)
+        // 已经有元素了
         return;
-    const dashboard = toolkit.ui.appendElement({
-        tag: 'iframe',
-        namespace: 'xul',
-        skipIfExists: true,
-        attributes: {
-            flex: 1,
-            src: 'chrome://chartero/content/dashboard/index.html'
-        }
-    }, panel) as HTMLIFrameElement;
+    const dashboard = toolkit.ui.appendElement(
+        {
+            tag: 'iframe',
+            namespace: 'xul',
+            skipIfExists: true,
+            attributes: {
+                flex: 1,
+                src: 'chrome://chartero/content/dashboard/index.html',
+            },
+        },
+        panel
+    ) as HTMLIFrameElement;
     (dashboard.contentWindow as any).toolkit = toolkit;
 }
 
@@ -21,24 +25,28 @@ export default function registerPanels() {
         toolkit.locale.dashboard,
         (panel?: XUL.TabPanel) => panel && renderDashboard(panel)
     );
-    toolkit.libTab.register(
-        toolkit.locale.dashboard,
-        (panel: XUL.TabPanel) => renderDashboard(panel)
+    toolkit.libTab.register(toolkit.locale.dashboard, (panel: XUL.TabPanel) =>
+        renderDashboard(panel)
     );
-    toolkit.reader.addReaderTabPanelDeckObserver(addImagesPreviewer);
+    toolkit.reader.register('initialized', 'chartero', reader =>
+        reader._waitForReader().then(() => addImagesPreviewer(reader))
+    );
 }
 
 /**
  * 给阅读器左侧边栏添加图片预览
  */
-async function addImagesPreviewer() {
-    const reader = await toolkit.reader.getReader();
-    if (!reader || 'charteroProgressmeter' in (reader._iframeWindow as any).wrappedJSObject)
-        return;
-    (reader._iframeWindow as any).wrappedJSObject.charteroProgressmeter = () => {
+function addImagesPreviewer(reader: _ZoteroTypes.ReaderInstance) {
+    const win: any = reader._iframeWindow;
+    if (!win || 'charteroProgressmeter' in win.wrappedJSObject) return;
+    win.wrappedJSObject.charteroProgressmeter = () => {
         const popMsg = new Zotero.ProgressWindow(),
             locale = toolkit.locale.imagesLoaded;
-        popMsg.changeHeadline('', 'chrome://chartero/content/icons/icon.png', 'Chartero');
+        popMsg.changeHeadline(
+            '',
+            'chrome://chartero/content/icons/icon.png',
+            'Chartero'
+        );
         popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
         let prog = new popMsg.ItemProgress(
             'chrome://chartero/content/icons/accept.png',
@@ -55,13 +63,18 @@ async function addImagesPreviewer() {
                 prog.setText('Scanning images in page ' + (page || 0));
             }
         };
-    }
-    toolkit.ui.appendElement({
-        tag: 'script',
-        namespace: 'html',
-        skipIfExists: true,
-        properties: {
-            innerHTML: Zotero.File.getContentsFromURL('chrome://chartero/content/reader.js')
-        }
-    }, reader._iframeWindow.document.head);
+    };
+    toolkit.ui.appendElement(
+        {
+            tag: 'script',
+            namespace: 'html',
+            skipIfExists: true,
+            properties: {
+                innerHTML: Zotero.File.getContentsFromURL(
+                    'chrome://chartero/content/reader.js'
+                ),
+            },
+        },
+        win.document.head
+    );
 }

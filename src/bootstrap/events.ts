@@ -5,75 +5,83 @@ import registerPanels from './modules/sidebar';
  * 初始化插件时调用
  */
 export function onInit() {
-  toolkit.log('Initializing Chartero addon...');
-  toolkit.prefPane.register({  // 注册设置面板
-    pluginID: config.addonID,
-    src: rootURI + 'chrome/content/preferences.xhtml',
-    image: `chrome://${config.addonName}/content/icons/icon32.png`,
-    label: 'Chartero'
-  });
-  toolkit.ui.appendElement({  // 加载样式文件
-    tag: 'link',
-    directAttributes: {
-      type: 'text/css',
-      rel: 'stylesheet',
-      href: `chrome://${config.addonName}/content/zoteroPane.css`,
-    }
-  }, document.documentElement);
-  document.getElementById('zotero-collections-toolbar')?.appendChild( // 添加工具栏按钮
-    toolkit.ui.createElement(document, 'toolbarbutton', {
-      id: 'chartero-toolbar-button',
-      classList: ['zotero-tb-button'],
-      attributes: { tooltiptext: toolkit.locale.dashboard },
-      listeners: [{ type: 'command', listener: onToolButtonCommand }]
-    })
-  );
-  Zotero.uiReadyPromise.then(() => {  // 监听条目选择事件
-    ZoteroPane.itemsView.onSelect.addListener(onItemSelect);
-    ZoteroPane.collectionsView.onSelect.addListener(onCollectionSelect);
-  });
-  Zotero.Notifier.registerObserver({
-     notify: (
-      event: _ZoteroTypes.Notifier.Event,
-      type: _ZoteroTypes.Notifier.Type,
-      ids: string[],
-      extraData: _ZoteroTypes.anyObj
-    ) => {
-      if (event == 'close' && ids[0] == Zotero.Chartero.overviewTabID)
-        Zotero.Chartero.overviewTabID = undefined;
-    }
-  }, ['tab']);
-  registerPanels();
-  toolkit.log('Chartero initialized successfully!');
+    toolkit.log('Initializing Chartero addon...');
+    // 注册设置面板
+    toolkit.prefPane.register({
+        pluginID: config.addonID,
+        src: rootURI + 'chrome/content/preferences.xhtml',
+        image: `chrome://${config.addonName}/content/icons/icon32.png`,
+        label: 'Chartero',
+    });
+
+    // 添加工具栏按钮
+    document.getElementById('zotero-collections-toolbar')?.appendChild(
+        toolkit.ui.createElement(document, 'toolbarbutton', {
+            id: 'chartero-toolbar-button',
+            classList: ['zotero-tb-button'],
+            attributes: { tooltiptext: toolkit.locale.dashboard },
+            styles: {
+                'list-style-image':
+                    'url("chrome://chartero/content/icons/icon@16px.png");',
+            },
+            listeners: [{ type: 'command', listener: onToolButtonCommand }],
+        })
+    );
+
+    // 监听条目选择事件
+    Zotero.uiReadyPromise.then(() => {
+        ZoteroPane.itemsView.onSelect.addListener(onItemSelect);
+        ZoteroPane.collectionsView.onSelect.addListener(onCollectionSelect);
+    });
+    Zotero.Notifier.registerObserver(
+        {
+            notify: (
+                event: _ZoteroTypes.Notifier.Event,
+                type: _ZoteroTypes.Notifier.Type,
+                ids: string[],
+                extraData: _ZoteroTypes.anyObj
+            ) => {
+                if (event == 'close' && ids[0] == Zotero.Chartero.overviewTabID)
+                    Zotero.Chartero.overviewTabID = undefined;
+            },
+        },
+        ['tab']
+    );
+    registerPanels();
+    toolkit.log('Chartero initialized successfully!');
 }
 
 function onToolButtonCommand(_: Event) {
-  if (Zotero.Chartero.overviewTabID){
-    Zotero_Tabs.select(Zotero.Chartero.overviewTabID);
-    return;
-  }
-  const { id, container } = Zotero_Tabs.add({  // 打开新的标签页
-    type: 'library',
-    title: 'Chartero',
-    select: true
-  });
-  Zotero.Chartero.overviewTabID = id;
-
-  const overview = toolkit.ui.appendElement({
-    tag: 'iframe',
-    namespace: 'xul',
-    attributes: {
-      flex: 1,
-      src: `chrome://${config.addonName}/content/overview/index.html`
+    if (Zotero.Chartero.overviewTabID) {
+        Zotero_Tabs.select(Zotero.Chartero.overviewTabID);
+        return;
     }
-  }, container) as HTMLIFrameElement;
-  (overview.contentWindow as any).toolkit = toolkit;
+    const { id, container } = Zotero_Tabs.add({
+        // 打开新的标签页
+        type: 'library',
+        title: 'Chartero',
+        select: true,
+    });
+    Zotero.Chartero.overviewTabID = id;
+
+    const overview = toolkit.ui.appendElement(
+        {
+            tag: 'iframe',
+            namespace: 'xul',
+            attributes: {
+                flex: 1,
+                src: `chrome://${config.addonName}/content/overview/index.html`,
+            },
+        },
+        container
+    ) as HTMLIFrameElement;
+    (overview.contentWindow as any).toolkit = toolkit;
 }
 
 function onItemSelect() {
-  const items = ZoteroPane.getSelectedItems();
+    const items = ZoteroPane.getSelectedItems();
 }
 
 function onCollectionSelect() {
-  const row = ZoteroPane.getCollectionTreeRow();
+    const row = ZoteroPane.getCollectionTreeRow();
 }

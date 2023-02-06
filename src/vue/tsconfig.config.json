@@ -1,18 +1,19 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.node.json",
-  "include": [
-    "vite.config.*",
-    "vitest.config.*",
-    "cypress.config.*",
-    "playwright.config.*"
-  ],
-  "compilerOptions": {
-    "composite": true,
-    "strict": true,
-    "types": [
-      "node",
-      "tdesign-vue-next/global",
-      "highcharts-vue/types/highcharts-vue"
-    ]
-  }
+    "extends": "@vue/tsconfig/tsconfig.node.json",
+    "include": [
+        "vite.config.*",
+        "vitest.config.*",
+        "cypress.config.*",
+        "playwright.config.*"
+    ],
+    "compilerOptions": {
+        "target": "ESNext",
+        "composite": true,
+        "strict": true,
+        "types": [
+            "node",
+            "tdesign-vue-next/global",
+            "highcharts-vue/types/highcharts-vue"
+        ]
+    }
 }
