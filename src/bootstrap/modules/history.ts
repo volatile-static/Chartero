@@ -1,17 +1,35 @@
-import ReadingHistory, { AttachmentHistory } from 'zotero-reading-history';
+import { AttachmentHistory } from 'zotero-reading-history';
 
-export default class CharteroReadingHistory extends ReadingHistory {
-    getByDate(data: AttachmentHistory[], date: Date) {
+export default class HistoryAnalyzer {
+    private readonly data: AttachmentHistory[];
+    constructor(data: AttachmentHistory[]) {
+        this.data = data;
+    }
+    getByDate(date: Date) {
         return accumulatePeriodIf(
-            data,
+            this.data,
             time => time.toDateString() == date.toDateString()
         );
     }
-    getByDay(data: AttachmentHistory[], day: number) {
-        return accumulatePeriodIf(data, time => time.getDay() == day);
+    getByDay(day: number) {
+        return accumulatePeriodIf(this.data, time => time.getDay() == day);
     }
-    getByHour(data: AttachmentHistory[], hour: number) {
-        return accumulatePeriodIf(data, time => time.getHours() == hour);
+    getByHour(hour: number) {
+        return accumulatePeriodIf(this.data, time => time.getHours() == hour);
+    }
+    get firstTime() {
+        const maxT = 9999999999;
+        return this.data.reduce(
+            (result, history) =>
+                Math.min(result, history.record.firstTime ?? maxT),
+            maxT
+        );
+    }
+    get lastTime() {
+        return this.data.reduce(
+            (result, history) => Math.max(result, history.record.lastTime ?? 0),
+            0
+        );
     }
 }
 

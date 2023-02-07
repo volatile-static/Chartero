@@ -1,8 +1,3 @@
-/* Copyright 2012 Will Shanks.
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 if (typeof Zotero == "undefined") {
   var Zotero;
 }
@@ -68,10 +63,10 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
     ].getService(Components.interfaces.amIAddonManagerStartup);
     var manifestURI = Services.io.newURI(rootURI + "manifest.json");
     chromeHandle = aomStartup.registerChrome(manifestURI, [
-      ["locale", "__addonName__", "en-US", rootURI + "chrome/locale/en-US/"],
-      ["locale", "__addonName__", "zh-CN", rootURI + "chrome/locale/zh-CN/"],
-      ["locale", "__addonName__", "ja-JP", rootURI + "chrome/locale/ja-JP/"],
-      ["content", "__addonName__", rootURI + "chrome/content/"],
+      ["locale", "__addonName__", "en-US", rootURI + "locale/en-US/"],
+      ["locale", "__addonName__", "zh-CN", rootURI + "locale/zh-CN/"],
+      ["locale", "__addonName__", "ja-JP", rootURI + "locale/ja-JP/"],
+      ["content", "__addonName__", rootURI + "content/"],
     ]);
   }
 
@@ -93,7 +88,7 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
   window.console.debug('~~~~~~ Chartero startup ~~~~~~');
   try {
     Services.scriptloader.loadSubScript(
-      `${rootURI}/chrome/content/scripts/Chartero.js`,
+      `${rootURI}/content/Chartero.js`,
       ctx
     );
   } catch (error) {

@@ -9,7 +9,7 @@ export function onInit() {
     // 注册设置面板
     toolkit.prefPane.register({
         pluginID: config.addonID,
-        src: rootURI + 'chrome/content/preferences.xhtml',
+        src: rootURI + 'content/preferences.xhtml',
         image: `chrome://${config.addonName}/content/icons/icon32.png`,
         label: 'Chartero',
     });
@@ -22,7 +22,7 @@ export function onInit() {
             attributes: { tooltiptext: toolkit.locale.dashboard },
             styles: {
                 'list-style-image':
-                    'url("chrome://chartero/content/icons/icon@16px.png");',
+                    'url("chrome://chartero/content/icons/icon@16px.png")',
             },
             listeners: [{ type: 'command', listener: onToolButtonCommand }],
         })

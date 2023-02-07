@@ -105,7 +105,7 @@ async function main() {
         __dev__: process.env.NODE_ENV == 'development',
       },
       bundle: true,
-      outfile: path.join(buildDir, "addon/chrome/content/scripts/Chartero.js")
+      outfile: path.join(buildDir, "addon/content/Chartero.js")
     })
   ]).catch(reason => {
     console.log("[Build] Error: ", reason);

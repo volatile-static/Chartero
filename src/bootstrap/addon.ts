@@ -8,7 +8,8 @@ import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
 import { config } from '../../package.json';
 import { onInit } from './events';
 import prefsPaneDoc from './modules/prefs';
-import CharteroReadingHistory from './modules/history';
+import HistoryAnalyzer from './modules/history';
+import ReadingHistory from 'zotero-reading-history';
 
 export class CharteroToolkit extends toolBase.BasicTool {
     readonly menu: MenuManager;
@@ -18,8 +19,9 @@ export class CharteroToolkit extends toolBase.BasicTool {
     readonly readerTab: ReaderTabPanelManager;
     readonly reader: ReaderInstanceManager;
     readonly ui: UITool;
-    readonly history: CharteroReadingHistory;
-    readonly locale: typeof import('../../addon/chrome/locale/zh-CN/chartero.json');
+    readonly history: ReadingHistory;
+    readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
+    readonly HistoryAnalyzer: typeof HistoryAnalyzer;
 
     constructor() {
         super();
@@ -34,7 +36,7 @@ export class CharteroToolkit extends toolBase.BasicTool {
         this.readerTab = new ReaderTabPanelManager(this);
         this.reader = new ReaderInstanceManager(this);
         this.ui = new UITool(this);
-        this.history = new CharteroReadingHistory({
+        this.history = new ReadingHistory({
             timestamp: true,
             groupUser: true,
             numPages: true,
@@ -44,6 +46,7 @@ export class CharteroToolkit extends toolBase.BasicTool {
                 'chrome://chartero/locale/chartero.json'
             )
         );
+        this.HistoryAnalyzer = HistoryAnalyzer;
     }
 }
 
