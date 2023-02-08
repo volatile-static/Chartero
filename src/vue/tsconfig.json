@@ -1,21 +1,11 @@
 {
     "extends": "@vue/tsconfig/tsconfig.web.json",
-    "include": [
-        "env.d.ts",
-        "**/*",
-        "**/*.vue",
-        "../../node_modules/zotero-types"
-    ],
+    "include": ["env.d.ts", "**/*.ts", "**/*.vue"],
     "compilerOptions": {
         "baseUrl": ".",
         "types": ["vite/client"],
-        "paths": {
-            "@/*": ["./*"]
-        }
+        "typeRoots": ["./"],
+        "paths": { "@/*": ["./*"] }
     },
-    "references": [
-        {
-            "path": "./tsconfig.config.json"
-        }
-    ]
+    "references": [{ "path": "./tsconfig.config.json" }]
 }

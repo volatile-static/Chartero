@@ -3,11 +3,10 @@ import 'tdesign-vue-next/es/style/index.css';
 import { Button as TButton, Transfer as TTransfer } from 'tdesign-vue-next';
 import WordCloud from '../components/wordCloud.vue';
 import SkyLine from '../components/skyline.vue';
+import PageTime from '../components/pageTime.vue';
 </script>
 
 <script lang="ts">
-import { ref } from 'vue';
-
 const list: any = [];
 for (let i = 0; i < 20; i++) {
     list.push({
@@ -16,7 +15,6 @@ for (let i = 0; i < 20; i++) {
     });
 }
 
-const targetValue = ref([]);
 export default {
     data() {
         return {
@@ -62,6 +60,7 @@ export default {
                     },
                 ],
             },
+            history: toolkit.history.getInLibrary()[0],
         };
     },
     methods: {
@@ -77,6 +76,7 @@ export default {
     <header>
         <!-- <WordCloud></WordCloud> -->
         <SkyLine></SkyLine>
+        <PageTime :history="history"></PageTime>
         <!-- <TTransfer
             v-model="targetValue"
             theme="primary"

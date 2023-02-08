@@ -30,8 +30,6 @@
 </template>
 
 <script lang="ts">
-import { Tooltip as TTooltip } from 'tdesign-vue-next';
-
 /** 遍历每个格子 */
 function forEachBlock<T>(fun: (week: number, day: number) => T): T[] {
     const result = new Array();

@@ -1,7 +1,9 @@
-function renderDashboard(panel: XUL.TabPanel) {
-    if (panel.childElementCount)
-        // 已经有元素了
-        return;
+async function renderDashboard(
+    panel: XUL.TabPanel,
+    reader?: _ZoteroTypes.ReaderInstance
+) {
+    await reader?._waitForReader();
+    if (panel.childElementCount) return; // 已经有元素了
     const dashboard = toolkit.ui.appendElement(
         {
             tag: 'iframe',
@@ -11,10 +13,11 @@ function renderDashboard(panel: XUL.TabPanel) {
                 flex: 1,
                 src: 'chrome://chartero/content/dashboard/index.html',
             },
+            classList: ['chartero-dashboard'],
         },
         panel
     ) as HTMLIFrameElement;
-    (dashboard.contentWindow as any).toolkit = toolkit;
+    (dashboard.contentWindow as any).wrappedJSObject.toolkit = toolkit;
 }
 
 /**
@@ -23,7 +26,12 @@ function renderDashboard(panel: XUL.TabPanel) {
 export default function registerPanels() {
     toolkit.readerTab.register(
         toolkit.locale.dashboard,
-        (panel?: XUL.TabPanel) => panel && renderDashboard(panel)
+        (
+            panel: XUL.TabPanel,
+            ownerDeck: XUL.Deck,
+            ownerWindow: Window,
+            reader: _ZoteroTypes.ReaderInstance
+        ) => renderDashboard(panel, reader)
     );
     toolkit.libTab.register(toolkit.locale.dashboard, (panel: XUL.TabPanel) =>
         renderDashboard(panel)

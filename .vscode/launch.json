@@ -14,7 +14,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "dev",
+            "name": "一条龙",
             "runtimeExecutable": "npm",
             "runtimeArgs": ["run", "restart"]
         },

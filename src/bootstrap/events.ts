@@ -79,7 +79,12 @@ function onToolButtonCommand(_: Event) {
 }
 
 function onItemSelect() {
-    const items = ZoteroPane.getSelectedItems();
+    const items = ZoteroPane.getSelectedItems(true),
+        dashboard = document.querySelector(
+            '#zotero-view-tabbox .chartero-dashboard'
+        ) as HTMLIFrameElement;
+    if (items.length == 1)
+        dashboard?.contentWindow?.postMessage({ id: items[0] }, '*');
 }
 
 function onCollectionSelect() {

@@ -2,7 +2,6 @@
 import type Highcharts from "./highcharts";
 import { Chart } from "highcharts-vue";
 import { onMounted, ref } from "vue";
-import networkOptions from "./charts/network"
 
 const chart = ref<Highcharts.Chart | null>(null);
 
@@ -12,5 +11,5 @@ onMounted(() => {
 </script>
 
 <template>
-    <Chart :constructorType="'chart'" ref="chart" :options="networkOptions()"></Chart>
+    <!-- <Chart :constructorType="'chart'" ref="chart" :options="networkOptions()"></Chart> -->
 </template>

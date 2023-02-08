@@ -43,7 +43,7 @@
         "zotero-reading-history": "file:../zotero-plugin-toolkit"
     },
     "devDependencies": {
-        "@types/node": "^18.11.19",
+        "@types/node": "^18.13.0",
         "@vitejs/plugin-vue": "^4.0.0",
         "@vue/tsconfig": "^0.1.3",
         "compressing": "^1.7.0",

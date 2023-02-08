@@ -1,8 +1,10 @@
 {
-    "cSpell.words": ["denormalize", "tdesign", "unplugin"],
+    "cSpell.words": ["denormalize", "gantt", "tdesign", "unplugin"],
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
-    }
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.suggestSelection": "recentlyUsedByPrefix"
 }

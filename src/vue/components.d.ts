@@ -7,6 +7,8 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    TButton: typeof import('tdesign-vue-next')['Button']
     TTooltip: typeof import('tdesign-vue-next')['Tooltip']
+    TTransfer: typeof import('tdesign-vue-next')['Transfer']
   }
 }
