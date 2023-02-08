@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import 'tdesign-vue-next/es/style/index.css';
-import { Button as TButton, Transfer as TTransfer } from 'tdesign-vue-next';
 import WordCloud from '../components/wordCloud.vue';
 import SkyLine from '../components/skyline.vue';
 import PageTime from '../components/pageTime.vue';

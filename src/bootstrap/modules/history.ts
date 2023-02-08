@@ -31,16 +31,22 @@ export default class HistoryAnalyzer {
             0
         );
     }
+    get progress() {
+        const read = accumulate(this.data, his => his.record.readPages),
+            total = accumulate(this.data, his => his.record.numPages ?? 0);
+        if (total == 0) return 0;
+        else return Math.round((100 * read) / total);
+    }
 }
 
-function accumulate<T>(arr: T[], callback: (e: T) => number) {
+function accumulate<T>(arr: readonly T[], callback: (e: T) => number) {
     if (arr.length > 0)
         return arr.reduce((sum: number, e) => sum + callback(e), 0);
     else return 0;
 }
 
 function accumulatePeriodIf(
-    data: AttachmentHistory[],
+    data: readonly AttachmentHistory[],
     predicate: (time: Date) => boolean
 ) {
     const attachmentsPages = data

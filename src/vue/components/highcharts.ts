@@ -27,6 +27,7 @@ Highcharts.setOptions({
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         useUTC: false,
     },
+    title: { text: undefined },
     chart: {
         borderRadius: 6,
         animation: {

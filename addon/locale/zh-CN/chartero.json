@@ -1,13 +1,5 @@
 {
-    "weekdays": [
-        "周日",
-        "周一",
-        "周二",
-        "周三",
-        "周四",
-        "周五",
-        "周六"
-    ],
+    "weekdays": ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
     "copyPNG": "复制图表",
     "imageCopied": "图片已复制到剪贴板",
     "seconds": "秒",
@@ -16,7 +8,7 @@
     "date": "日期",
     "time": "时长",
     "readingProgressTip": "浏览过的页面与总页数之比",
-    "pagenum": "页码",
+    "pageNum": "页码",
     "unfiled": "未分类",
     "itemChartTitle": "读过的条目",
     "pdfAnnotation": "PDF注释",
@@ -38,7 +30,7 @@
     "chartTitle": {
         "pie": "总阅读时长占比",
         "pieSub": "点击扇形了解更多",
-        "wordcloud": "标题词云图",
+        "wordCloud": "标题词云图",
         "gantt": "时间线",
         "schedule": "作息规律统计",
         "dateTime": "每日阅读时长",
@@ -49,10 +41,6 @@
 
     "noHistoryFound": "没有历史记录！",
     "jsonParseError": "数据格式错误！",
-    "readingProgressmeter": {
-        "hide": "隐藏高能进度条",
-        "show": "显示高能进度条"
-    },
     "loadingImages": "加载更多…",
     "imagesLoaded": "图片加载完成！",
     "dashboard": "仪表盘",

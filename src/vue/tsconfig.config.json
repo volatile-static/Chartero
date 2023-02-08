@@ -12,6 +12,7 @@
         "strict": true,
 
         "types": [
+            "vite/client",
             "node",
             "tdesign-vue-next/global",
             "highcharts-vue/types/highcharts-vue"
