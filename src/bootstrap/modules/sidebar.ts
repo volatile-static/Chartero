@@ -18,6 +18,11 @@ async function renderDashboard(
         panel
     ) as HTMLIFrameElement;
     (dashboard.contentWindow as any).wrappedJSObject.toolkit = toolkit;
+
+    if (reader)
+        dashboard.contentWindow?.addEventListener('load', () =>
+            dashboard.contentWindow?.postMessage({ id: reader.itemID }, '*')
+        );
 }
 
 /**

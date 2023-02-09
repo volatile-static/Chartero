@@ -5,10 +5,6 @@ import HighchartsGantt from 'highcharts/modules/gantt';
 HighchartsGantt(Highcharts);
 import HighchartsExporting from 'highcharts/modules/exporting';
 HighchartsExporting(Highcharts);
-import HC_offlineExporting from 'highcharts/modules/offline-exporting';
-HC_offlineExporting(Highcharts);
-import HC_dark from 'highcharts/themes/dark-unica';
-HC_dark(Highcharts);
 import {
     copySVG2JPG,
     saveSVG,
@@ -31,7 +27,7 @@ Highcharts.setOptions({
     chart: {
         borderRadius: 6,
         animation: {
-            duration: 1500,
+            duration: 1200,
             easing: (pos: number) => {
                 if (pos < 1 / 2.75) return 7.5625 * pos * pos;
                 if (pos < 2 / 2.75)

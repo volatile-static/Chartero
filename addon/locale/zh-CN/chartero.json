@@ -7,6 +7,14 @@
     "hours": "小时",
     "date": "日期",
     "time": "时长",
+    "pages": "页",
+    "progressLabel": {
+        "read": "已读",
+        "total": "共",
+        "notes": "条笔记",
+        "words": "字",
+        "PDFs": "个PDF附件"
+    },
     "readingProgressTip": "浏览过的页面与总页数之比",
     "pageNum": "页码",
     "unfiled": "未分类",

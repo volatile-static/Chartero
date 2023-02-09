@@ -7,12 +7,12 @@ import registerPanels from './modules/sidebar';
 export function onInit() {
     toolkit.log('Initializing Chartero addon...');
     // 注册设置面板
-    toolkit.prefPane.register({
-        pluginID: config.addonID,
-        src: rootURI + 'content/preferences.xhtml',
-        image: `chrome://${config.addonName}/content/icons/icon32.png`,
-        label: 'Chartero',
-    });
+    // toolkit.prefPane.register({
+    //     pluginID: config.addonID,
+    //     src: rootURI + 'content/preferences.xhtml',
+    //     image: `chrome://${config.addonName}/content/icons/icon32.png`,
+    //     label: 'Chartero',
+    // });
 
     // 添加工具栏按钮
     document.getElementById('zotero-collections-toolbar')?.appendChild(
@@ -56,8 +56,8 @@ function onToolButtonCommand(_: Event) {
         Zotero_Tabs.select(Zotero.Chartero.overviewTabID);
         return;
     }
+    // 打开新的标签页
     const { id, container } = Zotero_Tabs.add({
-        // 打开新的标签页
         type: 'library',
         title: 'Chartero',
         select: true,
@@ -84,6 +84,7 @@ function onItemSelect() {
             '#zotero-view-tabbox .chartero-dashboard'
         ) as HTMLIFrameElement;
     if (items.length == 1)
+        // 当前处于侧边栏标签页
         dashboard?.contentWindow?.postMessage({ id: items[0] }, '*');
 }
 

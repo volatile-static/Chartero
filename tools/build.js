@@ -105,6 +105,7 @@ async function main() {
         __dev__: process.env.NODE_ENV == 'development',
       },
       bundle: true,
+      minify: process.env.NODE_ENV != 'development',
       outfile: path.join(buildDir, "addon/content/Chartero.js")
     })
   ]).catch(reason => {

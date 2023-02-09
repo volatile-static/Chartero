@@ -54,7 +54,6 @@ export class Addon {
     overviewTabID?: string;
     constructor() {
         onInit();
-        toolkit.log(toolkit.history);
     }
 
     unload() {

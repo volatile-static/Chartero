@@ -1,15 +1,23 @@
 <template>
-    <Chart constructor-type="chart" ref="chart" :options="options"></Chart>
+    <Chart constructor-type="chart" :options="options" :key="theme"></Chart>
 </template>
 
 <script lang="ts">
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
+import Highcharts from './highcharts';
+
+function getTitle(his: AttachmentHistory) {
+    const Items = toolkit.getGlobal('Zotero').Items,
+        item = Items.getByLibraryAndKey(his.note.libraryID, his.key);
+    return item && (item as Zotero.Item).getField('title');
+}
+
 export default defineComponent({
     data() {
         return {
-            options: {
+            chartOpts: {
                 chart: {
                     panning: {
                         enabled: true,
@@ -25,29 +33,37 @@ export default defineComponent({
             } as Highcharts.Options,
         };
     },
-    watch: {
-        history(oldHis: AttachmentHistory, newHis: AttachmentHistory) {
-            toolkit.log(oldHis, newHis);
-            if (!newHis) return;
-
-            const firstTime = newHis.record.firstTime,
-                lastTime = newHis.record.lastTime,
-                ha = new toolkit.HistoryAnalyzer([newHis]),
-                series = this.options.series![0] as Highcharts.SeriesBarOptions,
-                xAxis = this.options.xAxis as Highcharts.AxisOptions;
-
-            xAxis.categories = [];
-            series.data = [];
-            // 遍历每天
-            if (firstTime && lastTime)
-                for (let i = firstTime; i <= lastTime; i += 86400) {
-                    const date = new Date(i * 1000);
-                    xAxis.categories.push(date.toLocaleDateString());
-                    series.data.push(ha.getByDate(date));
-                }
+    computed: {
+        options() {
+            return Highcharts.merge(this.chartOpts, this.theme);
         },
     },
-    props: { history: { required: false } },
+    watch: {
+        history(newHis: AttachmentHistory[]) {
+            if (!newHis) return;
+
+            this.chartOpts.series = newHis.map(attHis => {
+                const firstTime = attHis.record.firstTime,
+                    lastTime = attHis.record.lastTime,
+                    ha = new toolkit.HistoryAnalyzer([attHis]),
+                    data: number[] = [];
+                // 遍历每天
+                if (firstTime && lastTime)
+                    for (let i = firstTime; i <= lastTime; i += 86400) {
+                        const date = new Date(i * 1000);
+                        data.push(ha.getByDate(date));
+                    }
+                return {
+                    name: getTitle(attHis),
+                    data,
+                } as Highcharts.SeriesLineOptions;
+            });
+        },
+    },
+    props: {
+        history: { type: Array<AttachmentHistory>, required: true },
+        theme: Object,
+    },
     components: { Chart },
 });
 </script>

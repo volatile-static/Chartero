@@ -1,44 +1,66 @@
 <template>
-    <Chart :constructor-type="'chart'" ref="chart" :options="options"></Chart>
+    <Chart constructor-type="chart" :options="options" :key="theme"></Chart>
 </template>
 
 <script lang="ts">
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
+import Highcharts from './highcharts';
+
+function getTitle(his: AttachmentHistory) {
+    const Items = toolkit.getGlobal('Zotero').Items,
+        item = Items.getByLibraryAndKey(his.note.libraryID, his.key);
+    return item && (item as Zotero.Item).getField('title');
+}
 
 export default defineComponent({
     data() {
         return {
-            options: {
+            chartOpts: {
                 xAxis: { title: { text: toolkit.locale.pageNum } },
                 series: [{ type: 'bar' }],
+                chart: {
+                    panning: {
+                        enabled: true,
+                        type: 'x',
+                    },
+                    zooming: {
+                        type: 'x',
+                        key: 'shift',
+                    },
+                },
             } as Highcharts.Options,
         };
     },
-    props: {
-        history: {
-            // type: Object as PropType<AttachmentHistory>,
-            required: false,
+    computed: {
+        options() {
+            return Highcharts.merge(this.chartOpts, this.theme);
         },
     },
+    props: {
+        history: {
+            type: Array<AttachmentHistory>,
+            required: true,
+        },
+        theme: Object,
+    },
     watch: {
-        history(oldHis: AttachmentHistory, newHis: AttachmentHistory) {
-            if (!newHis && !oldHis) return;
+        history(his: AttachmentHistory[]) {
+            if (his.length < 1) return;
 
-            const his = newHis ?? oldHis,
-                firstPage = his.record.firstPage,
-                lastPage = his.record.lastPage,
-                series = this.options.series![0] as Highcharts.SeriesBarOptions,
-                xAxis = this.options.xAxis as Highcharts.AxisOptions;
-
-            series.data = new Array();
-            xAxis.categories = new Array();
-            for (let i = firstPage; i <= lastPage; ++i) {
-                xAxis.categories.push(i.toString());
-                series.data.push(his.record.pages[i]?.totalS ?? 0);
-            }
-            toolkit.log(this.options);
+            this.chartOpts.series = his.map(attHis => {
+                const firstPage = attHis.record.firstPage,
+                    lastPage = attHis.record.lastPage,
+                    data: number[] = [];
+                for (let i = firstPage; i <= lastPage; ++i)
+                    data.push(attHis.record.pages[i]?.totalS ?? 0);
+                return {
+                    type: 'bar',
+                    name: getTitle(attHis),
+                    data,
+                } as Highcharts.SeriesBarOptions;
+            });
         },
     },
     components: { Chart },

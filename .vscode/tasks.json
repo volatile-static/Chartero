@@ -1,16 +1,23 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "npm",
-			"script": "build-vite",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"problemMatcher": [],
-			"label": "Vue",
-			"detail": "cross-env NODE_ENV=development node ./tools/build.js"
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "build-dev-all",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "label": "Vue",
+            "detail": "cross-env NODE_ENV=development node ./tools/build.js"
+        },
+        {
+            "type": "npm",
+            "script": "type-check-all",
+            "problemMatcher": ["$eslint-compact"],
+            "label": "npm: type-check-all",
+            "detail": "npm run type-check-vue & npm run type-check-bootstrap"
+        }
+    ]
 }

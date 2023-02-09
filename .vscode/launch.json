@@ -7,16 +7,16 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "bootstrap",
+            "name": "restart-bootstrap",
             "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "bootstrap"]
+            "runtimeArgs": ["run", "restart-bootstrap"]
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "一条龙",
+            "name": "restart-all",
             "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "restart"]
+            "runtimeArgs": ["run", "restart-all"]
         },
         {
             "type": "node",
