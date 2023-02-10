@@ -23,6 +23,8 @@
     "itemTitle": "条目标题",
     "readingProgress": "阅读进度",
     "timeline": "时间轴",
+    "dateAdded": "添加附件",
+    "dateModified": "最后修改",
     "sort": "排序",
     "filter": "过滤",
     "ganttMenu": {

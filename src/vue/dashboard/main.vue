@@ -53,6 +53,14 @@
         </t-collapse-panel>
 
         <t-collapse-panel
+            value="network"
+            :header="locale.chartTitle.network"
+            :disabled="collapseDisabled"
+        >
+            <Network :item="topLevel" :theme="chartTheme"></Network>
+        </t-collapse-panel>
+
+        <t-collapse-panel
             value="timeline"
             :header="locale.timeline"
             :disabled="collapseDisabled"
@@ -75,6 +83,7 @@ import { GridLightTheme, DarkUnicaTheme } from '../utility/themes';
 import PageTime from './components/pageTime.vue';
 import DateTime from './components/dateTime.vue';
 import TimeLine from './components/timeline.vue';
+import Network from './components/network.vue';
 
 export default {
     methods: {
@@ -94,11 +103,12 @@ export default {
             if (typeof e.data.id != 'number') return; // 判断消息是否包含ID
             const Items = toolkit.getGlobal('Zotero').Items,
                 item = Items.get(e.data.id); // 获取传入的条目
-            let topLevel = item;
+            this.topLevel = item;
 
             // 传入附件的条件：阅读器
             if (!item.isRegularItem()) {
-                if (item.parentItem) topLevel = item.parentItem; // 常规条目
+                if (item.parentItem)
+                    this.topLevel = item.parentItem; // 常规条目
                 else {
                     // 独立PDF的情况
                     const his = toolkit.history.getByAttachment(item);
@@ -108,14 +118,14 @@ export default {
             }
 
             // 统计笔记信息
-            const noteIDs = topLevel.getNotes(),
+            const noteIDs = this.topLevel.getNotes(),
                 notes = noteIDs.map(id => Items.get(id).getNote()),
                 text = notes.map(str => str.replace(/<[^<>]+>/g, '')).join('');
             this.noteNum = noteIDs.length;
             this.noteWords = text.replace(/\s/g, '').length;
 
             // 更新阅读进度
-            const best = await topLevel.getBestAttachment(),
+            const best = await this.topLevel.getBestAttachment(),
                 bestHis = best && toolkit.history.getByAttachment(best);
             if (bestHis) {
                 this.readPages = bestHis.record.readPages;
@@ -124,7 +134,7 @@ export default {
 
             // 统计附件大小
             const File = toolkit.getGlobal('Zotero').File,
-                files = topLevel
+                files = this.topLevel
                     .getAttachments()
                     .map(id => Items.get(id))
                     .filter(it => it.isPDFAttachment())
@@ -135,9 +145,11 @@ export default {
                     0
                 );
             this.attachmentSize = (totalSize / 1024 / 1024).toFixed(2);
-            this.numAttachment = topLevel.numPDFAttachments();
+            this.numAttachment = this.topLevel.numPDFAttachments();
 
-            this.itemHistory = await toolkit.history.getInTopLevel(topLevel);
+            this.itemHistory = await toolkit.history.getInTopLevel(
+                this.topLevel
+            );
         });
     },
     computed: {
@@ -173,9 +185,10 @@ export default {
             numAttachment: 0,
             attachmentSize: '',
             collapseValue: ['progress'] as Array<string | number>,
+            topLevel: null as null | Zotero.Item,
         };
     },
-    components: { PageTime, DateTime, TimeLine },
+    components: { PageTime, DateTime, TimeLine, Network },
 };
 </script>
 

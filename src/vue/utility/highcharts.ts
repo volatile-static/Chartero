@@ -3,6 +3,8 @@ import HighchartsMore from 'highcharts/highcharts-more';
 HighchartsMore(Highcharts);
 import HighchartsGantt from 'highcharts/modules/gantt';
 HighchartsGantt(Highcharts);
+import NetworkGraph from 'highcharts/modules/networkgraph';
+NetworkGraph(Highcharts);
 import HighchartsExporting from 'highcharts/modules/exporting';
 HighchartsExporting(Highcharts);
 import {

@@ -2,8 +2,26 @@ import { AttachmentHistory } from 'zotero-reading-history';
 
 export default class HistoryAnalyzer {
     private readonly data: AttachmentHistory[];
+    private _attachments: Array<false | Zotero.Item>;
     constructor(data: AttachmentHistory[]) {
         this.data = data;
+        this._attachments = [];
+    }
+    get attachments() {
+        const Items = toolkit.getGlobal('Zotero').Items;
+        if (this._attachments.length != this.data.length)
+            this._attachments = this.data.map(attHis =>
+                Items.getByLibraryAndKey(attHis.note.libraryID, attHis.key)
+            ) as Array<false | Zotero.Item>;
+        return this._attachments;
+    }
+    get validAttachments() {
+        return this.attachments.filter(att => att) as Zotero.Item[];
+    }
+    get titles() {
+        return this.attachments.map(att =>
+            att ? (att.getField('title') as string) : undefined
+        );
     }
     getByDate(date: Date) {
         return accumulatePeriodIf(
