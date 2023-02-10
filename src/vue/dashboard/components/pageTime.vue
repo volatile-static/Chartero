@@ -6,13 +6,8 @@
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import Highcharts from './highcharts';
-
-function getTitle(his: AttachmentHistory) {
-    const Items = toolkit.getGlobal('Zotero').Items,
-        item = Items.getByLibraryAndKey(his.note.libraryID, his.key);
-    return item && (item as Zotero.Item).getField('title');
-}
+import { getTitle } from '../../utility/utils';
+import Highcharts from '../../utility/highcharts';
 
 export default defineComponent({
     data() {
@@ -30,6 +25,7 @@ export default defineComponent({
                         key: 'shift',
                     },
                 },
+                legend: { enabled: false },
             } as Highcharts.Options,
         };
     },
@@ -57,10 +53,11 @@ export default defineComponent({
                     data.push(attHis.record.pages[i]?.totalS ?? 0);
                 return {
                     type: 'bar',
-                    name: getTitle(attHis),
+                    name: his.length > 1 ? getTitle(attHis) : undefined,
                     data,
                 } as Highcharts.SeriesBarOptions;
             });
+            this.chartOpts.legend!.enabled = his.length > 1;
         },
     },
     components: { Chart },

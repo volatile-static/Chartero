@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import WordCloud from '../components/wordCloud.vue';
-import SkyLine from '../components/skyline.vue';
-import PageTime from '../components/pageTime.vue';
+import WordCloud from './components/wordCloud.vue';
+import SkyLine from './components/skyline.vue';
 </script>
 
 <script lang="ts">
@@ -74,7 +73,6 @@ export default {
     <header>
         <!-- <WordCloud></WordCloud> -->
         <SkyLine></SkyLine>
-        <PageTime :history="history"></PageTime>
         <!-- <TTransfer
             v-model="targetValue"
             theme="primary"

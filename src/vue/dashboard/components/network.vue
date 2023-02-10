@@ -6,7 +6,7 @@
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import Highcharts from './highcharts';
+import Highcharts from '../../utility/highcharts';
 
 export default defineComponent({
     data() {
@@ -24,7 +24,6 @@ export default defineComponent({
     watch: {
         history(newHis: AttachmentHistory) {
             if (!newHis) return;
-
         },
     },
     props: { history: { required: false }, theme: Object },

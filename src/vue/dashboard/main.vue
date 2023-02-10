@@ -7,11 +7,16 @@
     >
         <t-collapse-panel value="progress" :header="locale.readingProgress">
             <t-space align="center" size="small" class="progress-space">
-                <t-progress
-                    theme="circle"
-                    size="small"
-                    :percentage="readingProgress"
-                />
+                <t-tooltip
+                    :content="locale.readingProgressTip"
+                    :show-arrow="false"
+                >
+                    <t-progress
+                        theme="circle"
+                        size="small"
+                        :percentage="readingProgress"
+                    />
+                </t-tooltip>
                 <div class="progress-info">
                     <span>{{
                         `🔖 ${locale.progressLabel.read} ${readPages} ${locale.pages} / ${locale.progressLabel.total} ${numPages} ${locale.pages}`
@@ -46,8 +51,17 @@
         >
             <DateTime :history="itemHistory" :theme="chartTheme"></DateTime>
         </t-collapse-panel>
+
+        <t-collapse-panel
+            value="timeline"
+            :header="locale.timeline"
+            :disabled="collapseDisabled"
+        >
+            <TimeLine :history="itemHistory"></TimeLine>
+        </t-collapse-panel>
     </t-collapse>
-    <t-affix :offset-top="160" :offset-bottom="20" style="margin: 16px">
+
+    <t-affix :offset-top="160" :offset-bottom="60" style="margin: 16px">
         <t-button @click="onClk" size="large" shape="circle">{{
             themeBtn
         }}</t-button>
@@ -56,10 +70,11 @@
 
 <script lang="ts">
 import type { AttachmentHistory } from 'zotero-reading-history';
-import { GridLightTheme, DarkUnicaTheme } from '../components/themes';
-import PageTime from '../components/pageTime.vue';
-import DateTime from '../components/dateTime.vue';
 import type { CollapseValue } from 'tdesign-vue-next';
+import { GridLightTheme, DarkUnicaTheme } from '../utility/themes';
+import PageTime from './components/pageTime.vue';
+import DateTime from './components/dateTime.vue';
+import TimeLine from './components/timeline.vue';
 
 export default {
     methods: {
@@ -83,16 +98,12 @@ export default {
 
             // 传入附件的条件：阅读器
             if (!item.isRegularItem()) {
-                if (item.parentItem) topLevel = item.parentItem;
+                if (item.parentItem) topLevel = item.parentItem; // 常规条目
                 else {
                     // 独立PDF的情况
                     const his = toolkit.history.getByAttachment(item);
-                    if (his) {
-                        this.itemHistory = [his];
-                        return;
-                    } else {
-                        // 没有记录
-                    }
+                    this.itemHistory = his ? [his] : [];
+                    return;
                 }
             }
 
@@ -164,7 +175,7 @@ export default {
             collapseValue: ['progress'] as Array<string | number>,
         };
     },
-    components: { PageTime, DateTime },
+    components: { PageTime, DateTime, TimeLine },
 };
 </script>
 

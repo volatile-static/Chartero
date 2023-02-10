@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type Highcharts from "./highcharts";
-import { Chart } from "highcharts-vue";
-import { onMounted, ref } from "vue";
+import type Highcharts from '../../utility/highcharts';
+import { Chart } from 'highcharts-vue';
+import { onMounted, ref } from 'vue';
 
 const chart = ref<Highcharts.Chart | null>(null);
 

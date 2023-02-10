@@ -14,6 +14,8 @@ declare module '@vue/runtime-core' {
     TDivider: typeof import('tdesign-vue-next')['Divider']
     TProgress: typeof import('tdesign-vue-next')['Progress']
     TSpace: typeof import('tdesign-vue-next')['Space']
+    TTimeline: typeof import('tdesign-vue-next')['Timeline']
+    TTimelineItem: typeof import('tdesign-vue-next')['TimelineItem']
     TTooltip: typeof import('tdesign-vue-next')['Tooltip']
   }
 }
