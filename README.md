@@ -1,4 +1,4 @@
-# Chartero ![Downloads latest release](https://img.shields.io/github/downloads/volatile-static/Chartero/total?color=green)
+# Chartero
 
 https://github.com/volatile-static/Chartero/discussions/24
 

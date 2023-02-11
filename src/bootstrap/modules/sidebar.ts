@@ -8,7 +8,7 @@ async function renderDashboard(
         {
             tag: 'iframe',
             namespace: 'xul',
-            skipIfExists: true,
+            ignoreIfExists: true,
             attributes: {
                 flex: 1,
                 src: 'chrome://chartero/content/dashboard/index.html',
@@ -17,7 +17,7 @@ async function renderDashboard(
         },
         panel
     ) as HTMLIFrameElement;
-    (dashboard.contentWindow as any).wrappedJSObject.toolkit = toolkit;
+    (dashboard.contentWindow as any).wrappedJSObject.toolkit ??= toolkit;
 
     if (reader)
         dashboard.contentWindow?.addEventListener('load', () =>
@@ -28,7 +28,7 @@ async function renderDashboard(
 /**
  * 初始化侧边栏TabPanel
  */
-export default function registerPanels() {
+export function registerPanels() {
     toolkit.readerTab.register(
         toolkit.locale.dashboard,
         (
@@ -44,6 +44,30 @@ export default function registerPanels() {
     toolkit.reader.register('initialized', 'chartero', reader =>
         reader._waitForReader().then(() => addImagesPreviewer(reader))
     );
+}
+
+export function renderSummaryPanel(ids: number[]) {
+    const content = document.getElementById(
+            'zotero-item-pane-content'
+        ) as XUL.Deck,
+        summary: any = toolkit.ui.createElement(document, 'iframe', {
+            namespace: 'xul',
+            id: 'chartero-summary-iframe',
+            ignoreIfExists: true,
+            attributes: {
+                flex: 1,
+                src: 'chrome://chartero/content/summary/index.html',
+            },
+        });
+
+    if (summary.parentElement != content) {
+        content.appendChild(summary);
+        summary.contentWindow.wrappedJSObject.toolkit = toolkit;
+        summary.contentWindow.addEventListener('load', () =>
+            summary.contentWindow.postMessage(ids)
+        );
+    } else summary.contentWindow.postMessage(ids);
+    content.selectedPanel = summary;
 }
 
 /**

@@ -13,6 +13,7 @@ export default defineConfig({
         target: 'firefox60',
         rollupOptions: {
             input: {
+                summary: resolve(__dirname, 'summary/index.html'),
                 overview: resolve(__dirname, 'overview/index.html'),
                 dashboard: resolve(__dirname, 'dashboard/index.html'),
             },

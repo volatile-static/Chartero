@@ -1,12 +1,11 @@
 <template>
-    <Chart constructor-type="chart" :options="options" :key="theme"></Chart>
+    <Chart :options="options" :key="theme"></Chart>
 </template>
 
 <script lang="ts">
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import { getTitle } from '../../utility/utils';
 import Highcharts from '../../utility/highcharts';
 
 export default defineComponent({
@@ -46,14 +45,15 @@ export default defineComponent({
             if (his.length < 1) return;
 
             this.chartOpts.series = his.map(attHis => {
-                const firstPage = attHis.record.firstPage,
+                const ha = new toolkit.HistoryAnalyzer([attHis]),
+                    firstPage = attHis.record.firstPage,
                     lastPage = attHis.record.lastPage,
                     data: number[] = [];
                 for (let i = firstPage; i <= lastPage; ++i)
                     data.push(attHis.record.pages[i]?.totalS ?? 0);
                 return {
                     type: 'bar',
-                    name: his.length > 1 ? getTitle(attHis) : undefined,
+                    name: his.length > 1 ? ha.titles[0] : undefined,
                     data,
                 } as Highcharts.SeriesBarOptions;
             });

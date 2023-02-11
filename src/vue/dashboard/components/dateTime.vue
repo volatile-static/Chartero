@@ -1,12 +1,11 @@
 <template>
-    <Chart constructor-type="chart" :options="options" :key="theme"></Chart>
+    <Chart :options="options" :key="theme"></Chart>
 </template>
 
 <script lang="ts">
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import { getTitle } from '../../utility/utils';
 import Highcharts from '../../utility/highcharts';
 
 export default defineComponent({
@@ -50,7 +49,7 @@ export default defineComponent({
                         data.push(ha.getByDate(date));
                     }
                 return {
-                    name: newHis.length > 1 ? getTitle(attHis) : undefined,
+                    name: newHis.length > 1 ? ha.titles[0] : undefined,
                     data,
                 } as Highcharts.SeriesLineOptions;
             });

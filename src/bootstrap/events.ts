@@ -1,5 +1,5 @@
 import { config } from '../../package.json';
-import registerPanels from './modules/sidebar';
+import { registerPanels, renderSummaryPanel } from './modules/sidebar';
 
 /**
  * 初始化插件时调用
@@ -78,14 +78,41 @@ function onToolButtonCommand(_: Event) {
     (overview.contentWindow as any).toolkit = toolkit;
 }
 
-function onItemSelect() {
+async function onItemSelect() {
     const items = ZoteroPane.getSelectedItems(true),
         dashboard = document.querySelector(
             '#zotero-view-tabbox .chartero-dashboard'
         ) as HTMLIFrameElement;
+    // 当前处于侧边栏标签页
     if (items.length == 1)
-        // 当前处于侧边栏标签页
         dashboard?.contentWindow?.postMessage({ id: items[0] }, '*');
+    else if (ZoteroPane.itemsView.rowCount > items.length && items.length > 1)
+        renderSummaryPanel(items); // 当前选择多个条目
+    else {
+        // 当前选择整个分类
+        const row = ZoteroPane.getCollectionTreeRow();
+        switch (row?.type) {
+            case 'collection':
+                renderSummaryPanel(
+                    (row?.ref as Zotero.Collection).getChildItems(true)
+                );
+                break;
+            case 'search':
+            case 'unfiled':
+                renderSummaryPanel(await (row?.ref as Zotero.Search).search());
+                break;
+            case 'library':
+            case 'group':
+                renderSummaryPanel(await Zotero.Items.getAllIDs((row.ref as any).libraryID))
+                break;
+
+            case 'trash':
+            case 'duplicates':
+            case 'publications':
+            default:
+                break;
+        }
+    }
 }
 
 function onCollectionSelect() {

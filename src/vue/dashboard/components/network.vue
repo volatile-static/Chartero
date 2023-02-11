@@ -1,5 +1,5 @@
 <template>
-    <Chart constructor-type="chart" :options="options" :key="theme"></Chart>
+    <Chart :options="options" :key="theme"></Chart>
 </template>
 
 <script lang="ts">
