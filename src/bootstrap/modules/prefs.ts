@@ -1,7 +1,7 @@
-import { ElementProps } from 'zotero-plugin-toolkit/dist/tools/ui';
+import type { ElementProps } from 'zotero-plugin-toolkit/dist/tools/ui';
+import { mergeLegacyHistory } from './history';
 
 export default function prefsPaneDoc() {
-    // Zotero.Tags.getAll(1)
     return {
         tag: 'groupbox',
         children: [
@@ -11,168 +11,40 @@ export default function prefsPaneDoc() {
                 children: [
                     {
                         tag: 'h1',
-                        namespace: 'html',
-                        properties: {
-                            innerText: toolkit.locale.prefs.scheduleTitle,
-                        },
-                    },
-                    {
-                        tag: 'groupbox',
-                        children: [
-                            {
-                                tag: 'hbox',
-                                classList: ['indented-pref'],
-                                attributes: { align: 'center' },
-                                children: [
-                                    {
-                                        tag: 'span',
-                                        properties: {
-                                            innerText:
-                                                toolkit.locale.prefs
-                                                    .scheduleScanPeriod,
-                                        },
-                                    },
-                                    {
-                                        tag: 'html:input',
-                                        attributes: { type: 'text' },
-                                    },
-                                    {
-                                        tag: 'span',
-                                        properties: {
-                                            innerText: toolkit.locale.seconds,
-                                        },
-                                    },
-                                ],
-                            },
-                            {
-                                tag: 'hbox',
-                                classList: ['indented-pref'],
-                                attributes: { align: 'center' },
-                                children: [
-                                    {
-                                        tag: 'span',
-                                        properties: {
-                                            innerText:
-                                                toolkit.locale.prefs
-                                                    .scheduleSavePeriod,
-                                        },
-                                    },
-                                    {
-                                        tag: 'html:input',
-                                        attributes: { type: 'text' },
-                                    },
-                                    {
-                                        tag: 'span',
-                                        properties: {
-                                            innerText: toolkit.locale.seconds,
-                                        },
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                tag: 'vbox',
-                classList: ['main-section'],
-                children: [
-                    {
-                        tag: 'h1',
-                        namespace: 'html',
                         properties: {
                             innerText: toolkit.locale.prefs.storageTitle,
                         },
                     },
                     {
-                        tag: 'groupbox',
-                        namespace: 'xul',
-                        children: [
-                            {
-                                tag: 'label',
-                                children: [
-                                    {
-                                        tag: 'h2',
-                                        properties: { innerText: 'akakdk' },
-                                    },
-                                ],
-                            },
-                            {
-                                tag: 'hbox',
-                                attributes: { align: 'center' },
-                                children: [
-                                    {
-                                        tag: 'button',
-                                        attributes: { label: 'btn' },
-                                        styles: { 'margin-top': 0 },
-                                        listeners: [
-                                            {
-                                                type: 'command',
-                                                listener: e =>
-                                                    toolkit.log(toolkit.locale),
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                tag: 'vbox',
-                classList: ['main-section'],
-                children: [
-                    {
-                        tag: 'h1',
-                        properties: {
-                            innerText: toolkit.locale.prefs.plotTitle,
+                        tag: 'textarea',
+                        attributes: {
+                            placeholder:
+                                toolkit.locale.prefs.textAreaPlaceholder,
                         },
+                        styles: { resize: 'vertical' },
                     },
                     {
-                        tag: 'checkbox',
-                        attributes: { label: 'sss', native: true },
+                        tag: 'button',
+                        namespace: 'xul',
+                        id: 'chartero-preferences-pane-history-import-area',
+                        attributes: {
+                            label: toolkit.locale.prefs.importHistory,
+                            native: true,
+                        },
                         listeners: [
                             {
                                 type: 'command',
-                                listener: e => window.console.debug(Zotero),
-                            },
-                        ],
-                    },
-                    {
-                        tag: 'menulist',
-                        attributes: { native: true },
-                        listeners: [
-                            {
-                                type: 'command',
-                                listener: e => window.alert(1),
-                            },
-                        ],
-                        children: [
-                            {
-                                tag: 'menupopup',
-                                children: [
-                                    {
-                                        tag: 'menuitem',
-                                        attributes: { label: '1', value: 1 },
-                                    },
-                                    {
-                                        tag: 'menuitem',
-                                        attributes: { label: '2', value: 1 },
-                                    },
-                                    {
-                                        tag: 'menuitem',
-                                        attributes: { label: '3', value: 2 },
-                                    },
-                                    {
-                                        tag: 'menuitem',
-                                        attributes: { label: '4', value: 5 },
-                                    },
-                                    {
-                                        tag: 'menuitem',
-                                        attributes: { label: '5', value: 7 },
-                                    },
-                                ],
+                                listener: e => {
+                                    const btn = e.target as XUL.Button,
+                                        txt =
+                                            btn.previousElementSibling as HTMLTextAreaElement,
+                                        str = txt.value;
+                                    try {
+                                        mergeLegacyHistory(JSON.parse(str));
+                                    } catch (error) {
+                                        window.alert(error);
+                                    }
+                                },
                             },
                         ],
                     },

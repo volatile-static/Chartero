@@ -7,12 +7,12 @@ import { registerPanels, renderSummaryPanel } from './modules/sidebar';
 export function onInit() {
     toolkit.log('Initializing Chartero addon...');
     // 注册设置面板
-    // toolkit.prefPane.register({
-    //     pluginID: config.addonID,
-    //     src: rootURI + 'content/preferences.xhtml',
-    //     image: `chrome://${config.addonName}/content/icons/icon32.png`,
-    //     label: 'Chartero',
-    // });
+    toolkit.prefPane.register({
+        pluginID: config.addonID,
+        src: rootURI + 'content/preferences.xhtml',
+        image: `chrome://${config.addonName}/content/icons/icon32.png`,
+        label: 'Chartero',
+    });
 
     // 添加工具栏按钮
     document.getElementById('zotero-collections-toolbar')?.appendChild(
@@ -103,7 +103,9 @@ async function onItemSelect() {
                 break;
             case 'library':
             case 'group':
-                renderSummaryPanel(await Zotero.Items.getAllIDs((row.ref as any).libraryID))
+                renderSummaryPanel(
+                    await Zotero.Items.getAllIDs((row.ref as any).libraryID)
+                );
                 break;
 
             case 'trash':

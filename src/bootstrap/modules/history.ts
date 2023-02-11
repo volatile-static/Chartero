@@ -83,3 +83,28 @@ function accumulatePeriodIf(
         );
     });
 }
+
+export async function mergeLegacyHistory(json: _ZoteroTypes.anyObj) {
+    if (typeof json.lib != 'number' && typeof json.items != 'object')
+        throw new Error(toolkit.locale.prefs.historyParseError);
+    const mainItem: Zotero.Item =
+        await Zotero._readingHistoryGlobal.getMainItem();
+    for (const key in json.items) {
+        if (!Zotero.Items.getIDFromLibraryAndKey(1, key)) continue;
+
+        const oldJson = json.items[key],
+            newJson = {
+                numPages: oldJson.n,
+                pages: {} as _ZoteroTypes.anyObj,
+            },
+            noteItem = new Zotero.Item('note');
+        for (const page in oldJson.p)
+            newJson.pages[page] = { p: oldJson.p[page].t };
+
+        noteItem.setNote(
+            `zotero-reading-history#${key}\n${JSON.stringify(newJson)}`
+        );
+        noteItem.parentID = mainItem.id;
+        noteItem.saveTx();
+    }
+}
