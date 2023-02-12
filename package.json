@@ -61,6 +61,7 @@
         "prettier": "2.8.3",
         "release-it": "^15.6.0",
         "replace-in-file": "^6.3.5",
+        "tdesign-icons-vue-next": "^0.1.7",
         "unplugin-auto-import": "^0.12.2",
         "unplugin-vue-components": "^0.22.12",
         "vite": "^4.1.1",

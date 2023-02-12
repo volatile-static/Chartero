@@ -77,5 +77,9 @@
         "textAreaPlaceholder": "请将旧版JSON数据粘贴至此",
         "importHistory": "导入历史记录",
         "historyParseError": "记录格式不正确！"
+    },
+    "summary": {
+        "authorBubble": "作者气泡图",
+        "gantt": "历史甘特图"
     }
 }

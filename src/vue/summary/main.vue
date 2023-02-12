@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import {
+    ChartBubbleIcon,
+    FormatVerticalAlignRightIcon,
+} from 'tdesign-icons-vue-next';
+</script>
 <script lang="ts">
 import { GridLightTheme, DarkUnicaTheme } from '../utility/themes';
 import type { AttachmentHistory } from 'zotero-reading-history';
@@ -15,22 +21,36 @@ export default {
                 items: Zotero.Item[] = e.data.map((id: number) =>
                     Items.get(id)
                 ),
-                topLevels = Items.getTopLevel(items);
-            toolkit.log(items, topLevels);
+                topLevels = Items.getTopLevel(items).filter(it =>
+                    it.isRegularItem()
+                ),
+                attHisPro = topLevels.map(top =>
+                    toolkit.history.getInTopLevel(top)
+                ),
+                his = await Promise.all(attHisPro);
+            this.itemHistory = his.flat();
+        });
+        window.addEventListener('resize', () => {
+            this.panelStyle.height = window.innerHeight - 70 + 'px';
         });
     },
     data() {
         return {
+            locale: toolkit.locale.summary,
             isDark: false,
             themeIcon: this.isDark ? '☀️' : '🌙',
             messageContent: '',
             itemHistory: new Array<AttachmentHistory>(),
+            panelStyle: {
+                height: window.innerHeight - 70 + 'px',
+            },
         };
     },
-    computed:{
+    computed: {
         chartTheme(): object {
             return this.isDark ? DarkUnicaTheme : GridLightTheme;
-        },},
+        },
+    },
     methods: {
         switchTheme() {
             this.isDark = !this.isDark;
@@ -39,7 +59,7 @@ export default {
             else document.documentElement.removeAttribute('theme-mode');
         },
     },
-    components: {Gantt},
+    components: { Gantt },
 };
 </script>
 
@@ -49,7 +69,20 @@ export default {
             messageContent
         }}</t-header>
         <t-content>
-            <Gantt :history="itemHistory" :theme="chartTheme"></Gantt>
+            <t-tabs placement="bottom" default-value="gantt">
+                <t-tab-panel value="bubble" :style="panelStyle">
+                    <template #label>
+                        <ChartBubbleIcon /> {{ locale.authorBubble }}
+                    </template>
+                    <div>选项卡1内容</div>
+                </t-tab-panel>
+                <t-tab-panel value="gantt" :style="panelStyle">
+                    <template #label>
+                        <FormatVerticalAlignRightIcon /> {{ locale.gantt }}
+                    </template>
+                    <Gantt :history="itemHistory" :theme="chartTheme"></Gantt>
+                </t-tab-panel>
+            </t-tabs>
         </t-content>
     </t-layout>
     <div class="theme-button">
