@@ -2,6 +2,7 @@
 import {
     ChartBubbleIcon,
     FormatVerticalAlignRightIcon,
+    ForkIcon,
 } from 'tdesign-icons-vue-next';
 </script>
 <script lang="ts">
@@ -81,6 +82,11 @@ export default {
                         <FormatVerticalAlignRightIcon /> {{ locale.gantt }}
                     </template>
                     <Gantt :history="itemHistory" :theme="chartTheme"></Gantt>
+                </t-tab-panel>
+                <t-tab-panel value="network" :style="panelStyle">
+                    <template #label>
+                        <ForkIcon /> {{ locale.network }}
+                    </template>
                 </t-tab-panel>
             </t-tabs>
         </t-content>

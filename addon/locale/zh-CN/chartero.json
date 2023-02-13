@@ -22,6 +22,8 @@
     "pdfAnnotation": "PDF注释",
     "itemTitle": "条目标题",
     "readingProgress": "阅读进度",
+    "migratingLegacy": "迁移数据中……",
+    "migrationFinished": "数据迁移完成！",
     "timeline": "时间轴",
     "dateAdded": "添加附件",
     "dateModified": "最后修改",
@@ -36,7 +38,8 @@
         "completed": "已读完",
         "month": "最近一个月",
         "week": "最近一星期",
-        "day": "最近一天"
+        "day": "最近一天",
+        "fitLength": "自适应长度"
     },
     "chartTitle": {
         "pie": "总阅读时长占比",
@@ -80,6 +83,7 @@
     },
     "summary": {
         "authorBubble": "作者气泡图",
-        "gantt": "历史甘特图"
+        "gantt": "历史甘特图",
+        "network": "关联文献网"
     }
 }

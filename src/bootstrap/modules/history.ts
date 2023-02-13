@@ -1,4 +1,5 @@
 import { AttachmentHistory } from 'zotero-reading-history';
+import { showMessage } from './utils';
 
 export default class HistoryAnalyzer {
     private readonly data: AttachmentHistory[];
@@ -87,24 +88,40 @@ function accumulatePeriodIf(
 export async function mergeLegacyHistory(json: _ZoteroTypes.anyObj) {
     if (typeof json.lib != 'number' && typeof json.items != 'object')
         throw new Error(toolkit.locale.prefs.historyParseError);
-    const mainItem: Zotero.Item =
-        await Zotero._readingHistoryGlobal.getMainItem();
-    for (const key in json.items) {
-        if (!Zotero.Items.getIDFromLibraryAndKey(1, key)) continue;
+    const total = Object.keys(json.items).length,
+        mainItem: Zotero.Item =
+            await Zotero._readingHistoryGlobal.getMainItem();
+    Zotero.showZoteroPaneProgressMeter(toolkit.locale.migratingLegacy, true);
+    try {
+        let i = 0;
+        for (const key in json.items) {
+            if (!Zotero.Items.getIDFromLibraryAndKey(1, key)) continue;
 
-        const oldJson = json.items[key],
-            newJson = {
-                numPages: oldJson.n,
-                pages: {} as _ZoteroTypes.anyObj,
-            },
-            noteItem = new Zotero.Item('note');
-        for (const page in oldJson.p)
-            newJson.pages[page] = { p: oldJson.p[page].t };
+            const oldJson = json.items[key],
+                newJson = {
+                    numPages: oldJson.n,
+                    pages: {} as _ZoteroTypes.anyObj,
+                },
+                noteItem = new Zotero.Item('note');
+            for (const page in oldJson.p)
+                newJson.pages[page] = { p: oldJson.p[page].t };
 
-        noteItem.setNote(
-            `zotero-reading-history#${key}\n${JSON.stringify(newJson)}`
+            noteItem.setNote(
+                `zotero-reading-history#${key}\n${JSON.stringify(newJson)}`
+            );
+            noteItem.parentID = mainItem.id;
+            await noteItem.saveTx();
+
+            Zotero.updateZoteroPaneProgressMeter((++i * 100) / total);
+        }
+        Zotero._readingHistoryGlobal.loadAll();
+        showMessage(
+            toolkit.locale.migrationFinished,
+            'chrome://chartero/content/icons/accept.png'
         );
-        noteItem.parentID = mainItem.id;
-        noteItem.saveTx();
+    } catch (error) {
+        window.alert(error);
+    } finally {
+        Zotero.hideZoteroPaneOverlays();
     }
 }

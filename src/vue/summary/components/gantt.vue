@@ -75,7 +75,10 @@ export default defineComponent({
 </script>
 
 <template>
-    <t-space direction="vertical">
+    <p v-if="history.length < 1" class="center-label">
+        {{ locale.noHistoryFound }}
+    </p>
+    <t-space v-else direction="vertical">
         <t-space style="padding: 8px" break-line>
             <t-select
                 v-model="sortOption"
@@ -141,8 +144,13 @@ export default defineComponent({
                         )
                     "
                 ></t-option>
+                <t-option
+                    value="fit"
+                    :label="locale.ganttMenu.fitLength"
+                ></t-option>
             </t-select>
         </t-space>
+
         <Chart
             constructor-type="ganttChart"
             :options="options"
@@ -150,3 +158,11 @@ export default defineComponent({
         ></Chart>
     </t-space>
 </template>
+
+<style scoped>
+.center-label {
+    text-align: center;
+    position: relative;
+    top: 38%;
+}
+</style>
