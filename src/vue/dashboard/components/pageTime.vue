@@ -6,13 +6,39 @@
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import Highcharts from '../../utility/highcharts';
+import Highcharts from '@/utility/highcharts';
+import { toTimeString } from '@/utility/utils';
+import type { Tooltip, TooltipFormatterContextObject } from 'highcharts';
 
 export default defineComponent({
     data() {
         return {
             chartOpts: {
-                xAxis: { title: { text: toolkit.locale.pageNum } },
+                xAxis: {
+                    title: { text: toolkit.locale.pageNum },
+                    labels: {
+                        formatter: ctx => `${(ctx.value as number) + 1}`,
+                    },
+                },
+                yAxis: {
+                    title: { text: toolkit.locale.time },
+                    labels: { formatter: ctx => toTimeString(ctx.value) },
+                },
+                tooltip: {
+                    formatter: function (this: TooltipFormatterContextObject, tooltip: Tooltip) {
+                        const result = tooltip.chart.series.length > 1
+                            ? `${this.series.name}:<br>`
+                            : '';
+                        return (
+                            result +
+                            `${toolkit.locale.pageNum}: ${
+                                (this.x as number) + 1
+                            }<br>${toolkit.locale.time}: ${toTimeString(
+                                this.y!
+                            )}`
+                        );
+                    },
+                },
                 series: [{ type: 'bar' }],
                 chart: {
                     panning: {

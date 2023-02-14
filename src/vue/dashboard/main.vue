@@ -222,7 +222,11 @@ export default {
     display: flex;
     flex-direction: column;
 }
-
+.progress-info span {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
 .progress-space {
     margin: 10px 20px;
 }
