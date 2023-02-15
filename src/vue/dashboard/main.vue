@@ -127,22 +127,22 @@ export default {
             const noteIDs = this.topLevel.getNotes(),
                 notes = noteIDs.map(id => Items.get(id).getNote()),
                 text = notes.map(str => str.replace(/<[^<>]+>/g, '')).join('');
-            this.noteNum = noteIDs.length;
-            this.noteWords = text.replace(/\s/g, '').length;
-            // anime({ ...animateInt, noteNum: noteIDs.length });
-            // anime({ ...animateInt, noteWords: text.replace(/\s/g, '').length });
+            // this.noteNum = noteIDs.length;
+            // this.noteWords = text.replace(/\s/g, '').length;
+            anime({ ...animateInt, noteNum: noteIDs.length });
+            anime({ ...animateInt, noteWords: text.replace(/\s/g, '').length });
 
             // 更新阅读进度
             const best = await this.topLevel.getBestAttachment(),
                 bestHis = best && toolkit.history.getByAttachment(best);
             if (bestHis) {
-                // anime({ ...animateInt, readPages: bestHis.record.readPages });
-                // anime({
-                //     ...animateInt,
-                //     numPages: bestHis.record.numPages ?? 0,
-                // });
-                this.readPages = bestHis.record.readPages;
-                this.numPages = bestHis.record.numPages ?? 0;
+                anime({ ...animateInt, readPages: bestHis.record.readPages });
+                anime({
+                    ...animateInt,
+                    numPages: bestHis.record.numPages ?? 0,
+                });
+                // this.readPages = bestHis.record.readPages;
+                // this.numPages = bestHis.record.numPages ?? 0;
             }
 
             // 统计附件大小
@@ -161,14 +161,14 @@ export default {
                 targets: this,
                 attachmentSize: (totalSize / 1024 / 1024).toFixed(2),
                 round: 100,
-                duration: 626,
+                duration: 260,
                 easing: 'linear',
             });
-            // anime({
-            //     ...animateInt,
-            //     numAttachment: this.topLevel.numPDFAttachments(),
-            // });
-            this.numAttachment = this.topLevel.numPDFAttachments();
+            anime({
+                ...animateInt,
+                numAttachment: this.topLevel.numPDFAttachments(),
+            });
+            // this.numAttachment = this.topLevel.numPDFAttachments();
 
             this.itemHistory = await toolkit.history.getInTopLevel(
                 this.topLevel

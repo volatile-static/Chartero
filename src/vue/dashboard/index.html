@@ -14,13 +14,21 @@
     .t-collapse-panel__wrapper .t-collapse-panel__content {
       padding: 6px !important;
     }
+
+    .t-space.progress-space {
+      display: flex !important;
+    }
+
+    .t-space.progress-space div:nth-of-type(3) {
+      overflow: hidden;
+    }
   </style>
 </head>
 
 <body>
   <div id="app"></div>
   <script type="module">
-    import {createApp} from 'vue';
+    import { createApp } from 'vue';
     import App from './main.vue';
     import 'tdesign-vue-next/es/style/index.css';
     createApp(App).mount('#app');

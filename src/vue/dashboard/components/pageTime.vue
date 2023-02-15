@@ -27,7 +27,7 @@ export default defineComponent({
                 tooltip: {
                     formatter: function (this: TooltipFormatterContextObject, tooltip: Tooltip) {
                         const result = tooltip.chart.series.length > 1
-                            ? `${this.series.name}:<br>`
+                            ? `<span style="color: ${this.series.color}">\u25CF</span> ${this.series.name}:<br>`
                             : '';
                         return (
                             result +

@@ -82,28 +82,34 @@ async function onItemSelect() {
     const items = ZoteroPane.getSelectedItems(true),
         dashboard = document.querySelector(
             '#zotero-view-tabbox .chartero-dashboard'
-        ) as HTMLIFrameElement;
+        ) as HTMLIFrameElement,
+        renderSummaryPanelDebounced = Zotero.Utilities.debounce(
+            renderSummaryPanel,
+            233
+        );
     // 当前处于侧边栏标签页
     if (items.length == 1)
         dashboard?.contentWindow?.postMessage({ id: items[0] }, '*');
     else if (ZoteroPane.itemsView.rowCount > items.length && items.length > 1)
-        renderSummaryPanel(items); // 当前选择多个条目
+        renderSummaryPanelDebounced(items); // 当前选择多个条目
     else {
         // 当前选择整个分类
         const row = ZoteroPane.getCollectionTreeRow();
         switch (row?.type) {
             case 'collection':
-                renderSummaryPanel(
+                renderSummaryPanelDebounced(
                     (row?.ref as Zotero.Collection).getChildItems(true)
                 );
                 break;
             case 'search':
             case 'unfiled':
-                renderSummaryPanel(await (row?.ref as Zotero.Search).search());
+                renderSummaryPanelDebounced(
+                    await (row?.ref as Zotero.Search).search()
+                );
                 break;
             case 'library':
             case 'group':
-                renderSummaryPanel(
+                renderSummaryPanelDebounced(
                     await Zotero.Items.getAllIDs((row.ref as any).libraryID)
                 );
                 break;
