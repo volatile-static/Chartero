@@ -12,7 +12,7 @@ import Gantt from './components/gantt.vue';
 export default {
     mounted() {
         window.addEventListener('message', async e => {
-            if (e.data.length < 1) return;
+            if (e.data.length < 1) return; // TODO: show message
             this.messageContent =
                 parent.document.querySelector(
                     '#zotero-item-pane-message-box description'

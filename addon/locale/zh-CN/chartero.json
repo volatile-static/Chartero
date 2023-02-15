@@ -29,6 +29,8 @@
     "dateModified": "最后修改",
     "sort": "排序",
     "filter": "过滤",
+    "tableHeader": "表头",
+    "tableHeaderTip": "拉宽面板以显示表头",
     "ganttMenu": {
         "startAscending": "开始最早",
         "startDescending": "开始最晚",
@@ -39,7 +41,9 @@
         "month": "最近一个月",
         "week": "最近一星期",
         "day": "最近一天",
-        "fitLength": "自适应长度"
+        "fitLength": "自适应长度",
+        "showTitle": "显示标题",
+        "showAuthor": "显示作者"
     },
     "chartTitle": {
         "pie": "总阅读时长占比",

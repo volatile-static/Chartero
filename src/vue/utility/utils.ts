@@ -20,3 +20,7 @@ export function toTimeString(seconds: number | string) {
         label += tim.second + toolkit.locale.seconds;
     return label;
 }
+
+export function viewItemInLib(itemID: number) {
+    toolkit.getGlobal('ZoteroPane').selectItem(itemID);
+}
