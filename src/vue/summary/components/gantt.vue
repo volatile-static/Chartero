@@ -7,6 +7,8 @@ import type {
     SeriesGanttOptions,
     GanttPointOptionsObject,
     YAxisOptions,
+    NavigatorYAxisOptions,
+    GanttChart,
 } from 'highcharts';
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
@@ -17,14 +19,18 @@ export default defineComponent({
     data() {
         return {
             chartOpts: {
-                navigator: { liveRedraw: true },
-                yAxis: { visible: window.innerWidth > 500 },
-                plotOptions: {
-                    series: { minPointLength: 8 },
+                chart: { zooming: { type: undefined } },
+                navigator: {
+                    enabled: true,
+                    yAxis: { reversed: true, min: 0, max: 1 },
                 },
+                rangeSelector: { enabled: true },
+                scrollbar: { enabled: true, liveRedraw: true },
+                yAxis: { visible: window.innerWidth > 500 },
                 series: [
                     {
                         type: 'gantt',
+                        minPointLength: 8,
                         data: [],
                     } as SeriesGanttOptions,
                 ],
@@ -68,6 +74,8 @@ export default defineComponent({
                     } as GanttPointOptionsObject;
                 })
                 .filter(point => point.start! + point.end! > 0);
+            (this.chartOpts.navigator!.yAxis as NavigatorYAxisOptions).max =
+                this.seriesData.length - 1;
         },
         onResize() {
             (this.chartOpts.yAxis as YAxisOptions).visible = this.isLandscape =
@@ -216,7 +224,7 @@ export default defineComponent({
             <Chart
                 constructor-type="ganttChart"
                 :options="options"
-                :key="theme"
+                :key="options"
                 ref="chart"
                 style="width: 100%"
             ></Chart>

@@ -33,8 +33,6 @@ export default defineComponent({
                 exporting,
                 plotOptions: { series: { cursor: 'auto' } },
                 chart: {
-                    panning: { type: 'x', enabled: true },
-                    zooming: { type: 'x', key: 'shift' },
                 },
                 legend: { enabled: false },
                 tooltip: {

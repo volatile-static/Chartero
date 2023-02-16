@@ -7,6 +7,8 @@ import NetworkGraph from 'highcharts/modules/networkgraph';
 NetworkGraph(Highcharts);
 import HighchartsExporting from 'highcharts/modules/exporting';
 HighchartsExporting(Highcharts);
+import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
+NoDataToDisplay(Highcharts);
 import {
     copySVG2JPG,
     saveSVG,
@@ -14,13 +16,14 @@ import {
 } from '../../bootstrap/modules/utils';
 import { viewItemsInLib } from './utils';
 import * as zh_CN from './zh_CN.json';
+import { MessagePlugin } from 'tdesign-vue-next';
 
+let infoFlag = false;
 if (
     toolkit.getGlobal('Zotero').locale == 'zh-CN' ||
     toolkit.getGlobal('Zotero').locale == 'ja-JP'
 )
     Highcharts.setOptions(zh_CN as Highcharts.Options);
-
 Highcharts.setOptions({
     time: {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -42,6 +45,17 @@ Highcharts.setOptions({
             },
         },
         style: { fontFamily: '' },
+        panKey: 'shift',
+        panning: { type: 'x', enabled: true },
+        zooming: { type: 'x' },
+        events: {
+            selection: _ => {
+                if (!infoFlag) {
+                    MessagePlugin.info(toolkit.locale.zoomingTip);
+                    infoFlag = true;
+                }
+            },
+        },
     },
     plotOptions: {
         series: {
@@ -69,7 +83,7 @@ Highcharts.setOptions({
                     const points = this.getSelectedPoints(),
                         ids = points
                             .map((p: any) => p.id)
-                            .filter(id => typeof id == 'number');
+                            .filter(id => parseInt(id) >= 0);
                     if (ids.length > 0) viewItemsInLib(ids);
                 },
                 text: toolkit.locale.showSelectedInLibrary,

@@ -20,6 +20,7 @@ export default {
             itemHistory: new Array<AttachmentHistory>(),
             panelStyle: {
                 height: window.innerHeight - 70 + 'px',
+                overflow: 'scroll'
             },
         };
     },
