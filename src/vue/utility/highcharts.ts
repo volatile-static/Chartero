@@ -12,6 +12,7 @@ import {
     saveSVG,
     showMessage,
 } from '../../bootstrap/modules/utils';
+import { viewItemsInLib } from './utils';
 import * as zh_CN from './zh_CN.json';
 
 if (
@@ -26,6 +27,7 @@ Highcharts.setOptions({
         useUTC: false,
     },
     title: { text: undefined },
+    tooltip: { outside: true },
     chart: {
         borderRadius: 6,
         animation: {
@@ -42,7 +44,11 @@ Highcharts.setOptions({
         style: { fontFamily: '' },
     },
     plotOptions: {
-        series: { shadow: true },
+        series: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            shadow: true,
+        },
     },
     exporting: {
         menuItemDefinitions: {
@@ -58,14 +64,29 @@ Highcharts.setOptions({
                 },
                 text: toolkit.locale.copyPNG,
             },
+            showInLibrary: {
+                onclick: function () {
+                    const points = this.getSelectedPoints(),
+                        ids = points
+                            .map((p: any) => p.id)
+                            .filter(id => typeof id == 'number');
+                    if (ids.length > 0) viewItemsInLib(ids);
+                },
+                text: toolkit.locale.showSelectedInLibrary,
+            },
         },
         buttons: {
             contextButton: {
-                menuItems: ['viewFullscreen', 'downloadSVG', 'downloadJPEG'],
+                menuItems: [
+                    'viewFullscreen',
+                    'downloadSVG',
+                    'downloadJPEG',
+                    'showInLibrary',
+                ],
             },
         },
     },
     credits: { enabled: false },
-});
+} as Highcharts.Options);
 
 export default Highcharts;

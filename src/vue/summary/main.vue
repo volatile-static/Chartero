@@ -10,6 +10,24 @@ import { GridLightTheme, DarkUnicaTheme } from '../utility/themes';
 import type { AttachmentHistory } from 'zotero-reading-history';
 import Gantt from './components/gantt.vue';
 export default {
+    components: { Gantt },
+    data() {
+        return {
+            locale: toolkit.locale.summary,
+            isDark: false,
+            themeIcon: this.isDark ? '☀️' : '🌙',
+            messageContent: '',
+            itemHistory: new Array<AttachmentHistory>(),
+            panelStyle: {
+                height: window.innerHeight - 70 + 'px',
+            },
+        };
+    },
+    computed: {
+        chartTheme(): object {
+            return this.isDark ? DarkUnicaTheme : GridLightTheme;
+        },
+    },
     mounted() {
         window.addEventListener('message', async e => {
             if (e.data.length < 1) return; // TODO: show message
@@ -35,23 +53,6 @@ export default {
             this.panelStyle.height = window.innerHeight - 70 + 'px';
         });
     },
-    data() {
-        return {
-            locale: toolkit.locale.summary,
-            isDark: false,
-            themeIcon: this.isDark ? '☀️' : '🌙',
-            messageContent: '',
-            itemHistory: new Array<AttachmentHistory>(),
-            panelStyle: {
-                height: window.innerHeight - 70 + 'px',
-            },
-        };
-    },
-    computed: {
-        chartTheme(): object {
-            return this.isDark ? DarkUnicaTheme : GridLightTheme;
-        },
-    },
     methods: {
         switchTheme() {
             this.isDark = !this.isDark;
@@ -60,7 +61,6 @@ export default {
             else document.documentElement.removeAttribute('theme-mode');
         },
     },
-    components: { Gantt },
 };
 </script>
 

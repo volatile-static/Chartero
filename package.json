@@ -76,9 +76,6 @@
             "plugin:prettier/recommended"
         ]
     },
-    "lint-staged": {
-        "*.{d.ts}": "prettier --write ./**.d.ts"
-    },
     "prettier": {
         "tabWidth": 4,
         "singleQuote": true,

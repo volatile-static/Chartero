@@ -21,6 +21,14 @@ export function toTimeString(seconds: number | string) {
     return label;
 }
 
-export function viewItemInLib(itemID: number) {
-    toolkit.getGlobal('ZoteroPane').selectItem(itemID);
+export function viewItemsInLib(itemIDs: number[]) {
+    toolkit.getGlobal('ZoteroPane').selectItems(itemIDs);
 }
+
+export const exporting = {
+    buttons: {
+        contextButton: {
+            menuItems: ['viewFullscreen', 'downloadSVG', 'downloadJPEG'],
+        },
+    },
+};

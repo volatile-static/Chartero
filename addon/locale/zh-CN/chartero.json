@@ -2,6 +2,7 @@
     "weekdays": ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
     "copyPNG": "复制图表",
     "imageCopied": "图片已复制到剪贴板",
+    "showSelectedInLibrary": "查看选中条目",
     "seconds": "秒",
     "minutes": "分",
     "hours": "小时",
@@ -53,6 +54,7 @@
         "schedule": "作息规律统计",
         "dateTime": "每日阅读时长",
         "pageTime": "每页阅读时长",
+        "pageTimeSub": "Ctrl+单击跳转到页面",
         "network": "关联文献网",
         "networkSub": "Ctrl+单击 跳转"
     },

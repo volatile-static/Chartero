@@ -11,7 +11,6 @@ import type {
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import { viewItemInLib } from '@/utility/utils';
 import Highcharts from '@/utility/highcharts';
 
 export default defineComponent({
@@ -27,17 +26,6 @@ export default defineComponent({
                     {
                         type: 'gantt',
                         data: [],
-                        point: {
-                            events: {
-                                click: function (
-                                    this: GanttPointOptionsObject,
-                                    event
-                                ) {
-                                    if (event.ctrlKey)
-                                        viewItemInLib(Number(this.id));
-                                },
-                            },
-                        },
                     } as SeriesGanttOptions,
                 ],
             } as Options,
@@ -76,13 +64,7 @@ export default defineComponent({
                         start: (attHis.record.firstTime ?? 0) * 1000,
                         end: (attHis.record.lastTime ?? 0) * 1000,
                         completed: ha.progress / 100,
-                        id:
-                            toolkit
-                                .getGlobal('Zotero')
-                                .Items.getIDFromLibraryAndKey(
-                                    attHis.note.libraryID,
-                                    attHis.key
-                                ) || undefined,
+                        id: ha.ids[0],
                     } as GanttPointOptionsObject;
                 })
                 .filter(point => point.start! + point.end! > 0);

@@ -8,6 +8,17 @@ export default class HistoryAnalyzer {
         this.data = data;
         this._attachments = [];
     }
+    get ids() {
+        return this.data.map(
+            his =>
+                toolkit
+                    .getGlobal('Zotero')
+                    .Items.getIDFromLibraryAndKey(
+                        his.note.libraryID,
+                        his.key
+                    ) || undefined
+        );
+    }
     get attachments() {
         const Items = toolkit.getGlobal('Zotero').Items;
         if (this._attachments.length != this.data.length)
@@ -88,10 +99,12 @@ function accumulatePeriodIf(
 export async function mergeLegacyHistory(json: _ZoteroTypes.anyObj) {
     if (typeof json.lib != 'number' && typeof json.items != 'object')
         throw new Error(toolkit.locale.prefs.historyParseError);
+
     const total = Object.keys(json.items).length,
         mainItem: Zotero.Item =
             await Zotero._readingHistoryGlobal.getMainItem();
     Zotero.showZoteroPaneProgressMeter(toolkit.locale.migratingLegacy, true);
+    window.focus();
     try {
         let i = 0;
         for (const key in json.items) {

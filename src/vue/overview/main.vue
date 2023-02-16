@@ -73,28 +73,6 @@ export default {
     <header>
         <!-- <WordCloud></WordCloud> -->
         <SkyLine></SkyLine>
-        <!-- <TTransfer
-            v-model="targetValue"
-            theme="primary"
-            :data="list"
-            :search="true"
-        />
-        <div>
-            <TButton theme="primary" variant="base">2填充按钮</TButton>
-            <TButton theme="success" variant="outline">描边按钮</TButton>
-            <TButton theme="warning" variant="dashed">虚框按钮</TButton>
-            <TButton theme="default" variant="text" @click="onClk"
-                >文字按钮</TButton
-            >
-        </div>
-        <div style="display: flex">
-            <highcharts
-                :constructor-type="'ganttChart'"
-                class="hc"
-                :options="chartOptions"
-                ref="chart"
-            ></highcharts>
-        </div> -->
     </header>
 </template>
 

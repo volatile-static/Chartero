@@ -6,38 +6,39 @@
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
+import { exporting, toTimeString } from '@/utility/utils';
 import Highcharts from '@/utility/highcharts';
-import { toTimeString } from '@/utility/utils';
+
+function tooltipFormatter(
+    this: Highcharts.TooltipFormatterContextObject,
+    tooltip: Highcharts.Tooltip
+) {
+    const result =
+        tooltip.chart.series.length > 1
+            ? `<span style="color: ${this.series.color}">\u25CF</span> ${this.series.name}:<br>`
+            : '';
+    return (
+        result +
+        `${toolkit.locale.date}: ${Highcharts.dateFormat(
+            '%Y-%m-%d',
+            this.x as number
+        )}<br>${toolkit.locale.time}: ${toTimeString(this.y as number)}`
+    );
+}
 
 export default defineComponent({
     data() {
         return {
             chartOpts: {
+                exporting,
+                plotOptions: { series: { cursor: 'auto' } },
                 chart: {
-                    panning: {
-                        enabled: true,
-                        type: 'x',
-                    },
-                    zooming: {
-                        type: 'x',
-                        key: 'shift',
-                    },
+                    panning: { type: 'x', enabled: true },
+                    zooming: { type: 'x', key: 'shift' },
                 },
                 legend: { enabled: false },
                 tooltip: {
-                    formatter: function (
-                        this: Highcharts.TooltipFormatterContextObject,
-                        tooltip: Highcharts.Tooltip
-                    ) {
-                        return `<b>${this.series.name}</b><br>${
-                            toolkit.locale.date
-                        }: ${Highcharts.dateFormat(
-                            '%Y-%m-%d',
-                            this.x as number
-                        )}<br>${toolkit.locale.time}: ${toTimeString(
-                            this.y as number
-                        )}`;
-                    },
+                    formatter: tooltipFormatter,
                 },
                 xAxis: {
                     type: 'datetime',
