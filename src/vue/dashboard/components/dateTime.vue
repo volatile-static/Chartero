@@ -32,8 +32,6 @@ export default defineComponent({
             chartOpts: {
                 exporting,
                 plotOptions: { series: { cursor: 'auto' } },
-                chart: {
-                },
                 legend: { enabled: false },
                 tooltip: {
                     formatter: tooltipFormatter,

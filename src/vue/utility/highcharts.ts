@@ -9,11 +9,7 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 HighchartsExporting(Highcharts);
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 NoDataToDisplay(Highcharts);
-import {
-    copySVG2JPG,
-    saveSVG,
-    showMessage,
-} from '../../bootstrap/modules/utils';
+import { copySVG2JPG, saveSVG } from '../../bootstrap/modules/utils';
 import { viewItemsInLib } from './utils';
 import * as zh_CN from './zh_CN.json';
 import { MessagePlugin } from 'tdesign-vue-next';
@@ -74,7 +70,7 @@ Highcharts.setOptions({
             downloadJPEG: {
                 onclick: function () {
                     copySVG2JPG((this as any).getSVGForExport());
-                    showMessage(toolkit.locale.imageCopied, 'information');
+                    MessagePlugin.success(toolkit.locale.imageCopied);
                 },
                 text: toolkit.locale.copyPNG,
             },
@@ -85,6 +81,7 @@ Highcharts.setOptions({
                             .map((p: any) => p.id)
                             .filter(id => parseInt(id) >= 0);
                     if (ids.length > 0) viewItemsInLib(ids);
+                    else MessagePlugin.warning(toolkit.locale.noItemToView);
                 },
                 text: toolkit.locale.showSelectedInLibrary,
             },

@@ -8,12 +8,76 @@ import type {
     GanttPointOptionsObject,
     YAxisOptions,
     NavigatorYAxisOptions,
-    GanttChart,
 } from 'highcharts';
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
 import Highcharts from '@/utility/highcharts';
+
+interface GanttItem extends GanttPointOptionsObject {
+    start: number;
+    end: number;
+    completed: number;
+    custom: { totalS: number; author?: string };
+}
+let rawData: GanttItem[] = [];
+
+function sortData(opt: string, data: GanttItem[]): GanttItem[] {
+    return data.sort((a, b) => {
+        switch (opt) {
+            case 'startAscending':
+                return a.start - b.start;
+            case 'startDescending':
+                return b.start - a.start;
+            case 'endAscending':
+                return a.end - b.end;
+            case 'endDescending':
+                return b.end - a.end;
+            case 'timeAscending':
+                return a.custom.totalS - b.custom.totalS;
+            case 'timeDescending':
+                return b.custom.totalS - a.custom.totalS;
+            default:
+                return 0;
+        }
+    });
+}
+function filterData(opts: string[], data: GanttItem[]): GanttItem[] {
+    const now = new Date(); // 时间选项不会同时出现，所以放在循环外
+    return data.filter(point =>
+        opts.every(opt => {
+            switch (opt) {
+                case 'completed':
+                    return point.completed > 0.99;
+                case 'incomplete':
+                    return point.completed < 1.0;
+
+                case 'month':
+                    now.setMonth(now.getMonth() - 1);
+                    return point.end > now.getTime();
+                case 'week':
+                    now.setDate(now.getDate() - 7);
+                    return point.end > now.getTime();
+                case 'day':
+                    now.setDate(now.getDate() - 1);
+                    return point.end > now.getTime();
+
+                case 'fit':
+                default:
+                    return true;
+            }
+        })
+    );
+}
+
+const colTitleOpt = {
+        title: { text: toolkit.locale.fileName },
+        labels: { format: '{point.name}' },
+    },
+    colAuthorOpt = {
+        title: { text: toolkit.locale.author },
+        labels: { format: '{point.custom.author}' },
+    };
 
 export default defineComponent({
     data() {
@@ -24,9 +88,14 @@ export default defineComponent({
                     enabled: true,
                     yAxis: { reversed: true, min: 0, max: 1 },
                 },
-                rangeSelector: { enabled: true },
+                // rangeSelector: { enabled: true },
                 scrollbar: { enabled: true, liveRedraw: true },
-                yAxis: { visible: window.innerWidth > 500 },
+                xAxis: { tickPixelInterval: 100 },
+                yAxis: {
+                    visible: window.innerWidth > 500,
+                    type: 'category',
+                    grid: { enabled: true, columns: [colTitleOpt] },
+                },
                 series: [
                     {
                         type: 'gantt',
@@ -43,17 +112,27 @@ export default defineComponent({
             onResizeDebounced: toolkit
                 .getGlobal('Zotero')
                 .Utilities.debounce(this.onResize, 100) as () => void,
+            reloadChart: 0,
         };
     },
     watch: {
         sortOption(opt) {
-            toolkit.log(opt);
+            this.seriesData = sortData(opt, this.seriesData);
         },
         filterOption(opt) {
-            toolkit.log(opt);
+            this.seriesData = sortData(
+                this.sortOption,
+                filterData(opt, rawData)
+            );
+            (this.chartOpts.navigator!.yAxis as NavigatorYAxisOptions).max =
+                this.seriesData.length - 1;
+            ++this.reloadChart;
         },
         titleOption(opt) {
-            toolkit.log(opt);
+            const col = (this.chartOpts.yAxis as YAxisOptions).grid!.columns!;
+            col.length = 0;
+            if (opt.includes('title')) col.push(colTitleOpt);
+            if (opt.includes('author')) col.push(colAuthorOpt);
         },
         history(his: AttachmentHistory[]) {
             this.updateChart(his);
@@ -62,7 +141,7 @@ export default defineComponent({
     methods: {
         updateChart(his: AttachmentHistory[]) {
             if (his.length < 1) return;
-            this.seriesData = his
+            rawData = his
                 .map(attHis => {
                     const ha = new toolkit.HistoryAnalyzer([attHis]);
                     return {
@@ -71,9 +150,18 @@ export default defineComponent({
                         end: (attHis.record.lastTime ?? 0) * 1000,
                         completed: ha.progress / 100,
                         id: ha.ids[0],
-                    } as GanttPointOptionsObject;
+                        custom: {
+                            totalS: attHis.record.totalS,
+                            author: ha.parents[0]?.firstCreator,
+                        },
+                    } as GanttItem;
                 })
                 .filter(point => point.start! + point.end! > 0);
+
+            this.seriesData = sortData(
+                this.sortOption,
+                filterData(this.filterOption, rawData)
+            );
             (this.chartOpts.navigator!.yAxis as NavigatorYAxisOptions).max =
                 this.seriesData.length - 1;
         },
@@ -84,14 +172,18 @@ export default defineComponent({
     },
     computed: {
         options() {
+            ++this.reloadChart;
             return Highcharts.merge(this.chartOpts, this.theme);
         },
         seriesData: {
-            get() {
-                return (this.chartOpts.series![0] as SeriesGanttOptions).data!;
+            get(): GanttItem[] {
+                return (this.chartOpts.series![0] as SeriesGanttOptions)
+                    .data as GanttItem[];
             },
-            set(data: GanttPointOptionsObject[]) {
+            set(data: GanttItem[]) {
+                data.forEach((point, i) => (point.y = i));
                 (this.chartOpts.series![0] as SeriesGanttOptions).data = data;
+                ++this.reloadChart;
             },
         },
     },
@@ -165,6 +257,14 @@ export default defineComponent({
                         value="endDescending"
                         :label="locale.ganttMenu.endDescending"
                     ></t-option>
+                    <t-option
+                        value="timeAscending"
+                        :label="locale.ganttMenu.timeAscending"
+                    ></t-option>
+                    <t-option
+                        value="timeDescending"
+                        :label="locale.ganttMenu.timeDescending"
+                    ></t-option>
                 </t-select>
                 <t-select
                     v-model="filterOption"
@@ -214,17 +314,17 @@ export default defineComponent({
                             )
                         "
                     ></t-option>
-                    <t-option
+                    <!-- <t-option
                         value="fit"
                         :label="locale.ganttMenu.fitLength"
-                    ></t-option>
+                    ></t-option> -->
                 </t-select>
             </t-space>
 
             <Chart
                 constructor-type="ganttChart"
                 :options="options"
-                :key="options"
+                :key="reloadChart"
                 ref="chart"
                 style="width: 100%"
             ></Chart>

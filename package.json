@@ -45,9 +45,9 @@
         "highcharts": "^10.3.3",
         "highcharts-vue": "^1.4.0",
         "segmentit": "^2.0.3",
-        "tdesign-vue-next": "^1.0.6",
-        "zotero-plugin-toolkit": "^2.0.3",
-        "zotero-reading-history": "file:../zotero-plugin-toolkit"
+        "tdesign-vue-next": "^1.0.7",
+        "zotero-plugin-toolkit": "^2.0.5",
+        "zotero-reading-history": "file:../zotero-reading-history"
     },
     "devDependencies": {
         "@types/animejs": "^3.1.7",
@@ -68,8 +68,8 @@
         "unplugin-vue-components": "^0.22.12",
         "vite": "^4.1.1",
         "vue": "^3.2.45",
-        "vue-tsc": "^1.0.24",
-        "zotero-types": "^1.0.9"
+        "vue-tsc": "^1.1.2",
+        "zotero-types": "^1.0.10"
     },
     "eslintConfig": {
         "extends": [

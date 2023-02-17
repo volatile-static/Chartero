@@ -35,6 +35,9 @@ export default class HistoryAnalyzer {
             att ? (att.getField('title') as string) : undefined
         );
     }
+    get parents() {
+        return this.validAttachments.map(att => att.parentItem);
+    }
     getByDate(date: Date) {
         return accumulatePeriodIf(
             this.data,
