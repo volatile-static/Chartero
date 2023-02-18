@@ -70,6 +70,9 @@ export default class HistoryAnalyzer {
         if (total == 0) return 0;
         else return Math.round((100 * read) / total);
     }
+    get totalS() {
+        return accumulate(this.data, his => his.record.totalS);
+    }
 }
 
 function accumulate<T>(arr: readonly T[], callback: (e: T) => number) {

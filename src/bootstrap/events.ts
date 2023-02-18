@@ -41,7 +41,10 @@ export function onInit() {
                 ids: string[],
                 extraData: _ZoteroTypes.anyObj
             ) => {
-                if (event == 'close' && ids[0] == Zotero.Chartero.overviewTabID)
+                if (
+                    event == 'close' &&
+                    ids[0] == Zotero.Chartero?.overviewTabID
+                )
                     Zotero.Chartero.overviewTabID = undefined;
             },
         },

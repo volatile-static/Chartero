@@ -1,0 +1,171 @@
+<script lang="ts">
+import type {
+    Options,
+    PointClickEventObject,
+    PointOptionsObject,
+    SeriesPackedbubbleOptions,
+} from 'highcharts';
+import type { AttachmentHistory } from 'zotero-reading-history';
+import { defineComponent, nextTick } from 'vue';
+import { toTimeString } from '@/utility/utils';
+import Highcharts from '@/utility/highcharts';
+
+async function processSeries(creatorIDs: number[], themeColors: string[]) {
+    async function getSeries(creatorID: number) {
+        const zotero = toolkit.getGlobal('Zotero'),
+            itemIDs = await zotero.Creators.getItemsWithCreator(creatorID),
+            itemsPro = itemIDs.map(id => zotero.Items.getAsync(id)),
+            items = await Promise.all(itemsPro),
+            dataPro = items.map(async it => {
+                const his = await toolkit.history.getInTopLevel(it),
+                    ha = new toolkit.HistoryAnalyzer(his);
+                return {
+                    name: it.getField('title'),
+                    value: ha.totalS,
+                    custom: { itemID: it.id, icon: it.getImageSrc() },
+                } as PointOptionsObject;
+            }),
+            creator = zotero.Creators.get(creatorID);
+        if (dataPro.length < 2) return;
+        return {
+            type: 'packedbubble',
+            name:
+                creator.firstName!.length > 0
+                    ? creator.firstName + ' ' + creator.lastName
+                    : creator.lastName,
+            data: await Promise.all(dataPro),
+        } as SeriesPackedbubbleOptions;
+    }
+    let colorCnt = 0;
+    const itemColor: { [key: number]: number } = {},
+        rawSeries = await Promise.all(creatorIDs.map(getSeries)),
+        filtered = rawSeries.filter(it => it) as SeriesPackedbubbleOptions[];
+    return filtered.map(series => {
+        (series.data as PointOptionsObject[]).forEach(point => {
+            const itemID: number = point.custom!.itemID;
+            itemColor[itemID] ??= colorCnt++;
+            point.color = themeColors[itemColor[itemID] % themeColors.length];
+        });
+        return series;
+    });
+}
+
+export default defineComponent({
+    data() {
+        const onPointClick = (e: PointClickEventObject) => {
+            const opts: any = this.chartOpts,
+                series = opts.series as SeriesPackedbubbleOptions[],
+                selectID = (e.point as PointOptionsObject).custom!.itemID;
+            series.forEach(s =>
+                (s.data as PointOptionsObject[]).forEach(d => {
+                    if (d.custom!.itemID == selectID) d.selected = !d.selected;
+                })
+            );
+        };
+        return {
+            chartOpts: {
+                plotOptions: {
+                    packedbubble: {
+                        minSize: '20%',
+                        maxSize: '80%',
+                        layoutAlgorithm: {
+                            gravitationalConstant: 0.02,
+                            splitSeries: true,
+                            parentNodeLimit: true,
+                        },
+                        point: { events: { click: onPointClick } },
+                        dataLabels: {
+                            enabled: true,
+                            useHTML: true,
+                            filter: {
+                                property: 'radius',
+                                operator: '>',
+                                value: 30,
+                            },
+                            format: `<span style="
+                                        display: inline-block;
+                                        width: 32px;
+                                        height: 32px;
+                                        background-image: url('{point.custom.icon}');
+                                    "></span>`,
+                            parentNodeFormat: '{point.name}',
+                        },
+                        tooltip: {
+                            pointFormatter: function () {
+                                const icon = this.options.custom!.icon,
+                                    time = toTimeString(this.options.value!);
+                                return `
+                                    <b>${this.options.name}</b>
+                                    <br/>
+                                    <span>${time}</span>
+                                `.trim();
+                            },
+                        },
+                    },
+                },
+                series: [],
+            } as Options,
+            locale: toolkit.locale,
+        };
+    },
+    computed: {
+        options() {
+            return Highcharts.merge(this.chartOpts, this.theme);
+        },
+    },
+    methods: {
+        updateSeries(his: AttachmentHistory[]) {
+            const ha = new toolkit.HistoryAnalyzer(his),
+                topLevels = ha.parents,
+                creatorIDs = topLevels
+                    .map(it => it && (it as any)._creatorIDs)
+                    .flat(),
+                uniqueCreatorIDs = Array.from(new Set(creatorIDs)),
+                themeColors =
+                    typeof this.theme?.colors[0] == 'string'
+                        ? this.theme.colors
+                        : (Highcharts.getOptions().colors as string[]),
+                chart = (this.$refs.chart as Chart).chart;
+
+            chart.showLoading();
+            processSeries(uniqueCreatorIDs, themeColors).then(series => {
+                this.chartOpts.series = series;
+                nextTick(() => {
+                    for (let i = 6; i < chart.series.length; ++i)
+                        chart.series[i].setVisible(false, false);
+                    chart.hideLoading();
+                });
+            });
+        },
+    },
+    watch: {
+        history(his: AttachmentHistory[]) {
+            this.updateSeries(his);
+        },
+    },
+    mounted() {
+        this.updateSeries(this.history);
+    },
+    props: {
+        history: {
+            type: Array<AttachmentHistory>,
+            required: true,
+        },
+        theme: Object,
+    },
+});
+</script>
+<script lang="ts" setup>
+import { Chart } from 'highcharts-vue';
+</script>
+
+<template>
+    <Chart
+        :options="options"
+        :key="theme"
+        ref="chart"
+        style="height: 100%"
+    ></Chart>
+</template>
+
+<style scoped></style>

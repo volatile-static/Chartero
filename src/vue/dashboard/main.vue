@@ -127,8 +127,6 @@ export default {
             const noteIDs = this.topLevel.getNotes(),
                 notes = noteIDs.map(id => Items.get(id).getNote()),
                 text = notes.map(str => str.replace(/<[^<>]+>/g, '')).join('');
-            // this.noteNum = noteIDs.length;
-            // this.noteWords = text.replace(/\s/g, '').length;
             anime({ ...animateInt, noteNum: noteIDs.length });
             anime({ ...animateInt, noteWords: text.replace(/\s/g, '').length });
 
@@ -141,8 +139,6 @@ export default {
                     ...animateInt,
                     numPages: bestHis.record.numPages ?? 0,
                 });
-                // this.readPages = bestHis.record.readPages;
-                // this.numPages = bestHis.record.numPages ?? 0;
             }
 
             // 统计附件大小
@@ -168,7 +164,6 @@ export default {
                 ...animateInt,
                 numAttachment: this.topLevel.numPDFAttachments(),
             });
-            // this.numAttachment = this.topLevel.numPDFAttachments();
 
             this.itemHistory = await toolkit.history.getInTopLevel(
                 this.topLevel

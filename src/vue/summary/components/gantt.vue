@@ -232,6 +232,7 @@ export default defineComponent({
                 <t-select
                     v-else
                     disabled
+                    auto-width
                     size="small"
                     :placeholder="locale.tableHeaderTip"
                 ></t-select>

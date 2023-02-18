@@ -9,8 +9,9 @@ import {
 import { GridLightTheme, DarkUnicaTheme } from '../utility/themes';
 import type { AttachmentHistory } from 'zotero-reading-history';
 import Gantt from './components/gantt.vue';
+import AuthorBubble from './components/authorBubble.vue';
 export default {
-    components: { Gantt },
+    components: { Gantt, AuthorBubble },
     data() {
         return {
             locale: toolkit.locale.summary,
@@ -20,7 +21,7 @@ export default {
             itemHistory: new Array<AttachmentHistory>(),
             panelStyle: {
                 height: window.innerHeight - 70 + 'px',
-                overflow: 'scroll'
+                overflow: 'scroll',
             },
         };
     },
@@ -76,7 +77,10 @@ export default {
                     <template #label>
                         <ChartBubbleIcon /> {{ locale.authorBubble }}
                     </template>
-                    <div>选项卡1内容</div>
+                    <AuthorBubble
+                        :history="itemHistory"
+                        :theme="chartTheme"
+                    ></AuthorBubble>
                 </t-tab-panel>
                 <t-tab-panel value="gantt" :style="panelStyle">
                     <template #label>

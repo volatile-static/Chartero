@@ -26,7 +26,7 @@ Highcharts.setOptions({
         useUTC: false,
     },
     title: { text: undefined },
-    tooltip: { outside: true },
+    // tooltip: { outside: true },
     chart: {
         borderRadius: 6,
         animation: {
@@ -58,6 +58,7 @@ Highcharts.setOptions({
             allowPointSelect: true,
             cursor: 'pointer',
             shadow: true,
+            point: { events: { select: _ => toolkit.log(_) } },
         },
     },
     exporting: {
@@ -78,7 +79,7 @@ Highcharts.setOptions({
                 onclick: function () {
                     const points = this.getSelectedPoints(),
                         ids = points
-                            .map((p: any) => p.id)
+                            .map((p: any) => p.custom?.itemID ?? p.id)
                             .filter(id => parseInt(id) >= 0);
                     if (ids.length > 0) viewItemsInLib(ids);
                     else MessagePlugin.warning(toolkit.locale.noItemToView);
