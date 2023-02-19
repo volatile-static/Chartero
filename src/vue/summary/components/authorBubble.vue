@@ -22,7 +22,11 @@ async function processSeries(creatorIDs: number[], themeColors: string[]) {
                 return {
                     name: it.getField('title'),
                     value: ha.totalS,
-                    custom: { itemID: it.id, icon: it.getImageSrc() },
+                    custom: {
+                        libraryID: it.libraryID,
+                        itemID: it.id,
+                        icon: it.getImageSrc(),
+                    },
                 } as PointOptionsObject;
             }),
             creator = zotero.Creators.get(creatorID);
@@ -90,17 +94,31 @@ export default defineComponent({
                                     "></span>`,
                             parentNodeFormat: '{point.name}',
                         },
-                        tooltip: {
-                            pointFormatter: function () {
-                                const icon = this.options.custom!.icon,
-                                    time = toTimeString(this.options.value!);
-                                return `
-                                    <b>${this.options.name}</b>
-                                    <br/>
-                                    <span>${time}</span>
-                                `.trim();
-                            },
-                        },
+                    },
+                },
+                tooltip: {
+                    useHTML: true,
+                    pointFormatter: function () {
+                        const icon = this.options.custom!.icon,
+                            style = `
+                                display: inline-block;
+                                width: 32px;
+                                height: 32px;
+                                transform: scale(0.5);
+                                float: left;
+                                background-image: url('${icon}');
+                            `,
+                            lib = toolkit
+                                .getGlobal('Zotero')
+                                .Libraries.get(this.options.custom!.libraryID),
+                            libraryName = lib ? lib.name : '',
+                            time = toTimeString(this.options.value!);
+                        return `
+                            <span style="${style}"></span>
+                            <b style="float: none">${this.options.name}</b>
+                            <br/><span>📂 ${libraryName}</span>
+                            <span style="float: right">${time}</span>
+                        `;
                     },
                 },
                 series: [],
@@ -167,5 +185,3 @@ import { Chart } from 'highcharts-vue';
         style="height: 100%"
     ></Chart>
 </template>
-
-<style scoped></style>

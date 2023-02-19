@@ -39,16 +39,15 @@ export default class HistoryAnalyzer {
         return this.validAttachments.map(att => att.parentItem);
     }
     getByDate(date: Date) {
-        return accumulatePeriodIf(
-            this.data,
+        return this.accumulatePeriodIf(
             time => time.toDateString() == date.toDateString()
         );
     }
     getByDay(day: number) {
-        return accumulatePeriodIf(this.data, time => time.getDay() == day);
+        return this.accumulatePeriodIf(time => time.getDay() == day);
     }
     getByHour(hour: number) {
-        return accumulatePeriodIf(this.data, time => time.getHours() == hour);
+        return this.accumulatePeriodIf(time => time.getHours() == hour);
     }
     get firstTime() {
         const maxT = 9999999999;
@@ -73,33 +72,53 @@ export default class HistoryAnalyzer {
     get totalS() {
         return accumulate(this.data, his => his.record.totalS);
     }
+    get dateTimeStats() {
+        const result: { [key: string]: { date: number; time: number } } = {};
+        this.forEachPeriod((date, time) => {
+            result[date.toLocaleDateString()] ??= {
+                date: date.getTime(),
+                time: 0,
+            };
+            result[date.toLocaleDateString()].time += time;
+        });
+        return Object.values(result).sort((a, b) => a.date - b.date);
+    }
+    private accumulatePeriodIf(predicate: (time: Date) => boolean) {
+        const attachmentsPages = this.data
+            .map(history => history.record.pageArr)
+            .filter(pages => pages.length > 0);
+
+        return accumulate(attachmentsPages, pageRecords => {
+            const pagesPeriod = pageRecords
+                .filter(pageRecord => pageRecord.period)
+                .map(pageRecord => Object.entries(pageRecord.period!));
+
+            return accumulate(pagesPeriod, periodEntries =>
+                accumulate(periodEntries, ([timestamp, period]) =>
+                    predicate(new Date(parseInt(timestamp) * 1000)) ? period : 0
+                )
+            );
+        });
+    }
+    forEachPeriod(callback: (time: Date, period: number) => void) {
+        const attachmentsPages = this.data.map(
+            history => history.record.pageArr
+        );
+
+        for (const pageRecords of attachmentsPages)
+            for (const pageRecord of pageRecords)
+                if (pageRecord.period)
+                    for (const [timestamp, period] of Object.entries(
+                        pageRecord.period
+                    ))
+                        callback(new Date(parseInt(timestamp) * 1000), period);
+    }
 }
 
 function accumulate<T>(arr: readonly T[], callback: (e: T) => number) {
     if (arr.length > 0)
         return arr.reduce((sum: number, e) => sum + callback(e), 0);
     else return 0;
-}
-
-function accumulatePeriodIf(
-    data: readonly AttachmentHistory[],
-    predicate: (time: Date) => boolean
-) {
-    const attachmentsPages = data
-        .map(history => history.record.pageArr)
-        .filter(pages => pages.length > 0);
-
-    return accumulate(attachmentsPages, pageRecords => {
-        const pagesPeriod = pageRecords
-            .filter(pageRecord => pageRecord.period)
-            .map(pageRecord => Object.entries(pageRecord.period!));
-
-        return accumulate(pagesPeriod, periodEntries =>
-            accumulate(periodEntries, ([timestamp, period]) =>
-                predicate(new Date(parseInt(timestamp) * 1000)) ? period : 0
-            )
-        );
-    });
 }
 
 export async function mergeLegacyHistory(json: _ZoteroTypes.anyObj) {

@@ -58,19 +58,10 @@ export default defineComponent({
             if (!newHis) return;
 
             this.chartOpts.series = newHis.map(attHis => {
-                const firstTime = attHis.record.firstTime,
-                    lastTime = attHis.record.lastTime,
-                    ha = new toolkit.HistoryAnalyzer([attHis]),
-                    data: Highcharts.PointOptionsObject[] = [];
-                // 遍历每天
-                if (firstTime && lastTime)
-                    for (let i = firstTime; i <= lastTime; i += 86400) {
-                        const date = new Date(i * 1000);
-                        data.push({ x: i * 1000, y: ha.getByDate(date) });
-                    }
+                const ha = new toolkit.HistoryAnalyzer([attHis]);
                 return {
                     name: newHis.length > 1 ? ha.titles[0] : undefined,
-                    data,
+                    data: ha.dateTimeStats.map(obj => [obj.date, obj.time]),
                 } as Highcharts.SeriesLineOptions;
             });
             this.chartOpts.legend!.enabled = newHis.length > 1;
