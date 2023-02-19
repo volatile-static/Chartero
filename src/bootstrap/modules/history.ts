@@ -1,4 +1,5 @@
 import { AttachmentHistory } from 'zotero-reading-history';
+import { showMessage } from './utils';
 
 export default class HistoryAnalyzer {
     private readonly data: AttachmentHistory[];
@@ -6,6 +7,17 @@ export default class HistoryAnalyzer {
     constructor(data: AttachmentHistory[]) {
         this.data = data;
         this._attachments = [];
+    }
+    get ids() {
+        return this.data.map(
+            his =>
+                toolkit
+                    .getGlobal('Zotero')
+                    .Items.getIDFromLibraryAndKey(
+                        his.note.libraryID,
+                        his.key
+                    ) || undefined
+        );
     }
     get attachments() {
         const Items = toolkit.getGlobal('Zotero').Items;
@@ -22,6 +34,9 @@ export default class HistoryAnalyzer {
         return this.attachments.map(att =>
             att ? (att.getField('title') as string) : undefined
         );
+    }
+    get parents() {
+        return this.validAttachments.map(att => att.parentItem);
     }
     getByDate(date: Date) {
         return accumulatePeriodIf(
@@ -55,6 +70,9 @@ export default class HistoryAnalyzer {
         if (total == 0) return 0;
         else return Math.round((100 * read) / total);
     }
+    get totalS() {
+        return accumulate(this.data, his => his.record.totalS);
+    }
 }
 
 function accumulate<T>(arr: readonly T[], callback: (e: T) => number) {
@@ -87,24 +105,42 @@ function accumulatePeriodIf(
 export async function mergeLegacyHistory(json: _ZoteroTypes.anyObj) {
     if (typeof json.lib != 'number' && typeof json.items != 'object')
         throw new Error(toolkit.locale.prefs.historyParseError);
-    const mainItem: Zotero.Item =
-        await Zotero._readingHistoryGlobal.getMainItem();
-    for (const key in json.items) {
-        if (!Zotero.Items.getIDFromLibraryAndKey(1, key)) continue;
 
-        const oldJson = json.items[key],
-            newJson = {
-                numPages: oldJson.n,
-                pages: {} as _ZoteroTypes.anyObj,
-            },
-            noteItem = new Zotero.Item('note');
-        for (const page in oldJson.p)
-            newJson.pages[page] = { p: oldJson.p[page].t };
+    const total = Object.keys(json.items).length,
+        mainItem: Zotero.Item =
+            await Zotero._readingHistoryGlobal.getMainItem();
+    Zotero.showZoteroPaneProgressMeter(toolkit.locale.migratingLegacy, true);
+    window.focus();
+    try {
+        let i = 0;
+        for (const key in json.items) {
+            if (!Zotero.Items.getIDFromLibraryAndKey(1, key)) continue;
 
-        noteItem.setNote(
-            `zotero-reading-history#${key}\n${JSON.stringify(newJson)}`
+            const oldJson = json.items[key],
+                newJson = {
+                    numPages: oldJson.n,
+                    pages: {} as _ZoteroTypes.anyObj,
+                },
+                noteItem = new Zotero.Item('note');
+            for (const page in oldJson.p)
+                newJson.pages[page] = { p: oldJson.p[page].t };
+
+            noteItem.setNote(
+                `zotero-reading-history#${key}\n${JSON.stringify(newJson)}`
+            );
+            noteItem.parentID = mainItem.id;
+            await noteItem.saveTx();
+
+            Zotero.updateZoteroPaneProgressMeter((++i * 100) / total);
+        }
+        Zotero._readingHistoryGlobal.loadAll();
+        showMessage(
+            toolkit.locale.migrationFinished,
+            'chrome://chartero/content/icons/accept.png'
         );
-        noteItem.parentID = mainItem.id;
-        noteItem.saveTx();
+    } catch (error) {
+        window.alert(error);
+    } finally {
+        Zotero.hideZoteroPaneOverlays();
     }
 }

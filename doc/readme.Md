@@ -4,7 +4,7 @@
 
 ## User Guide
 
-## Development
+## Developer Guide
 
 -   本插件基于 windingwind 的[插件模板](https://github.com/windingwind/zotero-addon-template)开发
 -   图表采用[Highcharts](https://www.npmjs.com/package/highcharts)生成

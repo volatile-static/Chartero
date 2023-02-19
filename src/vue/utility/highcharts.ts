@@ -7,25 +7,26 @@ import NetworkGraph from 'highcharts/modules/networkgraph';
 NetworkGraph(Highcharts);
 import HighchartsExporting from 'highcharts/modules/exporting';
 HighchartsExporting(Highcharts);
-import {
-    copySVG2JPG,
-    saveSVG,
-    showMessage,
-} from '../../bootstrap/modules/utils';
+import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
+NoDataToDisplay(Highcharts);
+import { copySVG2JPG, saveSVG } from '../../bootstrap/modules/utils';
+import { viewItemsInLib } from './utils';
 import * as zh_CN from './zh_CN.json';
+import { MessagePlugin } from 'tdesign-vue-next';
 
+let infoFlag = false;
 if (
     toolkit.getGlobal('Zotero').locale == 'zh-CN' ||
     toolkit.getGlobal('Zotero').locale == 'ja-JP'
 )
     Highcharts.setOptions(zh_CN as Highcharts.Options);
-
 Highcharts.setOptions({
     time: {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         useUTC: false,
     },
     title: { text: undefined },
+    // tooltip: { outside: true },
     chart: {
         borderRadius: 6,
         animation: {
@@ -40,9 +41,25 @@ Highcharts.setOptions({
             },
         },
         style: { fontFamily: '' },
+        panKey: 'shift',
+        panning: { type: 'x', enabled: true },
+        zooming: { type: 'x' },
+        events: {
+            selection: _ => {
+                if (!infoFlag) {
+                    MessagePlugin.info(toolkit.locale.zoomingTip);
+                    infoFlag = true;
+                }
+            },
+        },
     },
     plotOptions: {
-        series: { shadow: true },
+        series: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            shadow: true,
+            point: { events: { select: _ => toolkit.log(_) } },
+        },
     },
     exporting: {
         menuItemDefinitions: {
@@ -54,18 +71,34 @@ Highcharts.setOptions({
             downloadJPEG: {
                 onclick: function () {
                     copySVG2JPG((this as any).getSVGForExport());
-                    showMessage(toolkit.locale.imageCopied, 'information');
+                    MessagePlugin.success(toolkit.locale.imageCopied);
                 },
                 text: toolkit.locale.copyPNG,
+            },
+            showInLibrary: {
+                onclick: function () {
+                    const points = this.getSelectedPoints(),
+                        ids = points
+                            .map((p: any) => p.custom?.itemID ?? p.id)
+                            .filter(id => parseInt(id) >= 0);
+                    if (ids.length > 0) viewItemsInLib(ids);
+                    else MessagePlugin.warning(toolkit.locale.noItemToView);
+                },
+                text: toolkit.locale.showSelectedInLibrary,
             },
         },
         buttons: {
             contextButton: {
-                menuItems: ['viewFullscreen', 'downloadSVG', 'downloadJPEG'],
+                menuItems: [
+                    'viewFullscreen',
+                    'downloadSVG',
+                    'downloadJPEG',
+                    'showInLibrary',
+                ],
             },
         },
     },
     credits: { enabled: false },
-});
+} as Highcharts.Options);
 
 export default Highcharts;

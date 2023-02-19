@@ -84,6 +84,7 @@ import PageTime from './components/pageTime.vue';
 import DateTime from './components/dateTime.vue';
 import TimeLine from './components/timeline.vue';
 import Network from './components/network.vue';
+import anime from 'animejs';
 
 export default {
     methods: {
@@ -101,7 +102,12 @@ export default {
     mounted() {
         window.addEventListener('message', async e => {
             if (typeof e.data.id != 'number') return; // 判断消息是否包含ID
-            const Items = toolkit.getGlobal('Zotero').Items,
+            const animateInt = {
+                    round: 1,
+                    duration: 260,
+                    targets: this,
+                } as anime.AnimeParams,
+                Items = toolkit.getGlobal('Zotero').Items,
                 item = Items.get(e.data.id); // 获取传入的条目
             this.topLevel = item;
 
@@ -121,15 +127,18 @@ export default {
             const noteIDs = this.topLevel.getNotes(),
                 notes = noteIDs.map(id => Items.get(id).getNote()),
                 text = notes.map(str => str.replace(/<[^<>]+>/g, '')).join('');
-            this.noteNum = noteIDs.length;
-            this.noteWords = text.replace(/\s/g, '').length;
+            anime({ ...animateInt, noteNum: noteIDs.length });
+            anime({ ...animateInt, noteWords: text.replace(/\s/g, '').length });
 
             // 更新阅读进度
             const best = await this.topLevel.getBestAttachment(),
                 bestHis = best && toolkit.history.getByAttachment(best);
             if (bestHis) {
-                this.readPages = bestHis.record.readPages;
-                this.numPages = bestHis.record.numPages ?? 0;
+                anime({ ...animateInt, readPages: bestHis.record.readPages });
+                anime({
+                    ...animateInt,
+                    numPages: bestHis.record.numPages ?? 0,
+                });
             }
 
             // 统计附件大小
@@ -144,8 +153,17 @@ export default {
                         file ? File.pathToFile(file).fileSize + size : size,
                     0
                 );
-            this.attachmentSize = (totalSize / 1024 / 1024).toFixed(2);
-            this.numAttachment = this.topLevel.numPDFAttachments();
+            anime({
+                targets: this,
+                attachmentSize: (totalSize / 1024 / 1024).toFixed(2),
+                round: 100,
+                duration: 260,
+                easing: 'linear',
+            });
+            anime({
+                ...animateInt,
+                numAttachment: this.topLevel.numPDFAttachments(),
+            });
 
             this.itemHistory = await toolkit.history.getInTopLevel(
                 this.topLevel
@@ -199,7 +217,11 @@ export default {
     display: flex;
     flex-direction: column;
 }
-
+.progress-info span {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
 .progress-space {
     margin: 10px 20px;
 }

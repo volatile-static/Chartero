@@ -2,6 +2,8 @@
     "weekdays": ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
     "copyPNG": "复制图表",
     "imageCopied": "图片已复制到剪贴板",
+    "showSelectedInLibrary": "查看选中条目",
+    "noItemToView": "单击图中节点以选中条目",
     "seconds": "秒",
     "minutes": "分",
     "hours": "小时",
@@ -21,22 +23,34 @@
     "itemChartTitle": "读过的条目",
     "pdfAnnotation": "PDF注释",
     "itemTitle": "条目标题",
+    "author": "作者",
+    "fileName": "文件名",
     "readingProgress": "阅读进度",
+    "migratingLegacy": "迁移数据中……",
+    "migrationFinished": "数据迁移完成！",
     "timeline": "时间轴",
     "dateAdded": "添加附件",
     "dateModified": "最后修改",
     "sort": "排序",
     "filter": "过滤",
+    "tableHeader": "表头",
+    "tableHeaderTip": "拉宽面板以显示表头",
+    "zoomingTip": "按住shift拖动选区",
     "ganttMenu": {
         "startAscending": "开始最早",
         "startDescending": "开始最晚",
         "endAscending": "结束最早",
         "endDescending": "结束最晚",
+        "timeAscending": "总时长升序",
+        "timeDescending": "总时长降序",
         "incomplete": "未读完",
         "completed": "已读完",
         "month": "最近一个月",
         "week": "最近一星期",
-        "day": "最近一天"
+        "day": "最近一天",
+        "fitLength": "自适应长度",
+        "showTitle": "显示标题",
+        "showAuthor": "显示作者"
     },
     "chartTitle": {
         "pie": "总阅读时长占比",
@@ -46,6 +60,7 @@
         "schedule": "作息规律统计",
         "dateTime": "每日阅读时长",
         "pageTime": "每页阅读时长",
+        "pageTimeSub": "Ctrl+单击跳转到页面",
         "network": "关联文献网",
         "networkSub": "Ctrl+单击 跳转"
     },
@@ -80,6 +95,7 @@
     },
     "summary": {
         "authorBubble": "作者气泡图",
-        "gantt": "历史甘特图"
+        "gantt": "历史甘特图",
+        "network": "关联文献网"
     }
 }

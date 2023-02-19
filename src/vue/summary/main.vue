@@ -2,16 +2,37 @@
 import {
     ChartBubbleIcon,
     FormatVerticalAlignRightIcon,
+    ForkIcon,
 } from 'tdesign-icons-vue-next';
 </script>
 <script lang="ts">
 import { GridLightTheme, DarkUnicaTheme } from '../utility/themes';
 import type { AttachmentHistory } from 'zotero-reading-history';
 import Gantt from './components/gantt.vue';
+import AuthorBubble from './components/authorBubble.vue';
 export default {
+    components: { Gantt, AuthorBubble },
+    data() {
+        return {
+            locale: toolkit.locale.summary,
+            isDark: false,
+            themeIcon: this.isDark ? '☀️' : '🌙',
+            messageContent: '',
+            itemHistory: new Array<AttachmentHistory>(),
+            panelStyle: {
+                height: window.innerHeight - 70 + 'px',
+                overflow: 'scroll',
+            },
+        };
+    },
+    computed: {
+        chartTheme(): object {
+            return this.isDark ? DarkUnicaTheme : GridLightTheme;
+        },
+    },
     mounted() {
         window.addEventListener('message', async e => {
-            if (e.data.length < 1) return;
+            if (e.data.length < 1) return; // TODO: show message
             this.messageContent =
                 parent.document.querySelector(
                     '#zotero-item-pane-message-box description'
@@ -34,23 +55,6 @@ export default {
             this.panelStyle.height = window.innerHeight - 70 + 'px';
         });
     },
-    data() {
-        return {
-            locale: toolkit.locale.summary,
-            isDark: false,
-            themeIcon: this.isDark ? '☀️' : '🌙',
-            messageContent: '',
-            itemHistory: new Array<AttachmentHistory>(),
-            panelStyle: {
-                height: window.innerHeight - 70 + 'px',
-            },
-        };
-    },
-    computed: {
-        chartTheme(): object {
-            return this.isDark ? DarkUnicaTheme : GridLightTheme;
-        },
-    },
     methods: {
         switchTheme() {
             this.isDark = !this.isDark;
@@ -59,7 +63,6 @@ export default {
             else document.documentElement.removeAttribute('theme-mode');
         },
     },
-    components: { Gantt },
 };
 </script>
 
@@ -74,13 +77,21 @@ export default {
                     <template #label>
                         <ChartBubbleIcon /> {{ locale.authorBubble }}
                     </template>
-                    <div>选项卡1内容</div>
+                    <AuthorBubble
+                        :history="itemHistory"
+                        :theme="chartTheme"
+                    ></AuthorBubble>
                 </t-tab-panel>
                 <t-tab-panel value="gantt" :style="panelStyle">
                     <template #label>
                         <FormatVerticalAlignRightIcon /> {{ locale.gantt }}
                     </template>
                     <Gantt :history="itemHistory" :theme="chartTheme"></Gantt>
+                </t-tab-panel>
+                <t-tab-panel value="network" :style="panelStyle">
+                    <template #label>
+                        <ForkIcon /> {{ locale.network }}
+                    </template>
                 </t-tab-panel>
             </t-tabs>
         </t-content>

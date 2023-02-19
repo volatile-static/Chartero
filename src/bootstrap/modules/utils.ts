@@ -33,7 +33,7 @@ export async function saveSVG(svg: string) {
 }
 
 export function showMessage(msg: string, icon: string) {
-    new Notification('Chartero', {
+    new window.Notification('Chartero', {
         body: msg,
         icon,
     });

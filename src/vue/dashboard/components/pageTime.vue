@@ -6,23 +6,65 @@
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import Highcharts from '../../utility/highcharts';
+import Highcharts from '@/utility/highcharts';
+import { exporting, toTimeString } from '@/utility/utils';
+import type {
+    Tooltip,
+    TooltipFormatterContextObject,
+    Point,
+    PointClickEventObject,
+} from 'highcharts';
+
+function onPointClick(this: Point, events: PointClickEventObject) {
+    const zotero = toolkit.getGlobal('Zotero');
+    if (events.ctrlKey)
+        zotero.OpenPDF.openToPage(
+            zotero.Items.get(Number(this.series.options.id)),
+            (this.category as number) + 1
+        );
+    return false;
+}
+
+function tooltipFormatter(
+    this: TooltipFormatterContextObject,
+    tooltip: Tooltip
+) {
+    const result =
+        tooltip.chart.series.length > 1
+            ? `<span style="color: ${this.series.color}">\u25CF</span> ${this.series.name}:<br>`
+            : '';
+    return (
+        result +
+        `${toolkit.locale.pageNum}: ${(this.x as number) + 1}<br>${
+            toolkit.locale.time
+        }: ${toTimeString(this.y!)}`
+    );
+}
 
 export default defineComponent({
     data() {
         return {
             chartOpts: {
-                xAxis: { title: { text: toolkit.locale.pageNum } },
+                exporting,
+                plotOptions: {
+                    series: { point: { events: { click: onPointClick } } },
+                },
+                xAxis: {
+                    title: { text: toolkit.locale.pageNum },
+                    labels: {
+                        formatter: ctx => `${(ctx.value as number) + 1}`,
+                    },
+                },
+                yAxis: {
+                    title: { text: toolkit.locale.time },
+                    labels: { formatter: ctx => toTimeString(ctx.value) },
+                },
+                subtitle: { text: toolkit.locale.chartTitle.pageTimeSub },
+                tooltip: { formatter: tooltipFormatter },
                 series: [{ type: 'bar' }],
                 chart: {
-                    panning: {
-                        enabled: true,
-                        type: 'x',
-                    },
-                    zooming: {
-                        type: 'x',
-                        key: 'shift',
-                    },
+                    panning: { type: 'x', enabled: true },
+                    zooming: { type: 'x', key: 'shift' },
                 },
                 legend: { enabled: false },
             } as Highcharts.Options,
@@ -55,6 +97,7 @@ export default defineComponent({
                     type: 'bar',
                     name: his.length > 1 ? ha.titles[0] : undefined,
                     data,
+                    id: ha.ids[0],
                 } as Highcharts.SeriesBarOptions;
             });
             this.chartOpts.legend!.enabled = his.length > 1;

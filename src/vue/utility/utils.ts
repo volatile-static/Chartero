@@ -8,8 +8,10 @@ function s2hour(s: number) {
     };
 }
 
-export function toTimeString(seconds: number) {
-    const tim = s2hour(seconds);
+export function toTimeString(seconds: number | string) {
+    const tim = s2hour(
+        typeof seconds == 'number' ? seconds : parseInt(seconds)
+    );
     let label = '';
     if (tim.hour) label = tim.hour + toolkit.locale.hours;
     if (tim.minute) label += tim.minute + toolkit.locale.minutes;
@@ -18,3 +20,15 @@ export function toTimeString(seconds: number) {
         label += tim.second + toolkit.locale.seconds;
     return label;
 }
+
+export function viewItemsInLib(itemIDs: number[]) {
+    toolkit.getGlobal('ZoteroPane').selectItems(itemIDs);
+}
+
+export const exporting = {
+    buttons: {
+        contextButton: {
+            menuItems: ['viewFullscreen', 'downloadSVG', 'downloadJPEG'],
+        },
+    },
+};

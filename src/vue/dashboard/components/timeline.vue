@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { AttachmentHistory } from 'zotero-reading-history';
-import { toTimeString } from '../../utility/utils';
+import { toTimeString } from '@/utility/utils';
 
 export default {
     props: {

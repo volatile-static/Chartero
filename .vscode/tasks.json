@@ -4,10 +4,6 @@
         {
             "type": "npm",
             "script": "build-dev-all",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
             "problemMatcher": [],
             "label": "Vue",
             "detail": "cross-env NODE_ENV=development node ./tools/build.js"
@@ -18,6 +14,25 @@
             "problemMatcher": ["$eslint-compact"],
             "label": "npm: type-check-all",
             "detail": "npm run type-check-vue & npm run type-check-bootstrap"
+        },
+        {
+            "type": "npm",
+            "script": "restart-all",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$eslint-compact"],
+            "label": "npm: restart-all",
+            "detail": "npm run build-dev-all && npm run restart7"
+        },
+        {
+            "type": "npm",
+            "script": "build-all",
+            "group": "build",
+            "problemMatcher": [],
+            "label": "npm: build-all",
+            "detail": "npm run build-bootstrap && npm run build-vue"
         }
     ]
 }

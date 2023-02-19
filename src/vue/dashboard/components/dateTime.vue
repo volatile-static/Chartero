@@ -6,24 +6,44 @@
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import Highcharts from '../../utility/highcharts';
+import { exporting, toTimeString } from '@/utility/utils';
+import Highcharts from '@/utility/highcharts';
+
+function tooltipFormatter(
+    this: Highcharts.TooltipFormatterContextObject,
+    tooltip: Highcharts.Tooltip
+) {
+    const result =
+        tooltip.chart.series.length > 1
+            ? `<span style="color: ${this.series.color}">\u25CF</span> ${this.series.name}:<br>`
+            : '';
+    return (
+        result +
+        `${toolkit.locale.date}: ${Highcharts.dateFormat(
+            '%Y-%m-%d',
+            this.x as number
+        )}<br>${toolkit.locale.time}: ${toTimeString(this.y as number)}`
+    );
+}
 
 export default defineComponent({
     data() {
         return {
             chartOpts: {
-                chart: {
-                    panning: {
-                        enabled: true,
-                        type: 'x',
-                    },
-                    zooming: {
-                        type: 'x',
-                        key: 'shift',
-                    },
-                },
+                exporting,
+                plotOptions: { series: { cursor: 'auto' } },
                 legend: { enabled: false },
-                xAxis: { title: { text: toolkit.locale.date } },
+                tooltip: {
+                    formatter: tooltipFormatter,
+                },
+                xAxis: {
+                    type: 'datetime',
+                    title: { text: toolkit.locale.date },
+                },
+                yAxis: {
+                    title: { text: toolkit.locale.time },
+                    labels: { formatter: ctx => toTimeString(ctx.value) },
+                },
                 series: [{}],
             } as Highcharts.Options,
         };
@@ -41,12 +61,12 @@ export default defineComponent({
                 const firstTime = attHis.record.firstTime,
                     lastTime = attHis.record.lastTime,
                     ha = new toolkit.HistoryAnalyzer([attHis]),
-                    data: number[] = [];
+                    data: Highcharts.PointOptionsObject[] = [];
                 // 遍历每天
                 if (firstTime && lastTime)
                     for (let i = firstTime; i <= lastTime; i += 86400) {
                         const date = new Date(i * 1000);
-                        data.push(ha.getByDate(date));
+                        data.push({ x: i * 1000, y: ha.getByDate(date) });
                     }
                 return {
                     name: newHis.length > 1 ? ha.titles[0] : undefined,

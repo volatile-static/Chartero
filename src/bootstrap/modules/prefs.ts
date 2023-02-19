@@ -22,6 +22,16 @@ export default function prefsPaneDoc() {
                                 toolkit.locale.prefs.textAreaPlaceholder,
                         },
                         styles: { resize: 'vertical' },
+                        listeners: [
+                            {
+                                type: 'input',
+                                listener: e =>
+                                    ((
+                                        (e.target as XUL.Element)
+                                            .nextElementSibling as XUL.Button
+                                    ).disabled = false),
+                            },
+                        ],
                     },
                     {
                         tag: 'button',
@@ -39,6 +49,7 @@ export default function prefsPaneDoc() {
                                         txt =
                                             btn.previousElementSibling as HTMLTextAreaElement,
                                         str = txt.value;
+                                    btn.disabled = true;
                                     try {
                                         mergeLegacyHistory(JSON.parse(str));
                                     } catch (error) {
