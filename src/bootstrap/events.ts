@@ -23,7 +23,7 @@ export function onInit() {
             styles: {
                 'list-style-image':
                     'url("chrome://chartero/content/icons/icon@16px.png")',
-            },
+            } as Partial<CSSStyleDeclaration>,
             listeners: [{ type: 'command', listener: onToolButtonCommand }],
         })
     );

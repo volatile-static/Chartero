@@ -46,7 +46,7 @@
         "highcharts-vue": "^1.4.0",
         "segmentit": "^2.0.3",
         "tdesign-vue-next": "^1.0.7",
-        "zotero-plugin-toolkit": "^2.0.5",
+        "zotero-plugin-toolkit": "^2.0.6",
         "zotero-reading-history": "file:../zotero-reading-history"
     },
     "devDependencies": {
