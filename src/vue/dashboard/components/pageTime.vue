@@ -1,5 +1,5 @@
 <template>
-    <Chart :options="options" :key="theme"></Chart>
+    <Chart :options="options" :key="theme" ref="chart"></Chart>
 </template>
 
 <script lang="ts">
@@ -7,12 +7,13 @@ import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
 import Highcharts from '@/utility/highcharts';
-import { exporting, toTimeString } from '@/utility/utils';
+import { buttons, toTimeString, helpMessageOption } from '@/utility/utils';
 import type {
     Tooltip,
     TooltipFormatterContextObject,
     Point,
     PointClickEventObject,
+    ExportingOptions,
 } from 'highcharts';
 
 function onPointClick(this: Point, events: PointClickEventObject) {
@@ -45,7 +46,12 @@ export default defineComponent({
     data() {
         return {
             chartOpts: {
-                exporting,
+                exporting: {
+                    buttons,
+                    menuItemDefinitions: helpMessageOption(
+                        toolkit.locale.doc.pageTime
+                    ),
+                } as ExportingOptions,
                 plotOptions: {
                     series: { point: { events: { click: onPointClick } } },
                 },
@@ -85,6 +91,7 @@ export default defineComponent({
     watch: {
         history(his: AttachmentHistory[]) {
             if (his.length < 1) return;
+            (this.$refs.chart as Chart).chart.hideData();
 
             this.chartOpts.series = his.map(attHis => {
                 const ha = new toolkit.HistoryAnalyzer([attHis]),
@@ -95,7 +102,7 @@ export default defineComponent({
                     data.push(attHis.record.pages[i]?.totalS ?? 0);
                 return {
                     type: 'bar',
-                    name: his.length > 1 ? ha.titles[0] : undefined,
+                    name: his.length > 1 ? ha.titles[0] : toolkit.locale.time,
                     data,
                     id: ha.ids[0],
                 } as Highcharts.SeriesBarOptions;

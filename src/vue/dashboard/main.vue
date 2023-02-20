@@ -93,6 +93,9 @@ export default {
             if (this.dark)
                 document.documentElement.setAttribute('theme-mode', 'dark');
             else document.documentElement.removeAttribute('theme-mode');
+            document
+                .querySelectorAll('div.highcharts-data-table')
+                .forEach(el => el.remove());
         },
         onCollapseChange(val: CollapseValue) {
             this.collapseValue =
@@ -196,6 +199,7 @@ export default {
             dark: false,
             itemHistory: new Array<AttachmentHistory>(),
             locale: toolkit.locale,
+            mode: 'lib' as 'lib' | 'reader',
             noteNum: 0,
             noteWords: 0,
             readPages: 0,

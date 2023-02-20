@@ -12,6 +12,7 @@ import type {
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
+import { helpMessageOption } from '@/utility/utils';
 import Highcharts from '@/utility/highcharts';
 
 interface GanttItem extends GanttPointOptionsObject {
@@ -83,6 +84,11 @@ export default defineComponent({
     data() {
         return {
             chartOpts: {
+                exporting: {
+                    menuItemDefinitions: helpMessageOption(
+                        toolkit.locale.doc.gantt
+                    ),
+                },
                 chart: { zooming: { type: undefined } },
                 navigator: {
                     enabled: true,

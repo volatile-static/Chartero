@@ -22,6 +22,38 @@
     .t-space.progress-space div:nth-of-type(3) {
       overflow: hidden;
     }
+
+    .highcharts-table-caption {
+      margin-bottom: 5px;
+      font-family: sans-serif;
+      font-size: 14pt;
+    }
+
+    .highcharts-data-table table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      background: var(--td-bg-color-container);
+      min-width: 100%;
+      margin-top: 10px;
+    }
+
+    .highcharts-data-table td,
+    .highcharts-data-table th {
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 10pt;
+      border: 1px solid var(--td-component-border);
+      padding: 0.5em;
+    }
+
+    .highcharts-data-table tr:nth-child(even),
+    .highcharts-data-table thead tr {
+      background: var(--td-bg-color-secondarycontainer);
+    }
+
+    .highcharts-data-table tr:hover {
+      background: var(--td-bg-color-component-hover);
+    }
   </style>
 </head>
 

@@ -7,6 +7,8 @@ import NetworkGraph from 'highcharts/modules/networkgraph';
 NetworkGraph(Highcharts);
 import HighchartsExporting from 'highcharts/modules/exporting';
 HighchartsExporting(Highcharts);
+import HighchartsExportData from 'highcharts/modules/export-data';
+HighchartsExportData(Highcharts);
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 NoDataToDisplay(Highcharts);
 import { copySVG2JPG, saveSVG } from '../../bootstrap/modules/utils';
@@ -86,6 +88,7 @@ Highcharts.setOptions({
                 },
                 text: toolkit.locale.showSelectedInLibrary,
             },
+            help: { text: toolkit.locale.help },
         },
         buttons: {
             contextButton: {
@@ -94,6 +97,7 @@ Highcharts.setOptions({
                     'downloadSVG',
                     'downloadJPEG',
                     'showInLibrary',
+                    'help',
                 ],
             },
         },

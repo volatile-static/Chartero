@@ -1,17 +1,24 @@
 <template>
-    <Chart :options="options" :key="theme"></Chart>
+    <Chart :options="options" :key="theme" ref="chart"></Chart>
 </template>
 
 <script lang="ts">
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import { exporting, toTimeString } from '@/utility/utils';
+import { buttons, toTimeString, helpMessageOption } from '@/utility/utils';
 import Highcharts from '@/utility/highcharts';
+import type {
+    ExportingOptions,
+    Options,
+    SeriesLineOptions,
+    Tooltip,
+    TooltipFormatterContextObject,
+} from 'highcharts';
 
 function tooltipFormatter(
-    this: Highcharts.TooltipFormatterContextObject,
-    tooltip: Highcharts.Tooltip
+    this: TooltipFormatterContextObject,
+    tooltip: Tooltip
 ) {
     const result =
         tooltip.chart.series.length > 1
@@ -30,7 +37,12 @@ export default defineComponent({
     data() {
         return {
             chartOpts: {
-                exporting,
+                exporting: {
+                    buttons,
+                    menuItemDefinitions: helpMessageOption(
+                        toolkit.locale.doc.dateTime
+                    ),
+                } as ExportingOptions,
                 plotOptions: { series: { cursor: 'auto' } },
                 legend: { enabled: false },
                 tooltip: {
@@ -45,7 +57,7 @@ export default defineComponent({
                     labels: { formatter: ctx => toTimeString(ctx.value) },
                 },
                 series: [{}],
-            } as Highcharts.Options,
+            } as Options,
         };
     },
     computed: {
@@ -56,13 +68,15 @@ export default defineComponent({
     watch: {
         history(newHis: AttachmentHistory[]) {
             if (!newHis) return;
+            (this.$refs.chart as Chart).chart.hideData();
 
             this.chartOpts.series = newHis.map(attHis => {
                 const ha = new toolkit.HistoryAnalyzer([attHis]);
                 return {
-                    name: newHis.length > 1 ? ha.titles[0] : undefined,
+                    name:
+                        newHis.length > 1 ? ha.titles[0] : toolkit.locale.time,
                     data: ha.dateTimeStats.map(obj => [obj.date, obj.time]),
-                } as Highcharts.SeriesLineOptions;
+                } as SeriesLineOptions;
             });
             this.chartOpts.legend!.enabled = newHis.length > 1;
         },

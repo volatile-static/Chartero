@@ -1,4 +1,6 @@
+import type { ExportingMenuObject } from 'highcharts';
 import type { AttachmentHistory } from 'zotero-reading-history';
+import { DialogPlugin } from 'tdesign-vue-next';
 
 function s2hour(s: number) {
     return {
@@ -25,10 +27,37 @@ export function viewItemsInLib(itemIDs: number[]) {
     toolkit.getGlobal('ZoteroPane').selectItems(itemIDs);
 }
 
-export const exporting = {
-    buttons: {
-        contextButton: {
-            menuItems: ['viewFullscreen', 'downloadSVG', 'downloadJPEG'],
-        },
+export const buttons = {
+    contextButton: {
+        menuItems: [
+            'viewFullscreen',
+            'downloadSVG',
+            'downloadJPEG',
+            'viewData',
+            'help',
+        ],
     },
 };
+
+export function helpMessageOption(msg: string) {
+    return {
+        help: {
+            onclick: function () {
+                DialogPlugin.alert({
+                    header: toolkit.locale.help,
+                    body: h =>
+                        h(
+                            'div',
+                            { style: { cursor: 'auto' } },
+                            msg.split('\n').map(s => h('p', s))
+                        ),
+                    footer: false,
+                    draggable: true,
+                    width: '80%',
+                    mode: 'modeless',
+                    theme: 'info',
+                });
+            },
+        } as ExportingMenuObject,
+    };
+}

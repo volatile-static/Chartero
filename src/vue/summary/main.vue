@@ -22,7 +22,7 @@ export default {
             panelStyle: {
                 height: window.innerHeight - 70 + 'px',
                 overflow: 'scroll',
-            },
+            } as CSSStyleDeclaration,
         };
     },
     computed: {
