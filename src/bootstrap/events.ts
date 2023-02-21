@@ -14,19 +14,13 @@ export function onInit() {
         label: 'Chartero',
     });
 
-    // 添加工具栏按钮
-    document.getElementById('zotero-collections-toolbar')?.appendChild(
-        toolkit.ui.createElement(document, 'toolbarbutton', {
-            id: 'chartero-toolbar-button',
-            classList: ['zotero-tb-button'],
-            attributes: { tooltiptext: toolkit.locale.dashboard },
-            styles: {
-                'list-style-image':
-                    'url("chrome://chartero/content/icons/icon@16px.png")',
-            } as Partial<CSSStyleDeclaration>,
-            listeners: [{ type: 'command', listener: onToolButtonCommand }],
-        })
-    );
+    // 注册Overview菜单
+    toolkit.menu.register('menuView', {
+        tag: 'menuitem',
+        label: toolkit.locale.overview,
+        commandListener: openOverview,
+        icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
+    });
 
     // 监听条目选择事件
     Zotero.uiReadyPromise.then(() => {
@@ -54,7 +48,7 @@ export function onInit() {
     toolkit.log('Chartero initialized successfully!');
 }
 
-function onToolButtonCommand(_: Event) {
+function openOverview(_: Event) {
     if (Zotero.Chartero.overviewTabID) {
         Zotero_Tabs.select(Zotero.Chartero.overviewTabID);
         return;

@@ -74,7 +74,9 @@ export default defineComponent({
                 const ha = new toolkit.HistoryAnalyzer([attHis]);
                 return {
                     name:
-                        newHis.length > 1 ? ha.titles[0] : toolkit.locale.time,
+                        newHis.length > 1
+                            ? ha.titles[0]
+                            : `${toolkit.locale.time}(${toolkit.locale.seconds})`,
                     data: ha.dateTimeStats.map(obj => [obj.date, obj.time]),
                 } as SeriesLineOptions;
             });

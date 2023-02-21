@@ -1,3 +1,5 @@
+import renderMinimap from './minimap';
+
 async function renderDashboard(
     panel: XUL.TabPanel,
     reader?: _ZoteroTypes.ReaderInstance
@@ -41,9 +43,12 @@ export function registerPanels() {
     toolkit.libTab.register(toolkit.locale.dashboard, (panel: XUL.TabPanel) =>
         renderDashboard(panel)
     );
-    toolkit.reader.register('initialized', 'chartero', reader =>
-        reader._waitForReader().then(() => addImagesPreviewer(reader))
-    );
+    toolkit.reader.register('initialized', 'chartero', async reader => {
+        await reader._waitForReader();
+        renderMinimap(reader);
+        addImagesPreviewer(reader);
+    });
+    toolkit.log(renderMinimap)
 }
 
 export function renderSummaryPanel(ids: number[]) {

@@ -8,11 +8,12 @@ import type {
     GanttPointOptionsObject,
     YAxisOptions,
     NavigatorYAxisOptions,
+    Point,
 } from 'highcharts';
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import { helpMessageOption } from '@/utility/utils';
+import { helpMessageOption, toTimeString } from '@/utility/utils';
 import Highcharts from '@/utility/highcharts';
 
 interface GanttItem extends GanttPointOptionsObject {
@@ -71,6 +72,19 @@ function filterData(opts: string[], data: GanttItem[]): GanttItem[] {
     );
 }
 
+function pointFormatter(this: Point) {
+    const data = this.options as GanttItem,
+        startDate = new Date(data.start).toLocaleDateString(),
+        endDate = new Date(data.end).toLocaleDateString(),
+        totalS = toTimeString(data.custom.totalS);
+    return `
+        <b> ${data.name}</b><br/>
+        <b>${toolkit.locale.author}: </b>${data.custom.author}
+        <b>  ${toolkit.locale.time}: </b>${totalS}<br/>
+        ${startDate} ~ ${endDate}
+    `;
+}
+
 const colTitleOpt = {
         title: { text: toolkit.locale.fileName },
         labels: { format: '{point.name}' },
@@ -101,6 +115,10 @@ export default defineComponent({
                     visible: window.innerWidth > 500,
                     type: 'category',
                     grid: { enabled: true, columns: [colTitleOpt] },
+                },
+                tooltip: {
+                    headerFormat: `<span style="color: {point.color}">\u25CF</span>`,
+                    pointFormatter,
                 },
                 series: [
                     {

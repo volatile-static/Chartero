@@ -102,7 +102,10 @@ export default defineComponent({
                     data.push(attHis.record.pages[i]?.totalS ?? 0);
                 return {
                     type: 'bar',
-                    name: his.length > 1 ? ha.titles[0] : toolkit.locale.time,
+                    name:
+                        his.length > 1
+                            ? ha.titles[0]
+                            : `${toolkit.locale.time}(${toolkit.locale.seconds})`,
                     data,
                     id: ha.ids[0],
                 } as Highcharts.SeriesBarOptions;
