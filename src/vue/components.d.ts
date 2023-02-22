@@ -18,6 +18,7 @@ declare module '@vue/runtime-core' {
     TOption: typeof import('tdesign-vue-next')['Option']
     TProgress: typeof import('tdesign-vue-next')['Progress']
     TSelect: typeof import('tdesign-vue-next')['Select']
+    TSkeleton: typeof import('tdesign-vue-next')['Skeleton']
     TSpace: typeof import('tdesign-vue-next')['Space']
     TTabPanel: typeof import('tdesign-vue-next')['TabPanel']
     TTabs: typeof import('tdesign-vue-next')['Tabs']

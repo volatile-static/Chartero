@@ -1,5 +1,5 @@
 <template>
-        <Skyline v-if="!loading"></Skyline>
+    <Skyline v-if="!loading"></Skyline>
     <t-affix :offset-top="160" :offset-bottom="60" style="margin: 16px">
         <t-button @click="onClk" size="large" shape="circle">{{
             themeBtn
@@ -35,7 +35,7 @@ export default {
     },
     mounted() {
         toolkit.getGlobal('Zotero').hideZoteroPaneOverlays();
-        this.loading = false;
+        nextTick(() => (this.loading = false));
     },
     computed: {
         readingProgress(): number {
