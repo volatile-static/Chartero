@@ -1,16 +1,66 @@
 <!DOCTYPE html>
-<html lang="en" style="height: 100%;">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vite App</title>
+  <style>
+    body {
+      background-color: var(--td-bg-color-page);
+      margin: 0;
+    }
+
+    .t-collapse-panel__wrapper .t-collapse-panel__content {
+      padding: 6px !important;
+    }
+
+    .t-space.progress-space {
+      display: flex !important;
+    }
+
+    .t-space.progress-space div:nth-of-type(3) {
+      overflow: hidden;
+    }
+
+    .highcharts-table-caption {
+      margin-bottom: 5px;
+      font-family: sans-serif;
+      font-size: 14pt;
+    }
+
+    .highcharts-data-table table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      background: var(--td-bg-color-container);
+      min-width: 100%;
+      margin-top: 10px;
+    }
+
+    .highcharts-data-table td,
+    .highcharts-data-table th {
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 10pt;
+      border: 1px solid var(--td-component-border);
+      padding: 0.5em;
+    }
+
+    .highcharts-data-table tr:nth-child(even),
+    .highcharts-data-table thead tr {
+      background: var(--td-bg-color-secondarycontainer);
+    }
+
+    .highcharts-data-table tr:hover {
+      background: var(--td-bg-color-component-hover);
+    }
+  </style>
 </head>
 
-<body style="height: 100%; margin: 0; background-color: var(--td-bg-color-page);">
-  <div id="app" style="height: 100%;"></div>
+<body>
+  <div id="app"></div>
   <script type="module">
-    import {createApp} from 'vue';
+    import { createApp } from 'vue';
     import App from './main.vue';
     import 'tdesign-vue-next/es/style/index.css';
     createApp(App).mount('#app');

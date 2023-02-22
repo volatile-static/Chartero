@@ -3,7 +3,7 @@
         <div id="week-layout">
             <p class="skyline-label">Mon</p>
             <p class="skyline-label">Wed</p>
-            <p class="skyline-label" data-flow="top">Fri</p>
+            <p class="skyline-label">Fri</p>
         </div>
         <div id="month-layout">
             <p
@@ -17,8 +17,8 @@
         <div id="block-container">
             <TTooltip
                 v-for="block of blocks"
-                show-arrow
                 :content="block.description"
+                show-arrow
             >
                 <div
                     class="day-block"
@@ -30,66 +30,7 @@
 </template>
 
 <script lang="ts">
-/** 遍历每个格子 */
-function forEachBlock<T>(fun: (week: number, day: number) => T): T[] {
-    const result = new Array();
-    for (let i = 0; i < 53; ++i)
-        for (let j = 0; j <= (i < 52 ? 6 : now.getDay()); ++j)
-            result.push(fun(i, j));
-    return result;
-}
-
-/** 根据坐标推算日期 */
-function getDate(i: number, j: number) {
-    const date = new Date(firstDay);
-    date.setDate(firstDay.getDate() + i * 7 + j);
-    return date;
-}
-
-const now = new Date(),
-    firstDay = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate() - now.getDay() - 364
-    ),
-    colorMin = { r: 0x0e, g: 0x44, b: 0x29 },
-    colorMax = { r: 0x39, g: 0xd3, b: 0x53 },
-    history = new toolkit.HistoryAnalyzer(toolkit.history.getInLibrary()),
-    readingS = forEachBlock((week: number, day: number) =>
-        history.getByDate(getDate(week, day))
-    ),
-    orderlyReadingS = readingS.filter(e => e > 0).sort((l, r) => l - r), // 升序排
-    blocks = forEachBlock((week: number, day: number) => {
-        function normalize(max: number, min: number, val: number) {
-            return (val - min) / (max - min);
-        }
-        function denormalize(max: number, min: number, per: number) {
-            return (max - min) * per + min;
-        }
-        const index = week * 7 + day;
-        let color = '#161b22';
-        if (readingS[index] > orderlyReadingS[0]) {
-            type RGB = 'r' | 'g' | 'b';
-            const percent = normalize(
-                    orderlyReadingS.at(-1)!,
-                    orderlyReadingS[0],
-                    readingS[index]
-                ),
-                colors = (['r', 'g', 'b'] as RGB[]).map(color => {
-                    const str = Math.round(
-                        denormalize(colorMin[color], colorMax[color], percent)
-                    ).toString(16);
-                    return str.length == 1 ? '0' + str : str;
-                });
-            color = '#' + colors.join('');
-        }
-        return {
-            color,
-            description: getDate(week, day).toLocaleDateString(
-                toolkit.getGlobal('Zotero').locale
-            ),
-        };
-    });
+import { nextTick } from 'vue';
 
 export default {
     data() {
@@ -108,9 +49,83 @@ export default {
                 'Nov',
                 'Dec',
             ],
-            now,
-            blocks,
+            now: new Date(),
+            blocks: [] as Array<{ color: string; description: string }>,
         };
+    },
+    mounted() {
+        const now = this.now,
+            firstDay = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate() - now.getDay() - 364
+            );
+
+        /** 遍历每个格子 */
+        function forEachBlock<T>(fun: (week: number, day: number) => T): T[] {
+            const result = new Array();
+            for (let i = 0; i < 53; ++i)
+                for (let j = 0; j <= (i < 52 ? 6 : now.getDay()); ++j)
+                    result.push(fun(i, j));
+            return result;
+        }
+
+        /** 根据坐标推算日期 */
+        function getDate(i: number, j: number) {
+            const date = new Date(firstDay);
+            date.setDate(firstDay.getDate() + i * 7 + j);
+            return date;
+        }
+
+        function normalize(max: number, min: number, val: number) {
+            return (val - min) / (max - min);
+        }
+        
+        function denormalize(max: number, min: number, per: number) {
+            return (max - min) * per + min;
+        }
+
+        const colorMin = { r: 0x0e, g: 0x44, b: 0x29 },
+            colorMax = { r: 0x39, g: 0xd3, b: 0x53 },
+            history = new toolkit.HistoryAnalyzer(
+                toolkit.history.getInLibrary()
+            ),
+            stats = history.dateTimeMap,
+            readingS = forEachBlock(
+                (week: number, day: number) =>
+                    stats[getDate(week, day).toLocaleDateString()]?.time ?? 0
+            ),
+            orderlyReadingS = readingS.filter(e => e > 0).sort((l, r) => l - r); // 升序排
+
+        this.blocks = forEachBlock((week: number, day: number) => {
+            const index = week * 7 + day;
+            let color = '#161b22';
+            if (readingS[index] > orderlyReadingS[0]) {
+                type RGB = 'r' | 'g' | 'b';
+                const percent = normalize(
+                        orderlyReadingS.at(-1)!,
+                        orderlyReadingS[0],
+                        readingS[index]
+                    ),
+                    colors = (['r', 'g', 'b'] as RGB[]).map(color => {
+                        const str = Math.round(
+                            denormalize(
+                                colorMin[color],
+                                colorMax[color],
+                                percent
+                            )
+                        ).toString(16);
+                        return str.length == 1 ? '0' + str : str;
+                    });
+                color = '#' + colors.join('');
+            }
+            return {
+                color,
+                description: getDate(week, day).toLocaleDateString(
+                    toolkit.getGlobal('Zotero').locale
+                ),
+            };
+        });
     },
 };
 

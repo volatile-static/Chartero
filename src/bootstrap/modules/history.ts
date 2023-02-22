@@ -72,16 +72,19 @@ export default class HistoryAnalyzer {
     get totalS() {
         return accumulate(this.data, his => his.record.totalS);
     }
-    get dateTimeStats() {
+    get dateTimeMap() {
         const result: { [key: string]: { date: number; time: number } } = {};
         this.forEachPeriod((date, time) => {
             result[date.toLocaleDateString()] ??= {
-                date: date.getTime(),
+                date: date.getTime(),  // 仅记录当天第一次遇到的记录
                 time: 0,
             };
             result[date.toLocaleDateString()].time += time;
         });
-        return Object.values(result).sort((a, b) => a.date - b.date);
+        return result;
+    }
+    get dateTimeStats() {
+        return Object.values(this.dateTimeMap).sort((a, b) => a.date - b.date);
     }
     private accumulatePeriodIf(predicate: (time: Date) => boolean) {
         const attachmentsPages = this.data

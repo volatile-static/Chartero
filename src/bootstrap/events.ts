@@ -53,6 +53,8 @@ function openOverview(_: Event) {
         Zotero_Tabs.select(Zotero.Chartero.overviewTabID);
         return;
     }
+    Zotero.showZoteroPaneProgressMeter(toolkit.locale.drawInProgress);
+
     // 打开新的标签页
     const { id, container } = Zotero_Tabs.add({
         type: 'library',
