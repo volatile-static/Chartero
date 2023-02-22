@@ -14,3 +14,5 @@ https://github.com/volatile-static/Chartero/discussions/24
 > 使用旧版请[切换分支](https://gitee.com/const_volatile/chartero/tree/js_overlay/)
 
 ---
+
+https://www.zotero.org/support/dev/zotero_7_for_developers

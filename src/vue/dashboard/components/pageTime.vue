@@ -21,7 +21,7 @@ function onPointClick(this: Point, events: PointClickEventObject) {
     if (events.ctrlKey)
         zotero.OpenPDF.openToPage(
             zotero.Items.get(Number(this.series.options.id)),
-            (this.category as number) + 1
+            this.category
         );
     return false;
 }
@@ -36,7 +36,7 @@ function tooltipFormatter(
             : '';
     return (
         result +
-        `${toolkit.locale.pageNum}: ${(this.x as number) + 1}<br>${
+        `${toolkit.locale.pageNum}: ${this.x}<br>${
             toolkit.locale.time
         }: ${toTimeString(this.y!)}`
     );
@@ -58,7 +58,7 @@ export default defineComponent({
                 xAxis: {
                     title: { text: toolkit.locale.pageNum },
                     labels: {
-                        formatter: ctx => `${(ctx.value as number) + 1}`,
+                        format: '{value}',
                     },
                 },
                 yAxis: {
@@ -102,6 +102,7 @@ export default defineComponent({
                     data.push(attHis.record.pages[i]?.totalS ?? 0);
                 return {
                     type: 'bar',
+                    pointStart: firstPage + 1,
                     name:
                         his.length > 1
                             ? ha.titles[0]

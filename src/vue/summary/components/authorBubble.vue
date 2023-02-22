@@ -48,7 +48,7 @@ async function processSeries(creatorIDs: number[], themeColors: string[]) {
         (series.data as PointOptionsObject[]).forEach(point => {
             const itemID: number = point.custom!.itemID;
             itemColor[itemID] ??= colorCnt++;
-            point.color = themeColors[itemColor[itemID] % themeColors.length];
+            point.color = themeColors[itemColor[itemID] % 9]; // TODO: 换主题色时需要修改
         });
         return series;
     });
