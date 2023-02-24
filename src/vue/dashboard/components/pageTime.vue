@@ -3,11 +3,7 @@
 </template>
 
 <script lang="ts">
-import type { AttachmentHistory } from 'zotero-reading-history';
 import { Chart } from 'highcharts-vue';
-import { defineComponent } from 'vue';
-import Highcharts from '@/utility/highcharts';
-import { buttons, toTimeString, helpMessageOption } from '@/utility/utils';
 import type {
     Tooltip,
     TooltipFormatterContextObject,
@@ -15,6 +11,11 @@ import type {
     PointClickEventObject,
     ExportingOptions,
 } from 'highcharts';
+import type { AttachmentHistory } from 'zotero-reading-history';
+import { defineComponent } from 'vue';
+import { buttons, toTimeString, helpMessageOption } from '@/utility/utils';
+import Highcharts from '@/utility/highcharts';
+import HistoryAnalyzer from '@/utility/history';
 
 function onPointClick(this: Point, events: PointClickEventObject) {
     const zotero = toolkit.getGlobal('Zotero');
@@ -94,7 +95,7 @@ export default defineComponent({
             (this.$refs.chart as Chart).chart.hideData();
 
             this.chartOpts.series = his.map(attHis => {
-                const ha = new toolkit.HistoryAnalyzer([attHis]),
+                const ha = new HistoryAnalyzer([attHis]),
                     firstPage = attHis.record.firstPage,
                     lastPage = attHis.record.lastPage,
                     data: number[] = [];

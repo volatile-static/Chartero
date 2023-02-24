@@ -10,7 +10,7 @@ import { TDesignResolver } from 'unplugin-vue-components/resolvers';
 // https://vitejs.dev/config/
 export default defineConfig({
     build: {
-        target: 'firefox60',
+        target: 'firefox102',
         rollupOptions: {
             input: {
                 summary: resolve(__dirname, 'summary/index.html'),
@@ -20,7 +20,6 @@ export default defineConfig({
         },
         outDir: '../../builds/addon/content/',
         reportCompressedSize: false,
-        minify: false,
     },
     plugins: [
         vue(),

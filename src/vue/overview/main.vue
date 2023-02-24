@@ -13,7 +13,8 @@ import Skyline from './components/skyline.vue';
 <script lang="ts">
 import type { AttachmentHistory } from 'zotero-reading-history';
 import type { CollapseValue } from 'tdesign-vue-next';
-import { GridLightTheme, DarkUnicaTheme } from '../utility/themes';
+import { GridLightTheme, DarkUnicaTheme } from '@/utility/themes';
+import HistoryAnalyzer from '@/utility/history';
 import anime from 'animejs';
 import { nextTick } from 'vue';
 
@@ -40,7 +41,7 @@ export default {
     computed: {
         readingProgress(): number {
             if (this.itemHistory.length < 1) return 0;
-            const ha = new toolkit.HistoryAnalyzer(this.itemHistory);
+            const ha = new HistoryAnalyzer(this.itemHistory);
             return ha.progress;
         },
         chartTheme(): object {

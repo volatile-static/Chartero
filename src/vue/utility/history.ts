@@ -1,5 +1,4 @@
-import { AttachmentHistory } from 'zotero-reading-history';
-import { showMessage } from './utils';
+import type { AttachmentHistory } from 'zotero-reading-history';
 
 export default class HistoryAnalyzer {
     private readonly data: AttachmentHistory[];
@@ -122,47 +121,4 @@ function accumulate<T>(arr: readonly T[], callback: (e: T) => number) {
     if (arr.length > 0)
         return arr.reduce((sum: number, e) => sum + callback(e), 0);
     else return 0;
-}
-
-export async function mergeLegacyHistory(json: _ZoteroTypes.anyObj) {
-    if (typeof json.lib != 'number' && typeof json.items != 'object')
-        throw new Error(toolkit.locale.prefs.historyParseError);
-
-    const total = Object.keys(json.items).length,
-        mainItem: Zotero.Item =
-            await Zotero._readingHistoryGlobal.getMainItem();
-    Zotero.showZoteroPaneProgressMeter(toolkit.locale.migratingLegacy, true);
-    window.focus();
-    try {
-        let i = 0;
-        for (const key in json.items) {
-            if (!Zotero.Items.getIDFromLibraryAndKey(1, key)) continue;
-
-            const oldJson = json.items[key],
-                newJson = {
-                    numPages: oldJson.n,
-                    pages: {} as _ZoteroTypes.anyObj,
-                },
-                noteItem = new Zotero.Item('note');
-            for (const page in oldJson.p)
-                newJson.pages[page] = { p: oldJson.p[page].t };
-
-            noteItem.setNote(
-                `zotero-reading-history#${key}\n${JSON.stringify(newJson)}`
-            );
-            noteItem.parentID = mainItem.id;
-            await noteItem.saveTx();
-
-            Zotero.updateZoteroPaneProgressMeter((++i * 100) / total);
-        }
-        Zotero._readingHistoryGlobal.loadAll();
-        showMessage(
-            toolkit.locale.migrationFinished,
-            'chrome://chartero/content/icons/accept.png'
-        );
-    } catch (error) {
-        window.alert(error);
-    } finally {
-        Zotero.hideZoteroPaneOverlays();
-    }
 }

@@ -8,10 +8,10 @@
     "description": "一个好看的Zotero插件",
     "scripts": {
         "build-dev-bootstrap": "cross-env NODE_ENV=development node ./tools/build.js",
-        "build-dev-vue": "vite build ./src/vue",
+        "build-dev-vue": "vite build ./src/vue --minify false",
         "build-dev-all": "npm run build-dev-bootstrap && npm run build-dev-vue",
         "build-bootstrap": "cross-env NODE_ENV=production node ./tools/build.js",
-        "build-vue": "vite build ./src/vue --minify",
+        "build-vue": "vite build ./src/vue",
         "build-all": "npm run build-bootstrap && npm run build-vue",
         "type-check-vue": "vue-tsc --noEmit -p ./src/vue",
         "type-check-bootstrap": "tsc --noEmit -p ./src/bootstrap",

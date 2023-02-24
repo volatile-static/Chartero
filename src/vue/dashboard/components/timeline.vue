@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { AttachmentHistory } from 'zotero-reading-history';
 import { toTimeString } from '@/utility/utils';
+import HistoryAnalyzer from '@/utility/history';
 
 export default {
     props: {
@@ -12,7 +13,7 @@ export default {
     watch: {
         history(newHis: AttachmentHistory[]) {
             this.items.length = 0;
-            const ha = new toolkit.HistoryAnalyzer(newHis),
+            const ha = new HistoryAnalyzer(newHis),
                 attachments = ha.validAttachments;
             attachments.forEach(att => {
                 const title =
@@ -35,7 +36,7 @@ export default {
                 );
             });
             newHis.forEach(his => {
-                const ha = new toolkit.HistoryAnalyzer([his]),
+                const ha = new HistoryAnalyzer([his]),
                     dateTimeStats = ha.dateTimeStats;
                 dateTimeStats.forEach(({ date, time }) => {
                     this.items.push({

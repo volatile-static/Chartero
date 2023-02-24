@@ -15,6 +15,7 @@ import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
 import { helpMessageOption, toTimeString } from '@/utility/utils';
 import Highcharts from '@/utility/highcharts';
+import HistoryAnalyzer from '@/utility/history';
 
 interface GanttItem extends GanttPointOptionsObject {
     start: number;
@@ -167,7 +168,7 @@ export default defineComponent({
             if (his.length < 1) return;
             rawData = his
                 .map(attHis => {
-                    const ha = new toolkit.HistoryAnalyzer([attHis]);
+                    const ha = new HistoryAnalyzer([attHis]);
                     return {
                         name: ha.titles[0],
                         start: (attHis.record.firstTime ?? 0) * 1000,

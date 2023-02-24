@@ -85,6 +85,7 @@ import DateTime from './components/dateTime.vue';
 import TimeLine from './components/timeline.vue';
 import Network from './components/network.vue';
 import anime from 'animejs';
+import HistoryAnalyzer from '@/utility/history';
 
 export default {
     methods: {
@@ -177,7 +178,7 @@ export default {
     computed: {
         readingProgress(): number {
             if (this.itemHistory.length < 1) return 0;
-            const ha = new toolkit.HistoryAnalyzer(this.itemHistory);
+            const ha = new HistoryAnalyzer(this.itemHistory);
             return ha.progress;
         },
         chartTheme(): object {

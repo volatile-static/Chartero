@@ -7,8 +7,8 @@ import { ReaderTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/reade
 import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
 import { config } from '../../package.json';
 import { onInit } from './events';
+import { updateDashboard } from './modules/sidebar';
 import prefsPaneDoc from './modules/prefs';
-import HistoryAnalyzer from './modules/history';
 import ReadingHistory from 'zotero-reading-history';
 
 export class CharteroToolkit extends toolBase.BasicTool {
@@ -21,7 +21,6 @@ export class CharteroToolkit extends toolBase.BasicTool {
     readonly ui: UITool;
     readonly history: ReadingHistory;
     readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
-    readonly HistoryAnalyzer: typeof HistoryAnalyzer;
 
     constructor() {
         super();
@@ -36,17 +35,22 @@ export class CharteroToolkit extends toolBase.BasicTool {
         this.readerTab = new ReaderTabPanelManager(this);
         this.reader = new ReaderInstanceManager(this);
         this.ui = new UITool(this);
-        this.history = new ReadingHistory({
-            timestamp: true,
-            groupUser: true,
-            numPages: true,
-        });
+        this.history = new ReadingHistory(
+            {
+                timestamp: true,
+                groupUser: true,
+                numPages: true,
+            },
+            reader => {
+                updateDashboard(reader.itemID);
+                return {};
+            }
+        );
         this.locale = JSON.parse(
             Zotero.File.getContentsFromURL(
                 'chrome://chartero/locale/chartero.json'
             )
         );
-        this.HistoryAnalyzer = HistoryAnalyzer;
     }
 
     getPref(key: string) {

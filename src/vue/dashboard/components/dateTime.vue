@@ -8,6 +8,7 @@ import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
 import { buttons, toTimeString, helpMessageOption } from '@/utility/utils';
 import Highcharts from '@/utility/highcharts';
+import HistoryAnalyzer from '@/utility/history';
 import type {
     ExportingOptions,
     Options,
@@ -71,7 +72,7 @@ export default defineComponent({
             (this.$refs.chart as Chart).chart.hideData();
 
             this.chartOpts.series = newHis.map(attHis => {
-                const ha = new toolkit.HistoryAnalyzer([attHis]);
+                const ha = new HistoryAnalyzer([attHis]);
                 return {
                     name:
                         newHis.length > 1

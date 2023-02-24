@@ -9,6 +9,7 @@ import type { AttachmentHistory } from 'zotero-reading-history';
 import { defineComponent, nextTick } from 'vue';
 import { toTimeString } from '@/utility/utils';
 import Highcharts from '@/utility/highcharts';
+import HistoryAnalyzer from '@/utility/history';
 
 async function processSeries(creatorIDs: number[], themeColors: string[]) {
     async function getSeries(creatorID: number) {
@@ -18,7 +19,7 @@ async function processSeries(creatorIDs: number[], themeColors: string[]) {
             items = await Promise.all(itemsPro),
             dataPro = items.map(async it => {
                 const his = await toolkit.history.getInTopLevel(it),
-                    ha = new toolkit.HistoryAnalyzer(his);
+                    ha = new HistoryAnalyzer(his);
                 return {
                     name: it.getField('title'),
                     value: ha.totalS,
@@ -133,7 +134,7 @@ export default defineComponent({
     },
     methods: {
         updateSeries(his: AttachmentHistory[]) {
-            const ha = new toolkit.HistoryAnalyzer(his),
+            const ha = new HistoryAnalyzer(his),
                 topLevels = ha.parents,
                 creatorIDs = topLevels
                     .map(it => it && (it as any)._creatorIDs)

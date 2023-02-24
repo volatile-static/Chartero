@@ -24,10 +24,9 @@ export function onInit() {
     });
 
     // 监听条目选择事件
-    Zotero.uiReadyPromise.then(() => {
-        ZoteroPane.itemsView.onSelect.addListener(onItemSelect);
-        ZoteroPane.collectionsView.onSelect.addListener(onCollectionSelect);
-    });
+    Zotero.uiReadyPromise.then(() =>
+        ZoteroPane.itemsView.onSelect.addListener(onItemSelect)
+    );
     Zotero.Notifier.registerObserver(
         {
             notify: (
@@ -121,8 +120,4 @@ async function onItemSelect() {
                 break;
         }
     }
-}
-
-function onCollectionSelect() {
-    const row = ZoteroPane.getCollectionTreeRow();
 }

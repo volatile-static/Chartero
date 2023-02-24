@@ -32,6 +32,7 @@
 </template>
 
 <script lang="ts">
+import HistoryAnalyzer from '@/utility/history';
 import { nextTick } from 'vue';
 
 export default {
@@ -93,9 +94,7 @@ export default {
 
             const colorMin = { r: 0x0e, g: 0x44, b: 0x29 },
                 colorMax = { r: 0x39, g: 0xd3, b: 0x53 },
-                history = new toolkit.HistoryAnalyzer(
-                    toolkit.history.getInLibrary()
-                ),
+                history = new HistoryAnalyzer(toolkit.history.getInLibrary()),
                 stats = history.dateTimeMap,
                 readingS = forEachBlock(
                     (week: number, day: number) =>

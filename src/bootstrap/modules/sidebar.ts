@@ -1,5 +1,13 @@
 import renderMinimap from './minimap';
 
+const dashboards: { [id: number]: HTMLIFrameElement } = {};
+
+export function updateDashboard(id?: number) {
+    id &&
+        toolkit.getPref('enableRealTimeDashboard') &&
+        dashboards[id]?.contentWindow?.postMessage({ id }, '*');
+}
+
 async function renderDashboard(
     panel: XUL.TabPanel,
     reader?: _ZoteroTypes.ReaderInstance
@@ -21,10 +29,12 @@ async function renderDashboard(
     ) as HTMLIFrameElement;
     (dashboard.contentWindow as any).wrappedJSObject.toolkit ??= toolkit;
 
-    if (reader)
+    if (reader) {
         dashboard.contentWindow?.addEventListener('load', () =>
-            dashboard.contentWindow?.postMessage({ id: reader.itemID }, '*')
+            updateDashboard(reader.itemID)
         );
+        reader.itemID && (dashboards[reader.itemID] = dashboard);
+    }
 }
 
 /**
@@ -48,7 +58,6 @@ export function registerPanels() {
         renderMinimap(reader);
         addImagesPreviewer(reader);
     });
-    toolkit.log(renderMinimap)
 }
 
 export function renderSummaryPanel(ids: number[]) {

@@ -99,7 +99,7 @@ async function main() {
 
   await Promise.all([
     esbuild.build({
-      target: 'firefox60',
+      target: 'firefox102',
       entryPoints: [path.join(buildDir, "../src/bootstrap/index.ts")],
       define: {
         __dev__: process.env.NODE_ENV == 'development',
