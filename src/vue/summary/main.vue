@@ -32,7 +32,9 @@ export default {
     },
     mounted() {
         window.addEventListener('message', async e => {
+            if (toolkit.getPref('useDarkTheme')) this.switchTheme();
             if (e.data.length < 1) return; // TODO: show message
+            
             this.messageContent =
                 parent.document.querySelector(
                     '#zotero-item-pane-message-box description'

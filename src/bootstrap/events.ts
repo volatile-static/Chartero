@@ -10,6 +10,7 @@ export function onInit() {
     toolkit.prefPane.register({
         pluginID: config.addonID,
         src: rootURI + 'content/preferences.xhtml',
+        extraDTD: [`chrome://${config.addonName}/locale/prefs.dtd`],
         image: `chrome://${config.addonName}/content/icons/icon32.png`,
         label: 'Chartero',
     });

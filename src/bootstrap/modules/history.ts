@@ -76,7 +76,7 @@ export default class HistoryAnalyzer {
         const result: { [key: string]: { date: number; time: number } } = {};
         this.forEachPeriod((date, time) => {
             result[date.toLocaleDateString()] ??= {
-                date: date.getTime(),  // 仅记录当天第一次遇到的记录
+                date: date.getTime(), // 仅记录当天第一次遇到的记录
                 time: 0,
             };
             result[date.toLocaleDateString()].time += time;

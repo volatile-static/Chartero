@@ -122,9 +122,9 @@ async function main() {
       path.join(buildDir, "**/*.xul"),
       path.join(buildDir, "**/*.xhtml"),
       path.join(buildDir, "**/*.json"),
-      path.join(buildDir, "addon/defaults", "**/*.js"),
       path.join(buildDir, "addon/chrome.manifest"),
       path.join(buildDir, "addon/manifest.json"),
+      path.join(buildDir, "addon/prefs.js"),
       path.join(buildDir, "addon/bootstrap.js"),
       "update.json",
       "update.rdf",
@@ -139,6 +139,7 @@ async function main() {
       /__addonID__/g,
       /__buildVersion__/g,
       /__buildTime__/g,
+      /__addonPref__/g
     ],
     to: [
       author,
@@ -150,6 +151,7 @@ async function main() {
       config.addonID,
       version,
       buildTime,
+      'extensions.zotero.' + config.addonName
     ],
     countMatches: true,
   };

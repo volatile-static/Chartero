@@ -48,6 +48,10 @@ export class CharteroToolkit extends toolBase.BasicTool {
         );
         this.HistoryAnalyzer = HistoryAnalyzer;
     }
+
+    getPref(key: string) {
+        return Zotero.Prefs.get(`${config.addonName}.${key}`);
+    }
 }
 
 export class Addon {

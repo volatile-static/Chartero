@@ -6,7 +6,8 @@
 
 ## Developer Guide
 
--   本插件基于 windingwind 的[插件模板](https://github.com/windingwind/zotero-addon-template)开发
+-   [![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/windingwind/zotero-plugin-template)
+
 -   图表采用[Highcharts](https://www.npmjs.com/package/highcharts)生成
 -   欲参考纯 JavaScript 版本请[切换分支](https://gitee.com/const_volatile/chartero/tree/js_overlay/)
 

@@ -70,7 +70,7 @@
     </t-collapse>
 
     <t-affix :offset-top="160" :offset-bottom="60" style="margin: 16px">
-        <t-button @click="onClk" size="large" shape="circle">{{
+        <t-button @click="switchTheme" size="large" shape="circle">{{
             themeBtn
         }}</t-button>
     </t-affix>
@@ -88,7 +88,7 @@ import anime from 'animejs';
 
 export default {
     methods: {
-        onClk() {
+        switchTheme() {
             this.dark = !this.dark;
             if (this.dark)
                 document.documentElement.setAttribute('theme-mode', 'dark');
@@ -104,6 +104,7 @@ export default {
     },
     mounted() {
         window.addEventListener('message', async e => {
+            if (toolkit.getPref('useDarkTheme')) this.switchTheme();
             if (typeof e.data.id != 'number') return; // 判断消息是否包含ID
             const animateInt = {
                     round: 1,
