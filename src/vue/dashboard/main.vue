@@ -79,13 +79,16 @@
 <script lang="ts">
 import type { AttachmentHistory } from 'zotero-reading-history';
 import type { CollapseValue } from 'tdesign-vue-next';
-import { GridLightTheme, DarkUnicaTheme } from '../utility/themes';
+import { nextTick } from 'vue';
+import { GridLightTheme, DarkUnicaTheme } from '@/utility/themes';
 import PageTime from './components/pageTime.vue';
 import DateTime from './components/dateTime.vue';
 import TimeLine from './components/timeline.vue';
 import Network from './components/network.vue';
 import anime from 'animejs';
 import HistoryAnalyzer from '@/utility/history';
+
+const Zotero = toolkit.getGlobal('Zotero');
 
 export default {
     methods: {
@@ -102,62 +105,48 @@ export default {
             this.collapseValue =
                 this.itemHistory.length < 1 ? ['progress'] : val;
         },
-    },
-    mounted() {
-        window.addEventListener('message', async e => {
-            if (toolkit.getPref('useDarkTheme')) this.switchTheme();
-            if (typeof e.data.id != 'number') return; // 判断消息是否包含ID
-            const animateInt = {
-                    round: 1,
-                    duration: 260,
-                    targets: this,
-                } as anime.AnimeParams,
-                Items = toolkit.getGlobal('Zotero').Items,
-                item = Items.get(e.data.id); // 获取传入的条目
-            this.topLevel = item;
-
-            // 传入附件的条件：阅读器
-            if (!item.isRegularItem()) {
-                if (item.parentItem)
-                    this.topLevel = item.parentItem; // 常规条目
-                else {
-                    // 独立PDF的情况
-                    const his = toolkit.history.getByAttachment(item);
-                    this.itemHistory = his ? [his] : [];
-                    return;
-                }
-            }
-
-            // 统计笔记信息
-            const noteIDs = this.topLevel.getNotes(),
-                notes = noteIDs.map(id => Items.get(id).getNote()),
-                text = notes.map(str => str.replace(/<[^<>]+>/g, '')).join('');
-            anime({ ...animateInt, noteNum: noteIDs.length });
-            anime({ ...animateInt, noteWords: text.replace(/\s/g, '').length });
-
-            // 更新阅读进度
-            const best = await this.topLevel.getBestAttachment(),
-                bestHis = best && toolkit.history.getByAttachment(best);
-            if (bestHis) {
-                anime({ ...animateInt, readPages: bestHis.record.readPages });
+        // 统计笔记信息
+        updateNotes() {
+            const noteIDs = this.topLevel?.getNotes(),
+                notes = noteIDs?.map(id => Zotero.Items.get(id).getNote()),
+                text = notes?.map(str => str.replace(/<[^<>]+>/g, '')).join('');
+            anime({ ...this.animateInt, noteNum: noteIDs?.length ?? 0 });
+            anime({
+                ...this.animateInt,
+                noteWords: text?.replace(/\s/g, '').length ?? 0,
+            });
+        },
+        // 更新阅读进度
+        async updateProgress() {
+            const att = this.isReader
+                    ? this.item
+                    : await this.topLevel?.getBestAttachment(),
+                his = att && toolkit.history.getByAttachment(att);
+            if (his) {
+                anime({ ...this.animateInt, readPages: his.record.readPages });
                 anime({
-                    ...animateInt,
-                    numPages: bestHis.record.numPages ?? 0,
+                    ...this.animateInt,
+                    numPages: his.record.numPages ?? 0,
                 });
             }
-
-            // 统计附件大小
-            const File = toolkit.getGlobal('Zotero').File,
-                files = this.topLevel
-                    .getAttachments()
-                    .map(id => Items.get(id))
-                    .filter(it => it.isPDFAttachment())
-                    .map(it => it.getFilePath()),
-                totalSize = files.reduce(
-                    (size, file) =>
-                        file ? File.pathToFile(file).fileSize + size : size,
-                    0
-                );
+        },
+        // 统计附件大小
+        updateSize() {
+            const attachments = this.isReader
+                    ? [this.item]
+                    : this.topLevel
+                          ?.getAttachments()
+                          .map(id => Zotero.Items.get(id))
+                          .filter(it => it.isPDFAttachment()),
+                files = attachments?.map(it => it!.getFilePath()),
+                totalSize =
+                    files?.reduce(
+                        (size, file) =>
+                            file
+                                ? Zotero.File.pathToFile(file).fileSize + size
+                                : size,
+                        0
+                    ) ?? 0;
             anime({
                 targets: this,
                 attachmentSize: (totalSize / 1024 / 1024).toFixed(2),
@@ -166,13 +155,27 @@ export default {
                 easing: 'linear',
             });
             anime({
-                ...animateInt,
-                numAttachment: this.topLevel.numPDFAttachments(),
+                ...this.animateInt,
+                numAttachment: this.topLevel?.numPDFAttachments() ?? 1, // 自己本身算一个
             });
+        },
+    },
+    mounted() {
+        window.addEventListener('message', e => {
+            if (toolkit.getPref('useDarkTheme') != this.dark)
+                this.switchTheme();
+            // 判断消息是否包含ID
+            if (typeof e.data.id != 'number') return;
 
-            this.itemHistory = await toolkit.history.getInTopLevel(
-                this.topLevel
-            );
+            this.item = Zotero.Items.get(e.data.id); // 获取传入的条目
+            if (toolkit.getPref('enableRealtimeUpdating'))
+                this.realtimeUpdating = !this.realtimeUpdating;
+
+            nextTick(() => {
+                this.updateNotes();
+                this.updateProgress();
+                this.updateSize();
+            });
         });
     },
     computed: {
@@ -190,6 +193,29 @@ export default {
         collapseDisabled(): boolean {
             return this.itemHistory.length < 1;
         },
+        /** 2 */
+        topLevel(): Zotero.Item | undefined {
+            return this.isReader
+                ? this.item?.parentItem
+                : this.item ?? undefined;
+        },
+        /** 1 */
+        isReader(): boolean {
+            return !this.item?.isRegularItem();
+        },
+        /** 3 */
+        itemHistory(): AttachmentHistory[] {
+            if (this.realtimeUpdating) {
+                // no-op: 未更换条目时强制刷新历史记录
+            }
+            if (this.topLevel)
+                return toolkit.history.getInTopLevelSync(this.topLevel);
+            else {
+                const his =
+                    this.item && toolkit.history.getByAttachment(this.item);
+                return his ? [his] : [];
+            }
+        },
     },
     watch: {
         collapseDisabled(val: boolean) {
@@ -199,9 +225,7 @@ export default {
     data() {
         return {
             dark: false,
-            itemHistory: new Array<AttachmentHistory>(),
             locale: toolkit.locale,
-            mode: 'lib' as 'lib' | 'reader',
             noteNum: 0,
             noteWords: 0,
             readPages: 0,
@@ -209,7 +233,13 @@ export default {
             numAttachment: 0,
             attachmentSize: '',
             collapseValue: ['progress'] as Array<string | number>,
-            topLevel: null as null | Zotero.Item,
+            item: null as null | Zotero.Item,
+            animateInt: {
+                round: 1,
+                duration: 260,
+                targets: this,
+            } as anime.AnimeParams,
+            realtimeUpdating: false,
         };
     },
     components: { PageTime, DateTime, TimeLine, Network },
