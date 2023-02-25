@@ -57,7 +57,7 @@
             :header="locale.chartTitle.network"
             :disabled="collapseDisabled"
         >
-            <Network :item="topLevel" :theme="chartTheme"></Network>
+            <Network :topLevel="topLevel" :theme="chartTheme" :key="topLevel?.id"></Network>
         </t-collapse-panel>
 
         <t-collapse-panel

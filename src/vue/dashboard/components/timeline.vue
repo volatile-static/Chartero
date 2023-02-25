@@ -78,7 +78,7 @@ export default {
                     v-if="item.title"
                     theme="success"
                     variant="light"
-                    max-width="260px"
+                    max-width="220px"
                     >{{ item.title }}</t-tag
                 >
                 <p>{{ item.content }}</p>
