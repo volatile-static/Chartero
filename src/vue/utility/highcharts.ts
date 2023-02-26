@@ -5,6 +5,8 @@ import HighchartsGantt from 'highcharts/modules/gantt';
 HighchartsGantt(Highcharts);
 import NetworkGraph from 'highcharts/modules/networkgraph';
 NetworkGraph(Highcharts);
+import WordCloudGraph from 'highcharts/modules/wordcloud';
+WordCloudGraph(Highcharts);
 import HighchartsExporting from 'highcharts/modules/exporting';
 HighchartsExporting(Highcharts);
 import HighchartsExportData from 'highcharts/modules/export-data';

@@ -3,15 +3,16 @@ import {
     ChartBubbleIcon,
     FormatVerticalAlignRightIcon,
     ForkIcon,
+    CloudIcon,
 } from 'tdesign-icons-vue-next';
+import Gantt from './components/gantt.vue';
+import AuthorBubble from './components/authorBubble.vue';
+import WordCloud from './components/wordCloud.vue';
 </script>
 <script lang="ts">
 import { GridLightTheme, DarkUnicaTheme } from '../utility/themes';
 import type { AttachmentHistory } from 'zotero-reading-history';
-import Gantt from './components/gantt.vue';
-import AuthorBubble from './components/authorBubble.vue';
 export default {
-    components: { Gantt, AuthorBubble },
     data() {
         return {
             locale: toolkit.locale.summary,
@@ -19,6 +20,7 @@ export default {
             themeIcon: this.isDark ? '☀️' : '🌙',
             messageContent: '',
             itemHistory: new Array<AttachmentHistory>(),
+            items: new Array<Zotero.Item>(),
             panelStyle: {
                 height: window.innerHeight - 70 + 'px',
                 overflow: 'scroll',
@@ -32,9 +34,10 @@ export default {
     },
     mounted() {
         window.addEventListener('message', async e => {
-            if (toolkit.getPref('useDarkTheme')) this.switchTheme();
+            if (toolkit.getPref('useDarkTheme') != this.isDark)
+                this.switchTheme();
             if (e.data.length < 1) return; // TODO: show message
-            
+
             this.messageContent =
                 parent.document.querySelector(
                     '#zotero-item-pane-message-box description'
@@ -51,6 +54,7 @@ export default {
                     toolkit.history.getInTopLevel(top)
                 ),
                 his = await Promise.all(attHisPro);
+            this.items = topLevels;
             this.itemHistory = his.flat();
         });
         window.addEventListener('resize', () => {
@@ -90,10 +94,16 @@ export default {
                     </template>
                     <Gantt :history="itemHistory" :theme="chartTheme"></Gantt>
                 </t-tab-panel>
-                <t-tab-panel value="network" :style="panelStyle">
+                <!-- <t-tab-panel value="network" :style="panelStyle">
                     <template #label>
                         <ForkIcon /> {{ locale.network }}
                     </template>
+                </t-tab-panel> -->
+                <t-tab-panel value="wordCloud" :style="panelStyle">
+                    <template #label>
+                        <CloudIcon /> {{ locale.wordCloud }}
+                    </template>
+                    <WordCloud :items="items" :theme="chartTheme"></WordCloud>
                 </t-tab-panel>
             </t-tabs>
         </t-content>

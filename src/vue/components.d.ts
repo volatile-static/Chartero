@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     TCollapse: typeof import('tdesign-vue-next')['Collapse']
     TCollapsePanel: typeof import('tdesign-vue-next')['CollapsePanel']
     TContent: typeof import('tdesign-vue-next')['Content']
+    TDialog: typeof import('tdesign-vue-next')['Dialog']
     TDivider: typeof import('tdesign-vue-next')['Divider']
     THeader: typeof import('tdesign-vue-next')['Header']
     TLayout: typeof import('tdesign-vue-next')['Layout']
@@ -26,5 +27,6 @@ declare module '@vue/runtime-core' {
     TTimeline: typeof import('tdesign-vue-next')['Timeline']
     TTimelineItem: typeof import('tdesign-vue-next')['TimelineItem']
     TTooltip: typeof import('tdesign-vue-next')['Tooltip']
+    TTransfer: typeof import('tdesign-vue-next')['Transfer']
   }
 }

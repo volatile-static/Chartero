@@ -1,9 +1,12 @@
 {
+    "cancel": "取消",
+    "save": "保存",
     "weekdays": ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
     "copyPNG": "复制图表",
     "imageCopied": "图片已复制到剪贴板",
     "showSelectedInLibrary": "查看所选条目",
     "noItemToView": "单击图中节点以选中条目",
+    "occurrences": "次",
     "seconds": "秒",
     "minutes": "分",
     "hours": "小时",
@@ -20,7 +23,12 @@
     "readingProgressTip": "浏览过的页面与总页数之比",
     "pageNum": "页码",
     "unfiled": "未分类",
+    "selectDataSource": "选择数据源",
     "itemChartTitle": "读过的条目",
+    "filterTags": "筛选标签",
+    "allTags": "所有标签",
+    "excludedTags": "排除的标签",
+    "tags": "标签",
     "pdfAnnotation": "PDF注释",
     "itemTitle": "条目标题",
     "author": "作者",
@@ -55,7 +63,6 @@
     "chartTitle": {
         "pie": "总阅读时长占比",
         "pieSub": "点击扇形了解更多",
-        "wordCloud": "标题词云图",
         "gantt": "时间线",
         "schedule": "作息规律统计",
         "dateTime": "每日阅读时长",
@@ -91,6 +98,7 @@
     "summary": {
         "authorBubble": "作者气泡图",
         "gantt": "历史甘特图",
+        "wordCloud": "标题词云图",
         "network": "关联文献网"
     },
     "help": "帮助",

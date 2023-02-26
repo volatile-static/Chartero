@@ -9,7 +9,8 @@
         "prefs",
         "tdesign",
         "unfiled",
-        "unplugin"
+        "unplugin",
+        "wordcloud"
     ],
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
