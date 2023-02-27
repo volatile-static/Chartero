@@ -124,6 +124,7 @@ export default {
     background-color: var(--td-bg-color-secondarycontainer);
     border-bottom: solid 1px var(--td-border-level-1-color);
     display: inline-flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    padding: 0 8px;
 }
 </style>

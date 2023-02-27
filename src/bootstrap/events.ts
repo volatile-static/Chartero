@@ -1,5 +1,6 @@
 import { config } from '../../package.json';
 import { registerPanels, renderSummaryPanel } from './modules/sidebar';
+import buildRecentMenu from './modules/recent';
 
 /**
  * 初始化插件时调用
@@ -22,6 +23,7 @@ export function onInit() {
         commandListener: openOverview,
         icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
     });
+    buildRecentMenu();
 
     // 监听条目选择事件
     Zotero.uiReadyPromise.then(() =>

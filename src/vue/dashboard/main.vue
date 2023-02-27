@@ -57,7 +57,11 @@
             :header="locale.chartTitle.network"
             :disabled="collapseDisabled"
         >
-            <Network :topLevel="topLevel" :theme="chartTheme" :key="topLevel?.id"></Network>
+            <Network
+                :topLevel="topLevel"
+                :theme="chartTheme"
+                :key="topLevel?.id"
+            ></Network>
         </t-collapse-panel>
 
         <t-collapse-panel
@@ -69,11 +73,11 @@
         </t-collapse-panel>
     </t-collapse>
 
-    <t-affix :offset-top="160" :offset-bottom="60" style="margin: 16px">
+    <div class="theme-button">
         <t-button @click="switchTheme" size="large" shape="circle">{{
             themeBtn
         }}</t-button>
-    </t-affix>
+    </div>
 </template>
 
 <script lang="ts">
@@ -260,5 +264,10 @@ export default {
 }
 .progress-space {
     margin: 10px 20px;
+}
+.theme-button {
+    position: fixed;
+    bottom: 60px;
+    left: 26px;
 }
 </style>
