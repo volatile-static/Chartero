@@ -17,7 +17,6 @@ export default {
         return {
             locale: toolkit.locale.summary,
             isDark: false,
-            themeIcon: this.isDark ? '☀️' : '🌙',
             messageContent: '',
             itemHistory: new Array<AttachmentHistory>(),
             items: new Array<Zotero.Item>(),
@@ -28,6 +27,9 @@ export default {
         };
     },
     computed: {
+        themeIcon() {
+            return this.isDark ? '☀️' : '🌙';
+        },
         chartTheme(): object {
             return this.isDark ? DarkUnicaTheme : GridLightTheme;
         },
@@ -74,9 +76,16 @@ export default {
 
 <template>
     <t-layout>
-        <t-header class="layout-header" height="22px">{{
-            messageContent
-        }}</t-header>
+        <t-header class="layout-header" height="22px">
+            <span>{{ messageContent }}</span>
+            <t-button
+                @click="switchTheme"
+                size="small"
+                variant="text"
+                shape="circle"
+                >{{ themeIcon }}</t-button
+            >
+        </t-header>
         <t-content>
             <t-tabs placement="bottom" default-value="gantt">
                 <t-tab-panel value="bubble" :style="panelStyle">
@@ -108,21 +117,13 @@ export default {
             </t-tabs>
         </t-content>
     </t-layout>
-    <div class="theme-button">
-        <t-button @click="switchTheme" size="large" shape="circle">{{
-            themeIcon
-        }}</t-button>
-    </div>
 </template>
 
 <style scoped>
-.theme-button {
-    position: fixed;
-    bottom: 60px;
-    left: 26px;
-}
-
 .layout-header {
     background-color: var(--td-bg-color-secondarycontainer);
+    border-bottom: solid 1px var(--td-border-level-1-color);
+    display: inline-flex;
+    justify-content: space-around;
 }
 </style>
