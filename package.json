@@ -2,9 +2,10 @@
     "name": "chartero",
     "config": {
         "addonName": "Chartero",
+        "updateURL": "https://raw.githubusercontent.com/volatile-static/Chartero/main/tools/update.json",
         "addonID": "chartero@volatile.static"
     },
-    "version": "2.0.0",
+    "version": "2.0.0-dev",
     "description": "一个好看的Zotero插件",
     "scripts": {
         "build-dev-bootstrap": "cross-env NODE_ENV=development node ./tools/build.js",
@@ -33,11 +34,10 @@
     "author": "volatile static",
     "license": "AGPL-2.0-or-later",
     "bugs": {
-        "url": "https://gitee.com/const_volatile/chartero/issues"
+        "url": "https://github.com/volatile-static/Chartero/issues"
     },
     "homepage": "https://gitee.com/const_volatile/chartero",
     "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
-    "updaterdf": "https://raw.githubusercontent.com/volatile-static/Chartero/master/update.json",
     "dependencies": {
         "animejs": "^3.2.1",
         "compromise": "^14.8.2",

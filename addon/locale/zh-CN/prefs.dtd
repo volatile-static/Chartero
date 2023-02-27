@@ -1,3 +1,5 @@
 <!ENTITY zotero.chartero.enableRealTimeDashboard "阅读器仪表盘实时刷新">
 <!ENTITY zotero.chartero.darkTheme "暗黑模式">
 <!ENTITY zotero.chartero.plotTitle "可视化">
+<!ENTITY zotero.chartero.about "关于">
+<!ENTITY zotero.chartero.issue "报告漏洞">

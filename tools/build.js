@@ -8,9 +8,9 @@ const {
   description,
   homepage,
   releasepage,
-  updaterdf,
   config,
   version,
+  bugs
 } = require("../package.json");
 
 function copyFileSync(source, target) {
@@ -95,7 +95,6 @@ async function main() {
   copyFolderRecursiveSync("addon", buildDir);
 
   copyFileSync("tools/update-template.json", "tools/update.json");
-  copyFileSync("tools/update-template.rdf", "tools/update.rdf");
 
   await Promise.all([
     esbuild.build({
@@ -126,15 +125,15 @@ async function main() {
       path.join(buildDir, "addon/manifest.json"),
       path.join(buildDir, "addon/prefs.js"),
       path.join(buildDir, "addon/bootstrap.js"),
-      "update.json",
-      "update.rdf",
+      "tools/update.json",
     ],
     from: [
       /__author__/g,
       /__description__/g,
+      /__issue__/g,
       /__homepage__/g,
       /__releasepage__/g,
-      /__updaterdf__/g,
+      /__updateURL__/g,
       /__addonName__/g,
       /__addonID__/g,
       /__buildVersion__/g,
@@ -144,9 +143,10 @@ async function main() {
     to: [
       author,
       description,
+      bugs.url,
       homepage,
       releasepage,
-      updaterdf,
+      config.updateURL,
       config.addonName,
       config.addonID,
       version,

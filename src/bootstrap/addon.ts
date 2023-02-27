@@ -72,9 +72,10 @@ export class Addon {
     }
 
     loadPreferencesPane(win: Window) {
-        toolkit.ui.appendElement(
+        toolkit.ui.insertElementBefore(
             prefsPaneDoc(),
             win.document.getElementById('zotero-prefpane-' + config.addonName)!
+                .lastElementChild!
         );
         toolkit.log('Preferences Pane loaded!');
     }
