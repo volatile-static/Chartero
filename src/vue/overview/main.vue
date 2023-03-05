@@ -1,5 +1,7 @@
 <template>
     <Skyline v-if="!loading"></Skyline>
+    <ScheduleChart :theme="chartTheme"></ScheduleChart>
+    <CollectionPie :theme="chartTheme"></CollectionPie>
     <t-affix :offset-top="160" :offset-bottom="60" style="margin: 16px">
         <t-button @click="onClk" size="large" shape="circle">{{
             themeBtn
@@ -8,6 +10,8 @@
 </template>
 <script setup lang="ts">
 import Skyline from './components/skyline.vue';
+import ScheduleChart from './components/scheduleChart.vue';
+import CollectionPie from './components/collectionPie.vue';
 </script>
 
 <script lang="ts">
@@ -29,34 +33,17 @@ export default {
                 .querySelectorAll('div.highcharts-data-table')
                 .forEach(el => el.remove());
         },
-        onCollapseChange(val: CollapseValue) {
-            this.collapseValue =
-                this.itemHistory.length < 1 ? ['progress'] : val;
-        },
     },
     mounted() {
         toolkit.getGlobal('Zotero').hideZoteroPaneOverlays();
         nextTick(() => (this.loading = false));
     },
     computed: {
-        readingProgress(): number {
-            if (this.itemHistory.length < 1) return 0;
-            const ha = new HistoryAnalyzer(this.itemHistory);
-            return ha.progress;
-        },
         chartTheme(): object {
             return this.dark ? DarkUnicaTheme : GridLightTheme;
         },
         themeBtn(): string {
             return this.dark ? '☀️' : '🌙';
-        },
-        collapseDisabled(): boolean {
-            return this.itemHistory.length < 1;
-        },
-    },
-    watch: {
-        collapseDisabled(val: boolean) {
-            if (val) this.collapseValue = ['progress'];
         },
     },
     data() {
@@ -65,15 +52,6 @@ export default {
             dark: false,
             itemHistory: new Array<AttachmentHistory>(),
             locale: toolkit.locale,
-            mode: 'lib' as 'lib' | 'reader',
-            noteNum: 0,
-            noteWords: 0,
-            readPages: 0,
-            numPages: 0,
-            numAttachment: 0,
-            attachmentSize: '',
-            collapseValue: ['progress'] as Array<string | number>,
-            topLevel: null as null | Zotero.Item,
         };
     },
 };

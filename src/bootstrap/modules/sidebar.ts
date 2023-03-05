@@ -55,7 +55,7 @@ export function registerPanels() {
     );
     toolkit.reader.register('initialized', 'chartero', async reader => {
         await reader._waitForReader();
-        renderMinimap(reader);
+        // renderMinimap(reader);
         addImagesPreviewer(reader);
     });
 }

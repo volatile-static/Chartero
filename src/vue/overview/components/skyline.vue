@@ -107,7 +107,7 @@ export default {
 
             this.blocks = forEachBlock((week: number, day: number) => {
                 const index = week * 7 + day;
-                let color = '#161b22';
+                let color = 'var(--td-bg-color-component)';
                 if (readingS[index] > orderlyReadingS[0]) {
                     type RGB = 'r' | 'g' | 'b';
                     const percent = normalize(
@@ -138,7 +138,7 @@ export default {
         },
     },
     mounted() {
-        setTimeout(() => this.init(), 10);
+        setTimeout(this.init, 10);
     },
 };
 
@@ -193,7 +193,7 @@ export default {
 
 .skyline-label {
     font-size: 12px;
-    color: #ffffff;
+    color: var(--td-text-color-primary);
     text-overflow: ellipsis;
 }
 

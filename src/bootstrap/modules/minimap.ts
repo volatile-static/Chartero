@@ -9,49 +9,68 @@ export default async function renderMinimap(
     const win: Window = (reader._iframeWindow as any).wrappedJSObject,
         app: PDFViewerApplication = (win as any).PDFViewerApplication,
         doc = win.document,
-        primaryView = doc.getElementById('viewerContainer'),
-        secondView = doc.getElementById('secondView'),
+        outerContainer = doc.getElementById('outerContainer'),
         history = toolkit.history.getByAttachment(reader.itemID!);
-    if (!primaryView || !secondView || !history) return;
+    if (!history || !outerContainer) return;
 
-    primaryView.style.display = 'flex';
-    const container = toolkit.ui.appendElement(
-            {
-                tag: 'div',
-                styles: {
-                    display: 'block',
-                    width: '12px',
-                    height: '100%',
-                    position: 'sticky',
-                    top: '0px',
-                    left: '0px',
-                    'background-color': 'lightblue',
-                },
+    toolkit.ui.appendElement(
+        {
+            tag: 'style',
+            namespace: 'html',
+            properties: {
+                innerHTML: `
+                    .chartero-minimap-container {
+                        position: absolute;
+                        top: 32px;
+                        right: 0;
+                        display: block;
+                        width: 8px;
+                        height: calc(100% - 32px);
+                        opacity: 0.8;
+                        transition: all 0.2s ease-in-out;
+                        pointer-events: none;
+                    }
+
+                    .chartero-minimap-container:hover {
+                        opacity: 0.6;
+                        width: 12px;
+                    }
+
+                    .chartero-minimap-page {
+                        display: block;
+                        width: 100%;
+                        background-color: lime;
+                    }
+                `,
             },
-            primaryView
+            skipIfExists: true,
+        },
+        doc.head
+    );
+
+    const container = toolkit.ui.appendElement(
+            { tag: 'div', classList: ['chartero-minimap-container'] },
+            outerContainer
         ),
         seconds = history.record.pageArr.map(p => p.totalS),
         maxSeconds = seconds.reduce((a, b) => Math.max(a ?? 0, b ?? 0), 0);
 
     if (!maxSeconds) return;
-    toolkit.log('waiting for ', reader._title);
+    toolkit.log('waiting for ', app.pagesCount);
     while (!app.pagesCount) await Zotero.Promise.delay(1000);
-    toolkit.log('got ', reader._title);
+    toolkit.log('got ', app.pagesCount);
 
     for (let i = 0; i < app.pagesCount; ++i) {
-        toolkit.log(history.record.pages[i].totalS);
         toolkit.ui.appendElement(
             {
                 tag: 'div',
                 styles: {
-                    display: 'block',
-                    width: '100%',
                     height: 100 / app.pagesCount + '%',
                     //@ts-expect-error
-                    opacity: (history.record.pages[i].totalS ?? 0) / maxSeconds,
-                    transition: 'opacity 0.5s',
-                    'background-color': 'red',
+                    opacity:
+                        (history.record.pages[i]?.totalS ?? 0) / maxSeconds,
                 },
+                classList: ['chartero-minimap-page'],
             },
             container
         );
