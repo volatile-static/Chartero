@@ -88,6 +88,7 @@
     "details": "单击结点显示详情",
     "overview": "文库总览",
     "recent": "最近在读",
+    "others": "其它",
 
     "prefs": {
         "storageTitle": "存储",
@@ -99,7 +100,8 @@
         "authorBubble": "作者气泡图",
         "gantt": "历史甘特图",
         "wordCloud": "标题词云图",
-        "network": "关联文献网"
+        "network": "关联文献网",
+        "tagsPie": "关键词饼图"
     },
     "help": "帮助",
     "doc": {

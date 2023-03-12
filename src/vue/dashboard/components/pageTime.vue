@@ -58,9 +58,7 @@ export default defineComponent({
                 },
                 xAxis: {
                     title: { text: toolkit.locale.pageNum },
-                    labels: {
-                        format: '{value}',
-                    },
+                    scrollbar: { enabled: true },
                 },
                 yAxis: {
                     title: { text: toolkit.locale.time },

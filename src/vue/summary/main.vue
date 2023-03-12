@@ -4,10 +4,12 @@ import {
     FormatVerticalAlignRightIcon,
     ForkIcon,
     CloudIcon,
+    ChartPieIcon,
 } from 'tdesign-icons-vue-next';
 import Gantt from './components/gantt.vue';
 import AuthorBubble from './components/authorBubble.vue';
 import WordCloud from './components/wordCloud.vue';
+import TagsPie from './components/tagsPie.vue';
 </script>
 <script lang="ts">
 import { GridLightTheme, DarkUnicaTheme } from '../utility/themes';
@@ -92,16 +94,13 @@ export default {
                     <template #label>
                         <ChartBubbleIcon /> {{ locale.authorBubble }}
                     </template>
-                    <AuthorBubble
-                        :history="itemHistory"
-                        :theme="chartTheme"
-                    ></AuthorBubble>
+                    <AuthorBubble :history="itemHistory" :theme="chartTheme" />
                 </t-tab-panel>
                 <t-tab-panel value="gantt" :style="panelStyle">
                     <template #label>
                         <FormatVerticalAlignRightIcon /> {{ locale.gantt }}
                     </template>
-                    <Gantt :history="itemHistory" :theme="chartTheme"></Gantt>
+                    <Gantt :history="itemHistory" :theme="chartTheme" />
                 </t-tab-panel>
                 <!-- <t-tab-panel value="network" :style="panelStyle">
                     <template #label>
@@ -112,7 +111,13 @@ export default {
                     <template #label>
                         <CloudIcon /> {{ locale.wordCloud }}
                     </template>
-                    <WordCloud :items="items" :theme="chartTheme"></WordCloud>
+                    <WordCloud :items="items" :theme="chartTheme" />
+                </t-tab-panel>
+                <t-tab-panel value="tagsPie" :style="panelStyle">
+                    <template #label>
+                        <ChartPieIcon /> {{ locale.tagsPie }}
+                    </template>
+                    <TagsPie :history="itemHistory" :theme="chartTheme" />
                 </t-tab-panel>
             </t-tabs>
         </t-content>

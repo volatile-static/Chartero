@@ -7,6 +7,8 @@ import NetworkGraph from 'highcharts/modules/networkgraph';
 NetworkGraph(Highcharts);
 import WordCloudGraph from 'highcharts/modules/wordcloud';
 WordCloudGraph(Highcharts);
+import VariablePieGraph from 'highcharts/modules/variable-pie';
+VariablePieGraph(Highcharts);
 import HighchartsExporting from 'highcharts/modules/exporting';
 HighchartsExporting(Highcharts);
 import HighchartsExportData from 'highcharts/modules/export-data';
