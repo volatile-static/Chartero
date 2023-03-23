@@ -390,19 +390,20 @@ Zotero.Chartero = new function () {
     }
 
     this.notifierCallback = {
-        notify: async function (event, type, ids, extraData) {
+        notify: function (event, type, ids, extraData) {
             if (type === 'tab' && event === 'select' && extraData[ids[0]].type == 'reader') {  // 选择标签页
                 const reader = Zotero.Reader.getByTabID(ids[0]);
-                await reader._initPromise;
                 if (!reader)
                     return;
-                addImagesPreviewer(reader);
-                addReaderDashboard(ids[0]);
+                reader._initPromise.then(() => {
+                    addImagesPreviewer(reader);
+                    addReaderDashboard(ids[0]);
 
-                const viewer = reader._iframeWindow.document.getElementById('viewer');
-                // 防止重复添加
-                viewer.removeEventListener('mouseup', scrollThumbnailView, false);
-                viewer.addEventListener('mouseup', scrollThumbnailView, false);
+                    const viewer = reader._iframeWindow.document.getElementById('viewer');
+                    // 防止重复添加
+                    viewer.removeEventListener('mouseup', scrollThumbnailView, false);
+                    viewer.addEventListener('mouseup', scrollThumbnailView, false);
+                });
             }
             // Zotero.log("////////////////////////////////////notify chartero");
             // Zotero.log(event);
