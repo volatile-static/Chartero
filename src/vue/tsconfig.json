@@ -8,7 +8,10 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": { "@/*": ["./*"] },
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "preserveValueImports": false,
+        "importsNotUsedAsValues": "remove",
+        "verbatimModuleSyntax": true,
     },
     "references": [{ "path": "./tsconfig.config.json" }]
 }

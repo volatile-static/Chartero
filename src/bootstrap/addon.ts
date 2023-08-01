@@ -8,8 +8,8 @@ import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
 import { config } from '../../package.json';
 import { onInit } from './events';
 import { updateDashboard } from './modules/sidebar';
+import ReadingHistory from './modules/history/history';
 import prefsPaneDoc from './modules/prefs';
-import ReadingHistory from 'zotero-reading-history';
 
 export class CharteroToolkit extends toolBase.BasicTool {
     readonly menu: MenuManager;
@@ -35,17 +35,7 @@ export class CharteroToolkit extends toolBase.BasicTool {
         this.readerTab = new ReaderTabPanelManager(this);
         this.reader = new ReaderInstanceManager(this);
         this.ui = new UITool(this);
-        this.history = new ReadingHistory(
-            {
-                timestamp: true,
-                groupUser: true,
-                numPages: true,
-            },
-            reader => {
-                updateDashboard(reader.itemID);
-                return {};
-            }
-        );
+        this.history = new ReadingHistory();
         this.locale = JSON.parse(
             Zotero.File.getContentsFromURL(
                 'chrome://chartero/locale/chartero.json'
@@ -65,7 +55,7 @@ export class Addon {
     }
 
     unload() {
-        toolkit.history.disable();
+        // toolkit.history.disable();
         this.overviewTabID && Zotero_Tabs.close(this.overviewTabID);
         toolBase.unregister(toolkit);
         delete Zotero.Chartero;

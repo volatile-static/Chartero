@@ -10,7 +10,9 @@
         "target": "ESNext",
         "composite": true,
         "strict": true,
-
+        "preserveValueImports": false,
+        "importsNotUsedAsValues": "remove",
+        "verbatimModuleSyntax": true,
         "types": [
             "vite/client",
             "node",

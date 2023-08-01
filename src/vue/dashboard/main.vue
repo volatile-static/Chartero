@@ -36,6 +36,10 @@
             </t-space>
         </t-collapse-panel>
 
+        <!-- <t-collapse-panel value="bubble" :disabled="collapseDisabled">
+            <ProgressBubble :history="itemHistory" :theme="chartTheme" />
+        </t-collapse-panel> -->
+
         <t-collapse-panel
             value="page"
             :header="locale.chartTitle.pageTime"
@@ -89,6 +93,7 @@ import PageTime from './components/pageTime.vue';
 import DateTime from './components/dateTime.vue';
 import TimeLine from './components/timeline.vue';
 import Network from './components/network.vue';
+import ProgressBubble from './components/progressBubble.vue';
 import anime from 'animejs';
 import HistoryAnalyzer from '@/utility/history';
 
@@ -246,7 +251,7 @@ export default {
             realtimeUpdating: false,
         };
     },
-    components: { PageTime, DateTime, TimeLine, Network },
+    components: { PageTime, DateTime, TimeLine, Network, ProgressBubble },
 };
 </script>
 

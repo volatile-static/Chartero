@@ -68,7 +68,8 @@
         "dateTime": "每日阅读时长",
         "pageTime": "每页阅读时长",
         "pageTimeSub": "Ctrl+单击跳转到页面",
-        "network": "关联文献网"
+        "network": "关联文献网",
+        "progressBubble": "阅读进度气泡图"
     },
 
     "noHistoryFound": "没有历史记录！",

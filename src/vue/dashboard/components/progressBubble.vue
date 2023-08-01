@@ -1,0 +1,71 @@
+<script lang="ts">
+import type {
+    Options,
+    PointOptionsObject,
+    SeriesScatterOptions,
+} from 'highcharts';
+import type { AttachmentHistory } from 'zotero-reading-history';
+import Highcharts from '@/utility/highcharts';
+import HistoryAnalyzer from '@/utility/history';
+export default {
+    data() {
+        return { locale: toolkit.locale };
+    },
+    computed: {
+        chartOpts() {
+            return {
+                chart: { zooming: { type: 'xy' } },
+                xAxis: {
+                    type: 'datetime',
+                    title: { text: toolkit.locale.date },
+                },
+                yAxis: { title: { text: toolkit.locale.pageNum } },
+                colorAxis: {},
+                series: this.history.map(his => {
+                    return {
+                        type: 'scatter',
+                        cluster: { enabled: true },
+                        allowPointSelect: false,
+                        name: new HistoryAnalyzer([his]).titles[0],
+                        colorKey: 'z',
+                        data: Object.keys(his.record.pages).reduce(
+                            (arr, idx) => {
+                                const page = his.record.pages[Number(idx)],
+                                    periods = page.period;
+                                if (periods)
+                                    for (const t in periods)
+                                        arr.push({
+                                            x: parseInt(t) * 1000,
+                                            y: parseInt(idx),
+                                            z: periods[t],
+                                        });
+                                return arr;
+                            },
+                            [] as PointOptionsObject[]
+                        ),
+                    } as SeriesScatterOptions;
+                }),
+            } as Options;
+        },
+        options() {
+            return Highcharts.merge(this.chartOpts, this.theme);
+        },
+    },
+    props: {
+        history: {
+            type: Array<AttachmentHistory>,
+            required: true,
+        },
+        theme: Object,
+    },
+};
+</script>
+<script lang="ts" setup>
+import { Chart } from 'highcharts-vue';
+</script>
+
+<template>
+    <Chart :options="options" :key="theme"></Chart>
+</template>
+
+<style scoped></style>

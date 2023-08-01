@@ -92,7 +92,7 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
       ctx
     );
   } catch (error) {
-    window.console.debug(error.message, error.location);
+    window.console.debug(error);
   }
 }
 

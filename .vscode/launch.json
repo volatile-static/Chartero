@@ -21,16 +21,9 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "z7",
+            "name": "restart",
             "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "restart7"]
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "z6",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["run", "restart6"]
+            "runtimeArgs": ["run", "restart"]
         }
     ]
 }

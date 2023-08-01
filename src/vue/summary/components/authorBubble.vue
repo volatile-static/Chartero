@@ -151,7 +151,7 @@ export default defineComponent({
                 this.chartOpts.series = series;
                 nextTick(() => {
                     for (let i = 6; i < chart.series.length; ++i)
-                        chart.series[i].setVisible(false, false);
+                        chart.series[i].setVisible(false, false); // TODO: 切换时似乎未执行
                     chart.hideLoading();
                 });
             });

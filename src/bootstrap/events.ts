@@ -34,7 +34,7 @@ export function onInit() {
             notify: (
                 event: _ZoteroTypes.Notifier.Event,
                 type: _ZoteroTypes.Notifier.Type,
-                ids: string[],
+                ids: string[] | number[],
                 extraData: _ZoteroTypes.anyObj
             ) => {
                 if (

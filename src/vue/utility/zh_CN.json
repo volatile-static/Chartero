@@ -134,6 +134,7 @@
             }
         },
         "noData": "暂无数据",
+        "numericSymbols": null,
         "printChart": "打印图表",
         "resetZoom": "重置缩放比例",
         "resetZoomTitle": "重置为原始大小",
@@ -163,7 +164,6 @@
             "星期五",
             "星期六"
         ],
-        "shortWeekdays": ["日", "一", "二", "三", "四", "五", "六"],
         "rangeSelectorFrom": "开始时间",
         "rangeSelectorTo": "结束时间",
         "rangeSelectorZoom": "范围",
@@ -171,7 +171,7 @@
         "zoomOut": "放大"
     },
     "global": {
-        "canvasToolsURL": "http://cdn.hcharts.cn/highcharts/modules/canvas-tools.js",
+        "canvasToolsURL": "https://code.hcharts.cn/highcharts/modules/canvas-tools.js",
         "VMLRadialGradientURL": "http://cdn.hcharts.cn/highcharts/gfx/vml-radial-gradient.png"
     },
     "title": {
@@ -191,11 +191,11 @@
         "split": false
     },
     "exporting": {
-        "url": "http://export.highcharts.com.cn"
+        "url": "http://export.hcharts.cn"
     },
     "credits": {
-        "text": "Highcharts.com.cn",
-        "href": "https://www.highcharts.com.cn"
+        "text": "Highcharts",
+        "href": "https://www.hcharts.cn"
     },
     "xAxis": {
         "dateTimeLabelFormats": {
@@ -256,12 +256,36 @@
                         "%Y-%m-%d %H:%M:%S",
                         " ~ %H:%M:%S"
                     ],
-                    "minute": ["%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M", " ~ %H:%M"],
-                    "hour": ["%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M", " ~ %H:%M"],
-                    "day": ["%Y-%m-%d", "%Y-%m-%d", " ~ %Y-%m-%d"],
-                    "week": ["%Y-%m-%d", "%Y-%m-%d", " ~ %Y-%m-%d"],
-                    "month": ["%Y-%m", "%Y-%m", " ~ %Y-%m"],
-                    "year": ["%Y", "%Y", " ~ %Y"]
+                    "minute": [
+                        "%Y-%m-%d %H:%M",
+                        "%Y-%m-%d %H:%M",
+                        " ~ %H:%M"
+                    ],
+                    "hour": [
+                        "%Y-%m-%d %H:%M",
+                        "%Y-%m-%d %H:%M",
+                        " ~ %H:%M"
+                    ],
+                    "day": [
+                        "%Y-%m-%d",
+                        "%Y-%m-%d",
+                        " ~ %Y-%m-%d"
+                    ],
+                    "week": [
+                        "%Y-%m-%d",
+                        "%Y-%m-%d",
+                        " ~ %Y-%m-%d"
+                    ],
+                    "month": [
+                        "%Y-%m",
+                        "%Y-%m",
+                        " ~ %Y-%m"
+                    ],
+                    "year": [
+                        "%Y",
+                        "%Y",
+                        " ~ %Y"
+                    ]
                 }
             }
         },

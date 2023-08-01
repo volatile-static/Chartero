@@ -66,9 +66,9 @@ export default async function renderMinimap(
                 tag: 'div',
                 styles: {
                     height: 100 / app.pagesCount + '%',
-                    //@ts-expect-error
-                    opacity:
-                        (history.record.pages[i]?.totalS ?? 0) / maxSeconds,
+                    opacity: String(
+                        (history.record.pages[i]?.totalS ?? 0) / maxSeconds
+                    ),
                 },
                 classList: ['chartero-minimap-page'],
             },
