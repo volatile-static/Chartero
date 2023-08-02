@@ -134,7 +134,6 @@
             }
         },
         "noData": "暂无数据",
-        "numericSymbols": null,
         "printChart": "打印图表",
         "resetZoom": "重置缩放比例",
         "resetZoomTitle": "重置为原始大小",

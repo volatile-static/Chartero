@@ -1,34 +1,23 @@
 <template>
-    <t-collapse
-        :default-value="['progress', 'date']"
-        :value="collapseValue"
-        @change="onCollapseChange"
-        expand-icon-placement="right"
-    >
+    <t-collapse :default-value="['progress', 'date']" :value="collapseValue" @change="onCollapseChange"
+        expand-icon-placement="right">
         <t-collapse-panel value="progress" :header="locale.readingProgress">
             <t-space align="center" size="small" class="progress-space">
-                <t-tooltip
-                    :content="locale.readingProgressTip"
-                    :show-arrow="false"
-                >
-                    <t-progress
-                        theme="circle"
-                        size="small"
-                        :percentage="readingProgress"
-                    />
+                <t-tooltip :content="locale.readingProgressTip" :show-arrow="false">
+                    <t-progress theme="circle" size="small" :percentage="readingProgress" />
                 </t-tooltip>
                 <div class="progress-info">
                     <span>{{
-                        `🔖 ${locale.progressLabel.read} ${readPages} ${locale.pages} / ${locale.progressLabel.total} ${numPages} ${locale.pages}`
+                        `🔖 ${locale.progressLabel.read} ${readPages} ${locale.pages} / ${locale.progressLabel.total}
+                                            ${numPages} ${locale.pages}`
                     }}</span>
                     <span>{{
-                        `📚 ${numAttachment} ${locale.progressLabel.PDFs} / ${locale.progressLabel.total} ${attachmentSize} MB`
+                        `📚 ${numAttachment} ${locale.progressLabel.PDFs} / ${locale.progressLabel.total} ${attachmentSize}
+                        MB`
                     }}</span>
-                    <span
-                        >📝 {{ noteNum }} {{ locale.progressLabel.notes }} /
+                    <span>📝 {{ noteNum }} {{ locale.progressLabel.notes }} /
                         {{ locale.progressLabel.total }} {{ noteWords }}
-                        {{ locale.progressLabel.words }}</span
-                    >
+                        {{ locale.progressLabel.words }}</span>
                 </div>
                 <template #separator>
                     <t-divider layout="vertical" />
@@ -40,39 +29,19 @@
             <ProgressBubble :history="itemHistory" :theme="chartTheme" />
         </t-collapse-panel> -->
 
-        <t-collapse-panel
-            value="page"
-            :header="locale.chartTitle.pageTime"
-            :disabled="collapseDisabled"
-        >
+        <t-collapse-panel value="page" :header="locale.chartTitle.pageTime" :disabled="collapseDisabled">
             <PageTime :history="itemHistory" :theme="chartTheme"></PageTime>
         </t-collapse-panel>
 
-        <t-collapse-panel
-            value="date"
-            :header="locale.chartTitle.dateTime"
-            :disabled="collapseDisabled"
-        >
+        <t-collapse-panel value="date" :header="locale.chartTitle.dateTime" :disabled="collapseDisabled">
             <DateTime :history="itemHistory" :theme="chartTheme"></DateTime>
         </t-collapse-panel>
 
-        <t-collapse-panel
-            value="network"
-            :header="locale.chartTitle.network"
-            :disabled="collapseDisabled"
-        >
-            <Network
-                :topLevel="topLevel"
-                :theme="chartTheme"
-                :key="topLevel?.id"
-            ></Network>
+        <t-collapse-panel value="network" :header="locale.chartTitle.network" :disabled="collapseDisabled">
+            <Network :topLevel="topLevel" :theme="chartTheme" :key="topLevel?.id"></Network>
         </t-collapse-panel>
 
-        <t-collapse-panel
-            value="timeline"
-            :header="locale.timeline"
-            :disabled="collapseDisabled"
-        >
+        <t-collapse-panel value="timeline" :header="locale.timeline" :disabled="collapseDisabled">
             <TimeLine :history="itemHistory"></TimeLine>
         </t-collapse-panel>
     </t-collapse>
@@ -85,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import type { AttachmentHistory } from 'zotero-reading-history';
+import type { AttachmentHistory } from '@/utility/history';
 import type { CollapseValue } from 'tdesign-vue-next';
 import { nextTick } from 'vue';
 import { GridLightTheme, DarkUnicaTheme } from '@/utility/themes';
@@ -128,8 +97,8 @@ export default {
         // 更新阅读进度
         async updateProgress() {
             const att = this.isReader
-                    ? this.item
-                    : await this.topLevel?.getBestAttachment(),
+                ? this.item
+                : await this.topLevel?.getBestAttachment(),
                 his = att && toolkit.history.getByAttachment(att);
             if (his) {
                 anime({ ...this.animateInt, readPages: his.record.readPages });
@@ -142,11 +111,11 @@ export default {
         // 统计附件大小
         updateSize() {
             const attachments = this.isReader
-                    ? [this.item]
-                    : this.topLevel
-                          ?.getAttachments()
-                          .map(id => Zotero.Items.get(id))
-                          .filter(it => it.isPDFAttachment()),
+                ? [this.item]
+                : this.topLevel
+                    ?.getAttachments()
+                    .map(id => Zotero.Items.get(id))
+                    .filter(it => it.isPDFAttachment()),
                 files = attachments?.map(it => it!.getFilePath()),
                 totalSize =
                     files?.reduce(
@@ -262,14 +231,17 @@ export default {
     display: flex;
     flex-direction: column;
 }
+
 .progress-info span {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
+
 .progress-space {
     margin: 10px 20px;
 }
+
 .theme-button {
     position: fixed;
     bottom: 60px;

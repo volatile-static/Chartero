@@ -8,6 +8,7 @@
     "version": "2.0.0-beta",
     "description": "Charts for Zotero",
     "scripts": {
+        "task-run-server": "npm run build-all",
         "build-dev-bootstrap": "cross-env NODE_ENV=development node ./tools/build.js",
         "build-dev-vue": "vite build ./src/vue --minify false",
         "build-dev-all": "npm run build-dev-bootstrap && npm run build-dev-vue",
@@ -20,6 +21,9 @@
         "restart": "node ./tools/restart.js",
         "restart-all": "npm run build-dev-all && npm run restart",
         "restart-bootstrap": "npm run build-dev-bootstrap && npm run restart",
+        "reload-bootstrap": "npm run build-dev-bootstrap && node tools/reload.mjs",
+        "reload-vue": "npm run build-dev-vue && node tools/reload.mjs",
+        "reload-all": "npm run build-dev-all && node tools/reload.mjs",
         "pack": "node ./tools/pack.js",
         "build-pack": "npm run build-all && npm run pack",
         "release": "release-it",

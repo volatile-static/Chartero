@@ -105,7 +105,7 @@ function shutdown({ id, version, resourceURI, rootURI }, reason) {
       Components.interfaces.nsISupports
     ).wrappedJSObject;
   }
-  Zotero.Chartero && Zotero.Chartero.unload();
+  Zotero.Chartero?.unload();
 
   Cc["@mozilla.org/intl/stringbundle;1"]
     .getService(Components.interfaces.nsIStringBundleService)

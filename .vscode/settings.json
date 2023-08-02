@@ -1,16 +1,19 @@
 {
     "cSpell.words": [
         "animejs",
+        "Chartero",
         "denormalize",
         "gantt",
         "groupbox",
+        "highcharts",
         "Networkgraph",
         "Packedbubble",
         "prefs",
         "tdesign",
         "unfiled",
         "unplugin",
-        "wordcloud"
+        "wordcloud",
+        "Zotero"
     ],
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -26,6 +29,9 @@
         "editor.defaultFormatter": "Vue.volar"
     },
     "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     }
 }

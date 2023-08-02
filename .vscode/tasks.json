@@ -11,20 +11,20 @@
         {
             "type": "npm",
             "script": "type-check-all",
-            "problemMatcher": ["$eslint-compact"],
+            "problemMatcher": [
+                "$eslint-compact"
+            ],
             "label": "npm: type-check-all",
             "detail": "npm run type-check-vue & npm run type-check-bootstrap"
         },
         {
             "type": "npm",
             "script": "restart-all",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": ["$eslint-compact"],
+            "problemMatcher": [
+                "$eslint-compact"
+            ],
             "label": "npm: restart-all",
-            "detail": "npm run build-dev-all && npm run restart7"
+            "detail": "npm run restart-all"
         },
         {
             "type": "npm",
@@ -37,9 +37,35 @@
         {
             "type": "npm",
             "script": "restart-bootstrap",
-            "problemMatcher": ["$eslint-compact"],
+            "problemMatcher": [
+                "$eslint-compact"
+            ],
             "label": "npm: restart-bootstrap",
-            "detail": "npm run build-dev-bootstrap && npm run restart7"
+            "detail": "npm run build-dev-bootstrap && npm run restart"
+        },
+        {
+            "type": "npm",
+            "script": "reload-bootstrap",
+            "problemMatcher": [
+                "$tsc-watch"
+            ],
+            "label": "npm: reload-bootstrap",
+            "detail": "npm run build-dev-bootstrap && node tools/reload.mjs",
+            "isBackground": true
+        },
+        {
+            "type": "npm",
+            "script": "reload-all",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$vite"
+            ],
+            "label": "npm: reload-all",
+            "detail": "npm run build-dev-all && node tools/reload.mjs",
+            "isBackground": true
         }
     ]
 }

@@ -5,3 +5,6 @@ zotero-cmd.json
 dist
 auto-imports.d.ts
 .idea
+src/vue/tsconfig.config.tsbuildinfo
+src/vue/vite.config.d.ts
+src/vue/vite.config.js

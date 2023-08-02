@@ -1,4 +1,5 @@
-import type { AttachmentHistory } from 'zotero-reading-history';
+import type { RecordCache } from '../../bootstrap/modules/history/history';
+export type AttachmentHistory = Readonly<RecordCache>;
 
 export default class HistoryAnalyzer {
     private readonly data: AttachmentHistory[];

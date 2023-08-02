@@ -28,6 +28,7 @@ export class CharteroToolkit extends toolBase.BasicTool {
             this.basicOptions.log.prefix = `[${config.addonName}]`;
             this.basicOptions.log.disableConsole = true;
         }
+        this.basicOptions.debug.disableDebugBridgePassword = __dev__;
         this.menu = new MenuManager(this);
         this.prefPane = new PreferencePaneManager(this);
         // this.column = new ItemTreeManager(this);
@@ -35,7 +36,7 @@ export class CharteroToolkit extends toolBase.BasicTool {
         this.readerTab = new ReaderTabPanelManager(this);
         this.reader = new ReaderInstanceManager(this);
         this.ui = new UITool(this);
-        this.history = new ReadingHistory();
+        this.history = new ReadingHistory(this);
         this.locale = JSON.parse(
             Zotero.File.getContentsFromURL(
                 'chrome://chartero/locale/chartero.json'
@@ -55,7 +56,6 @@ export class Addon {
     }
 
     unload() {
-        // toolkit.history.disable();
         this.overviewTabID && Zotero_Tabs.close(this.overviewTabID);
         toolBase.unregister(toolkit);
         delete Zotero.Chartero;

@@ -1,5 +1,4 @@
 import type { ExportingMenuObject } from 'highcharts';
-import type { AttachmentHistory } from 'zotero-reading-history';
 import { DialogPlugin } from 'tdesign-vue-next';
 
 function s2hour(s: number) {
