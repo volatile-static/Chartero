@@ -2,6 +2,9 @@
     "name": "chartero",
     "config": {
         "addonName": "Chartero",
+        "addonPref": "extensions.zotero.Chartero",
+        "issue": "https://github.com/volatile-static/Chartero/issues",
+        "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
         "updateURL": "https://raw.githubusercontent.com/volatile-static/Chartero/main/tools/update.json",
         "addonID": "chartero@volatile.static"
     },
@@ -9,10 +12,10 @@
     "description": "Charts for Zotero",
     "scripts": {
         "task-run-server": "npm run build-all",
-        "build-dev-bootstrap": "cross-env NODE_ENV=development node ./tools/build.js",
+        "build-dev-bootstrap": "cross-env NODE_ENV=development node ./tools/build.mjs",
         "build-dev-vue": "vite build ./src/vue --minify false",
         "build-dev-all": "npm run build-dev-bootstrap && npm run build-dev-vue",
-        "build-bootstrap": "cross-env NODE_ENV=production node ./tools/build.js",
+        "build-bootstrap": "cross-env NODE_ENV=production node ./tools/build.mjs",
         "build-vue": "vite build ./src/vue",
         "build-all": "npm run build-bootstrap && npm run build-vue",
         "type-check-vue": "vue-tsc --noEmit -p ./src/vue",

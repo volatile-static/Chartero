@@ -5,12 +5,12 @@ import Highcharts from '@/utility/highcharts';
 import HistoryAnalyzer from '@/utility/history';
 import { toTimeString } from '@/utility/utils';
 
-const Zotero = toolkit.getGlobal('Zotero');
+const Zotero = addon.getGlobal('Zotero');
 
 export default {
     data() {
         return {
-            locale: toolkit.locale,
+            locale: addon.locale,
             dataOption: 'tag',
             dialogVisible: false,
             filteredTags: [] as number[],
@@ -33,7 +33,7 @@ export default {
             switch (this.dataOption) {
                 case 'tag':
                     for (const item of this.items) {
-                        const his = toolkit.history.getInTopLevelSync(item),
+                        const his = addon.history.getInTopLevelSync(item),
                             analyzer = new HistoryAnalyzer(his);
                         item.getTags().forEach(tag => {
                             const tagName = tag.tag,
@@ -86,7 +86,7 @@ export default {
                         const weight = this.point.options.weight!,
                             context = isTag
                                 ? toTimeString(weight)
-                                : weight + toolkit.locale.occurrences;
+                                : weight + addon.locale.occurrences;
                         return `
                             <span style="color: ${this.color}">\u25CF</span>
                             <b>${this.key}</b><br/>
@@ -111,7 +111,7 @@ export default {
     methods: {
         saveTagFilter() {
             this.dialogVisible = false;
-            toolkit.log(this.filteredTags);
+            addon.log(this.filteredTags);
         },
         async openDialog() {
             this.dialogVisible = true;

@@ -15,7 +15,7 @@ import CollectionPie from './components/collectionPie.vue';
 </script>
 
 <script lang="ts">
-import type { AttachmentHistory } from 'zotero-reading-history';
+import type { AttachmentHistory } from '@/utility/history';
 import type { CollapseValue } from 'tdesign-vue-next';
 import { GridLightTheme, DarkUnicaTheme } from '@/utility/themes';
 import HistoryAnalyzer from '@/utility/history';
@@ -64,11 +64,13 @@ export default {
     display: flex;
     flex-direction: column;
 }
+
 .progress-info span {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
+
 .progress-space {
     margin: 10px 20px;
 }

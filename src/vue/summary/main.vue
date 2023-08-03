@@ -12,12 +12,12 @@ import WordCloud from './components/wordCloud.vue';
 import TagsPie from './components/tagsPie.vue';
 </script>
 <script lang="ts">
-import { GridLightTheme, DarkUnicaTheme } from '../utility/themes';
-import type { AttachmentHistory } from 'zotero-reading-history';
+import { GridLightTheme, DarkUnicaTheme } from '@/utility/themes';
+import type { AttachmentHistory } from '@/utility/history';
 export default {
     data() {
         return {
-            locale: toolkit.locale.summary,
+            locale: addon.locale.summary,
             isDark: false,
             messageContent: '',
             itemHistory: new Array<AttachmentHistory>(),
@@ -38,7 +38,7 @@ export default {
     },
     mounted() {
         window.addEventListener('message', async e => {
-            if (toolkit.getPref('useDarkTheme') != this.isDark)
+            if (addon.getPref('useDarkTheme') != this.isDark)
                 this.switchTheme();
             if (e.data.length < 1) return; // TODO: show message
 
@@ -47,7 +47,7 @@ export default {
                     '#zotero-item-pane-message-box description'
                 )?.innerHTML ?? '';
 
-            const Items = toolkit.getGlobal('Zotero').Items,
+            const Items = addon.getGlobal('Zotero').Items,
                 items: Zotero.Item[] = e.data.map((id: number) =>
                     Items.get(id)
                 ),
@@ -55,7 +55,7 @@ export default {
                     it.isRegularItem()
                 ),
                 attHisPro = topLevels.map(top =>
-                    toolkit.history.getInTopLevel(top)
+                    addon.history.getInTopLevel(top)
                 ),
                 his = await Promise.all(attHisPro);
             this.items = topLevels;
@@ -80,13 +80,7 @@ export default {
     <t-layout>
         <t-header class="layout-header" height="22px">
             <span>{{ messageContent }}</span>
-            <t-button
-                @click="switchTheme"
-                size="small"
-                variant="text"
-                shape="circle"
-                >{{ themeIcon }}</t-button
-            >
+            <t-button @click="switchTheme" size="small" variant="text" shape="circle">{{ themeIcon }}</t-button>
         </t-header>
         <t-content>
             <t-tabs placement="bottom" default-value="gantt">

@@ -4,7 +4,7 @@ const dashboards: { [id: number]: HTMLIFrameElement } = {};
 
 export function updateDashboard(id?: number) {
     id &&
-        toolkit.getPref('enableRealTimeDashboard') &&
+        addon.getPref('enableRealTimeDashboard') &&
         dashboards[id]?.contentWindow?.postMessage({ id }, '*');
 }
 
@@ -14,7 +14,7 @@ async function renderDashboard(
 ) {
     await reader?._waitForReader();
     if (panel.childElementCount) return; // 已经有元素了
-    const dashboard = toolkit.ui.appendElement(
+    const dashboard = addon.ui.appendElement(
         {
             tag: 'iframe',
             namespace: 'xul',
@@ -27,7 +27,7 @@ async function renderDashboard(
         },
         panel
     ) as HTMLIFrameElement;
-    (dashboard.contentWindow as any).wrappedJSObject.toolkit ??= toolkit;
+    (dashboard.contentWindow as any).wrappedJSObject.addon ??= addon;
 
     if (reader) {
         dashboard.contentWindow?.addEventListener('load', () =>
@@ -41,8 +41,8 @@ async function renderDashboard(
  * 初始化侧边栏TabPanel
  */
 export function registerPanels() {
-    toolkit.readerTab.register(
-        toolkit.locale.dashboard,
+    addon.readerTab.register(
+        addon.locale.dashboard,
         (
             panel: XUL.TabPanel,
             ownerDeck: XUL.Deck,
@@ -50,10 +50,10 @@ export function registerPanels() {
             reader: _ZoteroTypes.ReaderInstance
         ) => renderDashboard(panel, reader)
     );
-    toolkit.libTab.register(toolkit.locale.dashboard, (panel: XUL.TabPanel) =>
+    addon.libTab.register(addon.locale.dashboard, (panel: XUL.TabPanel) =>
         renderDashboard(panel)
     );
-    toolkit.reader.register('initialized', 'chartero', async reader => {
+    addon.reader.register('initialized', 'chartero', async reader => {
         await reader._waitForReader();
         // renderMinimap(reader);
         addImagesPreviewer(reader);
@@ -64,7 +64,7 @@ export function renderSummaryPanel(ids: number[]) {
     const content = document.getElementById(
             'zotero-item-pane-content'
         ) as XUL.Deck,
-        summary: any = toolkit.ui.createElement(document, 'iframe', {
+        summary: any = addon.ui.createElement(document, 'iframe', {
             namespace: 'xul',
             id: 'chartero-summary-iframe',
             ignoreIfExists: true,
@@ -76,7 +76,7 @@ export function renderSummaryPanel(ids: number[]) {
 
     if (summary.parentElement != content) {
         content.appendChild(summary);
-        summary.contentWindow.wrappedJSObject.toolkit = toolkit;
+        summary.contentWindow.wrappedJSObject.addon = addon;
         summary.contentWindow.addEventListener('load', () =>
             summary.contentWindow.postMessage(ids)
         );
@@ -92,7 +92,7 @@ function addImagesPreviewer(reader: _ZoteroTypes.ReaderInstance) {
     if (!win || 'charteroProgressmeter' in win.wrappedJSObject) return;
     win.wrappedJSObject.charteroProgressmeter = () => {
         const popMsg = new Zotero.ProgressWindow(),
-            locale = toolkit.locale.imagesLoaded;
+            locale = addon.locale.imagesLoaded;
         popMsg.changeHeadline(
             '',
             'chrome://chartero/content/icons/icon.png',
@@ -101,7 +101,7 @@ function addImagesPreviewer(reader: _ZoteroTypes.ReaderInstance) {
         popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
         let prog = new popMsg.ItemProgress(
             'chrome://chartero/content/icons/accept.png',
-            toolkit.locale.loadingImages
+            addon.locale.loadingImages
         );
         popMsg.show();
         return function (percentage: number, page: number) {
@@ -115,7 +115,7 @@ function addImagesPreviewer(reader: _ZoteroTypes.ReaderInstance) {
             }
         };
     };
-    toolkit.ui.appendElement(
+    addon.ui.appendElement(
         {
             tag: 'script',
             namespace: 'html',

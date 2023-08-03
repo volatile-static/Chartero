@@ -1,17 +1,21 @@
-<vbox id="zotero-prefpane-__addonName__" onload="Zotero.Chartero.loadPreferencesPane(window);">
+<linkset>
+    <html:link rel="localization" href="__addonName__-preferences.ftl" />
+</linkset>
+<vbox id="zotero-prefpane-__addonName__" onload="Zotero.Notifier.trigger('redraw', 'setting', ['__addonName__'], window);">
     <vbox class="main-section">
-        <html:h1>&zotero.chartero.plotTitle;</html:h1>
-        <checkbox native="true" label="&zotero.chartero.enableRealTimeDashboard;"
+        <html:h1 data-l10n-id="plotTitle"></html:h1>
+        <checkbox native="true" data-l10n-id="enableRealTimeDashboard"
             preference="__addonPref__.enableRealTimeDashboard" />
-        <checkbox native="true" label="&zotero.chartero.darkTheme;" preference="__addonPref__.useDarkTheme" />
+        <checkbox native="true" data-l10n-id="darkTheme" preference="__addonPref__.useDarkTheme" />
     </vbox>
     <vbox class="main-section">
-        <html:h1>&zotero.chartero.tags;</html:h1>
-        <checkbox native="true" label="&zotero.chartero.ignoreTag;" />
+        <html:h1 data-l10n-id="storageTitle"></html:h1>
+        <html:textarea data-l10n-id="textAreaPlaceholder" style="resize: vertical;"></html:textarea>
+        <button id="chartero-preferences-pane-history-import-area" data-l10n-id="importHistory" native="true"></button>
     </vbox>
     <vbox class="main-section">
-        <html:h1>&zotero.chartero.about;</html:h1>
+        <html:h1 data-l10n-id="about"></html:h1>
         <label>&zotero.preferences.openurl.version; __buildVersion__ @ __buildTime__</label>
-        <label is="zotero-text-link" href="__issue__">&zotero.chartero.issue;</label>
+        <label is="zotero-text-link" href="__issue__" data-l10n-id="issue"></label>
     </vbox>
 </vbox>

@@ -13,12 +13,12 @@ import HistoryAnalyzer from '@/utility/history';
 
 async function processSeries(creatorIDs: number[], themeColors: string[]) {
     async function getSeries(creatorID: number) {
-        const zotero = toolkit.getGlobal('Zotero'),
+        const zotero = addon.getGlobal('Zotero'),
             itemIDs = await zotero.Creators.getItemsWithCreator(creatorID),
             itemsPro = itemIDs.map(id => zotero.Items.getAsync(id)),
             items = await Promise.all(itemsPro),
             dataPro = items.map(async it => {
-                const his = await toolkit.history.getInTopLevel(it),
+                const his = await addon.history.getInTopLevel(it),
                     ha = new HistoryAnalyzer(his);
                 return {
                     name: it.getField('title'),
@@ -109,7 +109,7 @@ export default defineComponent({
                                 float: left;
                                 background-image: url('${icon}');
                             `,
-                            lib = toolkit
+                            lib = addon
                                 .getGlobal('Zotero')
                                 .Libraries.get(this.options.custom!.libraryID),
                             libraryName = lib ? lib.name : '',
@@ -124,7 +124,7 @@ export default defineComponent({
                 },
                 series: [],
             } as Options,
-            locale: toolkit.locale,
+            locale: addon.locale,
         };
     },
     computed: {

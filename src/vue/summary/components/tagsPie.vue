@@ -5,7 +5,7 @@ import HistoryAnalyzer from '@/utility/history';
 export default {
     data() {
         return {
-            locale: toolkit.locale,
+            locale: addon.locale,
         };
     },
     computed: {
@@ -30,7 +30,7 @@ export default {
                     tagPieMap[tag].tim,
                 ])
             //     others = [
-            //         toolkit.locale.others,
+            //         addon.locale.others,
             //         data.reduce(
             //             (prev, curr) =>
             //                 prev + Number(curr[1] == 1 && curr[2] == 0),
@@ -38,7 +38,7 @@ export default {
             //         ),
             //         0,
             //     ];
-            // toolkit.log(data, others);
+            // addon.log(data, others);
             // data = data.filter(([, rad, tim]) => rad != 1 || tim != 0);
             // if (others[1] > 0) data.push(others);
             return {

@@ -1,7 +1,15 @@
 {
     "cancel": "取消",
     "save": "保存",
-    "weekdays": ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+    "weekdays": [
+        "周日",
+        "周一",
+        "周二",
+        "周三",
+        "周四",
+        "周五",
+        "周六"
+    ],
     "copyPNG": "复制图表",
     "imageCopied": "图片已复制到剪贴板",
     "showSelectedInLibrary": "查看所选条目",
@@ -71,7 +79,6 @@
         "network": "关联文献网",
         "progressBubble": "阅读进度气泡图"
     },
-
     "noHistoryFound": "没有历史记录！",
     "jsonParseError": "数据格式错误！",
     "loadingImages": "加载更多…",
@@ -80,7 +87,6 @@
     "historySaved": "记录保存成功！",
     "drawInProgress": "努力画图中……",
     "svg": "矢量图",
-
     "collapse": "全部折叠",
     "copy": "复制到剪贴板",
     "delete": "删除无效记录",
@@ -90,13 +96,7 @@
     "overview": "文库总览",
     "recent": "最近在读",
     "others": "其它",
-
-    "prefs": {
-        "storageTitle": "存储",
-        "textAreaPlaceholder": "请将旧版JSON数据粘贴至此",
-        "importHistory": "导入历史记录",
-        "historyParseError": "记录格式不正确！"
-    },
+    "historyParseError": "记录格式不正确！",
     "summary": {
         "authorBubble": "作者气泡图",
         "gantt": "历史甘特图",

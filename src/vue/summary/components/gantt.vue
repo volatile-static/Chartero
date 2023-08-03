@@ -80,18 +80,18 @@ function pointFormatter(this: Point) {
         totalS = toTimeString(data.custom.totalS);
     return `
         <b> ${data.name}</b><br/>
-        <b>${toolkit.locale.author}: </b>${data.custom.author}
-        <b>  ${toolkit.locale.time}: </b>${totalS}<br/>
+        <b>${addon.locale.author}: </b>${data.custom.author}
+        <b>  ${addon.locale.time}: </b>${totalS}<br/>
         ${startDate} ~ ${endDate}
     `;
 }
 
 const colTitleOpt = {
-        title: { text: toolkit.locale.fileName },
+        title: { text: addon.locale.fileName },
         labels: { format: '{point.name}' },
     },
     colAuthorOpt = {
-        title: { text: toolkit.locale.author },
+        title: { text: addon.locale.author },
         labels: { format: '{point.custom.author}' },
     };
 
@@ -101,7 +101,7 @@ export default defineComponent({
             chartOpts: {
                 exporting: {
                     menuItemDefinitions: helpMessageOption(
-                        toolkit.locale.doc.gantt
+                        addon.locale.doc.gantt
                     ),
                 },
                 chart: { zooming: { type: undefined } },
@@ -129,12 +129,12 @@ export default defineComponent({
                     } as SeriesGanttOptions,
                 ],
             } as Options,
-            locale: toolkit.locale,
+            locale: addon.locale,
             sortOption: '',
             filterOption: new Array<string>(),
             titleOption: ['title'],
             isLandscape: window.innerWidth > 500,
-            onResizeDebounced: toolkit
+            onResizeDebounced: addon
                 .getGlobal('Zotero')
                 .Utilities.debounce(this.onResize, 100) as () => void,
             reloadChart: 0,

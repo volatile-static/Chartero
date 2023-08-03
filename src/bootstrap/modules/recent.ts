@@ -1,11 +1,11 @@
 export default function () {
     // 注册“最近在读”菜单
-    toolkit.menu.register(
+    addon.menu.register(
         'menuFile',
         {
             tag: 'menu',
             id: 'chartero-open-recent',
-            label: toolkit.locale.recent,
+            label: addon.locale.recent,
         },
         'before',
         document.getElementById('menu_close') as XUL.Element
@@ -19,7 +19,7 @@ export default function () {
                 while (popup.hasChildNodes())
                     popup.removeChild(popup.lastChild!);
 
-                toolkit.history
+                addon.history
                     .getAll()
                     .map((his, id) =>
                         his ? { tim: his.record.lastTime ?? 0, id } : undefined
@@ -33,7 +33,7 @@ export default function () {
                                 ? attachment.parentItem!
                                 : attachment,
                             name = topLevel.getField('title') as string;
-                        toolkit.ui.appendElement(
+                        addon.ui.appendElement(
                             {
                                 tag: 'menuitem',
                                 classList: ['menuitem-iconic'],

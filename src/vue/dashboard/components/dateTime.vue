@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import type { AttachmentHistory } from 'zotero-reading-history';
+import type { AttachmentHistory } from '@/utility/history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
 import { buttons, toTimeString, helpMessageOption } from '@/utility/utils';
@@ -27,10 +27,10 @@ function tooltipFormatter(
             : '';
     return (
         result +
-        `${toolkit.locale.date}: ${Highcharts.dateFormat(
+        `${addon.locale.date}: ${Highcharts.dateFormat(
             '%Y-%m-%d',
             this.x as number
-        )}<br>${toolkit.locale.time}: ${toTimeString(this.y as number)}`
+        )}<br>${addon.locale.time}: ${toTimeString(this.y as number)}`
     );
 }
 
@@ -41,7 +41,7 @@ export default defineComponent({
                 exporting: {
                     buttons,
                     menuItemDefinitions: helpMessageOption(
-                        toolkit.locale.doc.dateTime
+                        addon.locale.doc.dateTime
                     ),
                 } as ExportingOptions,
                 plotOptions: { series: { cursor: 'auto' } },
@@ -51,10 +51,10 @@ export default defineComponent({
                 },
                 xAxis: {
                     type: 'datetime',
-                    title: { text: toolkit.locale.date },
+                    title: { text: addon.locale.date },
                 },
                 yAxis: {
-                    title: { text: toolkit.locale.time },
+                    title: { text: addon.locale.time },
                     labels: { formatter: ctx => toTimeString(ctx.value) },
                 },
                 series: [{}],
@@ -77,7 +77,7 @@ export default defineComponent({
                     name:
                         newHis.length > 1
                             ? ha.titles[0]
-                            : `${toolkit.locale.time}(${toolkit.locale.seconds})`,
+                            : `${addon.locale.time}(${addon.locale.seconds})`,
                     data: ha.dateTimeStats.map(obj => [obj.date, obj.time]),
                 } as SeriesLineOptions;
             });

@@ -4,12 +4,12 @@ import type {
     PointOptionsObject,
     SeriesScatterOptions,
 } from 'highcharts';
-import type { AttachmentHistory } from 'zotero-reading-history';
+import type { AttachmentHistory } from '@/utility/history';
 import Highcharts from '@/utility/highcharts';
 import HistoryAnalyzer from '@/utility/history';
 export default {
     data() {
-        return { locale: toolkit.locale };
+        return { locale: addon.locale };
     },
     computed: {
         chartOpts() {
@@ -17,9 +17,9 @@ export default {
                 chart: { zooming: { type: 'xy' } },
                 xAxis: {
                     type: 'datetime',
-                    title: { text: toolkit.locale.date },
+                    title: { text: addon.locale.date },
                 },
-                yAxis: { title: { text: toolkit.locale.pageNum } },
+                yAxis: { title: { text: addon.locale.pageNum } },
                 colorAxis: {},
                 series: this.history.map(his => {
                     return {

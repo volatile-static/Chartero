@@ -5,7 +5,7 @@
 <script lang="ts">
 import { Chart } from 'highcharts-vue';
 import { defineComponent, type PropType } from 'vue';
-import type { AttachmentHistory } from 'zotero-reading-history';
+import type { AttachmentHistory } from '@/utility/history';
 import Highcharts from '@/utility/highcharts';
 import HistoryAnalyzer from '@/utility/history';
 import { toTimeString } from '@/utility/utils';
@@ -30,7 +30,7 @@ export default defineComponent({
             function dfs(it: Zotero.Item) {
                 nodes[it.key] = true; // 访问该节点
                 for (const key of it.relatedItems) {
-                    const t = toolkit
+                    const t = addon
                         .getGlobal('Zotero')
                         .Items.getByLibraryAndKey(top.libraryID, key);
                     if (!t) continue;
@@ -56,7 +56,7 @@ export default defineComponent({
                     formatter: function () {
                         return `
                             <b>${(this.point as any).custom.title}</b><br>
-                            <span>${toolkit.locale.time}: ${toTimeString(
+                            <span>${addon.locale.time}: ${toTimeString(
                             (this.point as any).custom.time
                         )}</span>`;
                     },
@@ -68,9 +68,9 @@ export default defineComponent({
                         nodes: items.map(it => {
                             let his: AttachmentHistory[];
                             if (it.isRegularItem())
-                                his = toolkit.history.getInTopLevelSync(it);
+                                his = addon.history.getInTopLevelSync(it);
                             else {
-                                const att = toolkit.history.getByAttachment(it);
+                                const att = addon.history.getByAttachment(it);
                                 his = att ? [att] : [];
                             }
                             return {

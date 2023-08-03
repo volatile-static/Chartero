@@ -11,7 +11,7 @@ export default class HistoryAnalyzer {
     get ids() {
         return this.data.map(
             his =>
-                toolkit
+                addon
                     .getGlobal('Zotero')
                     .Items.getIDFromLibraryAndKey(
                         his.note.libraryID,
@@ -20,7 +20,7 @@ export default class HistoryAnalyzer {
         );
     }
     get attachments() {
-        const Items = toolkit.getGlobal('Zotero').Items;
+        const Items = addon.getGlobal('Zotero').Items;
         if (this._attachments.length != this.data.length)
             this._attachments = this.data.map(attHis =>
                 Items.getByLibraryAndKey(attHis.note.libraryID, attHis.key)

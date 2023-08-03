@@ -66,7 +66,7 @@ import ProgressBubble from './components/progressBubble.vue';
 import anime from 'animejs';
 import HistoryAnalyzer from '@/utility/history';
 
-const Zotero = toolkit.getGlobal('Zotero');
+const Zotero = addon.getGlobal('Zotero');
 
 export default {
     methods: {
@@ -99,7 +99,7 @@ export default {
             const att = this.isReader
                 ? this.item
                 : await this.topLevel?.getBestAttachment(),
-                his = att && toolkit.history.getByAttachment(att);
+                his = att && addon.history.getByAttachment(att);
             if (his) {
                 anime({ ...this.animateInt, readPages: his.record.readPages });
                 anime({
@@ -140,13 +140,13 @@ export default {
     },
     mounted() {
         window.addEventListener('message', e => {
-            if (toolkit.getPref('useDarkTheme') != this.dark)
+            if (addon.getPref('useDarkTheme') != this.dark)
                 this.switchTheme();
             // 判断消息是否包含ID
             if (typeof e.data.id != 'number') return;
 
             this.item = Zotero.Items.get(e.data.id); // 获取传入的条目
-            if (toolkit.getPref('enableRealtimeUpdating'))
+            if (addon.getPref('enableRealtimeUpdating'))
                 this.realtimeUpdating = !this.realtimeUpdating;
 
             nextTick(() => {
@@ -187,10 +187,10 @@ export default {
                 // no-op: 未更换条目时强制刷新历史记录
             }
             if (this.topLevel)
-                return toolkit.history.getInTopLevelSync(this.topLevel);
+                return addon.history.getInTopLevelSync(this.topLevel);
             else {
                 const his =
-                    this.item && toolkit.history.getByAttachment(this.item);
+                    this.item && addon.history.getByAttachment(this.item);
                 return his ? [his] : [];
             }
         },
@@ -203,7 +203,7 @@ export default {
     data() {
         return {
             dark: false,
-            locale: toolkit.locale,
+            locale: addon.locale,
             noteNum: 0,
             noteWords: 0,
             readPages: 0,

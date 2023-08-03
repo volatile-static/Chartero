@@ -11,14 +11,14 @@ import type {
     PointClickEventObject,
     ExportingOptions,
 } from 'highcharts';
-import type { AttachmentHistory } from 'zotero-reading-history';
+import type { AttachmentHistory } from '@/utility/history';
 import { defineComponent } from 'vue';
 import { buttons, toTimeString, helpMessageOption } from '@/utility/utils';
 import Highcharts from '@/utility/highcharts';
 import HistoryAnalyzer from '@/utility/history';
 
 function onPointClick(this: Point, events: PointClickEventObject) {
-    const zotero = toolkit.getGlobal('Zotero');
+    const zotero = addon.getGlobal('Zotero');
     if (events.ctrlKey)
         zotero.OpenPDF.openToPage(
             zotero.Items.get(Number(this.series.options.id)),
@@ -37,8 +37,7 @@ function tooltipFormatter(
             : '';
     return (
         result +
-        `${toolkit.locale.pageNum}: ${this.x}<br>${
-            toolkit.locale.time
+        `${addon.locale.pageNum}: ${this.x}<br>${addon.locale.time
         }: ${toTimeString(this.y!)}`
     );
 }
@@ -50,21 +49,21 @@ export default defineComponent({
                 exporting: {
                     buttons,
                     menuItemDefinitions: helpMessageOption(
-                        toolkit.locale.doc.pageTime
+                        addon.locale.doc.pageTime
                     ),
                 } as ExportingOptions,
                 plotOptions: {
                     series: { point: { events: { click: onPointClick } } },
                 },
                 xAxis: {
-                    title: { text: toolkit.locale.pageNum },
+                    title: { text: addon.locale.pageNum },
                     scrollbar: { enabled: true },
                 },
                 yAxis: {
-                    title: { text: toolkit.locale.time },
+                    title: { text: addon.locale.time },
                     labels: { formatter: ctx => toTimeString(ctx.value) },
                 },
-                subtitle: { text: toolkit.locale.chartTitle.pageTimeSub },
+                subtitle: { text: addon.locale.chartTitle.pageTimeSub },
                 tooltip: { formatter: tooltipFormatter },
                 series: [{ type: 'bar' }],
                 chart: {
@@ -105,7 +104,7 @@ export default defineComponent({
                     name:
                         his.length > 1
                             ? ha.titles[0]
-                            : `${toolkit.locale.time}(${toolkit.locale.seconds})`,
+                            : `${addon.locale.time}(${addon.locale.seconds})`,
                     data,
                     id: ha.ids[0],
                 } as Highcharts.SeriesBarOptions;

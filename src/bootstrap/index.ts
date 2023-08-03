@@ -1,7 +1,4 @@
-import { Addon, CharteroToolkit } from "./addon";
+import Addon from "./addon";
 
-if (!Zotero.Chartero) {
-  //@ts-ignore
-  toolkit = new CharteroToolkit();
-  Zotero.Chartero = new Addon();
-}
+// @ts-expect-error
+addon = new Addon();

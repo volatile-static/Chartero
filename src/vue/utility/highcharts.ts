@@ -26,8 +26,8 @@ import { MessagePlugin } from 'tdesign-vue-next';
 
 let infoFlag = false;
 if (
-    toolkit.getGlobal('Zotero').locale == 'zh-CN' ||
-    toolkit.getGlobal('Zotero').locale == 'ja-JP'
+    addon.getGlobal('Zotero').locale == 'zh-CN' ||
+    addon.getGlobal('Zotero').locale == 'ja-JP'
 )
     Highcharts.setOptions(zh_CN as Highcharts.Options);
 Highcharts.setOptions({
@@ -57,7 +57,7 @@ Highcharts.setOptions({
         events: {
             selection: _ => {
                 if (!infoFlag) {
-                    MessagePlugin.info(toolkit.locale.zoomingTip);
+                    MessagePlugin.info(addon.locale.zoomingTip);
                     infoFlag = true;
                 }
             },
@@ -68,7 +68,7 @@ Highcharts.setOptions({
             allowPointSelect: true,
             cursor: 'pointer',
             shadow: true,
-            point: { events: { select: _ => toolkit.log(_) } },
+            point: { events: { select: _ => addon.log(_) } },
         },
     },
     exporting: {
@@ -81,9 +81,9 @@ Highcharts.setOptions({
             downloadJPEG: {
                 onclick: function () {
                     copySVG2JPG((this as any).getSVGForExport());
-                    MessagePlugin.success(toolkit.locale.imageCopied);
+                    MessagePlugin.success(addon.locale.imageCopied);
                 },
-                text: toolkit.locale.copyPNG,
+                text: addon.locale.copyPNG,
             },
             showInLibrary: {
                 onclick: function () {
@@ -92,11 +92,11 @@ Highcharts.setOptions({
                             .map((p: any) => p.custom?.itemID ?? p.id)
                             .filter(id => parseInt(id) >= 0);
                     if (ids.length > 0) viewItemsInLib(ids);
-                    else MessagePlugin.warning(toolkit.locale.noItemToView);
+                    else MessagePlugin.warning(addon.locale.noItemToView);
                 },
-                text: toolkit.locale.showSelectedInLibrary,
+                text: addon.locale.showSelectedInLibrary,
             },
-            help: { text: toolkit.locale.help },
+            help: { text: addon.locale.help },
         },
         buttons: {
             contextButton: {

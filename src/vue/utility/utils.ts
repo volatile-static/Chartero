@@ -14,16 +14,16 @@ export function toTimeString(seconds: number | string) {
         typeof seconds == 'number' ? seconds : parseInt(seconds)
     );
     let label = '';
-    if (tim.hour) label = tim.hour + toolkit.locale.hours;
-    if (tim.minute) label += tim.minute + toolkit.locale.minutes;
-    if (label.length < 1) label = seconds + toolkit.locale.seconds;
+    if (tim.hour) label = tim.hour + addon.locale.hours;
+    if (tim.minute) label += tim.minute + addon.locale.minutes;
+    if (label.length < 1) label = seconds + addon.locale.seconds;
     else if (!tim.hour && tim.second)
-        label += tim.second + toolkit.locale.seconds;
+        label += tim.second + addon.locale.seconds;
     return label;
 }
 
 export function viewItemsInLib(itemIDs: number[]) {
-    toolkit.getGlobal('ZoteroPane').selectItems(itemIDs);
+    addon.getGlobal('ZoteroPane').selectItems(itemIDs);
 }
 
 export const buttons = {
@@ -43,7 +43,7 @@ export function helpMessageOption(msg: string) {
         help: {
             onclick: function () {
                 DialogPlugin.alert({
-                    header: toolkit.locale.help,
+                    header: addon.locale.help,
                     body: h =>
                         h(
                             'div',

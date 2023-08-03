@@ -1,61 +1,12 @@
 import { config } from '../../package.json';
-import { registerPanels, renderSummaryPanel } from './modules/sidebar';
-import buildRecentMenu from './modules/recent';
-
-/**
- * 初始化插件时调用
- */
-export function onInit() {
-    toolkit.log('Initializing Chartero addon...');
-    // 注册设置面板
-    toolkit.prefPane.register({
-        pluginID: config.addonID,
-        src: rootURI + 'content/preferences.xhtml',
-        extraDTD: [`chrome://${config.addonName}/locale/prefs.dtd`],
-        image: `chrome://${config.addonName}/content/icons/icon32.png`,
-        label: 'Chartero',
-    });
-
-    // 注册Overview菜单
-    toolkit.menu.register('menuView', {
-        tag: 'menuitem',
-        label: toolkit.locale.overview,
-        commandListener: openOverview,
-        icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
-    });
-    buildRecentMenu();
-
-    // 监听条目选择事件
-    Zotero.uiReadyPromise.then(() =>
-        ZoteroPane.itemsView.onSelect.addListener(onItemSelect)
-    );
-    Zotero.Notifier.registerObserver(
-        {
-            notify: (
-                event: _ZoteroTypes.Notifier.Event,
-                type: _ZoteroTypes.Notifier.Type,
-                ids: string[] | number[],
-                extraData: _ZoteroTypes.anyObj
-            ) => {
-                if (
-                    event == 'close' &&
-                    ids[0] == Zotero.Chartero?.overviewTabID
-                )
-                    Zotero.Chartero.overviewTabID = undefined;
-            },
-        },
-        ['tab']
-    );
-    registerPanels();
-    toolkit.log('Chartero initialized successfully!');
-}
+import { renderSummaryPanel } from './modules/sidebar';
 
 function openOverview(_: Event) {
     if (Zotero.Chartero.overviewTabID) {
         Zotero_Tabs.select(Zotero.Chartero.overviewTabID);
         return;
     }
-    Zotero.showZoteroPaneProgressMeter(toolkit.locale.drawInProgress);
+    Zotero.showZoteroPaneProgressMeter(addon.locale.drawInProgress);
 
     // 打开新的标签页
     const { id, container } = Zotero_Tabs.add({
@@ -65,7 +16,7 @@ function openOverview(_: Event) {
     });
     Zotero.Chartero.overviewTabID = id;
 
-    const overview = toolkit.ui.appendElement(
+    const overview = addon.ui.appendElement(
         {
             tag: 'iframe',
             namespace: 'xul',
@@ -76,10 +27,10 @@ function openOverview(_: Event) {
         },
         container
     ) as HTMLIFrameElement;
-    (overview.contentWindow as any).toolkit = toolkit;
+    (overview.contentWindow as any).addon = addon;
 }
 
-async function onItemSelect() {
+export async function onItemSelect() {
     const items = ZoteroPane.getSelectedItems(true),
         dashboard = document.querySelector(
             '#zotero-view-tabbox .chartero-dashboard'

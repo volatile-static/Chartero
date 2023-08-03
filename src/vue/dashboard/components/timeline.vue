@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { AttachmentHistory } from 'zotero-reading-history';
+import type { AttachmentHistory } from '@/utility/history';
 import { toTimeString } from '@/utility/utils';
 import HistoryAnalyzer from '@/utility/history';
 
@@ -24,13 +24,13 @@ export default {
                     {
                         dot: 'default',
                         date: new Date(att.dateAdded),
-                        content: toolkit.locale.dateAdded,
+                        content: addon.locale.dateAdded,
                         title,
                     },
                     {
                         dot: 'warning',
                         date: new Date(att.dateModified),
-                        content: toolkit.locale.dateModified,
+                        content: addon.locale.dateModified,
                         title,
                     }
                 );
@@ -69,18 +69,8 @@ export default {
 <template>
     <div class="timeline">
         <t-timeline style="margin: auto">
-            <t-timeline-item
-                v-for="item of items"
-                :label="item.date.toLocaleDateString()"
-                :dot-color="item.dot"
-            >
-                <t-tag
-                    v-if="item.title"
-                    theme="success"
-                    variant="light"
-                    max-width="220px"
-                    >{{ item.title }}</t-tag
-                >
+            <t-timeline-item v-for="item of items" :label="item.date.toLocaleDateString()" :dot-color="item.dot">
+                <t-tag v-if="item.title" theme="success" variant="light" max-width="220px">{{ item.title }}</t-tag>
                 <p>{{ item.content }}</p>
             </t-timeline-item>
         </t-timeline>

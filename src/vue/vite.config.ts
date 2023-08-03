@@ -18,7 +18,7 @@ export default defineConfig({
                 dashboard: resolve(__dirname, 'dashboard/index.html'),
             },
         },
-        outDir: '../../builds/addon/content/',
+        outDir: '../../build/addon/content/',
         reportCompressedSize: false,
     },
     plugins: [
