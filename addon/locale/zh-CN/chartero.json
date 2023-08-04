@@ -79,6 +79,9 @@
         "network": "关联文献网",
         "progressBubble": "阅读进度气泡图"
     },
+    "mainItemTitle": "阅读历史记录",
+    "deletingItem": "请勿删除包含历史记录的条目！",
+    "modifyingNote": "请勿手动修改历史记录！",
     "noHistoryFound": "没有历史记录！",
     "jsonParseError": "数据格式错误！",
     "loadingImages": "加载更多…",

@@ -11,3 +11,5 @@ issue = 报告漏洞
 storageTitle = 存储
 textAreaPlaceholder = 请将旧版JSON数据粘贴至此
 importHistory = 导入历史记录
+recordTitle = 记录
+scanPeriod = 扫描周期（秒）：

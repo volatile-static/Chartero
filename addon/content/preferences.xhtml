@@ -1,12 +1,19 @@
 <linkset>
     <html:link rel="localization" href="__addonName__-preferences.ftl" />
 </linkset>
-<vbox id="zotero-prefpane-__addonName__" onload="Zotero.Notifier.trigger('redraw', 'setting', ['__addonName__'], window);">
+<vbox id="zotero-prefpane-__addonName__"
+    onload="Zotero.Notifier.trigger('redraw', 'setting', ['__addonName__'], window);">
     <vbox class="main-section">
         <html:h1 data-l10n-id="plotTitle"></html:h1>
         <checkbox native="true" data-l10n-id="enableRealTimeDashboard"
             preference="__addonPref__.enableRealTimeDashboard" />
         <checkbox native="true" data-l10n-id="darkTheme" preference="__addonPref__.useDarkTheme" />
+    </vbox>
+    <vbox class="main-section">
+        <html:h1 data-l10n-id="recordTitle"></html:h1>
+        <html:label data-l10n-id="scanPeriod" for="chartero-preferences-pane-scanPeriod"></html:label>
+        <html:input id="chartero-preferences-pane-scanPeriod" preference="__addonPref__.scanPeriod" type="number"
+            min="1" step="1"></html:input>
     </vbox>
     <vbox class="main-section">
         <html:h1 data-l10n-id="storageTitle"></html:h1>

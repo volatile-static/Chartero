@@ -4,6 +4,7 @@ export default function initPrefsPane(win: Window) {
     const btn = win.document.getElementById('chartero-preferences-pane-history-import-area') as XUL.Button;
     btn.addEventListener('command', onMergeClick);
     btn.previousElementSibling!.addEventListener('input', onJsonInput);
+    win.document.getElementById('chartero-preferences-pane-scanPeriod')?.addEventListener('input', onScanPeriodInput);
 }
 
 async function onMergeClick(e: MouseEvent) {
@@ -47,7 +48,7 @@ async function onMergeClick(e: MouseEvent) {
 
             Zotero.updateZoteroPaneProgressMeter((++i * 100) / total);
         }
-        // Zotero._readingHistoryGlobal.loadAll();
+        addon.history.loadAll();
         showMessage(
             addon.locale.migrationFinished,
             'chrome://chartero/content/icons/accept.png'
@@ -62,4 +63,14 @@ async function onMergeClick(e: MouseEvent) {
 function onJsonInput(e: Event) {
     ((e.target as XUL.Element).nextElementSibling as XUL.Button).disabled =
         false;
+}
+
+function onScanPeriodInput(e: Event) {
+    try {
+        const period = parseInt((e.target as HTMLInputElement).value);
+        if (isNaN(period)) 
+            throw new Error('Invalid period');
+        addon.history.unregister();
+        addon.history.register(period);
+    } catch { }
 }

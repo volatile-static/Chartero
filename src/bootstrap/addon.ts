@@ -5,16 +5,14 @@ import { ReaderInstanceManager } from 'zotero-plugin-toolkit/dist/managers/reade
 import { LibraryTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/libraryTabPanel';
 import { ReaderTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/readerTabPanel';
 import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
-import { config } from '../../package.json';
+import { config, name as packageName } from '../../package.json';
 import ReadingHistory from './modules/history/history';
 import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
-import initPrefsPane from './modules/prefs';
-import { onItemSelect } from './events';
+import { onItemSelect, onNotify, patchedZoteroSearch } from './events';
 
 export default class Addon extends toolBase.BasicTool {
     readonly menu: MenuManager;
-    // readonly column: ItemTreeManager;
     readonly libTab: LibraryTabPanelManager;
     readonly prefPane: PreferencePaneManager;
     readonly readerTab: ReaderTabPanelManager;
@@ -24,6 +22,7 @@ export default class Addon extends toolBase.BasicTool {
     readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
 
     overviewTabID?: string;
+    private notifierID?: string;
 
     constructor() {
         super();
@@ -34,7 +33,6 @@ export default class Addon extends toolBase.BasicTool {
         this.basicOptions.debug.disableDebugBridgePassword = __dev__;
         this.menu = new MenuManager(this);
         this.prefPane = new PreferencePaneManager(this);
-        // this.column = new ItemTreeManager(this);
         this.libTab = new LibraryTabPanelManager(this);
         this.readerTab = new ReaderTabPanelManager(this);
         this.reader = new ReaderInstanceManager(this);
@@ -77,29 +75,26 @@ export default class Addon extends toolBase.BasicTool {
         Zotero.uiReadyPromise.then(() =>
             ZoteroPane.itemsView.onSelect.addListener(onItemSelect)
         );
-        Zotero.Notifier.registerObserver(
-            {
-                notify: (
-                    event: _ZoteroTypes.Notifier.Event,
-                    type: _ZoteroTypes.Notifier.Type,
-                    ids: string[] | number[],
-                    extraData: _ZoteroTypes.anyObj
-                ) => {
-                    if (event == 'close' && ids[0] == addon.overviewTabID)
-                        addon.overviewTabID = undefined;
-
-                    if (event == 'redraw' && type == 'setting' && ids[0] == config.addonName)
-                        initPrefsPane(extraData as Window);
-                },
-            },
-            ['tab', 'setting']
+        this.notifierID = Zotero.Notifier.registerObserver(
+            { notify: onNotify },
+            ['tab', 'setting', 'item']
         );
         registerPanels();
+
+        this.history.register(addon.getPref("scanPeriod") as number);
+        // this.patch(
+        //     Zotero.Search.prototype,
+        //     "search",
+        //     packageName,
+        //     patchedZoteroSearch
+        // );
         this.log('Chartero initialized successfully!');
     }
 
     unload() {
         this.overviewTabID && Zotero_Tabs.close(this.overviewTabID);
+        this.notifierID && Zotero.Notifier.unregisterObserver(this.notifierID);
+        ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
         toolBase.unregister(this);
     }
 }

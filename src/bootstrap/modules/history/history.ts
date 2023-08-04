@@ -1,4 +1,4 @@
-import { BasicTool, BasicOptions } from "zotero-plugin-toolkit/dist/basic";
+import { BasicTool, BasicOptions, ManagerTool } from "zotero-plugin-toolkit/dist/basic";
 import { AttachmentRecord, PageRecord } from "./data";
 import { name as packageName } from "../../../../package.json";
 
@@ -11,7 +11,7 @@ function ms2s(ms: number) {
     return Math.round(ms / 1000);
 }
 
-export default class ReadingHistory extends BasicTool {
+export default class ReadingHistory extends ManagerTool {
     /** @private 缓存的主条目，下标为libraryID */
     private _mainItems: Array<Zotero.Item | null>;
 
@@ -24,6 +24,8 @@ export default class ReadingHistory extends BasicTool {
     private _scanPeriod: number;
     private _firstState: ReaderState;
     private _secondState: ReaderState;
+
+    private _intervalID: number;
 
     constructor(base?: BasicTool | BasicOptions) {
         super(base);
@@ -43,40 +45,46 @@ export default class ReadingHistory extends BasicTool {
             top: 0,
         };
 
-        // 初始化定时器回调函数
-        this.zotero
-            .getMainWindow()
-            .setInterval(this.schedule.bind(this), (this._scanPeriod = 1000)); // 周期暂时在这里初始化，以后改成prompt
         this.loadAll();
     }
 
-    private loadAll(): void {
+    register(scanPeriod: number) {
+        // 初始化定时器回调函数
+        this._scanPeriod = scanPeriod;
+        this._intervalID = Zotero
+            .getMainWindow()
+            .setInterval(this.schedule.bind(this), this._scanPeriod * 1000);
+    }
+    unregister() {
+        Zotero.getMainWindow().clearInterval(this._intervalID);
+    }
+    unregisterAll() {
+        this.unregister();
+    }
+
+    loadAll(): void {
         const loadLib = async (libID: number) => {
             const mainItem = await this.getMainItem(libID);
             await mainItem.loadDataType("childItems"); // 等待主条目数据库加载子条目
             mainItem.getNotes().forEach(async (noteID) => {
-                const noteItem = (await this.zotero.Items.getAsync(
+                const noteItem = (await Zotero.Items.getAsync(
                     noteID
                 )) as Zotero.Item;
                 await noteItem.loadDataType("note"); // 等待笔记数据库加载
                 const his = this.parseNote(noteItem);
                 if (his) {
                     // 缓存解析出的记录
-                    const id = this.zotero.Items.getIDFromLibraryAndKey(libID, his.key);
+                    const id = Zotero.Items.getIDFromLibraryAndKey(libID, his.key);
                     id && (this._cached[id] = { note: noteItem, ...his });
                 }
             });
         };
         loadLib(1);
-        this.zotero.Groups.getAll()
+        Zotero.Groups.getAll()
             .map((group: Zotero.DataObject) =>
-                this.zotero.Groups.getLibraryIDFromGroupID(group.id)
+                Zotero.Groups.getLibraryIDFromGroupID(group.id)
             )
             .forEach(loadLib);
-    }
-
-    private get zotero(): _ZoteroTypes.Zotero {
-        return BasicTool.getZotero();
     }
 
     /**
@@ -91,7 +99,7 @@ export default class ReadingHistory extends BasicTool {
 
     private async getCache(attID: number) {
         if (!this._cached[attID]) {
-            const attachment = this.zotero.Items.get(attID);
+            const attachment = Zotero.Items.get(attID);
             this._cached[attID] = {
                 note: await this.newNoteItem(attachment),
                 key: attachment.key,
@@ -101,22 +109,41 @@ export default class ReadingHistory extends BasicTool {
         return this._cached[attID] as RecordCache;
     }
 
+    clearHistory(libraryID: number = 1) {
+        for (const id in this._cached) {
+            const note = this._cached[id]?.note;
+            if (note && this._mainItems[libraryID]?.getNotes().includes(note.id)) {
+                note.deleted = true;
+                note.saveTx({ skipNotifier: true });
+                delete this._cached[id];
+            }
+        }
+    }
+
+    isMainItem(item: Zotero.Item) {
+        return this._mainItems[item.libraryID]?.id == item.id ||
+            (item.itemType == "computerProgram" &&
+                item.getField("archiveLocation") ==
+                Zotero.URI.getLibraryURI(item.libraryID) &&
+                item.getField("shortTitle") == packageName);
+    }
+
+    async isHistoryNote(item: Zotero.Item) {
+        return item.itemType == "note" &&
+            this._mainItems[item.libraryID]?.id == item.parentItemID;
+    }
+
     /**
      * The callback of timer triggered periodically.
      */
     private async schedule() {
-        this._activeReader = this.zotero.Reader._readers.find((r) =>
+        this._activeReader = Zotero.Reader._readers.find((r) =>
             r._iframeWindow?.document.hasFocus()
         ); // refresh activated reader
 
         if (this._activeReader?.itemID) {
             const cache = await this.getCache(this._activeReader.itemID); // 当前PDF的缓存
             this.record(cache.record); // 先记录到缓存
-
-            // this.cachedHooks.forEach((hook) =>
-            //     cache.record.mergeJSON(hook(this._activeReader!))
-            // );
-
             this.saveNote(cache); // 保存本次记录
         }
     }
@@ -127,7 +154,7 @@ export default class ReadingHistory extends BasicTool {
      * @returns 新建的笔记条目
      */
     private async newNoteItem(attachment: Zotero.Item): Promise<Zotero.Item> {
-        const item = new this.zotero.Item("note");
+        const item = new Zotero.Item("note");
         item.libraryID = attachment.libraryID;
         item.parentID = (await this.getMainItem(attachment.libraryID)).id; // 若强制删除则成为独立笔记
         item.setNote(`${packageName}#${attachment.key}\n{}`);
@@ -144,11 +171,11 @@ export default class ReadingHistory extends BasicTool {
      * @returns 新建的主条目
      */
     private async newMainItem(libraryID: number): Promise<Zotero.Item> {
-        this.zotero.debug(
+        Zotero.debug(
             "[zotero-reading-history] Creating new main item in library " + libraryID
         );
-        const item = new this.zotero.Item("computerProgram");
-        item.setField("archiveLocation", this.zotero.URI.getLibraryURI(libraryID));
+        const item = new Zotero.Item("computerProgram");
+        item.setField("archiveLocation", Zotero.URI.getLibraryURI(libraryID));
         // item.setField("title", this.locale.mainItemTitle);
         item.setField("shortTitle", packageName);
         item.setField("programmingLanguage", "JSON");
@@ -157,10 +184,10 @@ export default class ReadingHistory extends BasicTool {
             "url",
             "https://github.com/volatile-static/Chartero"
         );
-        if (this.zotero.Groups.getByLibraryID(libraryID))
+        if (Zotero.Groups.getByLibraryID(libraryID))
             item.setField(
                 "libraryCatalog",
-                this.zotero.Groups.getByLibraryID(libraryID).name
+                Zotero.Groups.getByLibraryID(libraryID).name
             );
         item.setCreators([
             {
@@ -192,14 +219,14 @@ export default class ReadingHistory extends BasicTool {
     async getMainItem(libraryID: number = 1): Promise<Zotero.Item> {
         if (this._mainItems[libraryID]) return this._mainItems[libraryID]!;
 
-        const searcher = new this.zotero.Search();
+        const searcher = new Zotero.Search();
         searcher.addCondition("libraryID", "is", String(libraryID));
         searcher.addCondition("shortTitle", "is", packageName);
         searcher.addCondition("itemType", "is", "computerProgram");
         searcher.addCondition(
             "archiveLocation",
             "is",
-            this.zotero.URI.getLibraryURI(libraryID)
+            Zotero.URI.getLibraryURI(libraryID)
         );
         const ids = await searcher.search();
 
@@ -208,7 +235,7 @@ export default class ReadingHistory extends BasicTool {
             // TODO: merge
             throw new Error("主条目不唯一！");
         } else
-            return (this._mainItems[libraryID] = (await this.zotero.Items.getAsync(
+            return (this._mainItems[libraryID] = (await Zotero.Items.getAsync(
                 ids[0]
             )) as Zotero.Item);
     }
@@ -254,18 +281,18 @@ export default class ReadingHistory extends BasicTool {
                 ).wrappedJSObject.PDFViewerApplication.pagesCount;
 
                 pageHis.period ??= {};
-                pageHis.period[ms2s(new Date().getTime())] = ms2s(this._scanPeriod);
+                pageHis.period[ms2s(new Date().getTime())] = this._scanPeriod;
 
 
-                const item = this.zotero.Items.getLibraryAndKeyFromID(
+                const item = Zotero.Items.getLibraryAndKeyFromID(
                     this._activeReader!.itemID!
                 );
                 // 只有群组才记录不同用户
                 if (item && item.libraryID > 1) {
                     pageHis.userSeconds ??= {};
-                    const userID = this.zotero.Users.getCurrentUserID();
+                    const userID = Zotero.Users.getCurrentUserID();
                     pageHis.userSeconds[userID] =
-                        (pageHis.userSeconds[userID] ?? 0) + ms2s(this._scanPeriod);
+                        (pageHis.userSeconds[userID] ?? 0) + this._scanPeriod;
                 }
             },
             checkState = (
@@ -290,7 +317,6 @@ export default class ReadingHistory extends BasicTool {
                 }
                 return thisState.counter < 20; //  TODO: 用户自定义
             };
-
         //  先检查副屏
         if (
             checkState(this._secondState, this._activeReader!.getSecondViewState())
@@ -305,6 +331,37 @@ export default class ReadingHistory extends BasicTool {
         //  再检查主屏
         if (checkState(this._firstState, this._activeReader!.state))
             recordPage((win as any).wrappedJSObject.PDFViewerApplication.page);
+    }
+
+    private compress(record: AttachmentRecord) {
+        record.pageArr.forEach((page) => {
+            if (!page.period) return;
+            let start = 0, // 开始合并的时间戳
+                total = 0, // 连续时长
+                processing = false, // 是否正在合并
+                compressed: { [timestamp: number]: number } = {}; // 压缩后的period
+
+            Object.keys(page.period)
+                .map((t) => parseInt(t))
+                .filter((t) => !isNaN(t))
+                .forEach((t) => {
+                    if (t - start == total) {
+                        // 相连的时间戳合并
+                        total += page.period![t];
+                        processing = true;
+                    } else {
+                        if (processing) {
+                            // 结束合并
+                            processing = false;
+                            compressed[start] = total;
+                        }
+                        start = t;
+                        total = page.period![t];
+                    }
+                });
+            compressed[start] = total; // 保存最后一个连续的时间戳
+            page.period = compressed;
+        });
     }
 
     getByAttachment(att: Zotero.Item | number): AttachmentHistory | null {

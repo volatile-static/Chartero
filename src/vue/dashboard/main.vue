@@ -143,9 +143,11 @@ export default {
             if (addon.getPref('useDarkTheme') != this.dark)
                 this.switchTheme();
             // 判断消息是否包含ID
-            if (typeof e.data.id != 'number') return;
-
+            if (typeof e.data.id != 'number')
+                return;
             this.item = Zotero.Items.get(e.data.id); // 获取传入的条目
+            if (!this.item.isRegularItem())
+                return;
             if (addon.getPref('enableRealtimeUpdating'))
                 this.realtimeUpdating = !this.realtimeUpdating;
 
