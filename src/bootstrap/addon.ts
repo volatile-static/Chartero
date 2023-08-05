@@ -5,11 +5,13 @@ import { ReaderInstanceManager } from 'zotero-plugin-toolkit/dist/managers/reade
 import { LibraryTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/libraryTabPanel';
 import { ReaderTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/readerTabPanel';
 import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
-import { config, name as packageName } from '../../package.json';
+import { config } from '../../package.json';
 import ReadingHistory from './modules/history/history';
+import { patchedZoteroSearch } from './modules/history/patchers';
 import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
-import { onItemSelect, onNotify, patchedZoteroSearch } from './events';
+import { onItemSelect, onNotify } from './events';
+import { PatcherManager } from './modules/patcherManager';
 
 export default class Addon extends toolBase.BasicTool {
     readonly menu: MenuManager;
@@ -20,6 +22,7 @@ export default class Addon extends toolBase.BasicTool {
     readonly ui: UITool;
     readonly history: ReadingHistory;
     readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
+    readonly patcher: PatcherManager;
 
     overviewTabID?: string;
     private notifierID?: string;
@@ -38,6 +41,7 @@ export default class Addon extends toolBase.BasicTool {
         this.reader = new ReaderInstanceManager(this);
         this.ui = new UITool(this);
         this.history = new ReadingHistory(this);
+        this.patcher = new PatcherManager(this);
         this.locale = JSON.parse(
             Zotero.File.getContentsFromURL(
                 'chrome://chartero/locale/chartero.json'
@@ -82,12 +86,11 @@ export default class Addon extends toolBase.BasicTool {
         registerPanels();
 
         this.history.register(addon.getPref("scanPeriod") as number);
-        // this.patch(
-        //     Zotero.Search.prototype,
-        //     "search",
-        //     packageName,
-        //     patchedZoteroSearch
-        // );
+        this.patcher.register(
+            Zotero.Search.prototype,
+            "search",
+            patchedZoteroSearch
+        );
         this.log('Chartero initialized successfully!');
     }
 
