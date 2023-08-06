@@ -2,6 +2,7 @@
 import type { AttachmentHistory } from '@/utility/history';
 import Highcharts from '@/utility/highcharts';
 import HistoryAnalyzer from '@/utility/history';
+import { helpMessageOption } from '@/utility/utils';
 export default {
     data() {
         return {
@@ -42,6 +43,11 @@ export default {
             // data = data.filter(([, rad, tim]) => rad != 1 || tim != 0);
             // if (others[1] > 0) data.push(others);
             return {
+                exporting: {
+                    menuItemDefinitions: helpMessageOption(
+                        addon.locale.doc.pie
+                    )
+                },
                 plotOptions: { variablepie: { allowPointSelect: true } },
                 series: [
                     {

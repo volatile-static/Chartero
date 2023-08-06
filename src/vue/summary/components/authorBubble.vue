@@ -7,7 +7,7 @@ import type {
 } from 'highcharts';
 import type { AttachmentHistory } from '@/utility/history';
 import { defineComponent, nextTick } from 'vue';
-import { toTimeString } from '@/utility/utils';
+import { helpMessageOption, toTimeString } from '@/utility/utils';
 import Highcharts from '@/utility/highcharts';
 import HistoryAnalyzer from '@/utility/history';
 
@@ -69,6 +69,11 @@ export default defineComponent({
         };
         return {
             chartOpts: {
+                exporting: {
+                    menuItemDefinitions: helpMessageOption(
+                        addon.locale.doc.authorBubble
+                    ),
+                },
                 plotOptions: {
                     packedbubble: {
                         minSize: '20%',

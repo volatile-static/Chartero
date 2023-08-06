@@ -70,7 +70,11 @@ export default {
             this.isDark = !this.isDark;
             if (this.isDark)
                 document.documentElement.setAttribute('theme-mode', 'dark');
-            else document.documentElement.removeAttribute('theme-mode');
+            else
+                document.documentElement.removeAttribute('theme-mode');
+            document
+                .querySelectorAll('div.highcharts-data-table')
+                .forEach(el => el.remove());
         },
     },
 };

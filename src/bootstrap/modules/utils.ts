@@ -20,13 +20,13 @@ export function copySVG2JPG(svg: string) {
 
 export async function saveSVG(svg: string) {
     const result = await new FilePickerHelper(
-        toolkit.locale.loadingImages,
+        addon.locale.loadingImages,
         'save',
-        [[toolkit.locale.svg, '*.svg']]
+        [[addon.locale.svg, '*.svg']]
     ).open();
     if (result) {
-        const File = toolkit.getGlobal('FileUtils').File;
-        toolkit
+        const File = addon.getGlobal('FileUtils').File;
+        addon
             .getGlobal('Zotero')
             .File.putContents(new File(result + '.svg'), svg);
     }

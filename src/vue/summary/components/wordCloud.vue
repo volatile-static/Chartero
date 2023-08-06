@@ -3,7 +3,7 @@ import type { Options, SeriesWordcloudOptions } from 'highcharts';
 import type { DataOption } from 'tdesign-vue-next/es/transfer/type';
 import Highcharts from '@/utility/highcharts';
 import HistoryAnalyzer from '@/utility/history';
-import { toTimeString } from '@/utility/utils';
+import { toTimeString, helpMessageOption, buttons } from '@/utility/utils';
 
 const Zotero = addon.getGlobal('Zotero');
 
@@ -81,6 +81,12 @@ export default {
         chartOpts() {
             const isTag = this.dataOption === 'tag';
             return {
+                exporting: {
+                    buttons,
+                    menuItemDefinitions: helpMessageOption(
+                        addon.locale.doc.wordCloud
+                    ),
+                },
                 tooltip: {
                     formatter: function () {
                         const weight = this.point.options.weight!,
@@ -96,6 +102,7 @@ export default {
                 },
                 series: [
                     {
+                        name: isTag ? addon.locale.time : addon.locale.times,
                         type: 'wordcloud',
                         maxFontSize: 26,
                         minFontSize: 8,
@@ -121,10 +128,10 @@ export default {
             );
             this.allTags = ids.map(
                 id =>
-                    ({
-                        label: Zotero.Tags.getName(id),
-                        value: id,
-                    } as DataOption)
+                ({
+                    label: Zotero.Tags.getName(id),
+                    value: id,
+                } as DataOption)
             );
         },
     },
@@ -142,48 +149,23 @@ import { Chart } from 'highcharts-vue';
     <t-space direction="vertical" style="width: 100%">
         <t-space style="padding: 8px" break-line>
             <b>{{ locale.selectDataSource }}</b>
-            <t-select
-                v-model="dataOption"
-                :placeholder="locale.sort"
-                size="small"
-                auto-width
-            >
+            <t-select v-model="dataOption" :placeholder="locale.sort" size="small" auto-width>
                 <t-option value="tag" :label="locale.tags"></t-option>
                 <t-option value="author" :label="locale.author"></t-option>
                 <t-option value="title" :label="locale.itemTitle"></t-option>
-                <t-option
-                    value="annotation"
-                    :label="locale.pdfAnnotation"
-                ></t-option>
+                <t-option value="annotation" :label="locale.pdfAnnotation"></t-option>
             </t-select>
-            <t-button
-                v-show="dataOption === 'tag'"
-                size="small"
-                @click="openDialog"
-            >
+            <t-button v-show="dataOption === 'tag'" size="small" @click="openDialog">
                 {{ locale.filterTags }}
             </t-button>
         </t-space>
         <Chart :options="options" :key="theme"></Chart>
     </t-space>
-    <t-dialog
-        v-model:visible="dialogVisible"
-        :on-confirm="saveTagFilter"
-        :header="locale.filterTags"
-        :confirmBtn="locale.save"
-        mode="modeless"
-        width="96%"
-        confirm-on-enter
-        draggable
-    >
+    <t-dialog v-model:visible="dialogVisible" :on-confirm="saveTagFilter" :header="locale.filterTags"
+        :confirmBtn="locale.save" mode="modeless" width="96%" confirm-on-enter draggable>
         <div style="display: block; width: 500px">
-            <t-transfer
-                :title="[locale.allTags, locale.excludedTags]"
-                :data="allTags"
-                v-model="filteredTags"
-                theme="primary"
-                search
-            />
+            <t-transfer :title="[locale.allTags, locale.excludedTags]" :data="allTags" v-model="filteredTags"
+                theme="primary" search />
         </div>
     </t-dialog>
 </template>
