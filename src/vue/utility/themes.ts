@@ -1,3 +1,5 @@
+import type { Options } from 'highcharts';
+
 export const DarkUnicaTheme = {
     colors: [
         '#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
@@ -187,7 +189,7 @@ export const DarkUnicaTheme = {
         trackBackgroundColor: '#404043',
         trackBorderColor: '#404043'
     }
-};
+} as Options;
 
 export const GridLightTheme = {
     colors: [
@@ -195,7 +197,6 @@ export const GridLightTheme = {
         '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'
     ],
     chart: {
-        backgroundColor: null,
         style: {
             fontFamily: 'Dosis, sans-serif'
         }
@@ -245,4 +246,4 @@ export const GridLightTheme = {
             lineColor: '#404048'
         }
     }
-};
+} as Options;

@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { AttachmentHistory } from 'zotero-reading-history';
+import type { AttachmentHistory } from '@/utility/history';
 import Highcharts from '@/utility/highcharts';
 import HistoryAnalyzer from '@/utility/history';
 export default {
@@ -25,10 +25,10 @@ export default {
                 }
             }
             let data = Object.keys(tagPieMap).map(tag => [
-                    tag,
-                    tagPieMap[tag].rad,
-                    tagPieMap[tag].tim,
-                ])
+                tag,
+                tagPieMap[tag].rad,
+                tagPieMap[tag].tim,
+            ])
             //     others = [
             //         addon.locale.others,
             //         data.reduce(

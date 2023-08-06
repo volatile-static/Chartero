@@ -3,14 +3,13 @@ import { FilterIcon } from 'tdesign-icons-vue-next';
 </script>
 <script lang="ts">
 import type {
-    Options,
     SeriesGanttOptions,
     GanttPointOptionsObject,
     YAxisOptions,
     NavigatorYAxisOptions,
     Point,
 } from 'highcharts';
-import type { AttachmentHistory } from 'zotero-reading-history';
+import type { AttachmentHistory } from '@/utility/history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
 import { helpMessageOption, toTimeString } from '@/utility/utils';
@@ -87,9 +86,9 @@ function pointFormatter(this: Point) {
 }
 
 const colTitleOpt = {
-        title: { text: addon.locale.fileName },
-        labels: { format: '{point.name}' },
-    },
+    title: { text: addon.locale.fileName },
+    labels: { format: '{point.name}' },
+},
     colAuthorOpt = {
         title: { text: addon.locale.author },
         labels: { format: '{point.custom.author}' },
@@ -232,114 +231,47 @@ export default defineComponent({
 
 <template>
     <div>
-        <h1 v-if="seriesData.length < 1" class="center-label">
+        <h1 v-if="rawData.length < 1" class="center-label">
             {{ locale.noHistoryFound }}
         </h1>
         <t-space v-else direction="vertical" style="width: 100%">
             <t-space style="padding: 8px" break-line>
-                <t-select
-                    v-if="isLandscape"
-                    :placeholder="locale.tableHeader"
-                    v-model="titleOption"
-                    size="small"
-                    multiple
-                    clearable
-                    auto-width
-                >
+                <t-select v-if="isLandscape" :placeholder="locale.tableHeader" v-model="titleOption" size="small" multiple
+                    clearable auto-width>
                     <t-option value="title" :label="locale.ganttMenu.showTitle">
                     </t-option>
-                    <t-option
-                        value="author"
-                        :label="locale.ganttMenu.showAuthor"
-                    >
+                    <t-option value="author" :label="locale.ganttMenu.showAuthor">
                     </t-option>
                 </t-select>
-                <t-select
-                    v-else
-                    disabled
-                    auto-width
-                    size="small"
-                    :placeholder="locale.tableHeaderTip"
-                ></t-select>
-                <t-select
-                    v-model="sortOption"
-                    :placeholder="locale.sort"
-                    size="small"
-                    auto-width
-                >
-                    <t-option
-                        value="startAscending"
-                        :label="locale.ganttMenu.startAscending"
-                    ></t-option>
-                    <t-option
-                        value="startDescending"
-                        :label="locale.ganttMenu.startDescending"
-                    ></t-option>
-                    <t-option
-                        value="endAscending"
-                        :label="locale.ganttMenu.endAscending"
-                    ></t-option>
-                    <t-option
-                        value="endDescending"
-                        :label="locale.ganttMenu.endDescending"
-                    ></t-option>
-                    <t-option
-                        value="timeAscending"
-                        :label="locale.ganttMenu.timeAscending"
-                    ></t-option>
-                    <t-option
-                        value="timeDescending"
-                        :label="locale.ganttMenu.timeDescending"
-                    ></t-option>
+                <t-select v-else disabled auto-width size="small" :placeholder="locale.tableHeaderTip"></t-select>
+                <t-select v-model="sortOption" :placeholder="locale.sort" size="small" auto-width>
+                    <t-option value="startAscending" :label="locale.ganttMenu.startAscending"></t-option>
+                    <t-option value="startDescending" :label="locale.ganttMenu.startDescending"></t-option>
+                    <t-option value="endAscending" :label="locale.ganttMenu.endAscending"></t-option>
+                    <t-option value="endDescending" :label="locale.ganttMenu.endDescending"></t-option>
+                    <t-option value="timeAscending" :label="locale.ganttMenu.timeAscending"></t-option>
+                    <t-option value="timeDescending" :label="locale.ganttMenu.timeDescending"></t-option>
                 </t-select>
-                <t-select
-                    v-model="filterOption"
-                    :placeholder="locale.filter"
-                    size="small"
-                    multiple
-                    clearable
-                    auto-width
-                >
+                <t-select v-model="filterOption" :placeholder="locale.filter" size="small" multiple clearable auto-width>
                     <template #prefixIcon>
                         <FilterIcon />
                     </template>
-                    <t-option
-                        value="completed"
-                        :label="locale.ganttMenu.completed"
-                        :disabled="filterOption.includes('incomplete')"
-                    ></t-option>
-                    <t-option
-                        value="incomplete"
-                        :label="locale.ganttMenu.incomplete"
-                        :disabled="filterOption.includes('completed')"
-                    ></t-option>
-                    <t-option
-                        value="month"
-                        :label="locale.ganttMenu.month"
-                        :disabled="
-                            filterOption.some(val =>
-                                ['week', 'day'].includes(val)
-                            )
-                        "
-                    ></t-option>
-                    <t-option
-                        value="week"
-                        :label="locale.ganttMenu.week"
-                        :disabled="
-                            filterOption.some(val =>
-                                ['month', 'day'].includes(val)
-                            )
-                        "
-                    ></t-option>
-                    <t-option
-                        value="day"
-                        :label="locale.ganttMenu.day"
-                        :disabled="
-                            filterOption.some(val =>
-                                ['month', 'week'].includes(val)
-                            )
-                        "
-                    ></t-option>
+                    <t-option value="completed" :label="locale.ganttMenu.completed"
+                        :disabled="filterOption.includes('incomplete')"></t-option>
+                    <t-option value="incomplete" :label="locale.ganttMenu.incomplete"
+                        :disabled="filterOption.includes('completed')"></t-option>
+                    <t-option value="month" :label="locale.ganttMenu.month" :disabled="filterOption.some(val =>
+                        ['week', 'day'].includes(val)
+                    )
+                        "></t-option>
+                    <t-option value="week" :label="locale.ganttMenu.week" :disabled="filterOption.some(val =>
+                        ['month', 'day'].includes(val)
+                    )
+                        "></t-option>
+                    <t-option value="day" :label="locale.ganttMenu.day" :disabled="filterOption.some(val =>
+                        ['month', 'week'].includes(val)
+                    )
+                        "></t-option>
                     <!-- <t-option
                         value="fit"
                         :label="locale.ganttMenu.fitLength"
@@ -347,13 +279,8 @@ export default defineComponent({
                 </t-select>
             </t-space>
 
-            <Chart
-                constructor-type="ganttChart"
-                :options="options"
-                :key="reloadChart"
-                ref="chart"
-                style="width: 100%"
-            ></Chart>
+            <Chart constructor-type="ganttChart" :options="options" :key="reloadChart" ref="chart" style="width: 100%">
+            </Chart>
         </t-space>
     </div>
 </template>

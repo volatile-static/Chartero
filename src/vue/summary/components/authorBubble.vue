@@ -5,7 +5,7 @@ import type {
     PointOptionsObject,
     SeriesPackedbubbleOptions,
 } from 'highcharts';
-import type { AttachmentHistory } from 'zotero-reading-history';
+import type { AttachmentHistory } from '@/utility/history';
 import { defineComponent, nextTick } from 'vue';
 import { toTimeString } from '@/utility/utils';
 import Highcharts from '@/utility/highcharts';
@@ -179,10 +179,5 @@ import { Chart } from 'highcharts-vue';
 </script>
 
 <template>
-    <Chart
-        :options="options"
-        :key="theme"
-        ref="chart"
-        style="height: 100%"
-    ></Chart>
+    <Chart :options="options" :key="theme" ref="chart" style="height: 100%"></Chart>
 </template>
