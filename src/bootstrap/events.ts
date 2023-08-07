@@ -1,7 +1,7 @@
 import { config } from '../../package.json';
 import { renderSummaryPanel } from './modules/sidebar';
 import initPrefsPane from './modules/prefs';
-import { protectData } from './modules/history/patchers';
+import { protectData } from './modules/history/misc';
 
 function openOverview(_: Event) {
     if (Zotero.Chartero.overviewTabID) {

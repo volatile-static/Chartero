@@ -333,7 +333,7 @@ export default class ReadingHistory extends ManagerTool {
             recordPage((win as any).wrappedJSObject.PDFViewerApplication.page);
     }
 
-    private compress(record: AttachmentRecord) {
+    compress(record: AttachmentRecord) {
         record.pageArr.forEach((page) => {
             if (!page.period) return;
             let start = 0, // 开始合并的时间戳

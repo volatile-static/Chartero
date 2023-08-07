@@ -43,6 +43,7 @@
     "author": "作者",
     "fileName": "文件名",
     "readingProgress": "阅读进度",
+    "legacyNotFound": "未找到旧版数据！",
     "migratingLegacy": "迁移数据中……",
     "migrationFinished": "数据迁移完成！",
     "timeline": "时间轴",

@@ -5,9 +5,9 @@ import { ReaderInstanceManager } from 'zotero-plugin-toolkit/dist/managers/reade
 import { LibraryTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/libraryTabPanel';
 import { ReaderTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/readerTabPanel';
 import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
-import { config } from '../../package.json';
+import { config, name as packageName } from '../../package.json';
 import ReadingHistory from './modules/history/history';
-import { patchedZoteroSearch } from './modules/history/patchers';
+import { patchedZoteroSearch } from './modules/history/misc';
 import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
 import { onItemSelect, onNotify } from './events';
@@ -50,7 +50,7 @@ export default class Addon extends toolBase.BasicTool {
     }
 
     getPref(key: string) {
-        return Zotero.Prefs.get(`${config.addonName}.${key}`);
+        return Zotero.Prefs.get(`${packageName}.${key}`);
     }
 
     /**

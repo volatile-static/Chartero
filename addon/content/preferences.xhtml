@@ -17,8 +17,16 @@
     </vbox>
     <vbox class="main-section">
         <html:h1 data-l10n-id="storageTitle"></html:h1>
-        <html:textarea data-l10n-id="textAreaPlaceholder" style="resize: vertical; margin: 8px;"></html:textarea>
-        <button id="chartero-preferences-pane-history-import-area" data-l10n-id="importHistory" native="true"></button>
+        <groupbox>
+            <html:textarea data-l10n-id="textAreaPlaceholder" style="resize: vertical; margin: 8px;"></html:textarea>
+            <button id="chartero-preferences-pane-history-import-area" data-l10n-id="importHistory"></button>
+        </groupbox>
+        <groupbox>
+            <hbox>
+                <button id="chartero-preferences-pane-history-auto-import" data-l10n-id="autoImport" native="true"></button>
+                <html:div style="color: red;margin-top: -2px;display: list-item;"></html:div>
+            </hbox>
+        </groupbox>
     </vbox>
     <vbox class="main-section">
         <html:h1 data-l10n-id="about"></html:h1>

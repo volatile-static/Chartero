@@ -1,3 +1,6 @@
+import { showMessage } from '../utils';
+import { AttachmentRecord } from './data';
+
 // 防止阅读器侧边栏搜索到主条目下的笔记
 export const patchedZoteroSearch = (origin: Function) =>
     async function (this: Zotero.Search, asTempTable: boolean) {
@@ -52,5 +55,56 @@ export async function protectData(event: string, ids: number[] | string[]) {
 
         default:
             break;
+    }
+}
+
+export async function importLegacyHistory(str: string) {
+    try {
+        const json = JSON.parse(str);
+        if (typeof json.lib != 'number' && typeof json.items != 'object')
+            throw new Error(addon.locale.historyParseError);
+
+        const total = Object.keys(json.items).length,
+            mainItem: Zotero.Item =
+                await addon.history.getMainItem();
+        Zotero.showZoteroPaneProgressMeter(
+            addon.locale.migratingLegacy,
+            true
+        );
+        window.focus();
+        let i = 0;
+        for (const key in json.items) {
+            const item = Zotero.Items.getByLibraryAndKey(1, key);
+            if (!item) continue;
+
+            const oldJson = json.items[key],
+                newJson = {
+                    numPages: oldJson.n,
+                    pages: {} as _ZoteroTypes.anyObj,
+                },
+                noteItem = new Zotero.Item('note');
+            for (const page in oldJson.p)
+                newJson.pages[page] = { p: oldJson.p[page].t };
+
+            const record = new AttachmentRecord(newJson);
+            addon.history.compress(record);
+            // noteItem.setNote(
+            //     `chartero#${key}\n${JSON.stringify(record)}`
+            // );
+            // noteItem.parentID = mainItem.id;
+            // noteItem.addRelatedItem(item as Zotero.Item);
+            // await noteItem.saveTx();
+
+            Zotero.updateZoteroPaneProgressMeter((++i * 100) / total);
+        }
+        addon.history.loadAll();
+        showMessage(
+            addon.locale.migrationFinished,
+            'chrome://chartero/content/icons/accept.png'
+        );
+    } catch (error) {
+        window.alert(error);
+    } finally {
+        Zotero.hideZoteroPaneOverlays();
     }
 }
