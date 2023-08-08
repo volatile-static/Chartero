@@ -1,0 +1,22 @@
+#chartero-preferences-pane-excludedTagsTable {
+    display: flex;
+    border: gray dotted 1px;
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.03);
+    min-height: 16px;
+}
+
+.chartero-preferences-pane-ignoredTag {
+    margin: 8px;
+    background-color: skyblue;
+    border: deepskyblue thin solid;
+    border-radius: 8px;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.chartero-preferences-pane-ignoredTag:hover {
+    transition: all 150ms;
+    background-color: deepskyblue;
+    color: white;
+}

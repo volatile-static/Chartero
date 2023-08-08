@@ -119,6 +119,7 @@ export default {
         saveTagFilter() {
             this.dialogVisible = false;
             addon.log(this.filteredTags);
+            addon.getGlobal('Zotero').Prefs.set('chartero.excludedTags', JSON.stringify(this.filteredTags));
         },
         async openDialog() {
             this.dialogVisible = true;

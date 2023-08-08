@@ -42,10 +42,12 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
 }
 
 async function onMainWindowLoad({ window }, reason) {
+  addon.log(reason)
   addon.init();
 }
 
 async function onMainWindowUnload({ window }, reason) {
+  addon.log(reason)
   addon.unload();
 }
 

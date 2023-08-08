@@ -37,6 +37,7 @@
     "filterTags": "筛选标签",
     "allTags": "所有标签",
     "excludedTags": "排除的标签",
+    "confirmRemoveExcludedTag": "不再排除该标签？",
     "tags": "标签",
     "pdfAnnotation": "PDF注释",
     "itemTitle": "条目标题",

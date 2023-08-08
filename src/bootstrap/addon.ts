@@ -62,6 +62,7 @@ export default class Addon extends toolBase.BasicTool {
         this.prefPane.register({
             pluginID: config.addonID,
             src: rootURI + 'content/preferences.xhtml',
+            stylesheets: [rootURI + 'content/preferences.css'],
             image: `chrome://${config.addonName}/content/icons/icon32.png`,
             label: config.addonName,
         });

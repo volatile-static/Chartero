@@ -5,9 +5,21 @@
     onload="Zotero.Notifier.trigger('redraw', 'setting', ['__addonName__'], window);">
     <vbox class="main-section">
         <html:h1 data-l10n-id="plotTitle"></html:h1>
-        <checkbox native="true" data-l10n-id="enableRealTimeDashboard"
-            preference="__addonPref__.enableRealTimeDashboard" />
-        <checkbox native="true" data-l10n-id="darkTheme" preference="__addonPref__.useDarkTheme" />
+        <groupbox>
+            <checkbox native="true" data-l10n-id="enableRealTimeDashboard"
+                preference="__addonPref__.enableRealTimeDashboard" />
+            <checkbox native="true" data-l10n-id="darkTheme" preference="__addonPref__.useDarkTheme" />
+        </groupbox>
+        <groupbox>
+            <label>
+                <hbox>
+                    <html:h2 data-l10n-id="excludedTags"></html:h2>
+                    <toolbarbutton id="chartero-preferences-pane-refreshTagsTable"
+                        style="list-style-image: url('chrome://zotero/skin/arrow_refresh.png');"></toolbarbutton>
+                </hbox>
+            </label>
+            <html:div id="chartero-preferences-pane-excludedTagsTable"></html:div>
+        </groupbox>
     </vbox>
     <vbox class="main-section">
         <html:h1 data-l10n-id="recordTitle"></html:h1>
@@ -23,8 +35,9 @@
         </groupbox>
         <groupbox>
             <hbox>
-                <button id="chartero-preferences-pane-history-auto-import" data-l10n-id="autoImport" native="true"></button>
-                <html:div style="color: red;margin-top: -2px;display: list-item;"></html:div>
+                <button id="chartero-preferences-pane-history-auto-import" data-l10n-id="autoImport"
+                    native="true"></button>
+                <html:div style="color: red; margin-top: -2px; display: list-item;"></html:div>
             </hbox>
         </groupbox>
     </vbox>

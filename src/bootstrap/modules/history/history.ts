@@ -121,6 +121,7 @@ export default class ReadingHistory extends ManagerTool {
     }
 
     isMainItem(item: Zotero.Item) {
+        window.console.trace(item);
         return this._mainItems[item.libraryID]?.id == item.id ||
             (item.itemType == "computerProgram" &&
                 item.getField("archiveLocation") ==
