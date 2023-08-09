@@ -10,7 +10,7 @@ import ReadingHistory from './modules/history/history';
 import { patchedZoteroSearch } from './modules/history/misc';
 import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
-import { onItemSelect, onNotify } from './events';
+import { onHistoryRecord, onItemSelect, onNotify } from './events';
 import { PatcherManager } from './modules/patcherManager';
 
 export default class Addon extends toolBase.BasicTool {
@@ -40,7 +40,7 @@ export default class Addon extends toolBase.BasicTool {
         this.readerTab = new ReaderTabPanelManager(this);
         this.reader = new ReaderInstanceManager(this);
         this.ui = new UITool(this);
-        this.history = new ReadingHistory(this);
+        this.history = new ReadingHistory(this, onHistoryRecord);
         this.patcher = new PatcherManager(this);
         this.locale = JSON.parse(
             Zotero.File.getContentsFromURL(

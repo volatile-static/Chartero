@@ -46,11 +46,11 @@
         </t-collapse-panel>
     </t-collapse>
 
-    <div class="theme-button">
+    <!-- <div class="theme-button">
         <t-button @click="switchTheme" size="large" shape="circle">{{
             themeBtn
         }}</t-button>
-    </div>
+    </div> -->
 </template>
 
 <script lang="ts">
@@ -79,6 +79,10 @@ export default {
             document
                 .querySelectorAll('div.highcharts-data-table')
                 .forEach(el => el.remove());
+        },
+        updateTheme() {
+            if (addon.getPref('useDarkTheme') != this.dark)
+                this.switchTheme();
         },
         onCollapseChange(val: CollapseValue) {
             this.collapseValue =
@@ -141,17 +145,13 @@ export default {
     },
     mounted() {
         window.addEventListener('message', e => {
-            if (addon.getPref('useDarkTheme') != this.dark)
-                this.switchTheme();
             // 判断消息是否包含ID
             if (typeof e.data.id != 'number')
                 return;
             this.item = Zotero.Items.get(e.data.id); // 获取传入的条目
-            if (!this.item.isRegularItem())
-                return;
-            if (addon.getPref('enableRealtimeUpdating'))
+            if (addon.getPref('enableRealTimeDashboard'))  // 强制刷新
                 this.realtimeUpdating = !this.realtimeUpdating;
-
+            this.updateTheme();
             nextTick(() => {
                 this.updateNotes();
                 this.updateProgress();

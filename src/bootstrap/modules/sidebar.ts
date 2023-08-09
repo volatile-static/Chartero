@@ -62,8 +62,8 @@ export function registerPanels() {
 
 export function renderSummaryPanel(ids: number[]) {
     const content = document.getElementById(
-            'zotero-item-pane-content'
-        ) as XUL.Deck,
+        'zotero-item-pane-content'
+    ) as XUL.Deck,
         summary: any = addon.ui.createElement(document, 'iframe', {
             namespace: 'xul',
             id: 'chartero-summary-iframe',

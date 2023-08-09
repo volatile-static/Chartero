@@ -1,5 +1,5 @@
 import { config } from '../../package.json';
-import { renderSummaryPanel } from './modules/sidebar';
+import { renderSummaryPanel, updateDashboard } from './modules/sidebar';
 import initPrefsPane from './modules/prefs';
 import { protectData } from './modules/history/misc';
 
@@ -32,6 +32,10 @@ function openOverview(_: Event) {
     (overview.contentWindow as any).addon = addon;
 }
 
+export function onHistoryRecord(reader: _ZoteroTypes.ReaderInstance) {
+    updateDashboard(reader.itemID);
+}
+
 export async function onItemSelect() {
     const items = ZoteroPane.getSelectedItems(true),
         dashboard = document.querySelector(
@@ -42,8 +46,11 @@ export async function onItemSelect() {
             233
         );
     // 当前处于侧边栏标签页
-    if (items.length == 1)
-        dashboard?.contentWindow?.postMessage({ id: items[0] }, '*');
+    if (items.length == 1) {
+        const item = Zotero.Items.get(items[0]);
+        if (item.isRegularItem())  // 只有常规条目才有仪表盘
+            dashboard?.contentWindow?.postMessage({ id: items[0] }, '*');
+    }
     else if (ZoteroPane.itemsView.rowCount > items.length && items.length > 1)
         renderSummaryPanelDebounced(items); // 当前选择多个条目
     else {

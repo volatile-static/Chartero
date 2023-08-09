@@ -21,15 +21,18 @@ export default class ReadingHistory extends ManagerTool {
     /** @private 当前打开的阅读器 */
     private _activeReader?: _ZoteroTypes.ReaderInstance;
 
+    private readonly _recordHook: RecordHook;
+
     private _scanPeriod: number;
     private _firstState: ReaderState;
     private _secondState: ReaderState;
 
     private _intervalID: number;
 
-    constructor(base?: BasicTool | BasicOptions) {
+    constructor(base: BasicTool | BasicOptions, hook: RecordHook) {
         super(base);
 
+        this._recordHook = hook;
         this._mainItems = [];
         this._cached = [];
         this._firstState = {
@@ -145,7 +148,8 @@ export default class ReadingHistory extends ManagerTool {
         if (this._activeReader?.itemID) {
             const cache = await this.getCache(this._activeReader.itemID); // 当前PDF的缓存
             this.record(cache.record); // 先记录到缓存
-            this.saveNote(cache); // 保存本次记录
+            // this.saveNote(cache); // 保存本次记录
+            this._recordHook(this._activeReader);  // 插件回调函数，更新实时仪表盘
         }
     }
 
@@ -177,10 +181,10 @@ export default class ReadingHistory extends ManagerTool {
         );
         const item = new Zotero.Item("computerProgram");
         item.setField("archiveLocation", Zotero.URI.getLibraryURI(libraryID));
-        // item.setField("title", this.locale.mainItemTitle);
+        item.setField("title", addon.locale.mainItemTitle);
         item.setField("shortTitle", packageName);
         item.setField("programmingLanguage", "JSON");
-        // item.setField("abstractNote", this.locale.description);
+        item.setField("abstractNote", addon.locale.mainItemDescription);
         item.setField(
             "url",
             "https://github.com/volatile-static/Chartero"
@@ -273,37 +277,28 @@ export default class ReadingHistory extends ManagerTool {
      * @returns 与参数一样
      */
     private record(history: AttachmentRecord) {
-        const win = this._activeReader!._iframeWindow,
-            recordPage = (idx: number) => {
-                const pageHis = (history.pages[idx - 1] ??= new PageRecord());
+        const recordPage = (stats: _ZoteroTypes.Reader.Stats) => {
+            const pageHis = (history.pages[stats.pageIndex] ??= new PageRecord());
 
-                history.numPages ??= (
-                    win as any
-                ).wrappedJSObject.PDFViewerApplication.pagesCount;
+            history.numPages ??= stats.pagesCount;
+            pageHis.period ??= {};
+            pageHis.period[ms2s(new Date().getTime())] = Number(this._scanPeriod);
 
-                pageHis.period ??= {};
-                pageHis.period[ms2s(new Date().getTime())] = this._scanPeriod;
-
-
-                const item = Zotero.Items.getLibraryAndKeyFromID(
-                    this._activeReader!.itemID!
-                );
-                // 只有群组才记录不同用户
-                if (item && item.libraryID > 1) {
-                    pageHis.userSeconds ??= {};
-                    const userID = Zotero.Users.getCurrentUserID();
-                    pageHis.userSeconds[userID] =
-                        (pageHis.userSeconds[userID] ?? 0) + this._scanPeriod;
-                }
-            },
+            const item = Zotero.Items.getLibraryAndKeyFromID(
+                this._activeReader!.itemID!
+            );
+            // 只有群组才记录不同用户
+            if (item && item.libraryID > 1) {
+                pageHis.userSeconds ??= {};
+                const userID = Zotero.Users.getCurrentUserID();
+                pageHis.userSeconds[userID] =
+                    (pageHis.userSeconds[userID] ?? 0) + this._scanPeriod;
+            }
+        },
             checkState = (
                 thisState: ReaderState,
-                thatState?:
-                    | _ZoteroTypes.Reader.State
-                    | _ZoteroTypes.Reader.SecondViewState
+                thatState: _ZoteroTypes.Reader.State
             ) => {
-                if (typeof thatState == "undefined") return false;
-
                 if (
                     thisState.pageIndex == thatState.pageIndex &&
                     thisState.top == thatState.top &&
@@ -320,18 +315,13 @@ export default class ReadingHistory extends ManagerTool {
             };
         //  先检查副屏
         if (
-            checkState(this._secondState, this._activeReader!.getSecondViewState())
-        ) {
-            const secondView = win?.document.getElementById(
-                "secondViewIframe"
-            ) as HTMLIFrameElement,
-                secondWindow: null | any = secondView?.contentWindow;
-            if (secondWindow)
-                recordPage(secondWindow.wrappedJSObject.PDFViewerApplication.page);
-        }
+            this._activeReader!._secondaryView &&
+            checkState(this._secondState, this._activeReader!._state.secondaryViewState)
+        )
+            recordPage(this._activeReader!._state.secondaryViewStats);
         //  再检查主屏
-        if (checkState(this._firstState, this._activeReader!.state))
-            recordPage((win as any).wrappedJSObject.PDFViewerApplication.page);
+        if (checkState(this._firstState, this._activeReader!._state.primaryViewState))
+            recordPage(this._activeReader!._state.primaryViewStats);
     }
 
     compress(record: AttachmentRecord) {
@@ -416,6 +406,8 @@ export default class ReadingHistory extends ManagerTool {
         return this._cached;
     }
 }
+
+type RecordHook = (reader: _ZoteroTypes.ReaderInstance) => void;
 
 type AttachmentHistory = Readonly<RecordCache>;
 

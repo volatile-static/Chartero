@@ -83,6 +83,7 @@
         "progressBubble": "阅读进度气泡图"
     },
     "mainItemTitle": "阅读历史记录",
+    "mainItemDescription": "Chartero记录的阅读历史数据。\n请勿修改本条目！（可以移动）",
     "deletingItem": "请勿删除包含历史记录的条目！",
     "modifyingNote": "请勿手动修改历史记录！",
     "noHistoryFound": "没有历史记录！",
