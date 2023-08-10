@@ -124,7 +124,6 @@ export default class ReadingHistory extends ManagerTool {
     }
 
     isMainItem(item: Zotero.Item) {
-        window.console.trace(item);
         return this._mainItems[item.libraryID]?.id == item.id ||
             (item.itemType == "computerProgram" &&
                 item.getField("archiveLocation") ==
@@ -148,7 +147,7 @@ export default class ReadingHistory extends ManagerTool {
         if (this._activeReader?.itemID) {
             const cache = await this.getCache(this._activeReader.itemID); // 当前PDF的缓存
             this.record(cache.record); // 先记录到缓存
-            // this.saveNote(cache); // 保存本次记录
+            this.saveNote(cache); // 保存本次记录
             this._recordHook(this._activeReader);  // 插件回调函数，更新实时仪表盘
         }
     }

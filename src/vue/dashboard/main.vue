@@ -123,13 +123,16 @@ export default {
                     .filter(it => it.isPDFAttachment()),
                 files = attachments?.map(it => it!.getFilePath()),
                 totalSize =
-                    files?.reduce(
-                        (size, file) =>
-                            file
+                    files?.reduce((size, file) => {
+                        try {
+                            return file
                                 ? Zotero.File.pathToFile(file).fileSize + size
-                                : size,
-                        0
-                    ) ?? 0;
+                                : size;
+                        } catch (error) {
+                            addon.log(error);
+                            return size;
+                        }
+                    }, 0) ?? 0;
             anime({
                 targets: this,
                 attachmentSize: (totalSize / 1024 / 1024).toFixed(2),

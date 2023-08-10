@@ -34,7 +34,7 @@ export async function protectData(event: string, ids: number[] | string[]) {
         item.saveTx({ skipDateModifiedUpdate: true, skipNotifier: true });
     },
         items = ids.map((id) => Zotero.Items.get(id)), // 触发事件的条目
-        mainItems = items.filter(addon.history.isMainItem); // 筛选出的主条目
+        mainItems = items.filter(it => addon.history.isMainItem(it)); // 筛选出的主条目
 
     switch (event) {
         case "trash":
@@ -88,12 +88,12 @@ export async function importLegacyHistory(str: string) {
 
             const record = new AttachmentRecord(newJson);
             addon.history.compress(record);
-            // noteItem.setNote(
-            //     `chartero#${key}\n${JSON.stringify(record)}`
-            // );
-            // noteItem.parentID = mainItem.id;
-            // noteItem.addRelatedItem(item as Zotero.Item);
-            // await noteItem.saveTx();
+            noteItem.setNote(
+                `chartero#${key}\n${JSON.stringify(record)}`
+            );
+            noteItem.parentID = mainItem.id;
+            noteItem.addRelatedItem(item as Zotero.Item);
+            await noteItem.saveTx();
 
             Zotero.updateZoteroPaneProgressMeter((++i * 100) / total);
         }

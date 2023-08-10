@@ -4,6 +4,7 @@ import { PreferencePaneManager } from 'zotero-plugin-toolkit/dist/managers/prefe
 import { ReaderInstanceManager } from 'zotero-plugin-toolkit/dist/managers/readerInstance';
 import { LibraryTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/libraryTabPanel';
 import { ReaderTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/readerTabPanel';
+import { PatcherManager } from 'zotero-plugin-toolkit/dist/managers/patch';
 import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
 import { config, name as packageName } from '../../package.json';
 import ReadingHistory from './modules/history/history';
@@ -11,7 +12,6 @@ import { patchedZoteroSearch } from './modules/history/misc';
 import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
 import { onHistoryRecord, onItemSelect, onNotify } from './events';
-import { PatcherManager } from './modules/patcherManager';
 
 export default class Addon extends toolBase.BasicTool {
     readonly menu: MenuManager;
@@ -21,8 +21,8 @@ export default class Addon extends toolBase.BasicTool {
     readonly reader: ReaderInstanceManager;
     readonly ui: UITool;
     readonly history: ReadingHistory;
-    readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
     readonly patcher: PatcherManager;
+    readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
 
     overviewTabID?: string;
     private notifierID?: string;
