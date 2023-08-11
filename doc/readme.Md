@@ -13,6 +13,7 @@
 
 -   图表采用[Highcharts](https://www.npmjs.com/package/highcharts)生成
 -   欲参考纯 JavaScript 版本请[切换分支](https://gitee.com/const_volatile/chartero/tree/js_overlay/)
+-   在线调试需要[Firefox ESR 102](https://cdn.stubdownloader.services.mozilla.com/builds/firefox-esr-latest-ssl/zh-CN/win64/870c2fb9e80552dc40ae2c70659f802bb9ceacb64c9e8d5967369f1e9e84eeb5/Firefox%20Setup%20102.14.0esr.exe)
 
 ### 目录结构
 
