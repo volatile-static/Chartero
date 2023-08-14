@@ -19,7 +19,7 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
+        "editor.defaultFormatter": "Vue.volar"
     },
     "typescript.tsdk": "node_modules/typescript/lib",
     "editor.suggestSelection": "recentlyUsed",

@@ -3,7 +3,7 @@
         btnLoadMore = document.createElement('button'),
         chartero_style = document.createElement('style'),
         imagesView = document.createElement('div'),
-        left = document.querySelector('#toolbarSidebarLeft #viewAnnotations'),  // TODO：right
+        btnAnnotations = document.querySelector('#toolbarSidebar #viewAnnotations'),  
         sidebarCont = document.getElementById('sidebarContent');
     var images_page_loaded = 0;  // 记录预览图片加载了几页的全局变量
 
@@ -177,12 +177,13 @@ html[dir="rtl"] #viewImages.toolbarButton::before {
     btnViewImages.setAttribute('title', 'All images');  // TODO：locale
     btnViewImages.setAttribute('tabindex', '-1');
     btnViewImages.innerHTML = '<span>All images</span>';
-    left.parentElement.insertBefore(btnViewImages, left);
+    btnAnnotations.parentElement.insertBefore(btnViewImages, btnAnnotations);
 
     // 更新toolbutton切换的事件
-    const btns = document.getElementById('toolbarSidebarLeft').getElementsByTagName('button');
+    const btns = document.getElementById('toolbarSidebar').getElementsByTagName('button');
     for (const btn of btns)  // 给每个标签页按钮添加单击事件用于更新标签页选择状态
         btn.onclick = function () {
+    console.debug(PDFViewerApplication);
             if (this.id === 'viewImages') {
                 if (images_page_loaded < 1)
                     loadMoreImages();
