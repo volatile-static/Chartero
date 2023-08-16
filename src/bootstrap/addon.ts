@@ -94,6 +94,20 @@ export default class Addon extends toolBase.BasicTool {
             patchedZoteroSearch
         );
         this.log('Chartero initialized successfully!');
+
+        // 这两个图标要先在主窗口加载出来才能在reader里显示
+        this.ui.appendElement({
+            tag: 'div',
+            styles: {
+                backgroundImage: "url('chrome://chartero/content/icons/images-toggled.png')"
+            },
+            children: [{
+                tag: 'div',
+                styles: {
+                    backgroundImage: "url('chrome://chartero/content/icons/images.png')"
+                }
+            }]
+        }, document.lastChild as HTMLElement);
     }
 
     unload() {
