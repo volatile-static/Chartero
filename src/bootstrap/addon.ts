@@ -64,6 +64,7 @@ export default class Addon extends toolBase.BasicTool {
             src: rootURI + 'content/preferences.xhtml',
             stylesheets: [rootURI + 'content/preferences.css'],
             image: `chrome://${config.addonName}/content/icons/icon32.png`,
+            helpURL: this.locale.helpURL,
             label: config.addonName,
         });
 

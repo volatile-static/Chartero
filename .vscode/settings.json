@@ -40,5 +40,8 @@
     },
     "[css]": {
         "editor.defaultFormatter": "vscode.css-language-features"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "Vue.volar"
     }
 }

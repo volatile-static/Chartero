@@ -52,7 +52,7 @@
         "highcharts-vue": "^1.4.3",
         "segmentit": "^2.0.3",
         "tdesign-vue-next": "^1.4.2",
-        "zotero-plugin-toolkit": "^2.2.6"
+        "zotero-plugin-toolkit": "^2.2.7"
     },
     "devDependencies": {
         "@types/animejs": "^3.1.7",

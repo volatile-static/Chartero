@@ -9,6 +9,9 @@
         "skipLibCheck": true,
         "allowJs": true
     },
-    "include": ["./", "../../node_modules/zotero-types"],
+    "include": [
+        "./",
+        "../../node_modules/zotero-types"
+    ],
     "exclude": []
 }
