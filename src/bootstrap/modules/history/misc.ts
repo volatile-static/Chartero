@@ -27,7 +27,7 @@ export const patchedZoteroSearch = (origin: Function) =>
 
 export async function protectData(event: string, ids: number[] | string[]) {
     const restore = (item: Zotero.DataObject) => {
-        Zotero.debug(addon.locale.deletingItem);
+        Zotero.debug(addon.locale.history.deletingItem);
         Zotero.debug(item);
         // 恢复被删的条目
         item.deleted = false;
@@ -50,7 +50,7 @@ export async function protectData(event: string, ids: number[] | string[]) {
             });
             for (const it of items)
                 if (await addon.history.isHistoryNote(it))
-                    window.alert(addon.locale.modifyingNote);
+                    window.alert(addon.locale.history.modifyingNote);
             break; // TODO：此处并不能阻止修改，且保存时需skipNotify
 
         default:
@@ -62,7 +62,7 @@ export async function importLegacyHistory(str: string) {
     try {
         const json = JSON.parse(str);
         if (typeof json.lib != 'number' && typeof json.items != 'object')
-            throw new Error(addon.locale.historyParseError);
+            throw new Error(addon.locale.history.jsonParseError);
 
         const total = Object.keys(json.items).length,
             mainItem: Zotero.Item =

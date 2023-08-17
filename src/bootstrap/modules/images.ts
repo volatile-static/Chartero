@@ -23,42 +23,31 @@ async function waitForReader(reader: _ZoteroTypes.ReaderInstance) {
     throw new Error('Reader not found');
 }
 
-function ProgressMeter() {
-    const popMsg = new Zotero.ProgressWindow(),
-        locale = addon.locale.imagesLoaded;
-    popMsg.changeHeadline(
-        '',
-        'chrome://chartero/content/icons/icon.png',
-        'Chartero'
-    );
-    popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
-    let prog = new popMsg.ItemProgress(
-        'chrome://chartero/content/icons/accept.png',
-        addon.locale.loadingImages
-    );
-    popMsg.show();
-    return function (percentage: number, page: number = 0) {
-        if (percentage >= 100) {
-            prog.setProgress(100);
-            prog.setText(locale);
-            popMsg.startCloseTimer(2333, true);
-        } else {
-            prog.setProgress(percentage);
-            prog.setText('Scanning images in page ' + page);
-        }
-    };
-}
-
 abstract class ReaderImages {
     protected readonly doc: Document;
     protected readonly primaryView: _ZoteroTypes.Reader.PDFView | _ZoteroTypes.Reader.EPUBView | _ZoteroTypes.Reader.SnapshotView;
     protected readonly imagesView: HTMLDivElement;
     protected readonly viewImages: HTMLButtonElement;
+    protected readonly popMsg: Zotero.ProgressWindow;
+    protected readonly progMeter: typeof Zotero.ProgressWindow.ItemProgress;
     protected loadedImages = 0;
 
     constructor(reader: _ZoteroTypes.ReaderInstance) {
         this.doc = reader._iframeWindow!.document;
         this.primaryView = reader._primaryView;
+
+        // 初始化右下角弹窗
+        this.popMsg = new Zotero.ProgressWindow();
+        this.popMsg.changeHeadline(
+            '',
+            'chrome://chartero/content/icons/icon.png',
+            'Chartero'
+        );
+        this.popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
+        this.progMeter = new this.popMsg.ItemProgress(
+            'chrome://chartero/content/icons/accept.png',
+            addon.locale.images.loadingImages
+        );
 
         const btnAnnotations = this.doc.querySelector('#toolbarSidebar #viewAnnotations'),
             sidebarCont = this.doc.getElementById('sidebarContent'),
@@ -70,7 +59,7 @@ abstract class ReaderImages {
             id: 'viewImages',
             classList: ['toolbarButton'],
             attributes: {
-                title: 'All Images',
+                title: addon.locale.images.allImages,
                 tabindex: '-1'
             },
             children: [{ tag: 'span' }]  // 背景
@@ -106,16 +95,16 @@ abstract class ReaderImages {
             };
     }
 
-    protected abstract loadMoreImages(setProgress: ReturnType<typeof ProgressMeter>): Promise<void>;
+    protected abstract loadMoreImages(): Promise<void>;
     protected abstract onImageClick(e: MouseEvent): void;
 
     protected async loadAllImages() {
         this.viewImages.setAttribute('disabled', '1');
-        const setProgress = ProgressMeter();
+        this.popMsg.show();
 
-        await this.loadMoreImages(setProgress);
+        await this.loadMoreImages();
 
-        setProgress(100);
+        this.updateProgress(100);
         this.viewImages.removeAttribute('disabled');
     }
 
@@ -126,7 +115,7 @@ abstract class ReaderImages {
             id: idx ? 'chartero-allImages-' + idx : undefined,
             attributes: {
                 src: url,
-                title: '双击复制图片'
+                title: addon.locale.images.dblClickToCopy
             },
             classList: ['previewImg'],
             listeners: [
@@ -144,6 +133,8 @@ abstract class ReaderImages {
         canvas.getContext('2d')?.drawImage(this, 0, 0);
         new ClipboardHelper().addImage(canvas.toDataURL()).copy();
     }
+
+    protected abstract updateProgress(percentage: number): void;
 }
 
 class PDFImages extends ReaderImages {
@@ -156,12 +147,12 @@ class PDFImages extends ReaderImages {
             tag: 'button',
             namespace: 'html',
             id: 'btnLoadMore',
-            properties: { innerHTML: 'Load More...' },
+            properties: { innerHTML: addon.locale.images.loadMore },
             listeners: [{ type: 'click', listener: this.loadAllImages.bind(this) }]
         }, this.imagesView) as HTMLButtonElement;
     }
 
-    async loadMoreImages(setProgress: ReturnType<typeof ProgressMeter>) {
+    async loadMoreImages() {
         this.btnLoadMore.style.display = 'none';
         const win = this.primaryView._iframeWindow,
             viewerApp = win.PDFViewerApplication;
@@ -173,7 +164,7 @@ class PDFImages extends ReaderImages {
             i < 10 && this.loadedPages < viewerApp.pdfDocument.numPages;
             ++this.loadedPages
         ) {
-            setProgress(i * 10, this.loadedPages);
+            this.updateProgress(i * 10, this.loadedPages);
             const pdfPage = viewerApp.pdfViewer._pages[this.loadedPages].pdfPage,
                 opList = await pdfPage.getOperatorList(),
                 svgGfx = new win.pdfjsLib.SVGGraphics(pdfPage.commonObjs, pdfPage.objs),
@@ -203,19 +194,31 @@ class PDFImages extends ReaderImages {
     protected onImageClick(this: ReaderImages, e: MouseEvent) {
         addon.log(e);
     }
+
+    updateProgress(percentage: number, page: number = 0) {
+        if (percentage >= 100) {
+            this.progMeter.setProgress(100);
+            this.progMeter.setText(addon.locale.images.imagesLoaded);
+            this.popMsg.startCloseTimer(2333);
+        } else {
+            this.progMeter.setProgress(percentage);
+            this.progMeter.setText('Scanning images in page ' + page);
+        }
+    }
 }
 
-class EPUBImages extends ReaderImages {
-    private readonly imageLinks = new Array<SVGImageElement>();
+abstract class DOMImages<DOMImageElement extends (SVGImageElement | HTMLImageElement)> extends ReaderImages {
+    protected readonly imageLinks = new Array<DOMImageElement>();
+    protected readonly abstract imageSelector: string;
 
-    async loadMoreImages(setProgress: ReturnType<typeof ProgressMeter>) {
+    async loadMoreImages() {
         const doc = this.primaryView._iframeDocument as Document,
-            imgList: NodeListOf<SVGImageElement> = doc.querySelectorAll('svg image');
-        for (let i = 0; i < imgList.length; ++i) {
-            setProgress(i / imgList.length * 100);
-            addon.ui.appendElement(this.renderImage(imgList[i].href.baseVal, i), this.imagesView);
-            this.imageLinks.push(imgList[i]);
-        }
+            imgList: NodeListOf<DOMImageElement> = doc.querySelectorAll(this.imageSelector);
+        Array.prototype.forEach.call(imgList, (img: DOMImageElement, idx: number) => {
+            const url = img instanceof window.SVGImageElement ? img.href.baseVal : img.src;
+            addon.ui.appendElement(this.renderImage(url, idx), this.imagesView);
+            this.imageLinks.push(img);
+        });
     }
 
     protected onImageClick(e: MouseEvent): void {
@@ -225,30 +228,22 @@ class EPUBImages extends ReaderImages {
         else
             addon.log('No image to scroll.');
     }
+
+    protected updateProgress(): void {
+        this.progMeter.setProgress(100);
+        this.progMeter.setText(addon.locale.images.imagesLoaded);
+        this.popMsg.startCloseTimer(2333);
+    }
 }
 
-class SnapshotImages extends ReaderImages {
-    private readonly imageLinks = new Array<HTMLImageElement>();
+class EPUBImages extends DOMImages<SVGImageElement> {
+    protected readonly imageSelector = 'svg image';
+}
 
-    async loadMoreImages(setProgress: ReturnType<typeof ProgressMeter>) {
-        const doc = this.primaryView._iframeDocument as Document,
-            imgList: NodeListOf<HTMLImageElement> = doc.querySelectorAll('img');
-        for (let i = 0; i < imgList.length; ++i) {
-            setProgress(i / imgList.length * 100);
-            addon.ui.appendElement(this.renderImage(imgList[i].src, i), this.imagesView);
-            this.imageLinks.push(imgList[i]);
-        }
-    }
+class SnapshotImages extends DOMImages<HTMLImageElement> {
+    protected readonly imageSelector = 'img';
 
     protected onImageDblClick(this: HTMLImageElement) {
         new ClipboardHelper().addImage(this.src).copy();
-    }
-
-    protected onImageClick(e: MouseEvent): void {
-        const idx = (e.target as HTMLImageElement).id.split('-').at(-1);
-        if (idx)
-            this.imageLinks[parseInt(idx)].scrollIntoView({ behavior: 'smooth' });
-        else
-            addon.log('No image to scroll.');
     }
 }

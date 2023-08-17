@@ -180,10 +180,10 @@ export default class ReadingHistory extends ManagerTool {
         );
         const item = new Zotero.Item("computerProgram");
         item.setField("archiveLocation", Zotero.URI.getLibraryURI(libraryID));
-        item.setField("title", addon.locale.mainItemTitle);
+        item.setField("title", addon.locale.history.mainItemTitle);
         item.setField("shortTitle", packageName);
         item.setField("programmingLanguage", "JSON");
-        item.setField("abstractNote", addon.locale.mainItemDescription);
+        item.setField("abstractNote", addon.locale.history.mainItemDescription);
         item.setField(
             "url",
             "https://github.com/volatile-static/Chartero"
