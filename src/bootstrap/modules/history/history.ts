@@ -141,7 +141,7 @@ export default class ReadingHistory extends ManagerTool {
      */
     private async schedule() {
         this._activeReader = Zotero.Reader._readers.find((r) =>
-            r._iframeWindow?.document.hasFocus()
+            r._iframeWindow?.document.hasFocus() && r.type == "pdf"
         ); // refresh activated reader
 
         if (this._activeReader?.itemID) {
@@ -193,18 +193,11 @@ export default class ReadingHistory extends ManagerTool {
                 "libraryCatalog",
                 Zotero.Groups.getByLibraryID(libraryID).name
             );
-        item.setCreators([
-            {
-                fieldMode: 1,
-                creatorType: "contributor",
-                lastName: "MuiseDestiny",
-            },
-            {
-                creatorType: "programmer",
-                firstName: "volatile",
-                lastName: "static",
-            },
-        ]);
+        item.setCreators([{
+            creatorType: "programmer",
+            firstName: "volatile",
+            lastName: "static",
+        }]);
         item.libraryID = libraryID;
         await item.saveTx();
         this._mainItems[libraryID] = item;
@@ -233,15 +226,19 @@ export default class ReadingHistory extends ManagerTool {
             Zotero.URI.getLibraryURI(libraryID)
         );
         const ids = await searcher.search();
+        this.log('got main item(s): ', ids);
 
         if (!ids.length) return this.newMainItem(libraryID); // 没搜到，新建
-        else if (ids.length > 1) {
-            // TODO: merge
-            throw new Error("主条目不唯一！");
-        } else
-            return (this._mainItems[libraryID] = (await Zotero.Items.getAsync(
-                ids[0]
-            )) as Zotero.Item);
+        if (ids.length > 1) {
+            Zotero.Items.merge(
+                Zotero.Items.get(ids[0]),
+                Zotero.Items.get(ids.slice(1))
+            );
+            this.log('merge main item ', ids.slice(1), ' into ', ids[0]);
+        }
+        return (this._mainItems[libraryID] = (await Zotero.Items.getAsync(
+            ids[0]
+        )) as Zotero.Item);
     }
 
     /**
@@ -276,8 +273,8 @@ export default class ReadingHistory extends ManagerTool {
      * @returns 与参数一样
      */
     private record(history: AttachmentRecord) {
-        const recordPage = (stats: _ZoteroTypes.Reader.Stats) => {
-            const pageHis = (history.pages[stats.pageIndex] ??= new PageRecord());
+        const recordPage = (stats: _ZoteroTypes.Reader.ViewStats) => {
+            const pageHis = (history.pages[stats.pageIndex!] ??= new PageRecord());
 
             history.numPages ??= stats.pagesCount;
             pageHis.period ??= {};

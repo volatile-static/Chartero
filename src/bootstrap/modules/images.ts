@@ -16,7 +16,7 @@ export default async function addImagesPanelForReader(reader: _ZoteroTypes.Reade
 
 async function waitForReader(reader: _ZoteroTypes.ReaderInstance) {
     for (let i = 0; i < 500; ++i)
-        if (reader._internalReader && reader._lastView?._iframeWindow)
+        if (reader._internalReader && (reader._lastView as any)?._iframeWindow)
             return true;
         else
             await Zotero.Promise.delay(20);
@@ -28,26 +28,13 @@ abstract class ReaderImages {
     protected readonly primaryView: _ZoteroTypes.Reader.PDFView | _ZoteroTypes.Reader.EPUBView | _ZoteroTypes.Reader.SnapshotView;
     protected readonly imagesView: HTMLDivElement;
     protected readonly viewImages: HTMLButtonElement;
-    protected readonly popMsg: Zotero.ProgressWindow;
-    protected readonly progMeter: typeof Zotero.ProgressWindow.ItemProgress;
+    protected popMsg: Zotero.ProgressWindow;
+    protected progMeter: typeof Zotero.ProgressWindow.ItemProgress;
     protected loadedImages = 0;
 
     constructor(reader: _ZoteroTypes.ReaderInstance) {
         this.doc = reader._iframeWindow!.document;
         this.primaryView = reader._primaryView;
-
-        // 初始化右下角弹窗
-        this.popMsg = new Zotero.ProgressWindow();
-        this.popMsg.changeHeadline(
-            '',
-            'chrome://chartero/content/icons/icon.png',
-            'Chartero'
-        );
-        this.popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
-        this.progMeter = new this.popMsg.ItemProgress(
-            'chrome://chartero/content/icons/accept.png',
-            addon.locale.images.loadingImages
-        );
 
         const btnAnnotations = this.doc.querySelector('#toolbarSidebar #viewAnnotations'),
             sidebarCont = this.doc.getElementById('sidebarContent'),
@@ -100,8 +87,21 @@ abstract class ReaderImages {
 
     protected async loadAllImages() {
         this.viewImages.setAttribute('disabled', '1');
-        this.popMsg.show();
 
+        // 初始化右下角弹窗
+        this.popMsg = new Zotero.ProgressWindow();
+        this.popMsg.changeHeadline(
+            '',
+            'chrome://chartero/content/icons/icon.png',
+            'Chartero'
+        );
+        this.popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
+        this.progMeter = new this.popMsg.ItemProgress(
+            'chrome://chartero/content/icons/accept.png',
+            addon.locale.images.loadingImages
+        );
+        this.popMsg.show();
+        
         await this.loadMoreImages();
 
         this.updateProgress(100);
@@ -153,8 +153,8 @@ class PDFImages extends ReaderImages {
     }
 
     async loadMoreImages() {
-        this.btnLoadMore.style.display = 'none';
-        const win = this.primaryView._iframeWindow,
+        this.btnLoadMore.classList.toggle('hidden', true);
+        const win = (this.primaryView as _ZoteroTypes.Reader.PDFView)._iframeWindow!,
             viewerApp = win.PDFViewerApplication;
 
         await viewerApp.pdfLoadingTask.promise;
@@ -189,13 +189,15 @@ class PDFImages extends ReaderImages {
                 attributes: { 'data-content': pdfPage.pageNumber }
             }, this.btnLoadMore);
         }
+        if (this.loadedPages < viewerApp.pdfDocument.numPages)
+            this.btnLoadMore.classList.toggle('hidden', false);
     }
 
     protected onImageClick(this: ReaderImages, e: MouseEvent) {
         addon.log(e);
     }
 
-    updateProgress(percentage: number, page: number = 0) {
+    protected updateProgress(percentage: number, page: number = 0) {
         if (percentage >= 100) {
             this.progMeter.setProgress(100);
             this.progMeter.setText(addon.locale.images.imagesLoaded);
@@ -212,7 +214,7 @@ abstract class DOMImages<DOMImageElement extends (SVGImageElement | HTMLImageEle
     protected readonly abstract imageSelector: string;
 
     async loadMoreImages() {
-        const doc = this.primaryView._iframeDocument as Document,
+        const doc = (this.primaryView as any)._iframeDocument as Document,
             imgList: NodeListOf<DOMImageElement> = doc.querySelectorAll(this.imageSelector);
         Array.prototype.forEach.call(imgList, (img: DOMImageElement, idx: number) => {
             const url = img instanceof window.SVGImageElement ? img.href.baseVal : img.src;

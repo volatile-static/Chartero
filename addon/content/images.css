@@ -27,7 +27,7 @@ html[dir="rtl"] #viewImages.toolbarButton::before {
 }
 
 #imagesView #btnLoadMore {
-    display: none;
+    display: inline-block;
     border-radius: 6%;
     border: 1px solid limegreen;
     background-color: palegreen;
