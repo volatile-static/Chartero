@@ -28,10 +28,12 @@ export default class ReadingHistory extends ManagerTool {
     private _secondState: ReaderState;
 
     private _intervalID: number;
+    cacheLoaded: _ZoteroTypes.PromiseObject;
 
     constructor(base: BasicTool | BasicOptions, hook: RecordHook) {
         super(base);
 
+        this.cacheLoaded = Zotero.Promise.defer();
         this._recordHook = hook;
         this._mainItems = [];
         this._cached = [];
@@ -82,12 +84,10 @@ export default class ReadingHistory extends ManagerTool {
                 }
             });
         };
-        loadLib(1);
-        Zotero.Groups.getAll()
-            .map((group: Zotero.DataObject) =>
+        loadLib(1).then(() =>
+            Promise.all(Zotero.Groups.getAll().map((group: Zotero.DataObject) =>
                 Zotero.Groups.getLibraryIDFromGroupID(group.id)
-            )
-            .forEach(loadLib);
+            ).map(loadLib)).then(() => this.cacheLoaded.resolve(true)));
     }
 
     /**
@@ -230,7 +230,7 @@ export default class ReadingHistory extends ManagerTool {
 
         if (!ids.length) return this.newMainItem(libraryID); // 没搜到，新建
         if (ids.length > 1) {
-            Zotero.Items.merge(
+            await Zotero.Items.merge(
                 Zotero.Items.get(ids[0]),
                 Zotero.Items.get(ids.slice(1))
             );

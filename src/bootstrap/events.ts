@@ -97,6 +97,6 @@ export async function onNotify(
     if (event == 'redraw' && type == 'setting' && ids[0] == config.addonName)
         initPrefsPane(extraData as Window);
 
-    // if (type == 'item')
-    //     protectData(event, ids);
+    if (type == 'item')
+        protectData(event, ids);
 }

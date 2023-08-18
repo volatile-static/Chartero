@@ -26,6 +26,8 @@ export const patchedZoteroSearch = (origin: Function) =>
     }
 
 export async function protectData(event: string, ids: number[] | string[]) {
+    if (!(addon.history.cacheLoaded.promise as any).isFulfilled())
+        return;
     const restore = (item: Zotero.DataObject) => {
         Zotero.debug(addon.locale.history.deletingItem);
         Zotero.debug(item);
