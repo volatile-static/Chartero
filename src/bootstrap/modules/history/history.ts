@@ -28,6 +28,7 @@ export default class ReadingHistory extends ManagerTool {
     private _secondState: ReaderState;
 
     private _intervalID: number;
+    private _mutex: boolean;
     cacheLoaded: _ZoteroTypes.PromiseObject;
 
     constructor(base: BasicTool | BasicOptions, hook: RecordHook) {
@@ -97,7 +98,7 @@ export default class ReadingHistory extends ManagerTool {
         cache.note.setNote(
             `${packageName}#${cache.key}\n${JSON.stringify(cache.record)}`
         );
-        cache.note.saveTx({ skipSelect: true, skipNotifier: true });
+        return cache.note.saveTx({ skipSelect: true, skipNotifier: true });
     }
 
     private async getCache(attID: number) {
@@ -140,14 +141,17 @@ export default class ReadingHistory extends ManagerTool {
      * The callback of timer triggered periodically.
      */
     private async schedule() {
+        if (this._mutex)
+            return;
         this._activeReader = Zotero.Reader._readers.find((r) =>
             r._iframeWindow?.document.hasFocus() && r.type == "pdf"
         ); // refresh activated reader
 
         if (this._activeReader?.itemID) {
+            this._mutex = true;
             const cache = await this.getCache(this._activeReader.itemID); // 当前PDF的缓存
             this.record(cache.record); // 先记录到缓存
-            this.saveNote(cache); // 保存本次记录
+            this.saveNote(cache).then(() => this._mutex = false); // 保存本次记录
             this._recordHook(this._activeReader);  // 插件回调函数，更新实时仪表盘
         }
     }
@@ -290,6 +294,7 @@ export default class ReadingHistory extends ManagerTool {
                 pageHis.userSeconds[userID] =
                     (pageHis.userSeconds[userID] ?? 0) + this._scanPeriod;
             }
+            addon.log('record page ', stats.pageIndex, ' with ', this._scanPeriod);
         },
             checkState = (
                 thisState: ReaderState,

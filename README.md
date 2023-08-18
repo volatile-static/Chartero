@@ -9,4 +9,6 @@ Preview version for Zotero7 beta builds.
 
 ## User Guide
 
+### Troubleshooting
+
 ## Developer Guide

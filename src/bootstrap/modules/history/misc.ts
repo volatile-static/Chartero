@@ -38,6 +38,7 @@ export async function protectData(event: string, ids: number[] | string[]) {
         items = ids.map((id) => Zotero.Items.get(id)), // 触发事件的条目
         mainItems = items.filter(it => addon.history.isMainItem(it)); // 筛选出的主条目
 
+    addon.log(event, ids);
     switch (event) {
         case "trash":
             mainItems.forEach(restore); // 恢复所有被删的主条目
@@ -50,9 +51,9 @@ export async function protectData(event: string, ids: number[] | string[]) {
             mainItems.forEach((it) => {
                 // TODO: 若archiveLocation已被修改，则此处无法获取，考虑patch setField
             });
-            for (const it of items)
-                if (await addon.history.isHistoryNote(it))
-                    window.alert(addon.locale.history.modifyingNote);
+            // for (const it of items)
+            //     if (await addon.history.isHistoryNote(it))
+            //         window.alert(addon.locale.history.modifyingNote);
             break; // TODO：此处并不能阻止修改，且保存时需skipNotify
 
         default:
