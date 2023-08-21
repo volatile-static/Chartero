@@ -141,8 +141,10 @@ export default class ReadingHistory extends ManagerTool {
      * The callback of timer triggered periodically.
      */
     private async schedule() {
-        if (this._mutex)
+        if (this._mutex) {
+            addon.log('记录被阻塞！');
             return;
+        }
         this._activeReader = Zotero.Reader._readers.find((r) =>
             r._iframeWindow?.document.hasFocus() && r.type == "pdf"
         ); // refresh activated reader
@@ -312,7 +314,7 @@ export default class ReadingHistory extends ManagerTool {
                     thisState.left = thatState.left;
                     thisState.counter = 0;
                 }
-                return thisState.counter < 20; //  TODO: 用户自定义
+                return thisState.counter < Number(addon.getPref('scanTimeout'));
             };
         //  先检查副屏
         if (

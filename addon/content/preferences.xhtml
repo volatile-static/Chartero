@@ -23,9 +23,16 @@
     </vbox>
     <vbox class="main-section">
         <html:h1 data-l10n-id="recordTitle"></html:h1>
-        <html:label data-l10n-id="scanPeriod" for="chartero-preferences-pane-scanPeriod"></html:label>
-        <html:input id="chartero-preferences-pane-scanPeriod" preference="__addonPref__.scanPeriod" type="number"
-            min="1" step="1"></html:input>
+        <groupbox>
+            <html:label data-l10n-id="scanPeriod" for="chartero-preferences-pane-scanPeriod"></html:label>
+            <html:input id="chartero-preferences-pane-scanPeriod" preference="__addonPref__.scanPeriod" type="number"
+                min="1" step="1"></html:input>
+        </groupbox>
+        <groupbox>
+            <html:label data-l10n-id="recordTimeout" for="chartero-preferences-pane-scanTimeout"></html:label>
+            <html:input id="chartero-preferences-pane-scanTimeout" preference="__addonPref__.scanTimeout" type="number"
+                min="1" step="1"></html:input>
+        </groupbox>
     </vbox>
     <vbox class="main-section">
         <html:h1 data-l10n-id="storageTitle"></html:h1>
