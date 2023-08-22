@@ -38,7 +38,6 @@ export async function protectData(event: string, ids: number[] | string[]) {
         items = ids.map((id) => Zotero.Items.get(id)), // 触发事件的条目
         mainItems = items.filter(it => addon.history.isMainItem(it)); // 筛选出的主条目
 
-    addon.log(event, ids);
     switch (event) {
         case "trash":
             mainItems.forEach(restore); // 恢复所有被删的主条目

@@ -58,8 +58,10 @@ export function registerPanels() {
     addon.reader.register('initialized', 'chartero', async reader => {
         await reader._waitForReader();
         await waitForReader(reader);
-        renderMinimap(reader);
-        addImagesPanelForReader(reader);
+        if (addon.getPref('enableMinimap'))
+            renderMinimap(reader);
+        if (addon.getPref('enableAllImages'))
+            addImagesPanelForReader(reader);
     });
 }
 

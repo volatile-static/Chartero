@@ -1,12 +1,30 @@
-.chartero-minimap-container {
+#chartero-minimap-container {
     display: block;
+    width: 8px;
+    opacity: 0.7;
+    transition: all 0.3s;
+}
+
+#chartero-minimap-container:hover {
+    opacity: 1;
     width: 16px;
-    opacity: 0.8;
-    pointer-events: none;
+}
+
+#chartero-minimap-container:hover .chartero-minimap-note {
+    opacity: 0.6;
 }
 
 .chartero-minimap-page {
+    position: relative;
     display: block;
     width: 100%;
-    background-color: lime;
+}
+
+.chartero-minimap-note {
+    position: absolute;
+    display: inline-block;
+    right: 0;
+    width: 8px;
+    min-height: 1px;
+    opacity: 0.9;
 }
