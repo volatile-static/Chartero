@@ -2,11 +2,7 @@ var chromeHandle;
 
 async function startup({ id, version, resourceURI, rootURI }, reason) {
   await Zotero.initializationPromise;
-
-  // String 'rootURI' introduced in Zotero 7
-  if (!rootURI) {
-    rootURI = resourceURI.spec;
-  }
+  Zotero.debug('~~~~~~ __addonName__ startup ~~~~~~');
 
   var aomStartup = Components.classes[
     "@mozilla.org/addons/addon-manager-startup;1"
@@ -29,10 +25,9 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
     ZoteroPane: Zotero.getActiveZoteroPane(),
     Zotero_Tabs: window.Zotero_Tabs
   };
-  window.console.debug('~~~~~~ __addonName__ startup ~~~~~~');
   try {
     Services.scriptloader.loadSubScript(
-      `${rootURI}/content/__addonName__.js`,
+      rootURI + 'content/__addonName__.js',
       ctx
     );
   } catch (error) {
@@ -52,21 +47,15 @@ async function onMainWindowUnload({ window }, reason) {
 }
 
 function shutdown({ id, version, resourceURI, rootURI }, reason) {
-  if (reason === APP_SHUTDOWN) {
+  if (reason === APP_SHUTDOWN) 
     return;
-  }
-  if (typeof Zotero === "undefined") {
-    Zotero = Components.classes["@zotero.org/Zotero;1"].getService(
-      Components.interfaces.nsISupports
-    ).wrappedJSObject;
-  }
   addon.unload();
 
   Cc["@mozilla.org/intl/stringbundle;1"]
     .getService(Components.interfaces.nsIStringBundleService)
     .flushBundles();
 
-  Cu.unload(`${rootURI}/chrome/content/scripts/__addonName__.js`);
+  Cu.unload(rootURI + 'content/__addonName__.js');
 
   if (chromeHandle) {
     chromeHandle.destruct();
