@@ -1,0 +1,12 @@
+.chartero-minimap-container {
+    display: block;
+    width: 16px;
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.chartero-minimap-page {
+    display: block;
+    width: 100%;
+    background-color: lime;
+}

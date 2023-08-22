@@ -38,3 +38,16 @@ export function showMessage(msg: string, icon: string) {
         icon,
     });
 }
+
+export async function waitForReader(reader: _ZoteroTypes.ReaderInstance) {
+    for (let i = 0; i < 500; ++i)
+        if (
+            reader._internalReader && 
+            (reader._lastView as any)?._iframeWindow &&
+            Object.keys(reader._state.primaryViewStats).length
+        )
+            return true;
+        else
+            await Zotero.Promise.delay(20);
+    throw new Error('Reader not found');
+}

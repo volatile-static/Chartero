@@ -1,26 +1,17 @@
 import { ClipboardHelper } from "zotero-plugin-toolkit/dist/helpers/clipboard";
 import type { TagElementProps } from "zotero-plugin-toolkit/dist/tools/ui";
+import { waitForReader } from "./utils";
 
 /**
  * 给阅读器左侧边栏添加图片预览
  */
 export default async function addImagesPanelForReader(reader: _ZoteroTypes.ReaderInstance) {
-    await waitForReader(reader);
     switch (reader.type) {
         case 'pdf': new PDFImages(reader); break;
         case 'epub': new EPUBImages(reader); break;
         case 'snapshot': new SnapshotImages(reader); break;
         default: break;
     }
-}
-
-async function waitForReader(reader: _ZoteroTypes.ReaderInstance) {
-    for (let i = 0; i < 500; ++i)
-        if (reader._internalReader && (reader._lastView as any)?._iframeWindow)
-            return true;
-        else
-            await Zotero.Promise.delay(20);
-    throw new Error('Reader not found');
 }
 
 abstract class ReaderImages {
@@ -63,7 +54,8 @@ abstract class ReaderImages {
             namespace: 'html',
             properties: {
                 innerHTML: Zotero.File.getContentsFromURL(rootURI + 'content/images.css')
-            }
+            },
+            skipIfExists: true,
         }, this.doc.head);
 
         // 标签按钮切换的额外操作
@@ -101,7 +93,7 @@ abstract class ReaderImages {
             addon.locale.images.loadingImages
         );
         this.popMsg.show();
-        
+
         await this.loadMoreImages();
 
         this.updateProgress(100);

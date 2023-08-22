@@ -6,66 +6,41 @@ import type { PDFDocumentProxy, PDFDocumentLoadingTask } from 'pdfjs-dist';
 export default async function renderMinimap(
     reader: _ZoteroTypes.ReaderInstance
 ) {
-    const win: Window = (reader._iframeWindow as any).wrappedJSObject,
+    const win: Window = (reader._primaryView as _ZoteroTypes.Reader.PDFView)._iframeWindow!,
         app: PDFViewerApplication = (win as any).PDFViewerApplication,
-        doc = win.document,
-        outerContainer = doc.getElementById('outerContainer'),
-        history = toolkit.history.getByAttachment(reader.itemID!);
+        doc = reader._iframeWindow!.document,
+        outerContainer = doc.getElementById('primary-view'),
+        history = addon.history.getByAttachment(reader.itemID!),
+        numPages = reader._state.primaryViewStats.pagesCount!;
     if (!history || !outerContainer) return;
 
-    toolkit.ui.appendElement(
+    addon.ui.appendElement(
         {
             tag: 'style',
             namespace: 'html',
             properties: {
-                innerHTML: `
-                    .chartero-minimap-container {
-                        position: absolute;
-                        top: 32px;
-                        right: 0;
-                        display: block;
-                        width: 8px;
-                        height: calc(100% - 32px);
-                        opacity: 0.8;
-                        transition: all 0.2s ease-in-out;
-                        pointer-events: none;
-                    }
-
-                    .chartero-minimap-container:hover {
-                        opacity: 0.6;
-                        width: 12px;
-                    }
-
-                    .chartero-minimap-page {
-                        display: block;
-                        width: 100%;
-                        background-color: lime;
-                    }
-                `,
+                innerHTML: Zotero.File.getContentsFromURL(rootURI + 'content/minimap.css')
             },
             skipIfExists: true,
         },
         doc.head
     );
 
-    const container = toolkit.ui.appendElement(
-            { tag: 'div', classList: ['chartero-minimap-container'] },
-            outerContainer
-        ),
+    const container = addon.ui.appendElement(
+        { tag: 'div', classList: ['chartero-minimap-container'] },
+        outerContainer
+    ),
         seconds = history.record.pageArr.map(p => p.totalS),
         maxSeconds = seconds.reduce((a, b) => Math.max(a ?? 0, b ?? 0), 0);
 
     if (!maxSeconds) return;
-    toolkit.log('waiting for ', app.pagesCount);
-    while (!app.pagesCount) await Zotero.Promise.delay(1000);
-    toolkit.log('got ', app.pagesCount);
 
-    for (let i = 0; i < app.pagesCount; ++i) {
-        toolkit.ui.appendElement(
+    for (let i = 0; i < numPages; ++i) {
+        addon.ui.appendElement(
             {
                 tag: 'div',
                 styles: {
-                    height: 100 / app.pagesCount + '%',
+                    height: 100 / numPages + '%',
                     opacity: String(
                         (history.record.pages[i]?.totalS ?? 0) / maxSeconds
                     ),
@@ -75,14 +50,6 @@ export default async function renderMinimap(
             container
         );
     }
-
-    // thumbnails: PDFThumbnailView[] = app.pdfThumbnailViewer._thumbnails!;
-    // await waitFor(() => thumbnails.length > 0);
-    // const imagePromises = thumbnails.map(async thumbnail => {
-    //     await waitFor(() => typeof thumbnail.image != 'undefined');
-    //     toolkit.log(thumbnail.image!.getAttribute('src'));
-    //     return thumbnail.image;
-    // });
 }
 
 interface PDFViewerApplication {

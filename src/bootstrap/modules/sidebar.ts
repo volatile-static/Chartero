@@ -1,5 +1,6 @@
 import addImagesPanelForReader from './images';
 import renderMinimap from './minimap';
+import { waitForReader } from './utils';
 
 const dashboards: { [id: number]: HTMLIFrameElement } = {};
 
@@ -56,7 +57,8 @@ export function registerPanels() {
     );
     addon.reader.register('initialized', 'chartero', async reader => {
         await reader._waitForReader();
-        // renderMinimap(reader);
+        await waitForReader(reader);
+        renderMinimap(reader);
         addImagesPanelForReader(reader);
     });
 }
