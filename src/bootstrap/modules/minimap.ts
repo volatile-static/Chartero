@@ -3,7 +3,7 @@ import type { PDFThumbnailView } from 'pdfjs-dist/types/web/pdf_thumbnail_view';
 import type { PDFLinkService, PDFViewer } from 'pdfjs-dist/web/pdf_viewer';
 import type { PDFDocumentProxy, PDFDocumentLoadingTask } from 'pdfjs-dist';
 
-export default async function renderMinimap(
+export default function renderMinimap(
     reader: _ZoteroTypes.ReaderInstance
 ) {
     if (reader.type !== 'pdf') return;
