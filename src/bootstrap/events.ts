@@ -1,7 +1,8 @@
 import { config } from '../../package.json';
 import { renderSummaryPanel, updateDashboard } from './modules/sidebar';
-import initPrefsPane from './modules/prefs';
 import { protectData } from './modules/history/misc';
+import renderMinimap from './modules/minimap';
+import initPrefsPane from './modules/prefs';
 
 function openOverview(_: Event) {
     if (Zotero.Chartero.overviewTabID) {
@@ -34,6 +35,7 @@ function openOverview(_: Event) {
 
 export function onHistoryRecord(reader: _ZoteroTypes.ReaderInstance) {
     updateDashboard(reader.itemID);
+    renderMinimap(reader);
 }
 
 export async function onItemSelect() {

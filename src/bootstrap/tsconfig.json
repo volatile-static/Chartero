@@ -2,6 +2,7 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "ESNext",
+        "jsx": "react",
         "noImplicitThis": true,
         "noImplicitAny": true,
         "strictNullChecks": true,

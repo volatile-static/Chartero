@@ -39,6 +39,28 @@ async function renderDashboard(
     }
 }
 
+function addMinimapForReader(reader: _ZoteroTypes.ReaderInstance) {
+    const doc = reader._iframeWindow!.document,
+        outerContainer = doc.getElementById('primary-view');
+    addon.ui.appendElement(
+        {
+            tag: 'style',
+            namespace: 'html',
+            properties: {
+                innerHTML: Zotero.File.getContentsFromURL(rootURI + 'content/minimap.css')
+            },
+            ignoreIfExists: true,
+        },
+        doc.head
+    );
+    addon.ui.appendElement({
+        tag: 'div',
+        id: 'chartero-minimap-container',
+        removeIfExists: true
+    }, outerContainer!);
+    renderMinimap(reader);
+}
+
 /**
  * 初始化侧边栏TabPanel
  */
@@ -59,7 +81,7 @@ export function registerPanels() {
         await reader._waitForReader();
         await waitForReader(reader);
         if (addon.getPref('enableMinimap'))
-            renderMinimap(reader);
+            addMinimapForReader(reader);
         if (addon.getPref('enableAllImages'))
             addImagesPanelForReader(reader);
     });
