@@ -7,11 +7,19 @@
     ],
     "compilerOptions": {
         "baseUrl": ".",
-        "paths": { "@/*": ["./*"] },
+        "paths": {
+            "@/*": [
+                "./*"
+            ]
+        },
         "skipLibCheck": true,
         "preserveValueImports": false,
         "importsNotUsedAsValues": "remove",
-        "verbatimModuleSyntax": true,
+        "verbatimModuleSyntax": true
     },
-    "references": [{ "path": "./tsconfig.config.json" }]
+    "references": [
+        {
+            "path": "./tsconfig.config.json"
+        }
+    ]
 }

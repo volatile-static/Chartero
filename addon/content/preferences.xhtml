@@ -40,7 +40,8 @@
         <html:h1 data-l10n-id="storageTitle"></html:h1>
         <groupbox>
             <html:textarea data-l10n-id="textAreaPlaceholder" style="resize: vertical; margin: 8px;"></html:textarea>
-            <button id="chartero-preferences-pane-history-import-area" data-l10n-id="importHistory" disabled="true"></button>
+            <button id="chartero-preferences-pane-history-import-area" data-l10n-id="importHistory"
+                disabled="true"></button>
         </groupbox>
         <groupbox>
             <hbox>
@@ -52,7 +53,12 @@
     </vbox>
     <vbox class="main-section">
         <html:h1 data-l10n-id="about"></html:h1>
-        <label>&zotero.preferences.openurl.version; __buildVersion__ @ __buildTime__</label>
+        <hbox>
+            <label>&zotero.preferences.openurl.version; __buildVersion__ @ __buildTime__</label>
+            <label is="zotero-text-link" href="__homepage__">
+                <html:img src="https://img.shields.io/github/stars/volatile-static/Chartero?logo=github" />
+            </label>
+        </hbox>
         <label is="zotero-text-link" href="__issue__" data-l10n-id="issue"></label>
     </vbox>
 </vbox>

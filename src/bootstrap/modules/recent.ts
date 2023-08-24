@@ -1,3 +1,5 @@
+import { config } from '../../../package.json';
+
 export default function () {
     // 注册“最近在读”菜单
     addon.menu.register(
@@ -6,6 +8,7 @@ export default function () {
             tag: 'menu',
             id: 'chartero-open-recent',
             label: addon.locale.recent,
+            icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
         },
         'before',
         document.getElementById('menu_close') as XUL.Element

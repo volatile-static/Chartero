@@ -12,6 +12,7 @@ import { patchedZoteroSearch } from './modules/history/misc';
 import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
 import { onHistoryRecord, onItemSelect, onNotify } from './events';
+import { addDebugMenu } from './modules/debug';
 
 export default class Addon extends toolBase.BasicTool {
     readonly menu: MenuManager;
@@ -76,6 +77,7 @@ export default class Addon extends toolBase.BasicTool {
         //     icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
         // });
         buildRecentMenu();
+        addDebugMenu();
 
         // 监听条目选择事件
         Zotero.uiReadyPromise.then(() =>

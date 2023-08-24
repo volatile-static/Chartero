@@ -46,6 +46,10 @@
         {
             "type": "npm",
             "script": "reload-bootstrap",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "problemMatcher": [
                 "$tsc-watch"
             ],
@@ -56,10 +60,6 @@
         {
             "type": "npm",
             "script": "reload-all",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
             "problemMatcher": [
                 "$vite"
             ],
