@@ -77,7 +77,8 @@ export default class Addon extends toolBase.BasicTool {
         //     icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
         // });
         buildRecentMenu();
-        addDebugMenu();
+        if (__dev__)
+            addDebugMenu();
 
         // 监听条目选择事件
         Zotero.uiReadyPromise.then(() =>

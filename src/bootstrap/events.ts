@@ -39,6 +39,9 @@ export function onHistoryRecord(reader: _ZoteroTypes.ReaderInstance) {
 }
 
 export async function onItemSelect() {
+    // 仅用户操作GUI时响应
+    if (Zotero_Tabs.selectedType != 'library') 
+        return;
     const items = ZoteroPane.getSelectedItems(true),
         dashboard = document.querySelector(
             '#zotero-view-tabbox .chartero-dashboard'
