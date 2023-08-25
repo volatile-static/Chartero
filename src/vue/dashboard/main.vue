@@ -54,17 +54,17 @@
 </template>
 
 <script lang="ts">
-import type { AttachmentHistory } from '@/utility/history';
 import type { CollapseValue } from 'tdesign-vue-next';
 import { nextTick } from 'vue';
-import { GridLightTheme, DarkUnicaTheme } from '@/utility/themes';
+import { GridLightTheme, DarkUnicaTheme } from '@/themes';
 import PageTime from './components/pageTime.vue';
 import DateTime from './components/dateTime.vue';
 import TimeLine from './components/timeline.vue';
 import Network from './components/network.vue';
 import ProgressBubble from './components/progressBubble.vue';
 import anime from 'animejs';
-import HistoryAnalyzer from '@/utility/history';
+import HistoryAnalyzer from '$/history/analyzer';
+import type { AttachmentHistory } from '$/history/history';
 
 const Zotero = addon.getGlobal('Zotero');
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { AttachmentHistory } from '@/utility/history';
-import Highcharts from '@/utility/highcharts';
-import HistoryAnalyzer from '@/utility/history';
-import { helpMessageOption } from '@/utility/utils';
+import Highcharts from '@/highcharts';
+import HistoryAnalyzer from '$/history/analyzer';
+import { helpMessageOption } from '@/utils';
+import type { AttachmentHistory } from '$/history/history';
 export default {
     data() {
         return {

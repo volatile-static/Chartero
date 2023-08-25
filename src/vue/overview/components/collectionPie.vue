@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Options } from 'highcharts';
-import Highcharts from '@/utility/highcharts';
+import Highcharts from '@/highcharts';
 export default {
     data() {
         return {

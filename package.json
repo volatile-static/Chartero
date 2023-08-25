@@ -77,7 +77,7 @@
         "vite": "^4.4.9",
         "vue": "^3.2.45",
         "vue-tsc": "^1.8.8",
-        "zotero-types": "^1.2.2"
+        "zotero-types": "file:../zotero-types"
     },
     "eslintConfig": {
         "extends": [

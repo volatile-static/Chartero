@@ -13,6 +13,7 @@ import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
 import { onHistoryRecord, onItemSelect, onNotify } from './events';
 import { addDebugMenu } from './modules/debug';
+import addItemColumns from './modules/columns';
 
 export default class Addon extends toolBase.BasicTool {
     readonly menu: MenuManager;
@@ -68,6 +69,8 @@ export default class Addon extends toolBase.BasicTool {
             helpURL: this.locale.helpURL,
             label: config.addonName,
         });
+
+        addItemColumns();
 
         // 注册Overview菜单
         // this.menu.register('menuView', {

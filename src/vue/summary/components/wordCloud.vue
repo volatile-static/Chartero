@@ -1,9 +1,10 @@
 <script lang="ts">
 import type { Options, SeriesWordcloudOptions } from 'highcharts';
 import type { DataOption } from 'tdesign-vue-next/es/transfer/type';
-import Highcharts from '@/utility/highcharts';
-import HistoryAnalyzer from '@/utility/history';
-import { toTimeString, helpMessageOption, buttons } from '@/utility/utils';
+import Highcharts from '@/highcharts';
+import HistoryAnalyzer from '$/history/analyzer';
+import { helpMessageOption, buttons } from '@/utils';
+import { toTimeString } from '$/utils';
 
 const Zotero = addon.getGlobal('Zotero');
 

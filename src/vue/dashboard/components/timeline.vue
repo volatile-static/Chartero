@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { AttachmentHistory } from '@/utility/history';
-import { toTimeString } from '@/utility/utils';
-import HistoryAnalyzer from '@/utility/history';
+import HistoryAnalyzer from '$/history/analyzer';
+import type { AttachmentHistory } from '$/history/history';
+import { toTimeString } from '$/utils';
 
 export default {
     props: {

@@ -4,9 +4,9 @@ import type {
     SeriesColumnOptions,
     SeriesSplineOptions,
 } from 'highcharts';
-import { toTimeString } from '@/utility/utils';
-import Highcharts from '@/utility/highcharts';
-import HistoryAnalyzer from '@/utility/history';
+import Highcharts from '@/highcharts';
+import HistoryAnalyzer from '$/history/analyzer';
+import { toTimeString } from '$/utils';
 export default {
     data() {
         return {

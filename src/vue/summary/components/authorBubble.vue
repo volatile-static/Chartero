@@ -5,11 +5,12 @@ import type {
     PointOptionsObject,
     SeriesPackedbubbleOptions,
 } from 'highcharts';
-import type { AttachmentHistory } from '@/utility/history';
+import type { AttachmentHistory } from '$/history/history';
 import { defineComponent, nextTick } from 'vue';
-import { helpMessageOption, toTimeString } from '@/utility/utils';
-import Highcharts from '@/utility/highcharts';
-import HistoryAnalyzer from '@/utility/history';
+import { helpMessageOption } from '@/utils';
+import Highcharts from '@/highcharts';
+import HistoryAnalyzer from '$/history/analyzer';
+import { toTimeString } from '$/utils';
 
 async function processSeries(creatorIDs: number[], themeColors: string[]) {
     async function getSeries(creatorID: number) {

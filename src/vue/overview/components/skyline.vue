@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import HistoryAnalyzer from '@/utility/history';
+import HistoryAnalyzer from '$/history/analyzer';
 import { nextTick } from 'vue';
 
 export default {

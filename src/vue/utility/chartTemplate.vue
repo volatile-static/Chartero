@@ -1,10 +1,10 @@
 <script lang="ts">
 import type { Options } from 'highcharts';
-import type { AttachmentHistory } from 'zotero-reading-history';
-import Highcharts from '@/utility/highcharts';
+import type { AttachmentHistory } from '$/history/history';
+import Highcharts from '@/highcharts';
 export default {
     data() {
-        return { locale: toolkit.locale };
+        return { locale: addon.locale };
     },
     computed: {
         chartOpts() {

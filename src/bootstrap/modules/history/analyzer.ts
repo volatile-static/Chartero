@@ -1,5 +1,4 @@
-import type { RecordCache } from '../../bootstrap/modules/history/history';
-export type AttachmentHistory = Readonly<RecordCache>;
+import type { AttachmentHistory } from './history';
 
 export default class HistoryAnalyzer {
     private readonly data: AttachmentHistory[];

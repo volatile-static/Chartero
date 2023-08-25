@@ -29,12 +29,12 @@ export default class ReadingHistory extends ManagerTool {
 
     private _intervalID: number;
     private _mutex: boolean;
-    cacheLoaded: _ZoteroTypes.PromiseObject;
+    private _loadingPromise: _ZoteroTypes.PromiseObject<void>;
 
     constructor(base: BasicTool | BasicOptions, hook: RecordHook) {
         super(base);
 
-        this.cacheLoaded = Zotero.Promise.defer();
+        this._loadingPromise = Zotero.Promise.defer();
         this._recordHook = hook;
         this._mainItems = [];
         this._cached = [];
@@ -88,7 +88,11 @@ export default class ReadingHistory extends ManagerTool {
         loadLib(1).then(() =>
             Promise.all(Zotero.Groups.getAll().map((group: Zotero.DataObject) =>
                 Zotero.Groups.getLibraryIDFromGroupID(group.id)
-            ).map(loadLib)).then(() => this.cacheLoaded.resolve(true)));
+            ).map(loadLib)).then(() => this._loadingPromise.resolve()));
+    }
+
+    get cacheLoaded() {
+        return this._loadingPromise.promise.isResolved();
     }
 
     /**
@@ -296,7 +300,6 @@ export default class ReadingHistory extends ManagerTool {
                 pageHis.userSeconds[userID] =
                     (pageHis.userSeconds[userID] ?? 0) + this._scanPeriod;
             }
-            addon.log('record page ', stats.pageIndex, ' with ', this._scanPeriod);
         },
             checkState = (
                 thisState: ReaderState,
@@ -412,7 +415,7 @@ export default class ReadingHistory extends ManagerTool {
 
 type RecordHook = (reader: _ZoteroTypes.ReaderInstance) => void;
 
-type AttachmentHistory = Readonly<RecordCache>;
+export type AttachmentHistory = Readonly<RecordCache>;
 
 interface HistoryAtt {
     key: string;

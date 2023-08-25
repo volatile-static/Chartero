@@ -5,10 +5,10 @@
 <script lang="ts">
 import { Chart } from 'highcharts-vue';
 import { defineComponent, type PropType } from 'vue';
-import type { AttachmentHistory } from '@/utility/history';
-import Highcharts from '@/utility/highcharts';
-import HistoryAnalyzer from '@/utility/history';
-import { toTimeString } from '@/utility/utils';
+import Highcharts from '@/highcharts';
+import HistoryAnalyzer from '$/history/analyzer';
+import type { AttachmentHistory } from '$/history/history';
+import { toTimeString } from '$/utils';
 
 type GraphData = Array<[from: number, to: number]>;
 

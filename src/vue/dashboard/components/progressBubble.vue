@@ -4,9 +4,9 @@ import type {
     PointOptionsObject,
     SeriesScatterOptions,
 } from 'highcharts';
-import type { AttachmentHistory } from '@/utility/history';
-import Highcharts from '@/utility/highcharts';
-import HistoryAnalyzer from '@/utility/history';
+import Highcharts from '@/highcharts';
+import HistoryAnalyzer from '$/history/analyzer';
+import type { AttachmentHistory } from '$/history/history';
 export default {
     data() {
         return { locale: addon.locale };

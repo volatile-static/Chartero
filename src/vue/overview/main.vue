@@ -15,10 +15,8 @@ import CollectionPie from './components/collectionPie.vue';
 </script>
 
 <script lang="ts">
-import type { AttachmentHistory } from '@/utility/history';
-import type { CollapseValue } from 'tdesign-vue-next';
-import { GridLightTheme, DarkUnicaTheme } from '@/utility/themes';
-import HistoryAnalyzer from '@/utility/history';
+import type { AttachmentHistory } from '$/history/history';
+import { GridLightTheme, DarkUnicaTheme } from '@/themes';
 import anime from 'animejs';
 import { nextTick } from 'vue';
 

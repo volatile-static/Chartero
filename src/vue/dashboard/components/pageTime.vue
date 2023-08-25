@@ -11,11 +11,12 @@ import type {
     PointClickEventObject,
     ExportingOptions,
 } from 'highcharts';
-import type { AttachmentHistory } from '@/utility/history';
 import { defineComponent } from 'vue';
-import { buttons, toTimeString, helpMessageOption } from '@/utility/utils';
-import Highcharts from '@/utility/highcharts';
-import HistoryAnalyzer from '@/utility/history';
+import { buttons, helpMessageOption } from '@/utils';
+import Highcharts from '@/highcharts';
+import HistoryAnalyzer from '$/history/analyzer';
+import type { AttachmentHistory } from '$/history/history';
+import { toTimeString } from '$/utils';
 
 function onPointClick(this: Point, events: PointClickEventObject) {
     const zotero = addon.getGlobal('Zotero');

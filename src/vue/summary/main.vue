@@ -12,8 +12,8 @@ import WordCloud from './components/wordCloud.vue';
 import TagsPie from './components/tagsPie.vue';
 </script>
 <script lang="ts">
-import { GridLightTheme, DarkUnicaTheme } from '@/utility/themes';
-import type { AttachmentHistory } from '@/utility/history';
+import { GridLightTheme, DarkUnicaTheme } from '@/themes';
+import type { AttachmentHistory } from '$/history/history';
 export default {
     data() {
         return {

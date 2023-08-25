@@ -3,12 +3,11 @@
 </template>
 
 <script lang="ts">
-import type { AttachmentHistory } from '@/utility/history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import { buttons, toTimeString, helpMessageOption } from '@/utility/utils';
-import Highcharts from '@/utility/highcharts';
-import HistoryAnalyzer from '@/utility/history';
+import { buttons, helpMessageOption } from '@/utils';
+import Highcharts from '@/highcharts';
+import HistoryAnalyzer from '$/history/analyzer';
 import type {
     ExportingOptions,
     Options,
@@ -16,6 +15,8 @@ import type {
     Tooltip,
     TooltipFormatterContextObject,
 } from 'highcharts';
+import type { AttachmentHistory } from '$/history/history';
+import { toTimeString } from '$/utils';
 
 function tooltipFormatter(
     this: TooltipFormatterContextObject,

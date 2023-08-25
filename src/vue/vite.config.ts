@@ -18,6 +18,7 @@ export default defineConfig({
                 dashboard: resolve(__dirname, 'dashboard/index.html'),
             },
         },
+        sourcemap: true,
         outDir: '../../build/addon/content/',
         reportCompressedSize: false,
     },
@@ -40,7 +41,8 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': fileURLToPath(new URL('./', import.meta.url)),
+            '@': fileURLToPath(new URL('./utility', import.meta.url)),
+            '$': fileURLToPath(new URL('../bootstrap/modules', import.meta.url)),
         },
     },
     base: './',

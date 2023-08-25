@@ -10,12 +10,13 @@ import type {
     NavigatorYAxisOptions,
     Point,
 } from 'highcharts';
-import type { AttachmentHistory } from '@/utility/history';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
-import { helpMessageOption, toTimeString } from '@/utility/utils';
-import Highcharts from '@/utility/highcharts';
-import HistoryAnalyzer from '@/utility/history';
+import { helpMessageOption } from '@/utils';
+import Highcharts from '@/highcharts';
+import HistoryAnalyzer from '$/history/analyzer';
+import type { AttachmentHistory } from '$/history/history';
+import { toTimeString } from '$/utils';
 
 interface GanttItem extends GanttPointOptionsObject {
     start: number;
