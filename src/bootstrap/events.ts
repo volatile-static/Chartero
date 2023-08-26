@@ -1,7 +1,7 @@
 import { config } from '../../package.json';
 import { renderSummaryPanel, updateDashboard } from './modules/sidebar';
 import { protectData } from './modules/history/misc';
-import renderMinimap from './modules/minimap';
+import renderMinimap from './modules/minimap/minimap';
 import initPrefsPane from './modules/prefs';
 
 function openOverview(_: Event) {

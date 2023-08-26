@@ -10,6 +10,7 @@ import {
   rmSync,
 } from "fs";
 import { env, exit } from "process";
+import { sassPlugin } from 'esbuild-sass-plugin';
 import replaceInFile from "replace-in-file";
 const { replaceInFileSync } = replaceInFile;
 import details from "../package.json" assert { type: "json" };
@@ -187,8 +188,9 @@ async function esbuild() {
     target: 'firefox102',
     entryPoints: [path.join(buildDir, "../src/bootstrap/index.ts")],
     define: {
-      __dev__: process.env.NODE_ENV == 'development',
+      __dev__: String(process.env.NODE_ENV == 'development'),
     },
+    plugins: [sassPlugin({ type: 'css-text', style: 'compressed' })],
     bundle: true,
     minify: process.env.NODE_ENV != 'development',
     outfile: path.join(buildDir, `addon/content/${config.addonName}.js`)

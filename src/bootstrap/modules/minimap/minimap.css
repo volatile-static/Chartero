@@ -7,7 +7,13 @@
 
 #chartero-minimap-container:hover {
     opacity: 1;
+    overflow: visible;
+}
+
+#chartero-minimap-container:hover .chartero-minimap-page {   
     width: 16px;
+    left: -8px;
+    opacity: 0.6;
 }
 
 #chartero-minimap-container:hover .chartero-minimap-note {
@@ -18,6 +24,8 @@
     position: relative;
     display: block;
     width: 100%;
+    left: 0;
+    transition: all 0.3s;
 }
 
 .chartero-minimap-note {

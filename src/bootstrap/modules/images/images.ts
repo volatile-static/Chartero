@@ -1,6 +1,6 @@
 import { ClipboardHelper } from "zotero-plugin-toolkit/dist/helpers/clipboard";
 import type { TagElementProps } from "zotero-plugin-toolkit/dist/tools/ui";
-import { waitForReader } from "./utils";
+import stylesheet from "./images.css";
 
 /**
  * 给阅读器左侧边栏添加图片预览
@@ -52,24 +52,29 @@ abstract class ReaderImages {
         addon.ui.appendElement({
             tag: 'style',
             namespace: 'html',
-            properties: {
-                innerHTML: Zotero.File.getContentsFromURL(rootURI + 'content/images.css')
-            },
+            properties: { textContent: stylesheet },
             skipIfExists: true,
         }, this.doc.head);
 
         // 标签按钮切换的额外操作
         for (const btn of toolButtons)
             btn.onclick = (e: MouseEvent) => {
-                if ((e.target as HTMLButtonElement).id == 'viewImages') {
+                addon.log(e);
+                const b = e.target as HTMLButtonElement;
+                if (b.id == 'viewImages' || b.parentElement?.id == 'viewImages') {
                     reader.setSidebarView('chartero');
                     this.viewImages.classList.toggle('toggled', true);
                     this.imagesView.classList.toggle('hidden', false);
                     if (!this.loadedImages)
                         this.loadAllImages();
                 } else {
-                    this.viewImages.classList.toggle('toggled', false);
-                    this.imagesView.classList.toggle('hidden', true);
+                    b.ownerDocument
+                        .getElementById('viewImages')?.classList
+                        .toggle('toggled', false);
+                    b.ownerDocument
+                        .getElementById('imagesView')?.classList
+                        .toggle('hidden', true);
+                    addon.log('hide images');
                 }
             };
     }

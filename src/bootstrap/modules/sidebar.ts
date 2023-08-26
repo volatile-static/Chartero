@@ -1,5 +1,6 @@
-import addImagesPanelForReader from './images';
-import renderMinimap from './minimap';
+import addImagesPanelForReader from './images/images';
+import renderMinimap from './minimap/minimap';
+import stylesheet from './minimap/minimap.css';
 import { waitForReader } from './utils';
 
 const dashboards: { [id: number]: HTMLIFrameElement } = {};
@@ -46,9 +47,7 @@ function addMinimapForReader(reader: _ZoteroTypes.ReaderInstance) {
         {
             tag: 'style',
             namespace: 'html',
-            properties: {
-                innerHTML: Zotero.File.getContentsFromURL(rootURI + 'content/minimap.css')
-            },
+            properties: { textContent: stylesheet },
             ignoreIfExists: true,
         },
         doc.head

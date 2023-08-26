@@ -150,7 +150,7 @@ export default class ReadingHistory extends ManagerTool {
             return;
         }
         this._activeReader = Zotero.Reader._readers.find((r) =>
-            r._iframeWindow?.document.hasFocus() && r.type == "pdf"
+            r._iframeWindow?.document.hasFocus() && r.type != "snapshot"
         ); // refresh activated reader
 
         if (this._activeReader?.itemID) {

@@ -9,7 +9,7 @@ export default function renderMinimap(
 ): void {
     const doc = reader._iframeWindow!.document,
         container = doc.getElementById('chartero-minimap-container');
-    if (!container) return;
+    if (!container || reader.type != 'pdf') return;
 
     ReactDOM.render(<Minimap
         itemID={reader.itemID!}
