@@ -106,6 +106,7 @@ export default class ReadingHistory extends ManagerTool {
     }
 
     private async getCache(attID: number) {
+        await this._loadingPromise.promise;
         if (!this._cached[attID]) {
             const attachment = Zotero.Items.get(attID);
             this._cached[attID] = {
@@ -176,6 +177,7 @@ export default class ReadingHistory extends ManagerTool {
         // 必须等待新条目存入数据库后才能建立关联
         if ((await item.saveTx()) && attachment.addRelatedItem(item))
             attachment.saveTx({ skipDateModifiedUpdate: true });
+        addon.log('new note item: ', item);
         return item;
     }
 

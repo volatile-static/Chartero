@@ -1,7 +1,7 @@
 import { config } from '../../package.json';
 import { renderSummaryPanel, updateDashboard } from './modules/sidebar';
 import { protectData } from './modules/history/misc';
-import renderMinimap from './modules/minimap/minimap';
+import { updateMinimap } from './modules/minimap/minimap';
 import initPrefsPane from './modules/prefs';
 
 function openOverview(_: Event) {
@@ -35,12 +35,16 @@ function openOverview(_: Event) {
 
 export function onHistoryRecord(reader: _ZoteroTypes.ReaderInstance) {
     updateDashboard(reader.itemID);
-    renderMinimap(reader);
+    if (__dev__)
+        window.console.time('updateMinimap');
+    updateMinimap(reader);
+    if (__dev__)
+        window.console.timeEnd('updateMinimap');
 }
 
 export async function onItemSelect() {
     // 仅用户操作GUI时响应
-    if (Zotero_Tabs.selectedType != 'library') 
+    if (Zotero_Tabs.selectedType != 'library')
         return;
     const items = ZoteroPane.getSelectedItems(true),
         dashboard = document.querySelector(

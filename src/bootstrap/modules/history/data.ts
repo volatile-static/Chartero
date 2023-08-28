@@ -139,7 +139,7 @@ export class AttachmentRecord implements RecordBase {
     if (arr.length)
       return arr.reduce(
         (result, timestamp) => Math.min(result, timestamp),
-        9999999999
+        Infinity
       );
   }
 
