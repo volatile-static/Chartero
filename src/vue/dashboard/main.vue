@@ -120,7 +120,7 @@ export default {
                 : this.topLevel
                     ?.getAttachments()
                     .map(id => Zotero.Items.get(id))
-                    .filter(it => it.isPDFAttachment()),
+                    .filter(it => it.isFileAttachment()),
                 files = attachments?.map(it => it!.getFilePath()),
                 totalSize =
                     files?.reduce((size, file) => {
@@ -142,7 +142,7 @@ export default {
             });
             anime({
                 ...this.animateInt,
-                numAttachment: this.topLevel?.numPDFAttachments() ?? 1, // 自己本身算一个
+                numAttachment: this.topLevel?.numNonHTMLFileAttachments() ?? 1, // 自己本身算一个
             });
         },
     },

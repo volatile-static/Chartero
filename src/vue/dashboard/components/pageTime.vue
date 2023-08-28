@@ -91,7 +91,6 @@ export default defineComponent({
         history(his: AttachmentHistory[]) {
             if (his.length < 1) return;
             (this.$refs.chart as Chart).chart.hideData();
-
             this.chartOpts.series = his.map(attHis => {
                 const ha = new HistoryAnalyzer([attHis]),
                     firstPage = attHis.record.firstPage,

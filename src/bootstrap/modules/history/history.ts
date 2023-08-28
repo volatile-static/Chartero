@@ -38,18 +38,8 @@ export default class ReadingHistory extends ManagerTool {
         this._recordHook = hook;
         this._mainItems = [];
         this._cached = [];
-        this._firstState = {
-            counter: 0,
-            pageIndex: 0,
-            left: 0,
-            top: 0,
-        };
-        this._secondState = {
-            counter: 0,
-            pageIndex: 0,
-            left: 0,
-            top: 0,
-        };
+        this._firstState = { counter: 0 };
+        this._secondState = { counter: 0 };
 
         this.loadAll();
     }
@@ -305,8 +295,21 @@ export default class ReadingHistory extends ManagerTool {
         },
             checkState = (
                 thisState: ReaderState,
-                thatState: _ZoteroTypes.Reader.State
+                thatState: _ZoteroTypes.Reader.State | _ZoteroTypes.Reader.DOMViewState
             ) => {
+                addon.log(thisState.counter);
+                if ('cfi' in thatState)
+                    return checkEPUBState(
+                        thisState as EPUBReaderState,
+                        thatState as _ZoteroTypes.Reader.EPUBViewState
+                    );
+                else
+                    return checkPDFState(
+                        thisState as PDFReaderState,
+                        thatState as _ZoteroTypes.Reader.State
+                    );
+            },
+            checkPDFState = (thisState: PDFReaderState, thatState: _ZoteroTypes.Reader.State) => {
                 if (
                     thisState.pageIndex == thatState.pageIndex &&
                     thisState.top == thatState.top &&
@@ -317,6 +320,19 @@ export default class ReadingHistory extends ManagerTool {
                     thisState.pageIndex = thatState.pageIndex;
                     thisState.top = thatState.top;
                     thisState.left = thatState.left;
+                    thisState.counter = 0;
+                }
+                return thisState.counter < Number(addon.getPref('scanTimeout'));
+            },
+            checkEPUBState = (thisState: EPUBReaderState, thatState: _ZoteroTypes.Reader.EPUBViewState) => {
+                if (
+                    thisState.cfi == thatState.cfi &&
+                    thisState.cfiElementOffset == thatState.cfiElementOffset
+                )
+                    ++thisState.counter;
+                else {
+                    thisState.cfi = thatState.cfi!;
+                    thisState.cfiElementOffset = thatState.cfiElementOffset!;
                     thisState.counter = 0;
                 }
                 return thisState.counter < Number(addon.getPref('scanTimeout'));
@@ -429,8 +445,16 @@ export interface RecordCache extends HistoryAtt {
 }
 
 interface ReaderState {
+    counter: number;
+}
+
+interface PDFReaderState extends ReaderState {
     pageIndex: number;
     top: number;
     left: number;
-    counter: number;
+}
+
+interface EPUBReaderState extends ReaderState {
+    cfi: string;
+    cfiElementOffset: number;
 }

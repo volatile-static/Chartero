@@ -23,7 +23,7 @@
         "total": "共",
         "notes": "条笔记",
         "words": "字",
-        "PDFs": "个PDF附件"
+        "PDFs": "个文档附件"
     },
     "ganttMenu": {
         "startAscending": "开始最早",
