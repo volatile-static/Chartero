@@ -18,3 +18,5 @@ autoImport = 自动搜索并导入旧版记录
 recordTitle = 记录
 scanPeriod = 扫描周期（秒）：
 recordTimeout = 连续几次记录无变化后停止记录：
+compressHistory = 压缩记录数据
+historySize = 当前历史记录共占用存储空间：<b>{ $size }</b> KB

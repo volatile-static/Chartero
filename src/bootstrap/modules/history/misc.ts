@@ -110,3 +110,7 @@ export async function importLegacyHistory(str: string) {
         Zotero.hideZoteroPaneOverlays();
     }
 }
+
+export function compressHistory() {
+
+}

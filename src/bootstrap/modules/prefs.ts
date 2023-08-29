@@ -1,17 +1,19 @@
-import { importLegacyHistory } from "./history/misc";
+import { importLegacyHistory, compressHistory } from "./history/misc";
 
 export default function initPrefsPane(win: Window) {
     // 绑定事件
     const btn = win.document.getElementById('chartero-preferences-pane-history-import-area') as XUL.Button;
     btn.addEventListener('command', onMergeClick);
-    btn.previousElementSibling!.addEventListener('input', onJsonInput);
-    win.document.getElementById('chartero-preferences-pane-history-auto-import')!.addEventListener('command', autoImportHistory);
+    btn.parentElement!.previousElementSibling!.addEventListener('input', onJsonInput);
+    win.document.getElementById('chartero-preferences-pane-history-compress')?.addEventListener('command', compressHistory);
+    win.document.getElementById('chartero-preferences-pane-history-auto-import')?.addEventListener('command', autoImportHistory);
     win.document.getElementById('chartero-preferences-pane-scanPeriod')?.addEventListener('input', onScanPeriodInput);
     win.document.getElementById('chartero-preferences-pane-refreshTagsTable')?.addEventListener(
         'command',
         () => refreshExcludedTags(win.document)
     );
     refreshExcludedTags(win.document);
+    updateHistorySize(win.document);
 }
 
 // 渲染标签
@@ -82,4 +84,17 @@ function autoImportHistory(e: MouseEvent) {
         }
     }
     window.alert(addon.locale.legacyNotFound);
+}
+
+function updateHistorySize(doc: Document) {
+    const size = addon.history.getAll().reduce(
+        (acc, cur) => acc += (cur?.note.note.length ?? 0)
+        , 0
+    ) / 1024;
+    doc.getElementById(
+        'chartero-preferences-pane-history-size'
+    )?.setAttribute(
+        'data-l10n-args',
+        JSON.stringify({ size: size.toFixed(2) })
+    );
 }

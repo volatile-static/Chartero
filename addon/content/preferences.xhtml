@@ -20,7 +20,7 @@
                         style="list-style-image: url('chrome://zotero/skin/arrow_refresh.png');"></toolbarbutton>
                 </hbox>
             </label>
-            <html:div id="chartero-preferences-pane-excludedTagsTable"></html:div>
+            <html:div id="chartero-preferences-pane-excludedTagsTable" class="chartero-preferences-pane-box"></html:div>
         </groupbox>
     </vbox>
     <vbox class="main-section">
@@ -39,11 +39,20 @@
     <vbox class="main-section">
         <html:h1 data-l10n-id="storageTitle"></html:h1>
         <groupbox>
-            <html:textarea data-l10n-id="textAreaPlaceholder" style="resize: vertical; margin: 8px;"></html:textarea>
-            <button id="chartero-preferences-pane-history-import-area" data-l10n-id="importHistory"
-                disabled="true"></button>
+            <hbox>
+                <html:label id="chartero-preferences-pane-history-size" data-l10n-id="historySize"></html:label>
+                <!-- <button id="chartero-preferences-pane-history-compress" data-l10n-id="compressHistory"
+                    style="margin: 8px;"></button> -->
+            </hbox>
         </groupbox>
-        <groupbox>
+        <groupbox class="chartero-preferences-pane-box">
+            <html:textarea data-l10n-id="textAreaPlaceholder" style="resize: vertical; margin: 8px;"></html:textarea>
+            <hbox style="justify-content: center; display: flex;">
+                <button id="chartero-preferences-pane-history-import-area" data-l10n-id="importHistory"
+                    disabled="true"></button>
+            </hbox>
+        </groupbox>
+        <groupbox style="margin: 8px;">
             <hbox>
                 <button id="chartero-preferences-pane-history-auto-import" data-l10n-id="autoImport"
                     native="true"></button>
