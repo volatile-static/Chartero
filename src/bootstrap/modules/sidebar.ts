@@ -1,6 +1,7 @@
 import addImagesPanelForReader from './images/images';
 import { mountMinimap } from './minimap/minimap';
 import { waitForReader } from './utils';
+import { initReaderAlert } from './history/misc';
 
 const dashboards: { [id: number]: HTMLIFrameElement } = {};
 
@@ -36,6 +37,9 @@ async function renderDashboard(
             updateDashboard(reader.itemID)
         );
         reader.itemID && (dashboards[reader.itemID] = dashboard);
+
+        if (addon.getPref('enableReaderAlert'))
+            initReaderAlert(reader._iframe?.contentDocument)
     }
 }
 
@@ -66,6 +70,8 @@ export function registerPanels() {
 }
 
 export function renderSummaryPanel(ids: number[]) {
+    if (ids.length > Number(addon.getPref('maxSummaryItems')))
+        return;
     const content = document.getElementById(
         'zotero-item-pane-content'
     ) as XUL.Deck,

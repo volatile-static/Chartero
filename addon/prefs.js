@@ -5,3 +5,5 @@ pref('__addonPref__.scanTimeout', 20);
 pref('__addonPref__.excludedTags', '[]');
 pref('__addonPref__.enableAllImages', true);
 pref('__addonPref__.enableMinimap', true);
+pref('__addonPref__.enableReaderAlert', false);
+pref('__addonPref__.maxSummaryItems', 99);

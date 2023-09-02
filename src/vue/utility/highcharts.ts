@@ -19,6 +19,8 @@ import HighchartsExportData from 'highcharts/modules/export-data';
 HighchartsExportData(Highcharts);
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 NoDataToDisplay(Highcharts);
+// import MouseWheelZoom from 'highcharts/modules/mouse-wheel-zoom';
+// MouseWheelZoom(Highcharts);
 import { copySVG2JPG, saveSVG } from '../../bootstrap/modules/utils';
 import { viewItemsInLib } from './utils';
 import * as zh_CN from './zh_CN.json';
@@ -31,6 +33,7 @@ if (
 )
     Highcharts.setOptions(zh_CN as Highcharts.Options);
 Highcharts.setOptions({
+    accessibility: { enabled: false },
     time: {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         useUTC: false,
@@ -53,7 +56,11 @@ Highcharts.setOptions({
         style: { fontFamily: '' },
         panKey: 'shift',
         panning: { type: 'x', enabled: true },
-        zooming: { type: 'x' },
+        zooming: {
+            type: 'x',
+            // key: 'ctrl',
+            // mouseWheel: { enabled: true },
+        },
         events: {
             selection: _ => {
                 if (!infoFlag) {

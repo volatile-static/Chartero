@@ -98,6 +98,7 @@ export default defineComponent({
                     data: number[] = [];
                 for (let i = firstPage; i <= lastPage; ++i)
                     data.push(attHis.record.pages[i]?.totalS ?? 0);
+                // addon.log(attHis.record.pages, data);
                 return {
                     type: 'bar',
                     pointStart: firstPage + 1,

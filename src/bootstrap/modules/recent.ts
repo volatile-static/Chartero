@@ -8,7 +8,7 @@ export default function () {
             tag: 'menu',
             id: 'chartero-open-recent',
             label: addon.locale.recent,
-            icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
+            icon: `chrome://${config.addonName}/content/icons/icon.png`,
         },
         'before',
         document.getElementById('menu_close') as XUL.Element

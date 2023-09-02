@@ -14,6 +14,7 @@ import buildRecentMenu from './modules/recent';
 import { onHistoryRecord, onItemSelect, onNotify } from './events';
 import { addDebugMenu } from './modules/debug';
 import addItemColumns from './modules/columns';
+import { coroutine } from './modules/utils';
 
 export default class Addon extends toolBase.BasicTool {
     readonly menu: MenuManager;

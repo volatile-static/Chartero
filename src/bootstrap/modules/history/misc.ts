@@ -1,5 +1,6 @@
 import { showMessage } from '../utils';
 import { AttachmentRecord } from './data';
+import readerStyles from './reader.css';
 
 // 防止阅读器侧边栏搜索到主条目下的笔记
 export const patchedZoteroSearch = (origin: Function) =>
@@ -113,4 +114,32 @@ export async function importLegacyHistory(str: string) {
 
 export function compressHistory() {
 
+}
+
+export function initReaderAlert(doc: Document) {
+    const container = doc?.getElementById('split-view');
+    if (!container) return;
+
+    addon.ui.appendElement({
+        tag: 'style',
+        namespace: 'html',
+        ignoreIfExists: true,
+        properties: { textContent: readerStyles }
+    }, doc.head);
+    addon.ui.appendElement({
+        tag: 'div',
+        classList: ['hidden'],
+        ignoreIfExists: true,
+        id: 'chartero-reader-alert',
+    }, container);
+
+    // 立即隐藏警告
+    const frames = doc.defaultView?.frames;
+    for (let i = 0; i < (frames?.length ?? 0); ++i)
+        (['wheel', 'keydown'] as Array<keyof WindowEventMap>).forEach(event =>
+            frames![i].addEventListener(event, () => {
+                doc.getElementById('chartero-reader-alert')?.classList
+                    .toggle('hidden', true);
+            })
+        );
 }

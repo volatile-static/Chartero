@@ -29,7 +29,7 @@ export default class ReadingHistory extends ManagerTool {
 
     private _intervalID: number;
     private _mutex: boolean;
-    private _loadingPromise: _ZoteroTypes.PromiseObject<void>;
+    private _loadingPromise: _ZoteroTypes.DeferredPromise<void>;
 
     constructor(base: BasicTool | BasicOptions, hook: RecordHook) {
         super(base);
@@ -148,8 +148,9 @@ export default class ReadingHistory extends ManagerTool {
             this._mutex = true;
             const cache = await this.getCache(this._activeReader.itemID); // 当前PDF的缓存
             this.record(cache.record); // 先记录到缓存
-            this.saveNote(cache).then(() => this._mutex = false); // 保存本次记录
+            this.saveNote(cache).finally(() => this._mutex = false); // 保存本次记录
             this._recordHook(this._activeReader);  // 插件回调函数，更新实时仪表盘
+            this._onHold();
         }
     }
 
@@ -276,7 +277,11 @@ export default class ReadingHistory extends ManagerTool {
      */
     private record(history: AttachmentRecord) {
         const recordPage = (stats: _ZoteroTypes.Reader.ViewStats) => {
-            const pageHis = (history.pages[stats.pageIndex!] ??= new PageRecord());
+            if (!stats.pageIndex) {
+                addon.log(stats);
+                return;
+            }
+            const pageHis = (history.pages[stats.pageIndex] ??= new PageRecord());
 
             history.numPages ??= stats.pagesCount;
             pageHis.period ??= {};
@@ -297,7 +302,6 @@ export default class ReadingHistory extends ManagerTool {
                 thisState: ReaderState,
                 thatState: _ZoteroTypes.Reader.State | _ZoteroTypes.Reader.DOMViewState
             ) => {
-                addon.log(thisState.counter);
                 if ('cfi' in thatState)
                     return checkEPUBState(
                         thisState as EPUBReaderState,
@@ -309,7 +313,10 @@ export default class ReadingHistory extends ManagerTool {
                         thatState as _ZoteroTypes.Reader.State
                     );
             },
-            checkPDFState = (thisState: PDFReaderState, thatState: _ZoteroTypes.Reader.State) => {
+            checkPDFState = (
+                thisState: PDFReaderState,
+                thatState: _ZoteroTypes.Reader.State
+            ) => {
                 if (
                     thisState.pageIndex == thatState.pageIndex &&
                     thisState.top == thatState.top &&
@@ -324,7 +331,10 @@ export default class ReadingHistory extends ManagerTool {
                 }
                 return thisState.counter < Number(addon.getPref('scanTimeout'));
             },
-            checkEPUBState = (thisState: EPUBReaderState, thatState: _ZoteroTypes.Reader.EPUBViewState) => {
+            checkEPUBState = (
+                thisState: EPUBReaderState,
+                thatState: _ZoteroTypes.Reader.EPUBViewState
+            ) => {
                 if (
                     thisState.cfi == thatState.cfi &&
                     thisState.cfiElementOffset == thatState.cfiElementOffset
@@ -339,13 +349,26 @@ export default class ReadingHistory extends ManagerTool {
             };
         //  先检查副屏
         if (
-            this._activeReader!._secondaryView &&
+            this._activeReader!.splitType &&
             checkState(this._secondState, this._activeReader!._state.secondaryViewState)
         )
             recordPage(this._activeReader!._state.secondaryViewStats);
         //  再检查主屏
         if (checkState(this._firstState, this._activeReader!._state.primaryViewState))
             recordPage(this._activeReader!._state.primaryViewStats);
+    }
+
+    private _onHold() {
+        const overlay = this._activeReader?._iframe?.contentDocument
+            .getElementById('chartero-reader-alert');
+        if (!overlay) return;
+
+        const timeout = Number(addon.getPref('scanTimeout')),
+            recording = this._firstState.counter < timeout || (
+                this._activeReader!.splitType &&
+                this._secondState.counter < timeout
+            );  // 判定挂机的触发规则
+        overlay.classList.toggle('hidden', recording);
     }
 
     compress(record: AttachmentRecord) {

@@ -2,13 +2,14 @@ import { importLegacyHistory, compressHistory } from "./history/misc";
 
 export default function initPrefsPane(win: Window) {
     // 绑定事件
-    const btn = win.document.getElementById('chartero-preferences-pane-history-import-area') as XUL.Button;
+    const $: typeof document.getElementById = win.document.getElementById.bind(win.document),
+        btn = $('chartero-preferences-pane-history-import-area') as XUL.Button;
     btn.addEventListener('command', onMergeClick);
     btn.parentElement!.previousElementSibling!.addEventListener('input', onJsonInput);
-    win.document.getElementById('chartero-preferences-pane-history-compress')?.addEventListener('command', compressHistory);
-    win.document.getElementById('chartero-preferences-pane-history-auto-import')?.addEventListener('command', autoImportHistory);
-    win.document.getElementById('chartero-preferences-pane-scanPeriod')?.addEventListener('input', onScanPeriodInput);
-    win.document.getElementById('chartero-preferences-pane-refreshTagsTable')?.addEventListener(
+    $('chartero-preferences-pane-history-compress')?.addEventListener('command', compressHistory);
+    $('chartero-preferences-pane-history-auto-import')?.addEventListener('command', autoImportHistory);
+    $('chartero-preferences-pane-scanPeriod')?.addEventListener('input', onScanPeriodInput);
+    $('chartero-preferences-pane-refreshTagsTable')?.addEventListener(
         'command',
         () => refreshExcludedTags(win.document)
     );
@@ -34,6 +35,8 @@ function refreshExcludedTags(doc: Document) {
         addon.log('Resetting ignoredTags: ', error);
         Zotero.Prefs.set('chartero.excludedTags', JSON.stringify([]));
     }
+    if (!table.childElementCount)
+        table.innerText = addon.locale.noExcludedTags;
 }
 
 function onTagClick(event: MouseEvent) {

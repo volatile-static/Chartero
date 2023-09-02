@@ -37,8 +37,8 @@
             <DateTime :history="itemHistory" :theme="chartTheme"></DateTime>
         </t-collapse-panel>
 
-        <t-collapse-panel value="network" :header="locale.chartTitle.network" :disabled="collapseDisabled">
-            <Network :topLevel="topLevel" :theme="chartTheme" :key="topLevel?.id"></Network>
+        <t-collapse-panel value="network" :header="locale.chartTitle.network">
+            <Network :topLevel="topLevel" :theme="chartTheme" :itemID="topLevel?.id"></Network>
         </t-collapse-panel>
 
         <t-collapse-panel value="timeline" :header="locale.timeline" :disabled="collapseDisabled">
@@ -85,8 +85,10 @@ export default {
                 this.switchTheme();
         },
         onCollapseChange(val: CollapseValue) {
-            this.collapseValue =
-                this.itemHistory.length < 1 ? ['progress'] : val;
+            this.collapseValue = val.filter(i =>
+                this.itemHistory.length || 
+                ['progress', 'network'].includes(i as string)
+            );
         },
         // 统计笔记信息
         updateNotes() {
@@ -156,9 +158,13 @@ export default {
                 this.realtimeUpdating = !this.realtimeUpdating;
             this.updateTheme();
             nextTick(() => {
-                this.updateNotes();
-                this.updateProgress();
-                this.updateSize();
+                try {
+                    this.updateNotes();
+                    this.updateProgress();
+                    this.updateSize();
+                } catch (error) {
+                    addon.log(error);
+                }
             });
         });
     },
@@ -197,6 +203,7 @@ export default {
             else {
                 const his =
                     this.item && addon.history.getByAttachment(this.item);
+                // addon.log('itemHistory: ', his);
                 return his ? [his] : [];
             }
         },
