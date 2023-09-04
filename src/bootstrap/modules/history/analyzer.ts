@@ -3,8 +3,11 @@ import type { AttachmentHistory } from './history';
 export default class HistoryAnalyzer {
     private readonly data: AttachmentHistory[];
     private _attachments: Array<false | Zotero.Item>;
-    constructor(data: AttachmentHistory[]) {
-        this.data = data;
+    constructor(data: MaybeArray<AttachmentHistory>) {
+        if (Array.isArray(data))
+            this.data = data;
+        else
+            this.data = [data];
         this._attachments = [];
     }
     get ids() {

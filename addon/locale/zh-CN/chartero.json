@@ -124,5 +124,7 @@
     "overview": "文库总览",
     "recent": "最近在读",
     "others": "其它",
-    "help": "帮助"
+    "help": "帮助",
+    "thisItem": "当前条目",
+    "relatedItems": "相关条目"
 }

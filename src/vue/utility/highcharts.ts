@@ -41,6 +41,7 @@ Highcharts.setOptions({
     title: { text: undefined },
     // tooltip: { outside: true },
     chart: {
+        displayErrors: true,
         borderRadius: 6,
         animation: {
             duration: 1200,

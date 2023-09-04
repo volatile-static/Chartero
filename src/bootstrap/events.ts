@@ -60,7 +60,11 @@ export async function onItemSelect() {
         if (item.isRegularItem())  // 只有常规条目才有仪表盘
             dashboard?.contentWindow?.postMessage({ id: items[0] }, '*');
     }
-    else if (ZoteroPane.itemsView.rowCount > items.length && items.length > 1)
+    else if (
+        ZoteroPane.itemsView.rowCount > items.length &&
+        items.length > 1 &&
+        'duplicates' != ZoteroPane.getCollectionTreeRow()?.type
+    )
         renderSummaryPanelDebounced(items); // 当前选择多个条目
     else {
         // 当前选择整个分类
