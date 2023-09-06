@@ -38,7 +38,8 @@
         </t-collapse-panel>
 
         <t-collapse-panel value="network" :header="locale.chartTitle.network">
-            <Network :topLevel="topLevel" :theme="chartTheme" :itemID="topLevel?.id"></Network>
+            <Network :topLevel="topLevel" :theme="chartTheme" :itemID="topLevel?.id"
+                :show="collapseValue.includes('network')"></Network>
         </t-collapse-panel>
 
         <t-collapse-panel value="timeline" :header="locale.timeline" :disabled="collapseDisabled">
@@ -66,8 +67,6 @@ import anime from 'animejs';
 import HistoryAnalyzer from '$/history/analyzer';
 import type { AttachmentHistory } from '$/history/history';
 
-const Zotero = addon.getGlobal('Zotero');
-
 export default {
     methods: {
         switchTheme() {
@@ -86,7 +85,7 @@ export default {
         },
         onCollapseChange(val: CollapseValue) {
             this.collapseValue = val.filter(i =>
-                this.itemHistory.length || 
+                this.itemHistory.length ||
                 ['progress', 'network'].includes(i as string)
             );
         },

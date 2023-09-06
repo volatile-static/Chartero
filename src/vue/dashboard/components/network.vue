@@ -6,32 +6,56 @@
 import { Chart } from 'highcharts-vue';
 import { defineComponent, type PropType } from 'vue';
 import Highcharts from '@/highcharts';
+import Tree from '@/tree';
 import HistoryAnalyzer from '$/history/analyzer';
 import { toTimeString } from '$/utils';
-import type { SeriesNetworkgraphNodesOptions } from 'highcharts';
+import type {
+    SeriesNetworkgraphNodesOptions,
+    PointMarkerOptionsObject
+} from 'highcharts';
 
 type GraphData = Array<[from: string, to: string]>;
+
+let nodesRef: Highcharts.Point[] = [];
+let nodesLayout: { [id: number]: { x?: number, y?: number } } = {};
+
+function layoutPosition(this: any) {
+    // console.time('layout');
+    for (let i = 0; i < this.nodes.length; ++i)
+        if (nodesLayout[this.nodes[i].id]) {
+            this.nodes[i].plotX ??= nodesLayout[this.nodes[i].id].x;
+            this.nodes[i].plotY ??= nodesLayout[this.nodes[i].id].y;
+        }
+    // console.timeEnd('layout');
+}
 
 export default defineComponent({
     components: { Chart },
     computed: {
         options() {
-            return Highcharts.merge(this.chartOpts, this.theme);
+            // addon.log('network options', JSON.parse(JSON.stringify(this.graphNodes)));
+            return Highcharts.merge(this.theme, this.chartOpts);
         },
         chartOpts() {
-            addon.log(this.graphData, this.graphNodes);
             return {
                 plotOptions: {
                     networkgraph: {
                         layoutAlgorithm: {
-                            enableSimulation: false,
-                            // initialPositions: 'random',
+                            enableSimulation: true,
+                            maxIterations: 100,
+                            initialPositions:
+                                this.restorePosition ? layoutPosition : 'circle',
                         },
                     },
                     series: {
                         point: {
                             events: {
-                                click: ({ point }) => this.loadNode((point as any).id)
+                                click: event => {
+                                    if (event.shiftKey)  // 按住shift折叠
+                                        this.collapseNode(event.point);
+                                    else  // 单击加载更多     
+                                        this.loadNode((event.point as any).id);
+                                }
                             }
                         }
                     }
@@ -47,117 +71,187 @@ export default defineComponent({
                         return '';
                     },
                 },
-                series: [{
-                    type: 'networkgraph',
-                    data: this.graphData,
-                    nodes: this.graphNodes,
-                } as Highcharts.SeriesNetworkgraphOptions],
-                colorAxis: {
-                    dataClasses: [{
-                        color: this.thisColor,
+                series: [
+                    {
+                        type: 'networkgraph',  // 图表数据
+                        data: this.graphData,
+                        nodes: this.graphNodes
+                    } as Highcharts.SeriesNetworkgraphOptions,
+                    {
+                        type: 'bubble',  // 图例
                         name: addon.locale.thisItem,
-                    }, {
-                        color: this.thatColor,
+                        marker: {
+                            symbol: this.svgURL
+                        },
+                        events: { legendItemClick: () => false }
+                    },
+                    {
+                        type: 'bubble',  // 图例
                         name: addon.locale.relatedItems,
-                    }]
-                },
+                        color: this.thatColor,
+                        marker: { fillOpacity: 0.8 },
+                        events: { legendItemClick: () => false }
+                    },
+                    {
+                        type: 'bubble',  // 图例
+                        name: addon.locale.collapsedItems,
+                        color: this.thatColor,
+                        marker: {
+                            fillOpacity: 0.2,
+                            lineWidth: 2,
+                            lineColor: this.thatColor
+                        },
+                        events: { legendItemClick: () => false }
+                    }
+                ],
                 legend: {
                     itemHoverStyle: { cursor: 'default' }
                 },
+                xAxis: [{ visible: false }, { visible: false }],
+                yAxis: { visible: false },
                 chart: {
+                    zooming: { type: undefined },  // 禁止鼠标缩放
                     events: {
-                        load: function () {
-                            for (const it of this.legend.allItems)
-                                Highcharts.removeEvent(
-                                    (it as any).legendItem.group.element,
-                                    'click'
-                                )
+                        load: ({ target: chart }) => {
+                            // vue的ref不一定能访问series，只好每次更新
+                            nodesRef = (chart as any).series[0].nodes;
+
+                            // 初始化颜色
+                            const colors = (
+                                chart as unknown as Highcharts.Chart
+                            ).options.colors;
+                            this.thisColor = colors?.at(0) as string ?? 'blue';
+                            this.thatColor = colors?.at(1) as string ?? 'red';
                         }
-                    }
+                    },
+                    animation: undefined  // 使用默认动画 
                 }
             } as Highcharts.Options;
         },
+        svgURL() {  // SVG转DataURL
+            return `url(data:image/svg+xml,${encodeURIComponent(
+                this.svgStr.replace('fill="red"', `fill="${this.thisColor}"`)
+            )})`;
+        }
     },
     data() {
         return {
-            refresh: 0,
-            loading: false,
+            restorePosition: false,
+            refresh: 0,  // 强制刷新图表
+            loading: false,  // 互斥锁
+            thisID: this.topLevel?.id,
             thisColor: 'blue',
             thatColor: 'red',
             graphData: [] as GraphData,
             graphNodes: [] as SeriesNetworkgraphNodesOptions[],
-            visitNodes: {} as { [id: string]: boolean },
-            nodeSet: new Set<number>(),
+            loadedNodes: {} as { [id: string]: boolean },
+            visitedNodes: new Set<number>(),
+            cachedTree: new Tree(this.topLevel?.id),
+            svgStr: Zotero.File.getResource(
+                'chrome://chartero/content/icons/star.svg'
+            )
         }
-    },
-    mounted() {
-        const ref = (this.$refs.chartRef as Chart).chart,
-            colors = ref.options.colors;
-        this.thisColor = colors?.at(0) as string ?? 'blue';
-        this.thatColor = colors?.at(1) as string ?? 'red';
     },
     methods: {
         async loadNode(id: string) {
-            if (this.loading || this.visitNodes[id]) return;
-            const item = Zotero.Items.get(parseInt(id)),
-                data: GraphData = [],
-                nodes: Array<SeriesNetworkgraphNodesOptions> = [],
-                chartRef = (this.$refs.chartRef as Chart).chart;
+            if (this.loading || this.loadedNodes[id]) return;
+            const item = Zotero.Items.get(parseInt(id));
             if (!item) return;
 
             this.loading = true;
-            chartRef?.showLoading();
-            this.visitNodes[id] = true;
-            if (!this.nodeSet.has(item.id))
-                nodes.push(this.createNode(item));
+            await Zotero.Promise.delay(0);
 
-            for (const key of item.relatedItems) {
+            const tree = this.cachedTree.find(parseInt(id)),
+                data: GraphData = [],
+                nodes: Array<SeriesNetworkgraphNodesOptions> = [];
+            if (!this.visitedNodes.has(item.id))
+                nodes.push(this.createNode(item));
+            this.loadedNodes[id] = true;
+
+            for (const key of item.relatedItems) {  // 遍历相关条目
                 const it = <Zotero.Item>Zotero.Items
                     .getByLibraryAndKey(this.topLevel!.libraryID, key);
-                if (!it || this.visitNodes[it.id])
+                if (!it || this.loadedNodes[it.id])
                     continue;
-                data.push([String(item.id), String(it.id)]);
-                if (!this.nodeSet.has(it.id))
-                    nodes.push(this.createNode(it));
+                data.push([String(item.id), String(it.id)]);  // 加边
+
+                if (!this.visitedNodes.has(it.id)) {
+                    nodes.push(this.createNode(it));  // 加点
+                    tree?.appendChild(it.id);  // 记录继承关系
+                }
                 await Zotero.Promise.delay(0);  // 调度到后台，防止阻塞UI
             }
-            addon.log(data, nodes, this.nodeSet.size);
             this.graphData.push(...data);
             this.graphNodes.push(...nodes);
+            this.restorePosition = false;  // TODO: 保存当前位置
             ++this.refresh;
 
+            // 结构有变化，更新节点标记
             if (data.length + nodes.length > 0) {
-                const maxTime = this.graphNodes.reduce(
-                    (max, node) => Math.max(max, (node as any).custom.time),
-                    0
+                const maxTime = Math.max(
+                    ...this.graphNodes.map((node: any) => node.custom.time)
                 );
                 for (const node of this.graphNodes) {
-                    node.marker = {
-                        radius: Math.max(
-                            60 * ((node as any).custom.time / maxTime),
-                            8
-                        )
-                    };
-                    if (
-                        (node as any).id != this.topLevel?.id &&
-                        this.visitNodes[(node as any).id]
-                    )
-                        node.color = this.thatColor;
+                    const size = Math.max(
+                        60 * ((node as any).custom.time / maxTime),
+                        8
+                    );
+                    node.marker = this.getMarker((node as any).id, size);
                 }
+            } else {
+                const node = this.graphNodes.find(n => n.id == id)!;
+                node.marker = this.getMarker(parseInt(id), node.marker?.radius);
             }
-            chartRef?.hideLoading();
+            ++this.refresh;
+            this.loading = false;
+            addon.log('loaded', this.graphNodes);
+        },
+        async collapseNode(node: Highcharts.Point) {
+            const id = parseInt((node as any).id);
+            if (!this.loadedNodes[id] || id == this.topLevel?.id)
+                return;
+            this.loading = true;
+            this.loadedNodes[id] = false;
+
+            const point = this.graphNodes.find(n => n.id == id.toString())!,
+                tree = this.cachedTree.find(id);
+            if (tree) {
+                for (const child of tree.children) {
+                    await Zotero.Promise.delay(0);
+                    child.traverse(data => this.removeNode(data));
+                }
+                tree.clear();
+            }
+            point.marker = this.getMarker(id, point.marker?.radius);  // 更新标记
+            // addon.log('collapsed', JSON.parse(JSON.stringify(this.graphNodes)));
+
+            ++this.refresh;
             this.loading = false;
         },
+        removeNode(id?: number) {
+            if (!id)
+                return;
+            this.loadedNodes[id] = false;
+            this.visitedNodes.delete(id);
+            this.graphNodes = this.graphNodes.filter(
+                node => node.id != id.toString()
+            );
+            this.graphData = this.graphData.filter(edge => {
+                // 删除相关边，并标记相关节点为未加载
+                if (edge[0] == id.toString())
+                    return this.loadedNodes[edge[1]] = false;
+                if (edge[1] == id.toString())
+                    return this.loadedNodes[edge[0]] = false;
+                return true;
+            });
+        },
         createNode(item: Zotero.Item) {
-            this.nodeSet.add(item.id);
+            this.visitedNodes.add(item.id);
             return {
                 name: item.firstCreator,
                 id: String(item.id),
                 dataLabels: { enabled: true },
-                color: item.id == this.topLevel?.id ? this.thisColor : Highcharts
-                    .color(this.thatColor)
-                    .setOpacity(0.5)
-                    .get() as string,
+                marker: this.getMarker(item.id),
                 custom: {
                     title: item.getField('title'),
                     time: new HistoryAnalyzer(
@@ -167,31 +261,108 @@ export default defineComponent({
                     ).totalS ?? 0,
                 },
             } as SeriesNetworkgraphNodesOptions;
+        },
+        getMarker(id: number, size: number = 8): PointMarkerOptionsObject {
+            const relatedColor =
+                this.loadedNodes[id] ? this.thatColor : this.dim(this.thatColor),
+                isThis = id == this.topLevel?.id;
+            return {
+                symbol: isThis ? this.svgURL : 'circle',
+                radius: size,
+                width: size * 2,
+                height: size * 2,
+                fillColor: isThis ? this.thisColor : relatedColor,
+                lineColor: isThis ? this.thisColor : this.thatColor,
+                lineWidth: this.loadedNodes[id] ? 0 : 2,
+            }
+        },
+        dim(color: string) {  // 降低颜色亮度
+            return Highcharts.color(color).setOpacity(0.28).get() as string;
+        },
+        bfs(root: number) {
+            this.cachedTree = new Tree(root);
+            const queue = [this.cachedTree as Tree<number>],
+                visited = new Set<number>([root]);
+
+            while (queue.length) {
+                const node = queue.shift()!;
+
+                for (const edge of this.graphData)
+                    if (edge.includes(node.data.toString())) {
+                        const id = parseInt(edge[0]) + parseInt(edge[1]) - node.data;
+                        if (visited.has(id))
+                            continue;
+                        visited.add(id);
+                        node.appendChild(id);
+                    }
+                queue.push(...node.children);
+            }
+        },
+        initGraph(id: number) {
+            // 清空缓存并加载新的网络
+            this.graphData = [];
+            this.graphNodes = [];
+            this.loadedNodes = {};
+            this.visitedNodes.clear();
+            this.cachedTree = new Tree(id);
+            nodesLayout = {};
+            ++this.refresh;
+            this.loadNode(String(id));
+        },
+        updateGraph(newID: number, oldID?: number) {
+            // 保存当前位置
+            for (const node of nodesRef)
+                nodesLayout[(node as any).id] = {
+                    x: node.plotX,
+                    y: node.plotY
+                };
+            this.restorePosition = true;
+
+            // 更新缓存
+            this.bfs(newID);
+
+            // 更新当前节点
+            for (const node of this.graphNodes)
+                if (node.id == newID.toString() || node.id == oldID?.toString())
+                    node.marker = this.getMarker(
+                        (node as any).id,
+                        node.marker?.radius
+                    );
+            ++this.refresh;
         }
     },
     watch: {
-        async itemID(newID?: number, oldID?: number) {
-            if (newID && !this.loading) {
-                if (this.nodeSet.has(newID)) {
-                    // 更新当前节点颜色
-                    for (const node of this.graphNodes) 
-                        if (node.id == newID.toString())
-                            node.color = this.thisColor;
-                        else if (node.id == oldID?.toString())
-                            node.color = this.thatColor;
-                    ++this.refresh;
-                } else {
-                    // 清空缓存并加载新的网络
-                    this.graphData = [];
-                    this.graphNodes = [];
-                    this.visitNodes = {};
-                    this.nodeSet.clear();
-                    ++this.refresh;
-                    this.loadNode(String(newID));
-                }
+        itemID(newID?: number, oldID?: number) {
+            if (newID && !this.loading && this.show) {
+                this.thisID = newID;
+                if (this.visitedNodes.has(newID))
+                    this.updateGraph(newID, oldID);
+                else
+                    this.initGraph(newID);
             }
         },
+        show(newVal: boolean) {
+            if (!newVal)
+                return;
+            if (this.visitedNodes.has(this.topLevel!.id))
+                this.updateGraph(this.topLevel!.id, this.thisID);
+            else
+                this.initGraph(this.topLevel!.id);
+            this.thisID = this.topLevel?.id;
+        },
+        loading(newVal) {
+            const chartRef = (this.$refs.chartRef as Chart)?.chart;
+            if (newVal)
+                chartRef?.showLoading();
+            else
+                chartRef?.hideLoading();
+        }
     },
-    props: { topLevel: Object as PropType<Zotero.Item>, theme: Object, itemID: Number },
+    props: {
+        topLevel: Object as PropType<Zotero.Item>,
+        theme: Object,
+        itemID: Number,
+        show: Boolean
+    },
 });
 </script>

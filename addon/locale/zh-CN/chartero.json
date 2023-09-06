@@ -126,5 +126,6 @@
     "others": "其它",
     "help": "帮助",
     "thisItem": "当前条目",
-    "relatedItems": "相关条目"
+    "relatedItems": "相关条目",
+    "collapsedItems": "已折叠条目"
 }
