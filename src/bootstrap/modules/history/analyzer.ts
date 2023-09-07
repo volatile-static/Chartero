@@ -3,9 +3,16 @@ import type { AttachmentHistory } from './history';
 export default class HistoryAnalyzer {
     private readonly data: AttachmentHistory[];
     private _attachments: Array<false | Zotero.Item>;
-    constructor(data: MaybeArray<AttachmentHistory>) {
+    constructor(data: MaybeArray<AttachmentHistory> | Zotero.Item) {
         if (Array.isArray(data))
             this.data = data;
+        else if (data instanceof addon.getGlobal('Zotero').Item)
+            if (data.isRegularItem())
+                this.data = addon.history.getInTopLevelSync(data);
+            else {
+                const tmp = addon.history.getByAttachment(data);
+                this.data = tmp ? [tmp] : [];
+            }
         else
             this.data = [data];
         this._attachments = [];

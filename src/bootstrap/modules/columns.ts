@@ -1,6 +1,5 @@
 import { config } from '../../../package.json';
 import HistoryAnalyzer from './history/analyzer';
-import { AttachmentHistory } from './history/history';
 import { toTimeString } from './utils';
 
 export default function addItemColumns() {
@@ -8,26 +7,25 @@ export default function addItemColumns() {
         {
             dataKey: 'totalSeconds',
             label: addon.locale.totalTime,
-            iconPath: 'chrome://zotero/skin/tick.png',
+            // iconPath: `chrome://${config.addonName}/content/icons/icon.png`,
             columnPickerSubMenu: true,
             pluginID: config.addonID,
             dataProvider: (item: Zotero.Item) => {
                 try {
                     if (!addon.history.cacheLoaded)
                         return '';
-                    let his = [addon.history.getByAttachment(item)];
-                    if (!his[0])
-                        if (item.isRegularItem())
-                            his = addon.history.getInTopLevelSync(item);
-                        else
-                            return '';
-                    return toTimeString(
-                        new HistoryAnalyzer(his as AttachmentHistory[]).totalS
-                    );
+                    return new HistoryAnalyzer(item).totalS.toString();
                 } catch (e) {
                     addon.log(e);
                     return '';
                 }
+            },
+            renderCell: (_, data, column) => {
+                return addon.ui.createElement(document, 'span', {
+                    properties: { textContent: toTimeString(data) },
+                    classList: ['cell', ...column.className.split(' ')],
+                    enableElementDOMLog: false
+                });
             }
         }
     ]);

@@ -164,7 +164,7 @@ export default defineComponent({
             const tree = this.cachedTree.find(parseInt(id)),
                 data: GraphData = [],
                 nodes: Array<SeriesNetworkgraphNodesOptions> = [];
-            if (!this.visitedNodes.has(item.id))
+            if (!this.visitedNodes.has(item.id) && item.relatedItems.length)
                 nodes.push(this.createNode(item));
             this.loadedNodes[id] = true;
 
@@ -192,23 +192,24 @@ export default defineComponent({
                     ...this.graphNodes.map((node: any) => node.custom.time)
                 );
                 for (const node of this.graphNodes) {
-                    const size = Math.max(
+                    const size = maxTime ? Math.max(
                         60 * ((node as any).custom.time / maxTime),
                         8
-                    );
+                    ) : 8;
                     node.marker = this.getMarker((node as any).id, size);
                 }
             } else {
-                const node = this.graphNodes.find(n => n.id == id)!;
-                node.marker = this.getMarker(parseInt(id), node.marker?.radius);
+                const node = this.graphNodes.find(n => n.id == id);
+                if (node)
+                    node.marker = this.getMarker(parseInt(id), node.marker?.radius);
             }
             ++this.refresh;
             this.loading = false;
-            addon.log('loaded', this.graphNodes);
+            // addon.log('loaded', this.graphNodes);
         },
         async collapseNode(node: Highcharts.Point) {
             const id = parseInt((node as any).id);
-            if (!this.loadedNodes[id] || id == this.topLevel?.id)
+            if (!this.loadedNodes[id] || id == this.thisID)
                 return;
             this.loading = true;
             this.loadedNodes[id] = false;
@@ -254,18 +255,14 @@ export default defineComponent({
                 marker: this.getMarker(item.id),
                 custom: {
                     title: item.getField('title'),
-                    time: new HistoryAnalyzer(
-                        item.isRegularItem()
-                            ? addon.history.getInTopLevelSync(item)
-                            : addon.history.getByAttachment(item)
-                    ).totalS ?? 0,
+                    time: new HistoryAnalyzer(item).totalS,
                 },
             } as SeriesNetworkgraphNodesOptions;
         },
         getMarker(id: number, size: number = 8): PointMarkerOptionsObject {
             const relatedColor =
                 this.loadedNodes[id] ? this.thatColor : this.dim(this.thatColor),
-                isThis = id == this.topLevel?.id;
+                isThis = id == this.thisID;
             return {
                 symbol: isThis ? this.svgURL : 'circle',
                 radius: size,

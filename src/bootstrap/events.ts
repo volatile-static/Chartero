@@ -104,6 +104,7 @@ export async function onNotify(
     ids: string[] | number[],
     extraData: _ZoteroTypes.anyObj
 ) {
+    // addon.log('onNotify: ', event, type, ids, extraData);
     if (event == 'close' && type == 'tab' && ids[0] == addon.overviewTabID)
         addon.overviewTabID = undefined;
 

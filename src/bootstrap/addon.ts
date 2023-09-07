@@ -16,19 +16,20 @@ import { addDebugMenu } from './modules/debug';
 import addItemColumns from './modules/columns';
 
 export default class Addon extends toolBase.BasicTool {
+    readonly ui: UITool;
     readonly menu: MenuManager;
+    readonly patcher: PatcherManager;
+    readonly reader: ReaderInstanceManager;
     readonly libTab: LibraryTabPanelManager;
     readonly prefPane: PreferencePaneManager;
     readonly readerTab: ReaderTabPanelManager;
-    readonly reader: ReaderInstanceManager;
-    readonly ui: UITool;
     readonly history: ReadingHistory;
-    readonly patcher: PatcherManager;
     readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
 
     readonly rootURI = rootURI;
     overviewTabID?: string;
     private notifierID?: string;
+    private readonly prefsObserverIDs: Symbol[] = [];
 
     constructor() {
         super();
@@ -50,6 +51,7 @@ export default class Addon extends toolBase.BasicTool {
                 'chrome://chartero/locale/chartero.json'
             )
         );
+        this.ui.basicOptions.ui.enableElementDOMLog = __dev__;
     }
 
     getPref(key: string) {
@@ -94,6 +96,19 @@ export default class Addon extends toolBase.BasicTool {
         );
         registerPanels();
 
+        this.prefsObserverIDs.push(Zotero.Prefs.registerObserver(
+            `${packageName}.scanPeriod`,
+            () => {
+                if (Number(this.getPref('scanPeriod')) < 1)
+                    Zotero.Prefs.set(`${packageName}.scanPeriod`, 1);
+                this.history.unregister();
+                this.history.register(this.getPref('scanPeriod') as number);
+            }
+        ));
+        this.prefsObserverIDs.push(Zotero.Prefs.registerObserver(
+            `${packageName}.useDarkTheme`,
+            () => { }
+        ));
         this.history.register(addon.getPref("scanPeriod") as number);
         this.patcher.register(
             Zotero.Search.prototype,
@@ -120,6 +135,7 @@ export default class Addon extends toolBase.BasicTool {
     unload() {
         this.overviewTabID && Zotero_Tabs.close(this.overviewTabID);
         this.notifierID && Zotero.Notifier.unregisterObserver(this.notifierID);
+        this.prefsObserverIDs.forEach(id => Zotero.Prefs.unregisterObserver(id));
         ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
         toolBase.unregister(this);
     }

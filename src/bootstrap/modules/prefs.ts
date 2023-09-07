@@ -8,7 +8,6 @@ export default function initPrefsPane(win: Window) {
     btn.parentElement!.previousElementSibling!.addEventListener('input', onJsonInput);
     $('chartero-preferences-pane-history-compress')?.addEventListener('command', compressHistory);
     $('chartero-preferences-pane-history-auto-import')?.addEventListener('command', autoImportHistory);
-    $('chartero-preferences-pane-scanPeriod')?.addEventListener('input', onScanPeriodInput);
     $('chartero-preferences-pane-refreshTagsTable')?.addEventListener(
         'command',
         () => refreshExcludedTags(win.document)
@@ -65,24 +64,13 @@ function onJsonInput(e: Event) {
         false;
 }
 
-function onScanPeriodInput(e: Event) {
-    try {
-        const period = parseInt((e.target as HTMLInputElement).value);
-        if (isNaN(period))
-            throw new Error('Invalid period');
-        addon.history.unregister();
-        addon.history.register(period);
-    } catch {
-        (e.target as HTMLInputElement).value = '1';
-    }
-}
-
 function autoImportHistory(e: MouseEvent) {
     const dataKey = addon.getPref('dataKey');
     if (dataKey) {
         const noteItem = Zotero.Items.getByLibraryAndKey(1, String(dataKey));
         if (noteItem instanceof Zotero.Item && noteItem.isNote()) {
             importLegacyHistory(noteItem.note);
+            Zotero.Prefs.clear('chartero.dataKey');
             return;
         }
     }
