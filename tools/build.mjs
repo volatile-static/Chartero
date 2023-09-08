@@ -16,6 +16,7 @@ const { replaceInFileSync } = replaceInFile;
 import details from "../package.json" assert { type: "json" };
 
 const { name, author, description, homepage, version, config } = details;
+const prefs = config.defaultSettings;
 
 const t = new Date();
 const buildTime = dateFormat("YYYY-mm-dd HH:MM:SS", new Date());
@@ -100,16 +101,21 @@ function replaceString() {
   const replaceTo = [author, description, homepage, version, buildTime];
 
   replaceFrom.push(
-    ...Object.keys(config).map((k) => new RegExp(`__${k}__`, "g")),
+    ...[
+      ...Object.keys(config),
+      ...Object.keys(prefs)
+    ].map((k) => new RegExp(`__${k}__`, "g"))
   );
   replaceTo.push(...Object.values(config));
+  replaceTo.push(...Object.keys(prefs).map(
+    key => `id='${name}-${key}' preference='${config.addonPref}.${key}'`
+  ));
 
   const optionsAddon = {
     files: [
       `${buildDir}/addon/**/*.xhtml`,
       `${buildDir}/addon/**/*.html`,
       `${buildDir}/addon/**/*.json`,
-      `${buildDir}/addon/prefs.js`,
       `${buildDir}/addon/manifest.json`,
       `${buildDir}/addon/bootstrap.js`,
     ],
@@ -150,8 +156,8 @@ function replaceString() {
   const replaceResultXhtml = replaceInFileSync({
     files: [`${buildDir}/addon/**/*.xhtml`],
     processor: (input) => {
-      const matchs = [...input.matchAll(/(data-l10n-id)="(\S*)"/g)];
-      matchs.map((match) => {
+      const matches = [...input.matchAll(/(data-l10n-id)="(\S*)"/g)];
+      matches.map((match) => {
         if (localeMessage.has(match[2])) {
           input = input.replace(
             match[0],
@@ -178,13 +184,13 @@ function replaceString() {
     console.warn(
       `[Build] [Warn] Fluent message [${new Array(
         ...localeMessageMiss,
-      )}] do not exsit in addon's locale files.`,
+      )}] do not exist in addon's locale files.`,
     );
   }
 }
 
 async function esbuild() {
-  build({
+  return build({
     target: 'firefox102',
     entryPoints: [path.join(buildDir, "../src/bootstrap/index.ts")],
     define: {
@@ -197,6 +203,16 @@ async function esbuild() {
   }).catch(() => exit(1));
 }
 
+function buildPrefs() {
+  writeFileSync(
+    path.join(buildDir, 'addon/prefs.js'),
+    Object.entries(prefs).map(
+      ([k, v]) => `pref('${config.addonPref}.${k}', ${JSON.stringify(v)});`
+    ).join('\n')
+  );
+  console.log('[Build] Build prefs.js OK');
+}
+
 async function main() {
   console.log(
     `[Build] BUILD_DIR=${buildDir}, VERSION=${version}, BUILD_TIME=${buildTime}, ENV=${[
@@ -207,6 +223,7 @@ async function main() {
   clearFolder(buildDir);
 
   copyFolderRecursiveSync("addon", buildDir);
+  buildPrefs();
 
   if (isPreRelease) {
     console.log(

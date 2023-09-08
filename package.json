@@ -6,9 +6,20 @@
         "issue": "https://github.com/volatile-static/Chartero/issues",
         "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
         "updateURL": "https://raw.githubusercontent.com/volatile-static/Chartero/main/tools/update.json",
-        "addonID": "chartero@volatile.static"
+        "addonID": "chartero@volatile.static",
+        "defaultSettings": {
+            "useDarkTheme": false,
+            "enableRealTimeDashboard": true,
+            "enableAllImages": true,
+            "enableMinimap": true,
+            "enableReaderAlert": false,
+            "excludedTags": [],
+            "maxSummaryItems": 99,
+            "scanPeriod": 1,
+            "scanTimeout": 20
+        }
     },
-    "version": "2.0.0-beta.4",
+    "version": "2.0.0-beta.5",
     "description": "Charts for Zotero",
     "scripts": {
         "build": "npm run reload-all",

@@ -6,15 +6,14 @@
     <vbox class="main-section">
         <html:h1 data-l10n-id="plotTitle"></html:h1>
         <groupbox>
-            <checkbox native="true" data-l10n-id="darkTheme" preference="__addonPref__.useDarkTheme" />
-            <checkbox native="true" data-l10n-id="enableRealTimeDashboard"
-                preference="__addonPref__.enableRealTimeDashboard" />
-            <checkbox native="true" data-l10n-id="allImages" preference="__addonPref__.enableAllImages" />
-            <checkbox native="true" data-l10n-id="minimap" preference="__addonPref__.enableMinimap" />
-            <checkbox native="true" data-l10n-id="readerAlert" preference="__addonPref__.enableReaderAlert" />
+            <checkbox native="true" data-l10n-id="darkTheme" __useDarkTheme__ />
+            <checkbox native="true" data-l10n-id="enableRealTimeDashboard" __enableRealTimeDashboard__ />
+            <checkbox native="true" data-l10n-id="allImages" __enableAllImages__ />
+            <checkbox native="true" data-l10n-id="minimap" __enableMinimap__ />
+            <checkbox native="true" data-l10n-id="readerAlert" __enableReaderAlert__ />
 
-            <html:label data-l10n-id="maxSummaryItems" for="chartero-preferences-pane-maxSummaryItems"></html:label>
-            <html:input id="chartero-preferences-pane-maxSummaryItems" preference="__addonPref__.maxSummaryItems">
+            <html:label data-l10n-id="maxSummaryItems" for="chartero-maxSummaryItems"></html:label>
+            <html:input __maxSummaryItems__>
             </html:input>
         </groupbox>
         <groupbox>
@@ -32,13 +31,11 @@
         <html:h1 data-l10n-id="recordTitle"></html:h1>
         <groupbox>
             <html:label data-l10n-id="scanPeriod" for="chartero-preferences-pane-scanPeriod"></html:label>
-            <html:input id="chartero-preferences-pane-scanPeriod" preference="__addonPref__.scanPeriod" type="number"
-                min="1" step="1"></html:input>
+            <html:input __scanPeriod__ type="number" min="1" step="1"></html:input>
         </groupbox>
         <groupbox>
             <html:label data-l10n-id="recordTimeout" for="chartero-preferences-pane-scanTimeout"></html:label>
-            <html:input id="chartero-preferences-pane-scanTimeout" preference="__addonPref__.scanTimeout" type="number"
-                min="1" step="1"></html:input>
+            <html:input __scanTimeout__ type="number" min="1" step="1"></html:input>
         </groupbox>
     </vbox>
     <vbox class="main-section">

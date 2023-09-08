@@ -65,7 +65,7 @@ function onJsonInput(e: Event) {
 }
 
 function autoImportHistory(e: MouseEvent) {
-    const dataKey = addon.getPref('dataKey');
+    const dataKey = addon.getPref('dataKey' as PrefsKey);
     if (dataKey) {
         const noteItem = Zotero.Items.getByLibraryAndKey(1, String(dataKey));
         if (noteItem instanceof Zotero.Item && noteItem.isNote()) {

@@ -54,7 +54,7 @@ export default class Addon extends toolBase.BasicTool {
         this.ui.basicOptions.ui.enableElementDOMLog = __dev__;
     }
 
-    getPref(key: string) {
+    getPref(key: PrefsKey) {
         return Zotero.Prefs.get(`${packageName}.${key}`);
     }
 
