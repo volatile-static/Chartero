@@ -9,6 +9,7 @@ import Highcharts from '@/highcharts';
 import Tree from '@/tree';
 import HistoryAnalyzer from '$/history/analyzer';
 import { toTimeString } from '$/utils';
+import { helpMessageOption } from '@/utils';
 import type {
     SeriesNetworkgraphNodesOptions,
     PointMarkerOptionsObject
@@ -125,6 +126,11 @@ export default defineComponent({
                         }
                     },
                     animation: undefined  // 使用默认动画 
+                },
+                exporting: {
+                    menuItemDefinitions: helpMessageOption(
+                        addon.locale.doc.network
+                    ),
                 }
             } as Highcharts.Options;
         },

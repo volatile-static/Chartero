@@ -47,7 +47,7 @@ async function onMainWindowUnload({ window }, reason) {
 }
 
 function shutdown({ id, version, resourceURI, rootURI }, reason) {
-  if (reason === APP_SHUTDOWN) 
+  if (reason === APP_SHUTDOWN)
     return;
   addon.unload();
 
