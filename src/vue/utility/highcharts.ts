@@ -97,8 +97,8 @@ Highcharts.setOptions({
                 onclick: function () {
                     const points = this.getSelectedPoints(),
                         ids = points
-                            .map((p: any) => p.custom?.itemID ?? p.id)
-                            .filter(id => parseInt(id) >= 0);
+                            .map((p: any) => parseInt(p.custom?.itemID ?? p.id))
+                            .filter(id => id >= 0);
                     if (ids.length > 0) viewItemsInLib(ids);
                     else MessagePlugin.warning(addon.locale.noItemToView);
                 },

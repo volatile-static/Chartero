@@ -44,6 +44,7 @@
         "pie": "Proportion of Total Reading Time",
         "pieSub": "Click a Pie for Details",
         "schedule": "Daily Routines",
+        "network": "Relation Network",
         "dateTime": "Reading Time Per Day",
         "pageTime": "Reading Time Per Page",
         "pageTimeSub": "Ctrl+Click to Open PDF at Page"
@@ -52,7 +53,6 @@
         "authorBubble": "Author Bubble",
         "gantt": "Timeline",
         "wordCloud": "标题词云图",
-        "network": "Relation Network",
         "tagsPie": "关键词饼图"
     },
     "images": {
@@ -77,9 +77,9 @@
     "showSelectedInLibrary": "Show Selected in Library",
     "noItemToView": "Click a Node to Select an Item",
     "occurrences": "Occurrences",
-    "seconds": "Seconds",
-    "minutes": "Minutes",
-    "hours": "Hours",
+    "seconds": "s",
+    "minutes": "min",
+    "hours": "h",
     "date": "Date",
     "time": "Time",
     "times": "Times",

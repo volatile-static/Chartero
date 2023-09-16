@@ -64,9 +64,15 @@ function onJsonInput(e: Event) {
         false;
 }
 
-function autoImportHistory(e: MouseEvent) {
-    const dataKey = addon.getPref('dataKey' as PrefsKey);
+function autoImportHistory() {
+    const dataKey = addon.getPref('dataKey' as PrefsKey),
+        period = addon.getPref('scanPeriod') as number;
     if (dataKey) {
+        if (period && period > 999)  // 旧版单位是毫秒
+            Zotero.Prefs.set(
+                'chartero.scanPeriod',
+                Math.ceil(period / 1000)
+            );
         const noteItem = Zotero.Items.getByLibraryAndKey(1, String(dataKey));
         if (noteItem instanceof Zotero.Item && noteItem.isNote()) {
             importLegacyHistory(noteItem.note);

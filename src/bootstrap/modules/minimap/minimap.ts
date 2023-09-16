@@ -70,6 +70,11 @@ export function updateMinimap(reader: _ZoteroTypes.ReaderInstance) {
         }
         renderMinimap(container, { background, pagesHeight, annotations: annArr });
     } else if (reader.type == 'epub') {
+        if (reader.flowMode == 'paginated') {
+            container.toggleAttribute('hidden', true);
+            return;
+        }
+        container.toggleAttribute('hidden', false);
         const view = reader._primaryView as _ZoteroTypes.Reader.EPUBView,
             totalHeight = (view as any)
                 ._sectionsContainer.getBoundingClientRect().bottom,

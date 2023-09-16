@@ -146,9 +146,14 @@ export default class ReadingHistory extends ManagerTool {
 
         if (this._activeReader?.itemID) {
             this._mutex = true;
-            const cache = await this.getCache(this._activeReader.itemID); // 当前PDF的缓存
-            this.record(cache.record); // 先记录到缓存
-            this.saveNote(cache).finally(() => this._mutex = false); // 保存本次记录
+            try {
+                const cache = await this.getCache(this._activeReader.itemID); // 当前PDF的缓存
+                this.record(cache.record); // 先记录到缓存
+                this.saveNote(cache).finally(() => this._mutex = false); // 保存本次记录
+            } catch (error) {
+                addon.log(error);
+                this._mutex = false;
+            }
             this._recordHook(this._activeReader);  // 插件回调函数，更新实时仪表盘
             this._onHold();
         }
@@ -277,8 +282,8 @@ export default class ReadingHistory extends ManagerTool {
      */
     private record(history: AttachmentRecord) {
         const recordPage = (stats: _ZoteroTypes.Reader.ViewStats) => {
-            if (!stats.pageIndex) {
-                addon.log(stats);
+            if (typeof stats?.pageIndex != 'number') {
+                addon.log('Recording failed!', stats);
                 return;
             }
             const pageHis = (history.pages[stats.pageIndex] ??= new PageRecord());

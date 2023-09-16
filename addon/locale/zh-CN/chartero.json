@@ -44,6 +44,7 @@
         "pie": "总阅读时长占比",
         "pieSub": "点击扇形了解更多",
         "schedule": "作息规律统计",
+        "network": "关联文献网",
         "dateTime": "每日阅读时长",
         "pageTime": "每页阅读时长",
         "pageTimeSub": "Ctrl+单击跳转到页面"
@@ -52,7 +53,6 @@
         "authorBubble": "作者气泡图",
         "gantt": "历史甘特图",
         "wordCloud": "标题词云图",
-        "network": "关联文献网",
         "tagsPie": "关键词饼图"
     },
     "images": {

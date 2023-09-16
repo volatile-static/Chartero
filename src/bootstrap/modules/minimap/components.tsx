@@ -33,6 +33,7 @@ function Minimap({ background, pagesHeight, annotations }: MinimapProps) {
     const totalHeight = pagesHeight.reduce((a, b) => a + b, 0);
     return <>{
         pagesHeight.map((height, i) => <MinimapPage
+            key={Zotero.randomString()}
             background={background[i]}
             height={height}
             totalHeight={totalHeight}
@@ -48,7 +49,7 @@ function MinimapPage({ background, height, totalHeight, annotations }: {
     annotations: AnnotationInfo[]
 }) {
     if (__dev__ && annotations.length)
-        addon.log('MinimapPage', background, height, annotations);
+        addon.log('MinimapPage', background, height, JSON.stringify(annotations));
     return <div
         className="chartero-minimap-page"
         style={{
@@ -61,8 +62,8 @@ function MinimapPage({ background, height, totalHeight, annotations }: {
                 className="chartero-minimap-note"
                 style={{
                     backgroundColor: ann.color,
-                    height: `${Math.abs(rect.top - rect.bottom) / height}%`,
-                    bottom: `${rect.bottom / height}%`,
+                    top: `${(1 - rect.top / height) * 100}%`,
+                    bottom: `${rect.bottom / height * 100}%`,
                 }}
             ></div>))
         }</div>

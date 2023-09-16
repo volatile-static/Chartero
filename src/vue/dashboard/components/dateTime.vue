@@ -11,7 +11,7 @@ import HistoryAnalyzer from '$/history/analyzer';
 import type {
     ExportingOptions,
     Options,
-    SeriesLineOptions,
+    SeriesSplineOptions,
     Tooltip,
     TooltipFormatterContextObject,
 } from 'highcharts';
@@ -75,12 +75,13 @@ export default defineComponent({
             this.chartOpts.series = newHis.map(attHis => {
                 const ha = new HistoryAnalyzer([attHis]);
                 return {
+                    type: 'spline',
                     name:
                         newHis.length > 1
                             ? ha.titles[0]
                             : `${addon.locale.time}(${addon.locale.seconds})`,
                     data: ha.dateTimeStats.map(obj => [obj.date, obj.time]),
-                } as SeriesLineOptions;
+                } as SeriesSplineOptions;
             });
             this.chartOpts.legend!.enabled = newHis.length > 1;
         },
