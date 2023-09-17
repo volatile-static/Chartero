@@ -70,6 +70,7 @@ export default defineComponent({
         };
         return {
             chartOpts: {
+                chart: { animation: undefined },
                 exporting: {
                     menuItemDefinitions: helpMessageOption(
                         addon.locale.doc.authorBubble
@@ -80,9 +81,15 @@ export default defineComponent({
                         minSize: '20%',
                         maxSize: '80%',
                         layoutAlgorithm: {
-                            gravitationalConstant: 0.02,
+                            gravitationalConstant: 0.08,
                             splitSeries: true,
                             parentNodeLimit: true,
+                            parentNodeOptions: {
+                                marker: { 
+                                    fillColor: 'gray',
+                                    fillOpacity: 0.25
+                                 }
+                            }
                         },
                         point: { events: { click: onPointClick } },
                         dataLabels: {
