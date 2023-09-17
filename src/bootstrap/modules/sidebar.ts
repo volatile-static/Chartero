@@ -70,7 +70,10 @@ export function registerPanels() {
 }
 
 export function renderSummaryPanel(ids: number[]) {
-    if (ids.length > Number(addon.getPref('maxSummaryItems')))
+    if (
+        ids.length == 0 ||
+        ids.length > Number(addon.getPref('maxSummaryItems'))
+    )
         return;
     const content = document.getElementById(
         'zotero-item-pane-content'

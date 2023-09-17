@@ -1,5 +1,6 @@
 {
     "name": "chartero",
+    "version": "2.0.0-beta.6",
     "config": {
         "addonName": "Chartero",
         "addonPref": "extensions.zotero.chartero",
@@ -20,7 +21,6 @@
             "scanTimeout": 20
         }
     },
-    "version": "2.0.0-beta.5",
     "description": "Charts for Zotero",
     "scripts": {
         "build": "npm run reload-all",
@@ -68,7 +68,7 @@
     },
     "devDependencies": {
         "@types/animejs": "^3.1.7",
-        "@types/node": "^18.17.16",
+        "@types/node": "^18.17.17",
         "@types/react": "17.0.2",
         "@types/react-dom": "17.0.2",
         "@vitejs/plugin-vue": "^4.3.4",

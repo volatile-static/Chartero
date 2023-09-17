@@ -46,6 +46,13 @@ async function processSeries(creatorIDs: number[], themeColors: string[]) {
     const itemColor: { [key: number]: number } = {},
         rawSeries = await Promise.all(creatorIDs.map(getSeries)),
         filtered = rawSeries.filter(it => it) as SeriesPackedbubbleOptions[];
+    if (!filtered.length)
+        return [{
+            type: 'packedbubble', 
+            data: [], 
+            visible: false,
+            showInLegend: false,
+        } as SeriesPackedbubbleOptions];
     return filtered.map(series => {
         (series.data as PointOptionsObject[]).forEach(point => {
             const itemID: number = point.custom!.itemID;
