@@ -46,13 +46,6 @@ async function processSeries(creatorIDs: number[], themeColors: string[]) {
     const itemColor: { [key: number]: number } = {},
         rawSeries = await Promise.all(creatorIDs.map(getSeries)),
         filtered = rawSeries.filter(it => it) as SeriesPackedbubbleOptions[];
-    if (!filtered.length)
-        return [{
-            type: 'packedbubble', 
-            data: [], 
-            visible: false,
-            showInLegend: false,
-        } as SeriesPackedbubbleOptions];
     return filtered.map(series => {
         (series.data as PointOptionsObject[]).forEach(point => {
             const itemID: number = point.custom!.itemID;
@@ -68,10 +61,10 @@ export default defineComponent({
         const onPointClick = (e: PointClickEventObject) => {
             const opts: any = this.chartOpts,
                 series = opts.series as SeriesPackedbubbleOptions[],
-                selectID = (e.point as PointOptionsObject).custom!.itemID;
-            series.forEach(s =>
+                selectID = (e.point as PointOptionsObject).custom?.itemID;
+            selectID && series.forEach(s =>
                 (s.data as PointOptionsObject[]).forEach(d => {
-                    if (d.custom!.itemID == selectID) d.selected = !d.selected;
+                    if (d.custom?.itemID == selectID) d.selected = !d.selected;
                 })
             );
         };
@@ -163,11 +156,16 @@ export default defineComponent({
             processSeries(uniqueCreatorIDs, themeColors).then(series => {
                 this.chartOpts.series = series;
                 nextTick(() => {
+                    if (chart.series.length)
+                        (chart as any).hideNoData();
+                    else
+                        (chart as any).showNoData();
                     for (let i = 6; i < chart.series.length; ++i)
                         chart.series[i].setVisible(false, false); // TODO: 切换时似乎未执行
                     chart.hideLoading();
                 });
             });
+            // addon.log(chart);
         },
     },
     watch: {
