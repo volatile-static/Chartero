@@ -43,7 +43,7 @@ The name _Chartero_ is a combination of **Char**t and Zo**tero**. As a [Zotero](
 
 ### Troubleshooting
 
-Please disable all other plugins when necessary, and then file an issue with the exported debug output.
+Please disable all other plugins when necessary, and then file an issue with the exported debug output. Feel free to ask anything in issue😁
 
 ## Developer Guide
 
