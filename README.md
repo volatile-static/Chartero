@@ -100,6 +100,10 @@ The data structure of history records are defined in [history/data.ts](src/boots
 -   Patched the `search` method of object `Zotero.Search` to hide the note items which records the reading history.
 -   Add click events to tabs in the left side-bar of `Reader`.
 
+### See also
+
+-   [🤩 Awesome Zotero Plugins](https://plugins.zotero-chinese.com/charts.html)
+
 ---
 
 <br />
