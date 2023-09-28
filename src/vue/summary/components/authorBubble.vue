@@ -1,4 +1,5 @@
 <script lang="ts">
+import { Chart } from 'highcharts-vue';
 import type {
     Options,
     PointClickEventObject,
@@ -85,10 +86,10 @@ export default defineComponent({
                             splitSeries: true,
                             parentNodeLimit: true,
                             parentNodeOptions: {
-                                marker: { 
+                                marker: {
                                     fillColor: 'gray',
                                     fillOpacity: 0.25
-                                 }
+                                }
                             }
                         },
                         point: { events: { click: onPointClick } },
@@ -190,12 +191,9 @@ export default defineComponent({
         },
         theme: Object,
     },
+    components: { Chart },
 });
 </script>
-<script lang="ts" setup>
-import { Chart } from 'highcharts-vue';
-</script>
-
 <template>
     <Chart :options="options" :key="theme" ref="chart" style="height: 100%"></Chart>
 </template>

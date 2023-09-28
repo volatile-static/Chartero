@@ -1,8 +1,10 @@
 <script lang="ts">
 import type { Options } from 'highcharts';
 import type { AttachmentHistory } from '$/history/history';
+import { Chart } from 'highcharts-vue';
 import Highcharts from '@/highcharts';
 export default {
+    components: { Chart },
     data() {
         return { locale: addon.locale };
     },
@@ -24,9 +26,6 @@ export default {
         theme: Object,
     },
 };
-</script>
-<script lang="ts" setup>
-import { Chart } from 'highcharts-vue';
 </script>
 
 <template>

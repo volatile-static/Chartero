@@ -1,6 +1,3 @@
-<script setup lang="ts">
-import { FilterIcon, SwapIcon } from 'tdesign-icons-vue-next';
-</script>
 <script lang="ts">
 import type {
     Options,
@@ -10,6 +7,7 @@ import type {
     NavigatorYAxisOptions,
     Point,
 } from 'highcharts';
+import { FilterIcon, SwapIcon } from 'tdesign-icons-vue-next';
 import { Chart } from 'highcharts-vue';
 import { defineComponent } from 'vue';
 import { helpMessageOption } from '@/utils';
@@ -212,6 +210,9 @@ export default defineComponent({
                 ++this.reloadChart;
             },
         },
+        noHistoryFound() {
+            return rawData.length < 1;
+        },
     },
     props: {
         history: {
@@ -227,13 +228,13 @@ export default defineComponent({
     beforeUnmount() {
         window.removeEventListener('resize', this.onResizeDebounced);
     },
-    components: { Chart },
+    components: { Chart, FilterIcon, SwapIcon },
 });
 </script>
 
 <template>
     <div>
-        <h1 v-if="rawData.length < 1" class="center-label">
+        <h1 v-if="noHistoryFound" class="center-label">
             {{ locale.noHistoryFound }}
         </h1>
         <t-space v-else direction="vertical" style="width: 100%">
@@ -248,7 +249,7 @@ export default defineComponent({
                 <t-select v-else disabled auto-width size="small" :placeholder="locale.tableHeaderTip"></t-select>
                 <t-select v-model="sortOption" :placeholder="locale.sort" size="small" auto-width>
                     <template #prefixIcon>
-                        <SwapIcon style="transform: rotate(90deg);"/>
+                        <SwapIcon style="transform: rotate(90deg);" />
                     </template>
                     <t-option value="startAscending" :label="locale.ganttMenu.startAscending"></t-option>
                     <t-option value="startDescending" :label="locale.ganttMenu.startDescending"></t-option>

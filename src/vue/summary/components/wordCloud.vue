@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { Options, SeriesWordcloudOptions } from 'highcharts';
 import type { DataOption } from 'tdesign-vue-next/es/transfer/type';
+import { Chart } from 'highcharts-vue';
 import Highcharts from '@/highcharts';
 import HistoryAnalyzer from '$/history/analyzer';
 import { helpMessageOption, buttons } from '@/utils';
@@ -9,6 +10,7 @@ import { toTimeString } from '$/utils';
 const Zotero = addon.getGlobal('Zotero');
 
 export default {
+    components: { Chart },
     data() {
         return {
             locale: addon.locale,
@@ -142,9 +144,6 @@ export default {
         theme: Object,
     },
 };
-</script>
-<script lang="ts" setup>
-import { Chart } from 'highcharts-vue';
 </script>
 
 <template>
