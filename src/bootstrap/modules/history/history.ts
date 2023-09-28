@@ -46,7 +46,7 @@ export default class ReadingHistory extends ManagerTool {
 
     register(scanPeriod: number) {
         // 初始化定时器回调函数
-        this._scanPeriod = scanPeriod;
+        this._scanPeriod = Number(scanPeriod);
         this._intervalID = Zotero
             .getMainWindow()
             .setInterval(this.schedule.bind(this), this._scanPeriod * 1000);
@@ -290,7 +290,7 @@ export default class ReadingHistory extends ManagerTool {
 
             history.numPages ??= stats.pagesCount;
             pageHis.period ??= {};
-            pageHis.period[ms2s(new Date().getTime())] = Number(this._scanPeriod);
+            pageHis.period[ms2s(new Date().getTime())] = this._scanPeriod;
 
             const item = Zotero.Items.getLibraryAndKeyFromID(
                 this._activeReader!.itemID!
