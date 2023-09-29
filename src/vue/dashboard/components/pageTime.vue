@@ -19,10 +19,9 @@ import type { AttachmentHistory } from '$/history/history';
 import { toTimeString } from '$/utils';
 
 function onPointClick(this: Point, events: PointClickEventObject) {
-    const zotero = addon.getGlobal('Zotero');
     if (events.ctrlKey)
-        zotero.OpenPDF.openToPage(
-            zotero.Items.get(Number(this.series.options.id)),
+        Zotero.OpenPDF.openToPage(
+            Zotero.Items.get(Number(this.series.options.id)),
             this.category
         );
     return false;

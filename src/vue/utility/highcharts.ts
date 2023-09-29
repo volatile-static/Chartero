@@ -27,10 +27,7 @@ import * as zh_CN from './zh_CN.json';
 import { MessagePlugin } from 'tdesign-vue-next';
 
 let infoFlag = false;
-if (
-    addon.getGlobal('Zotero').locale == 'zh-CN' ||
-    addon.getGlobal('Zotero').locale == 'ja-JP'
-)
+if (['zh-CN', 'ja-JP'].includes(addon.getGlobal('Zotero').locale))
     Highcharts.setOptions(zh_CN as Highcharts.Options);
 Highcharts.setOptions({
     accessibility: { enabled: false },

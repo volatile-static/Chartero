@@ -37,6 +37,10 @@
             <DateTime :history="itemHistory" :theme="chartTheme"></DateTime>
         </t-collapse-panel>
 
+        <t-collapse-panel value="users" :header="locale.chartTitle.users" v-if="!isUserLib">
+            <UserPie :history="itemHistory" :theme="chartTheme"></UserPie>
+        </t-collapse-panel>
+
         <t-collapse-panel value="network" :header="locale.chartTitle.network">
             <Network :topLevel="topLevel" :theme="chartTheme" :itemID="topLevel?.id"
                 :show="collapseValue.includes('network')"></Network>
@@ -62,6 +66,7 @@ import PageTime from './components/pageTime.vue';
 import DateTime from './components/dateTime.vue';
 import TimeLine from './components/timeline.vue';
 import Network from './components/network.vue';
+import UserPie from './components/userPie.vue';
 import ProgressBubble from './components/progressBubble.vue';
 import anime from 'animejs';
 import HistoryAnalyzer from '$/history/analyzer';
@@ -168,6 +173,9 @@ export default {
         });
     },
     computed: {
+        isUserLib(): boolean {
+            return this.item?.libraryID == Zotero.Libraries.userLibraryID;
+        },
         readingProgress(): number {
             if (this.itemHistory.length < 1) return 0;
             const ha = new HistoryAnalyzer(this.itemHistory);
@@ -232,7 +240,7 @@ export default {
             realtimeUpdating: false,
         };
     },
-    components: { PageTime, DateTime, TimeLine, Network, ProgressBubble },
+    components: { PageTime, DateTime, TimeLine, Network, UserPie },
 };
 </script>
 

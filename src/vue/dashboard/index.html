@@ -60,13 +60,13 @@
 <body>
   <div id="app"></div>
   <script type="module">
-    import {createApp} from 'vue';
+    import { createApp } from 'vue';
     import App from './main.vue';
     import 'tdesign-vue-next/es/style/index.css';
     try {
       createApp(App).mount('#app');
     } catch (error) {
-      addon.log(error)
+      addon.log('dashboard app', error)
     }
   </script>
   <script>Zotero = addon.getGlobal('Zotero');</script>

@@ -72,6 +72,10 @@ export class PageRecord implements RecordBase {
       );
   }
 
+  public get userIDs(): number[] {
+    return this.userSeconds ? Object.keys(this.userSeconds).map(Number) : [];
+  }
+
   getUserTotalSeconds(userID: number): number | undefined {
     if (this.userSeconds) return this.userSeconds[userID];
   }
@@ -154,6 +158,12 @@ export class AttachmentRecord implements RecordBase {
 
   public get totalS() {
     return this.pageArr.reduce((sum, p) => sum + (p.totalS ?? 0), 0);
+  }
+
+  public get userIDs() {
+    return Array.from(new Set(
+      this.pageArr.reduce((arr, page) => arr.concat(page.userIDs), [] as number[])
+    ));
   }
 
   getUserTotalSeconds(userID: number): number {

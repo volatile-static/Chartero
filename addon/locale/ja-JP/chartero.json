@@ -44,6 +44,7 @@
         "schedule": "スケジュール統計",
         "dateTime": "毎日の読み時間",
         "pageTime": "毎ページの読み時間",
+        "users": "ユーザー統計",
         "network": "文献関連ネットワーク",
         "networkSub": "Ctrl+クリック ジャンプ"
     },

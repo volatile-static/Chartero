@@ -45,6 +45,7 @@
         "pieSub": "Click a Pie for Details",
         "schedule": "Daily Routines",
         "network": "Relation Network",
+        "users": "Reading by Users",
         "dateTime": "Reading Time Per Day",
         "pageTime": "Reading Time Per Page",
         "pageTimeSub": "Ctrl+Click to Open PDF at Page"
