@@ -18,6 +18,7 @@ export default defineConfig({
                 dashboard: resolve(__dirname, 'dashboard/index.html'),
             },
         },
+        cssMinify: true,
         outDir: '../../build/addon/content/',
         reportCompressedSize: false,
     },
