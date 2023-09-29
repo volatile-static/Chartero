@@ -20,7 +20,7 @@ export default defineConfig({
         },
         cssMinify: true,
         outDir: '../../build/addon/content/',
-        reportCompressedSize: false,
+        reportCompressedSize: false
     },
     plugins: [
         vue(),
