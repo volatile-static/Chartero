@@ -58,6 +58,13 @@ export default class Addon extends toolBase.BasicTool {
         return Zotero.Prefs.get(`${packageName}.${key}`);
     }
 
+    // 仅供初始化调用
+    private addPrefsObserver(fn: () => void, key: PrefsKey) {
+        this.prefsObserverIDs.push(
+            Zotero.Prefs.registerObserver(`${packageName}.${key}`, fn)
+        );
+    }
+
     /**
      * 初始化插件时调用
      */
@@ -96,28 +103,18 @@ export default class Addon extends toolBase.BasicTool {
         );
         registerPanels();
 
-        this.prefsObserverIDs.push(Zotero.Prefs.registerObserver(
-            `${packageName}.scanPeriod`,
-            () => {
-                if (Number(this.getPref('scanPeriod')) < 1)
-                    Zotero.Prefs.set(`${packageName}.scanPeriod`, 1);
-                this.history.unregister();
-                this.history.register(this.getPref('scanPeriod') as number);
-            }
-        ));
-        this.prefsObserverIDs.push(Zotero.Prefs.registerObserver(
-            `${packageName}.useDarkTheme`,
-            () => { }
-        ));
-        this.prefsObserverIDs.push(Zotero.Prefs.registerObserver(
-            `${packageName}.excludedTags`,
-            () => {
-                const summaryFrame = document.getElementById('chartero-summary-iframe'),
-                    summaryWin = (summaryFrame as HTMLIFrameElement)?.contentWindow;
-                summaryWin?.postMessage('updateExcludedTags');
-                addon.log('Updating excluded tags');
-            }
-        ));
+        this.addPrefsObserver(() => {
+            if (Number(this.getPref('scanPeriod')) < 1)
+                Zotero.Prefs.set(`${packageName}.scanPeriod`, 1);
+            this.history.unregister();
+            this.history.register(this.getPref('scanPeriod') as number);
+        }, 'scanPeriod');
+        this.addPrefsObserver(() => {
+            const summaryFrame = document.getElementById('chartero-summary-iframe'),
+                summaryWin = (summaryFrame as HTMLIFrameElement)?.contentWindow;
+            summaryWin?.postMessage('updateExcludedTags');
+            addon.log('Updating excluded tags');
+        }, 'excludedTags');
 
         this.history.register(addon.getPref("scanPeriod") as number);
         this.patcher.register(
