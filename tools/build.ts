@@ -3,6 +3,7 @@ import { sassPlugin } from 'esbuild-sass-plugin';
 import { env, exit } from "process";
 import fs from "fs";
 import path from "path";
+import lodash from "lodash";
 import replaceInFile from "replace-in-file";
 import details from "../package.json" assert { type: "json" };
 
@@ -99,7 +100,7 @@ function replaceString() {
     ];
 
     replaceFrom.push(...[
-        ...Object.keys(details.config),
+        ...Object.keys(details.config).filter(k => k != 'defaultSettings'),
         ...Object.keys(prefs)
     ].map((k) => new RegExp(`__${k}__`, "g")));
     replaceTo.push(
@@ -108,6 +109,12 @@ function replaceString() {
     replaceTo.push(...Object.keys(prefs).map(
         key => `id='${details.name}-${key}' preference='${details.config.addonPref}.${key}'`
     ));
+    if (replaceFrom.length != replaceTo.length) {
+        lodash.zip(replaceFrom, replaceTo).forEach(([from, to]) => {
+            console.debug(`[Build] Replace ${from} to ${to}`);
+        });
+        throw new Error("[Build] Replace string length not match.");
+    }
 
     const optionsAddon = {
         files: [
