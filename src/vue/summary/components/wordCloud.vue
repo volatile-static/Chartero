@@ -35,6 +35,9 @@ export default {
 
             switch (this.dataOption) {
                 case 'tag':
+                    // this.filteredTags = JSON.parse(
+                    //     addon.getPref('excludedTags') as string
+                    // );
                     for (const item of this.items) {
                         const his = addon.history.getInTopLevelSync(item),
                             analyzer = new HistoryAnalyzer(his);
@@ -142,6 +145,15 @@ export default {
     props: {
         items: { type: Array<Zotero.Item>, required: true },
         theme: Object,
+    },
+    mounted() {
+        addEventListener('message', e => {
+            if (e.data != 'updateExcludedTags')
+                return;
+            this.filteredTags = JSON.parse(
+                addon.getPref('excludedTags') as string
+            );
+        });
     },
 };
 </script>

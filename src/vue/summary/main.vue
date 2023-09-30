@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 import {
     ChartBubbleIcon,
     FormatVerticalAlignRightIcon,
@@ -10,11 +10,10 @@ import Gantt from './components/gantt.vue';
 import AuthorBubble from './components/authorBubble.vue';
 import WordCloud from './components/wordCloud.vue';
 import TagsPie from './components/tagsPie.vue';
-</script>
-<script lang="ts">
 import { GridLightTheme, DarkUnicaTheme } from '@/themes';
 import type { AttachmentHistory } from '$/history/history';
 export default {
+    components: { Gantt, AuthorBubble, WordCloud, TagsPie, ChartBubbleIcon, FormatVerticalAlignRightIcon, ForkIcon, CloudIcon, ChartPieIcon },
     data() {
         return {
             locale: addon.locale.summary,
@@ -40,7 +39,8 @@ export default {
         window.addEventListener('message', async e => {
             if (addon.getPref('useDarkTheme') != this.isDark)
                 this.switchTheme();
-            if (e.data.length < 1) return; // TODO: show message
+            if (!Array.isArray(e.data) || e.data.length < 1)
+                return; // TODO: show message
 
             this.messageContent =
                 parent.document.querySelector(

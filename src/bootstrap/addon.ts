@@ -109,6 +109,16 @@ export default class Addon extends toolBase.BasicTool {
             `${packageName}.useDarkTheme`,
             () => { }
         ));
+        this.prefsObserverIDs.push(Zotero.Prefs.registerObserver(
+            `${packageName}.excludedTags`,
+            () => {
+                const summaryFrame = document.getElementById('chartero-summary-iframe'),
+                    summaryWin = (summaryFrame as HTMLIFrameElement)?.contentWindow;
+                summaryWin?.postMessage('updateExcludedTags');
+                addon.log('Updating excluded tags');
+            }
+        ));
+
         this.history.register(addon.getPref("scanPeriod") as number);
         this.patcher.register(
             Zotero.Search.prototype,
