@@ -24,4 +24,10 @@ export function addDebugMenu() {
         icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
         commandListener: () => addon.log(Zotero.Reader.getByTabID(Zotero_Tabs.selectedID))
     });
+    addon.menu.register('menuHelp', {
+        tag: 'menuitem',
+        label: 'log main items to console',
+        icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
+        commandListener: () => addon.log((<any>addon.history)._mainItems)
+    });
 }

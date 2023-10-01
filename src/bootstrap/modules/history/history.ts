@@ -62,6 +62,8 @@ export default class ReadingHistory extends ManagerTool {
         const loadLib = async (libID: number) => {
             const mainItem = await this.getMainItem(libID);
             await mainItem.loadDataType("childItems"); // 等待主条目数据库加载子条目
+            this.log(`${Zotero.Libraries.getName(libID)}读取到${mainItem.getNotes().length}条记录。`);
+
             mainItem.getNotes().forEach(async (noteID) => {
                 const noteItem = (await Zotero.Items.getAsync(
                     noteID
