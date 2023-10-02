@@ -27,7 +27,7 @@ export const patchedZoteroSearch = (origin: Function) =>
         } else return ids;
     }
 
-export async function protectData(event: string, ids: number[] | string[]) {
+export function protectData(event: string, ids: number[] | string[]) {
     if (!addon.history.cacheLoaded || __dev__)
         return;
     const restore = (item: Zotero.DataObject) => {
@@ -44,7 +44,7 @@ export async function protectData(event: string, ids: number[] | string[]) {
         case "trash":
             mainItems.forEach(restore); // 恢复所有被删的主条目
             for (const it of items)
-                if (await addon.history.isHistoryNote(it))
+                if (addon.history.isHistoryNote(it))
                     restore(it); // 恢复主条目下所有笔记
             break;
 
@@ -187,4 +187,14 @@ export function initReaderAlert(doc: Document) {
                     .toggle('hidden', true);
             })
         );
+}
+
+export function hideDeleteMenuForHistory() {
+    const menu = document.querySelector(
+        '#zotero-itemmenu .zotero-menuitem-move-to-trash'
+    ) as XUL.MenuItem,
+        hasHis = Zotero.getActiveZoteroPane().getSelectedItems().some(
+            item => addon.history.isMainItem(item) || addon.history.isHistoryNote(item)
+        );
+    menu.setAttribute('disabled', hasHis);
 }

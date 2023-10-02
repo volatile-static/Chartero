@@ -45,6 +45,8 @@ The name _Chartero_ is a combination of **Char**t and Zo**tero**. As a [Zotero](
 
 Please disable all other plugins when necessary, and then file an issue with the exported debug output. Feel free to ask anything in issue😁
 
+> [Known Issues](https://github.com/volatile-static/Chartero/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+
 ## Developer Guide
 
 -   [![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/windingwind/zotero-plugin-template)

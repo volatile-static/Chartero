@@ -129,7 +129,7 @@ export default class ReadingHistory extends ManagerTool {
                 item.getField("shortTitle") == packageName);
     }
 
-    async isHistoryNote(item: Zotero.Item) {
+    isHistoryNote(item: Zotero.Item) {
         return item.itemType == "note" &&
             this._mainItems[item.libraryID]?.id == item.parentItemID;
     }

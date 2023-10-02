@@ -1,8 +1,8 @@
 import { execSync } from "child_process";
-import { killZotero, startZotero } from "./zotero-cmd.json";
+import cmd from "./zotero-cmd.json" assert { type: "json" };
 
 try {
-  execSync(killZotero);
+  execSync(cmd.killZotero);
 } catch (e) { }
 
-execSync(startZotero);
+execSync(cmd.startZotero);

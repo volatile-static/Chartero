@@ -8,7 +8,7 @@ import { PatcherManager } from 'zotero-plugin-toolkit/dist/managers/patch';
 import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
 import { config, name as packageName } from '../../package.json';
 import ReadingHistory from './modules/history/history';
-import { patchedZoteroSearch } from './modules/history/misc';
+import { hideDeleteMenuForHistory, patchedZoteroSearch } from './modules/history/misc';
 import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
 import { onHistoryRecord, onItemSelect, onNotify } from './events';
@@ -80,6 +80,10 @@ export default class Addon extends toolBase.BasicTool {
             label: config.addonName,
         });
 
+        document.getElementById('zotero-itemmenu')?.addEventListener(
+            'popupshowing',
+            hideDeleteMenuForHistory
+        );
         addItemColumns();
 
         // 注册Overview菜单
@@ -144,6 +148,10 @@ export default class Addon extends toolBase.BasicTool {
         this.notifierID && Zotero.Notifier.unregisterObserver(this.notifierID);
         this.prefsObserverIDs.forEach(id => Zotero.Prefs.unregisterObserver(id));
         ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
+        document.getElementById('zotero-itemmenu')?.removeEventListener(
+            'popupshowing',
+            hideDeleteMenuForHistory
+        );
         toolBase.unregister(this);
     }
 }
