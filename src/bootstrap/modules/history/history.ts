@@ -185,9 +185,7 @@ export default class ReadingHistory extends ManagerTool {
      * @returns 新建的主条目
      */
     private async newMainItem(libraryID: number): Promise<Zotero.Item> {
-        Zotero.debug(
-            "[zotero-reading-history] Creating new main item in library " + libraryID
-        );
+        addon.log("Creating new main item in library " + libraryID);
         const item = new Zotero.Item("computerProgram");
         item.setField("archiveLocation", Zotero.URI.getLibraryURI(libraryID));
         item.setField("title", addon.locale.history.mainItemTitle);
@@ -270,7 +268,7 @@ export default class ReadingHistory extends ManagerTool {
                 data.replace(/<\/?\w+>/g, ""); // TODO: 考虑更复杂的情况
                 json = JSON.parse(data);
             } else {
-                window.console.trace(error);
+                this.log(error);
                 return null;
             }
         }
@@ -458,6 +456,10 @@ export default class ReadingHistory extends ManagerTool {
 
     getAll() {
         return this._cached;
+    }
+
+    get mainItems() {
+        return this._mainItems.filter(it => it) as Zotero.Item[];
     }
 }
 

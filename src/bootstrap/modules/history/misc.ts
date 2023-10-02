@@ -1,5 +1,6 @@
 import { showMessage } from '../utils';
 import { AttachmentRecord } from './data';
+import { AttachmentHistory } from './history';
 import readerStyles from './reader.css';
 
 // 防止阅读器侧边栏搜索到主条目下的笔记
@@ -112,8 +113,52 @@ export async function importLegacyHistory(str: string) {
     }
 }
 
-export function compressHistory() {
+/**
+ * 清理无效记录
+ * 1. 若条目已被删除，则删除相应的记录
+ * 2. 若存在重复记录，则合并所有的记录
+ */
+export async function compressHistory() {
+    for (const mainItem of addon.history.mainItems) {  // 遍历文库
+        const hisMap: { [key: string]: AttachmentHistory } = {};
+        for (const noteItem of Zotero.Items.get(mainItem.getNotes())) {
+            const history = addon.history.parseNote(noteItem),
+                att = history && Zotero.Items.getByLibraryAndKey(
+                    noteItem.libraryID,
+                    history.key
+                );
+            if (!att || att.deleted) {  // 条目已被删除或记录解析失败
+                noteItem.deleted = true;
+                addon.log('Deleting invalid history note', noteItem);
+                await noteItem.saveTx({ skipSelect: true, skipNotifier: true });
+            } else if (att instanceof Zotero.Item) {  // 有效记录
+                if (att.addRelatedItem(noteItem))
+                    await att.saveTx({ skipSelect: true, skipNotifier: true });
+                if (noteItem.addRelatedItem(att))
+                    await noteItem.saveTx({ skipSelect: true, skipNotifier: true });
 
+                if (hisMap[history.key]) {  // 合并重复记录
+                    hisMap[history.key].record.mergeJSON(
+                        JSON.parse(JSON.stringify(history.record))
+                    );
+                    noteItem.deleted = true;
+                    addon.log('Deleting duplicate history note', noteItem);
+                    await noteItem.saveTx({ skipSelect: true, skipNotifier: true });
+                } else
+                    hisMap[history.key] = { note: noteItem, ...history };
+            }
+        }
+        for (const his of Object.values(hisMap)) {  // 压缩后保存记录
+            addon.history.compress(his.record);
+            addon.log('Saving compressed history note', his.note);
+            his.note.setNote(
+                `chartero#${his.key}\n${JSON.stringify(his.record)}`
+            );
+            await his.note.saveTx({ skipSelect: true, skipNotifier: true });
+        }
+    }
+    if (window.confirm(addon.locale.confirmRestart))
+        Zotero.Utilities.Internal.quit(true);
 }
 
 export function initReaderAlert(doc: Document) {
