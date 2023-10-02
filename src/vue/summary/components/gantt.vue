@@ -137,6 +137,7 @@ export default defineComponent({
                 .getGlobal('Zotero')
                 .Utilities.debounce(this.onResize, 100) as () => void,
             reloadChart: 0,
+            noHistoryFound: true
         };
     },
     watch: {
@@ -181,6 +182,7 @@ export default defineComponent({
                     } as GanttItem;
                 })
                 .filter(point => point.start! + point.end! > 0);
+            this.noHistoryFound = rawData.length < 1;
 
             this.seriesData = sortData(
                 this.sortOption,
@@ -209,10 +211,7 @@ export default defineComponent({
                 (this.chartOpts.series![0] as SeriesGanttOptions).data = data;
                 ++this.reloadChart;
             },
-        },
-        noHistoryFound() {
-            return rawData.length < 1;
-        },
+        }
     },
     props: {
         history: {
