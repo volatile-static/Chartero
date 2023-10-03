@@ -15,6 +15,13 @@ import { onHistoryRecord, onItemSelect, onNotify } from './events';
 import { addDebugMenu } from './modules/debug';
 import addItemColumns from './modules/columns';
 
+type DefaultPrefs = Omit<
+    typeof config.defaultSettings,
+    'excludedTags'
+> & {
+    excludedTags: number[];
+};
+
 export default class Addon extends toolBase.BasicTool {
     readonly ui: UITool;
     readonly menu: MenuManager;
@@ -54,12 +61,34 @@ export default class Addon extends toolBase.BasicTool {
         this.ui.basicOptions.ui.enableElementDOMLog = __dev__;
     }
 
-    getPref(key: PrefsKey) {
-        return Zotero.Prefs.get(`${packageName}.${key}`);
+    getPref<K extends keyof DefaultPrefs>(key: K) {
+        // 若获取不到则使用默认值
+        const pref = Zotero.Prefs.get(`${packageName}.${key}`) ?? config.defaultSettings[key];
+        if (__dev__)
+            this.log(`Getting pref ${key}:`, pref);
+        switch (typeof config.defaultSettings[key]) {
+            case 'object':
+                return JSON.parse(pref as string) as DefaultPrefs[K];
+            case 'number':
+                return Number(pref) as DefaultPrefs[K];
+            default:
+                return pref as DefaultPrefs[K];
+        }
+    }
+
+    setPref<K extends keyof DefaultPrefs>(key: K, value?: DefaultPrefs[K]) {
+        // 若未指定则设为默认值
+        value ??= <DefaultPrefs[K]>config.defaultSettings[key];
+        if (__dev__)
+            this.log(`Setting pref ${key}:`, value);
+        Zotero.Prefs.set(
+            `${packageName}.${key}`,
+            typeof value == 'object' ? JSON.stringify(value) : value
+        );
     }
 
     // 仅供初始化调用
-    private addPrefsObserver(fn: () => void, key: PrefsKey) {
+    private addPrefsObserver(fn: () => void, key: keyof DefaultPrefs) {
         this.prefsObserverIDs.push(
             Zotero.Prefs.registerObserver(`${packageName}.${key}`, fn)
         );
@@ -108,10 +137,10 @@ export default class Addon extends toolBase.BasicTool {
         registerPanels();
 
         this.addPrefsObserver(() => {
-            if (Number(this.getPref('scanPeriod')) < 1)
-                Zotero.Prefs.set(`${packageName}.scanPeriod`, 1);
+            if (this.getPref('scanPeriod') < 1)
+                addon.setPref('scanPeriod', 1);
             this.history.unregister();
-            this.history.register(this.getPref('scanPeriod') as number);
+            this.history.register(this.getPref('scanPeriod'));
         }, 'scanPeriod');
         this.addPrefsObserver(() => {
             const summaryFrame = document.getElementById('chartero-summary-iframe'),
@@ -120,7 +149,7 @@ export default class Addon extends toolBase.BasicTool {
             addon.log('Updating excluded tags');
         }, 'excludedTags');
 
-        this.history.register(addon.getPref("scanPeriod") as number);
+        this.history.register(addon.getPref("scanPeriod"));
         this.patcher.register(
             Zotero.Search.prototype,
             "search",

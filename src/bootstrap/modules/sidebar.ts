@@ -72,7 +72,7 @@ export function registerPanels() {
 export function renderSummaryPanel(ids: number[]) {
     if (
         ids.length == 0 ||
-        ids.length > Number(addon.getPref('maxSummaryItems'))
+        ids.length > addon.getPref('maxSummaryItems')
     )
         return;
     const content = document.getElementById(

@@ -334,7 +334,7 @@ export default class ReadingHistory extends ManagerTool {
                     thisState.left = thatState.left;
                     thisState.counter = 0;
                 }
-                return thisState.counter < Number(addon.getPref('scanTimeout'));
+                return thisState.counter < addon.getPref('scanTimeout');
             },
             checkEPUBState = (
                 thisState: EPUBReaderState,
@@ -350,7 +350,7 @@ export default class ReadingHistory extends ManagerTool {
                     thisState.cfiElementOffset = thatState.cfiElementOffset!;
                     thisState.counter = 0;
                 }
-                return thisState.counter < Number(addon.getPref('scanTimeout'));
+                return thisState.counter < addon.getPref('scanTimeout');
             };
         //  先检查副屏
         if (
@@ -368,7 +368,7 @@ export default class ReadingHistory extends ManagerTool {
             .getElementById('chartero-reader-alert');
         if (!overlay) return;
 
-        const timeout = Number(addon.getPref('scanTimeout')),
+        const timeout = addon.getPref('scanTimeout'),
             recording = this._firstState.counter < timeout || (
                 this._activeReader!.splitType &&
                 this._secondState.counter < timeout

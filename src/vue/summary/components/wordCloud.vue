@@ -16,7 +16,7 @@ export default {
             locale: addon.locale,
             dataOption: 'tag',
             dialogVisible: false,
-            filteredTags: [] as number[],
+            filteredTags: addon.getPref('excludedTags'),
             allTags: [] as DataOption[],
         };
     },
@@ -124,8 +124,7 @@ export default {
     methods: {
         saveTagFilter() {
             this.dialogVisible = false;
-            addon.log(this.filteredTags);
-            addon.getGlobal('Zotero').Prefs.set('chartero.excludedTags', JSON.stringify(this.filteredTags));
+            addon.setPref('excludedTags', this.filteredTags);
         },
         async openDialog() {
             this.dialogVisible = true;
@@ -150,9 +149,7 @@ export default {
         addEventListener('message', e => {
             if (e.data != 'updateExcludedTags')
                 return;
-            this.filteredTags = JSON.parse(
-                addon.getPref('excludedTags') as string
-            );
+            this.filteredTags = addon.getPref('excludedTags');
         });
     },
 };

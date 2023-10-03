@@ -23,7 +23,7 @@ function refreshExcludedTags(doc: Document) {
     while (table.firstChild)
         table.removeChild(table.firstChild);
     try {
-        JSON.parse(String(tags)).forEach((tag: number) => addon.ui.appendElement({
+        tags.forEach((tag: number) => addon.ui.appendElement({
             tag: 'div',
             id: 'chartero-preferences-pane-ignoredTag-' + tag,
             classList: ['chartero-preferences-pane-ignoredTag'],
@@ -32,7 +32,7 @@ function refreshExcludedTags(doc: Document) {
         }, table));
     } catch (error) {
         addon.log('Resetting ignoredTags: ', error);
-        Zotero.Prefs.set('chartero.excludedTags', JSON.stringify([]));
+        addon.setPref('excludedTags');
     }
     if (!table.childElementCount)
         table.innerText = addon.locale.noExcludedTags;
@@ -43,9 +43,8 @@ function onTagClick(event: MouseEvent) {
         win = div.ownerDocument.defaultView;
     if (win?.confirm(addon.locale.confirmRemoveExcludedTag)) {
         const tagID = div.id.split('-').at(-1),
-            pref = addon.getPref('excludedTags'),
-            tags = JSON.parse(String(pref));
-        tags.splice(tags.indexOf(tagID), 1);
+            tags = addon.getPref('excludedTags');
+        tags.splice(tags.indexOf(Number(tagID)), 1);
         Zotero.Prefs.set('chartero.excludedTags', JSON.stringify(tags));
         refreshExcludedTags(win.document);
     }
@@ -65,14 +64,11 @@ function onJsonInput(e: Event) {
 }
 
 function autoImportHistory() {
-    const dataKey = addon.getPref('dataKey' as PrefsKey),
-        period = addon.getPref('scanPeriod') as number;
+    const dataKey = addon.getPref('dataKey' as any),
+        period = addon.getPref('scanPeriod');
     if (dataKey) {
         if (period && period > 999)  // 旧版单位是毫秒
-            Zotero.Prefs.set(
-                'chartero.scanPeriod',
-                Math.ceil(period / 1000)
-            );
+            addon.setPref('scanPeriod', Math.ceil(period / 1000));
         const noteItem = Zotero.Items.getByLibraryAndKey(1, String(dataKey));
         if (noteItem instanceof Zotero.Item && noteItem.isNote()) {
             importLegacyHistory(noteItem.note);
