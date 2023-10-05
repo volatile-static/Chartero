@@ -105,11 +105,11 @@ abstract class ReaderImages {
         this.viewImages.removeAttribute('disabled');
     }
 
-    protected renderImage(url: string, idx?: number): TagElementProps {
+    protected renderImage(url: string): TagElementProps {
         ++this.loadedImages;
         return {
             tag: 'img',
-            id: idx ? 'chartero-allImages-' + idx : undefined,
+            id: 'chartero-allImages-' + this.loadedImages,
             attributes: {
                 src: url,
                 title: addon.locale.images.dblClickToCopy
@@ -135,11 +135,17 @@ abstract class ReaderImages {
 }
 
 class PDFImages extends ReaderImages {
+    private readonly reader: _ZoteroTypes.ReaderInstance;
     private readonly btnLoadMore: HTMLButtonElement;
+    private readonly positions = new Array<{
+        pageIndex: number,
+        rects: Array<[number, number, number, number]>
+    }>();
     private loadedPages = 0;
 
     constructor(reader: _ZoteroTypes.ReaderInstance) {
         super(reader);
+        this.reader = reader;
         this.btnLoadMore = addon.ui.appendElement({
             tag: 'button',
             namespace: 'html',
@@ -149,35 +155,56 @@ class PDFImages extends ReaderImages {
         }, this.imagesView) as HTMLButtonElement;
     }
 
+    /**
+     * 计算图片在页面中的位置
+     */
+    private calcRect(elm: SVGGElement): [number, number, number, number] {
+        const childMatrix = elm.transform.baseVal.consolidate()!.matrix,
+            parentMatrix = (elm.parentNode as SVGGElement).transform.baseVal.consolidate()!.matrix,
+            width = Number(elm.attributes.getNamedItem('width')!.value.slice(0, -2)),
+            height = Number(elm.attributes.getNamedItem('height')!.value.slice(0, -2)),
+            tWidth = Math.abs(width * childMatrix.a * parentMatrix.a),
+            tHeight = Math.abs(height * childMatrix.d * parentMatrix.d),
+            bottom = childMatrix.f + parentMatrix.f,
+            left = childMatrix.e + parentMatrix.e;
+        window.console.table([childMatrix, parentMatrix]);
+        // addon.log(left, top, right, bottom);
+        return [left, bottom, left + tWidth, bottom + tHeight];
+    }
+
     async loadMoreImages() {
         this.btnLoadMore.classList.toggle('hidden', true);
         const win = (this.primaryView as _ZoteroTypes.Reader.PDFView)._iframeWindow!,
             viewerApp = win.PDFViewerApplication;
 
-        await viewerApp.pdfLoadingTask.promise;
-        await viewerApp.pdfViewer.pagesPromise;
+        await viewerApp.pdfLoadingTask?.promise;
+        await viewerApp.pdfViewer?.pagesPromise;
+        viewerApp.pdfLinkService?.goToDestination
         for (
             let i = 0;
-            i < 10 && this.loadedPages < viewerApp.pdfDocument.numPages;
+            i < 10 && this.loadedPages < viewerApp.pdfDocument!.numPages;
             ++this.loadedPages
         ) {
             this.updateProgress(i * 10, this.loadedPages);
-            const pdfPage = viewerApp.pdfViewer._pages[this.loadedPages].pdfPage,
+            const pdfPage: _ZoteroTypes.Reader.PDFPageProxy =
+                viewerApp.pdfViewer!._pages![this.loadedPages].pdfPage,
                 opList = await pdfPage.getOperatorList(),
                 svgGfx = new win.pdfjsLib.SVGGraphics(pdfPage.commonObjs, pdfPage.objs),
                 // 页面转换为svg
-                svg = await svgGfx.getSVG(opList, pdfPage.getViewport({ scale: 1 })),
-                urlArr: string[] = Array.prototype.map.call(
-                    svg.getElementsByTagName('svg:image'),
-                    (i: SVGAElement) => i.getAttribute('xlink:href')
-                );  // 获取所有图片的链接
+                svg: unknown = await svgGfx.getSVG(opList, pdfPage.getViewport({ scale: 1 })),
+                imgArr = Array.from((svg as SVGElement).getElementsByTagName('svg:image')),
+                urlArr = imgArr.map(img => img.getAttribute('xlink:href'));  // 获取所有图片的链接
             if (urlArr.length < 1 || urlArr.length > 60)  // 每页超过多少张图不显示
                 continue;
             ++i;
+            this.positions.push(...imgArr.map(img => ({
+                pageIndex: this.loadedPages,
+                rects: [this.calcRect(img as SVGGElement)]
+            })));
 
             for (const url of urlArr)
                 addon.ui.insertElementBefore(
-                    this.renderImage(url),
+                    this.renderImage(url || ''),
                     this.btnLoadMore
                 );
             addon.ui.insertElementBefore({
@@ -186,12 +213,16 @@ class PDFImages extends ReaderImages {
                 attributes: { 'data-content': pdfPage.pageNumber }
             }, this.btnLoadMore);
         }
-        if (this.loadedPages < viewerApp.pdfDocument.numPages)
+        if (this.loadedPages < viewerApp.pdfDocument!.numPages)
             this.btnLoadMore.classList.toggle('hidden', false);
     }
 
-    protected onImageClick(this: ReaderImages, e: MouseEvent) {
-        addon.log(e);
+    protected onImageClick(this: PDFImages, e: MouseEvent) {
+        const idx = (e.target as HTMLImageElement).id.split('-').at(-1),
+            pos = idx && this.positions[parseInt(idx) - 1];
+        if (__dev__)
+            addon.log(pos);
+        pos && this.reader.navigate({ position: pos });
     }
 
     protected updateProgress(percentage: number, page: number = 0) {
@@ -213,9 +244,9 @@ abstract class DOMImages<DOMImageElement extends (SVGImageElement | HTMLImageEle
     async loadMoreImages() {
         const doc = (this.primaryView as any)._iframeDocument as Document,
             imgList: NodeListOf<DOMImageElement> = doc.querySelectorAll(this.imageSelector);
-        Array.prototype.forEach.call(imgList, (img: DOMImageElement, idx: number) => {
+        Array.prototype.forEach.call(imgList, (img: DOMImageElement) => {
             const url = img instanceof window.SVGImageElement ? img.href.baseVal : img.src;
-            addon.ui.appendElement(this.renderImage(url, idx), this.imagesView);
+            addon.ui.appendElement(this.renderImage(url), this.imagesView);
             this.imageLinks.push(img);
         });
     }

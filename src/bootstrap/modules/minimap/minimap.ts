@@ -46,8 +46,8 @@ export function updateMinimap(reader: _ZoteroTypes.ReaderInstance) {
 
     if (reader.type == 'pdf') {
         const view = reader._primaryView as _ZoteroTypes.Reader.PDFView,
-            pagesHeight = view._iframeWindow!.PDFViewerApplication.pdfViewer
-                ._pages.map((p: any) => p.viewport.viewBox[3]);
+            pagesHeight = view._iframeWindow!.PDFViewerApplication.pdfViewer!
+                ._pages!.map((p: any) => p.viewport.viewBox[3]);
         for (const ann of annotations) {
             const pos = ann.position as _ZoteroTypes.Reader.PDFPosition,
                 arr = annArr[pos.pageIndex] ??= [];
@@ -92,7 +92,7 @@ export function updateMinimap(reader: _ZoteroTypes.ReaderInstance) {
             }, [] as number[]) ?? [];
         // 相邻两页的差值
         pagesHeight.push(totalHeight - (ranges?.at(-1)?.getBoundingClientRect().bottom ?? 0));
-        
+
         for (const ann of annotations) {
             const pos = ann.position as _ZoteroTypes.Reader.FragmentSelector,
                 range = view.getRange(pos.value),
