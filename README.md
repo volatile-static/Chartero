@@ -101,6 +101,7 @@ The data structure of history records are defined in [history/data.ts](src/boots
 
 -   Patched the `search` method of object `Zotero.Search` to hide the note items which records the reading history.
 -   Add click events to tabs in the left side-bar of `Reader`.
+-   When adding "Overview" tab, `contextPane.js` throws `extraData[ids[0]] is undefined` error, caused by the `type` of this tab is `library`.
 
 ## See also
 

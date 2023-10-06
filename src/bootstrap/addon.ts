@@ -11,7 +11,7 @@ import ReadingHistory from './modules/history/history';
 import { hideDeleteMenuForHistory, patchedZoteroSearch } from './modules/history/misc';
 import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
-import { onHistoryRecord, onItemSelect, onNotify } from './events';
+import { onHistoryRecord, onItemSelect, onNotify, openOverview } from './events';
 import { addDebugMenu } from './modules/debug';
 import addItemColumns from './modules/columns';
 
@@ -116,12 +116,12 @@ export default class Addon extends toolBase.BasicTool {
         addItemColumns();
 
         // 注册Overview菜单
-        // this.menu.register('menuView', {
-        //     tag: 'menuitem',
-        //     label: this.locale.overview,
-        //     commandListener: openOverview,
-        //     icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
-        // });
+        this.menu.register('menuView', {
+            tag: 'menuitem',
+            label: this.locale.overview,
+            commandListener: openOverview,
+            icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
+        });
         buildRecentMenu();
         if (__dev__)
             addDebugMenu();

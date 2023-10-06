@@ -1,7 +1,0 @@
-
-<!ENTITY chartero.dashboard.noHistory "このアイテムには読み記録がありません">
-<!ENTITY chartero.dashboard "ダッシュボード">
-<!ENTITY chartero.toolbarbutton.overview "総覧">
-<!ENTITY chartero.toolbarbutton.tip "読み記録を更新する">
-<!ENTITY chartero.asdata "Chartero記録に設定">
-<!ENTITY chartero.recent "最近読んだ">

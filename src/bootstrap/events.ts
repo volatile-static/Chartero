@@ -4,20 +4,19 @@ import { protectData } from './modules/history/misc';
 import { updateMinimap } from './modules/minimap/minimap';
 import initPrefsPane from './modules/prefs';
 
-function openOverview(_: Event) {
-    if (Zotero.Chartero.overviewTabID) {
-        Zotero_Tabs.select(Zotero.Chartero.overviewTabID);
+export function openOverview(_: Event) {
+    if (addon.overviewTabID) {
+        Zotero_Tabs.select(addon.overviewTabID);
         return;
     }
-    Zotero.showZoteroPaneProgressMeter(addon.locale.drawInProgress);
-
     // 打开新的标签页
     const { id, container } = Zotero_Tabs.add({
         type: 'library',
         title: 'Chartero',
         select: true,
+        onClose: () => addon.overviewTabID = undefined,
     });
-    Zotero.Chartero.overviewTabID = id;
+    addon.overviewTabID = id;
 
     const overview = addon.ui.appendElement(
         {
@@ -105,9 +104,6 @@ export async function onNotify(
     extraData: _ZoteroTypes.anyObj
 ) {
     // addon.log('onNotify: ', event, type, ids, extraData);
-    if (event == 'close' && type == 'tab' && ids[0] == addon.overviewTabID)
-        addon.overviewTabID = undefined;
-
     if (event == 'redraw' && type == 'setting' && ids[0] == config.addonName)
         initPrefsPane(extraData as Window);
 

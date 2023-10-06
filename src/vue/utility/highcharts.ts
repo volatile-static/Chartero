@@ -9,8 +9,8 @@ import WordCloudGraph from 'highcharts/modules/wordcloud';
 WordCloudGraph(Highcharts);
 import VariablePieGraph from 'highcharts/modules/variable-pie';
 VariablePieGraph(Highcharts);
-import MarkerCluster from 'highcharts/modules/marker-clusters';
-MarkerCluster(Highcharts);
+// import MarkerCluster from 'highcharts/modules/marker-clusters';
+// MarkerCluster(Highcharts);
 import HighchartsColorAxis from 'highcharts/modules/coloraxis';
 HighchartsColorAxis(Highcharts);
 import HighchartsExporting from 'highcharts/modules/exporting';
@@ -19,8 +19,15 @@ import HighchartsExportData from 'highcharts/modules/export-data';
 HighchartsExportData(Highcharts);
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 NoDataToDisplay(Highcharts);
+import HighchartsDrilldown from 'highcharts/modules/drilldown';
+HighchartsDrilldown(Highcharts);
 // import MouseWheelZoom from 'highcharts/modules/mouse-wheel-zoom';
 // MouseWheelZoom(Highcharts);
+import HighchartsPlugin from '@highcharts/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin';
+HighchartsPlugin.custom.connectHighcharts(Highcharts);
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src';
+Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
+
 import { copySVG2JPG, saveSVG } from '../../bootstrap/modules/utils';
 import { viewItemsInLib } from './utils';
 import * as zh_CN from './zh_CN.json';
@@ -119,3 +126,4 @@ Highcharts.setOptions({
 } as Highcharts.Options);
 
 export default Highcharts;
+export { Dashboards };

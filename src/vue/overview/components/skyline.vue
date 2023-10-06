@@ -6,25 +6,14 @@
             <p class="skyline-label">Fri</p>
         </div>
         <div id="month-layout">
-            <p
-                v-for="month in 13"
-                class="skyline-label"
-                :id="'month-label-' + month"
-            >
-                {{ monthStrings[(now.getMonth() + month) % 12] }}
+            <p v-for="month in 13" class="skyline-label" :id="'month-label-' + month">
+                {{ monthStrings[(now.getMonth() + month - 1) % 12] }}
             </p>
         </div>
         <t-skeleton :loading="loading" animation="gradient">
             <div id="block-container">
-                <TTooltip
-                    v-for="block of blocks"
-                    :content="block.description"
-                    show-arrow
-                >
-                    <div
-                        class="day-block"
-                        :style="{ backgroundColor: block.color }"
-                    ></div>
+                <TTooltip v-for="block of blocks" :content="block.description" show-arrow>
+                    <div class="day-block" :style="{ backgroundColor: block.color }"></div>
                 </TTooltip>
             </div>
         </t-skeleton>
@@ -94,7 +83,7 @@ export default {
 
             const colorMin = { r: 0x0e, g: 0x44, b: 0x29 },
                 colorMax = { r: 0x39, g: 0xd3, b: 0x53 },
-                history = new HistoryAnalyzer(toolkit.history.getInLibrary()),
+                history = new HistoryAnalyzer(addon.history.getInLibrary()),
                 stats = history.dateTimeMap,
                 readingS = forEachBlock(
                     (week: number, day: number) =>
@@ -111,10 +100,10 @@ export default {
                 if (readingS[index] > orderlyReadingS[0]) {
                     type RGB = 'r' | 'g' | 'b';
                     const percent = normalize(
-                            orderlyReadingS.at(-1)!,
-                            orderlyReadingS[0],
-                            readingS[index]
-                        ),
+                        orderlyReadingS.at(-1)!,
+                        orderlyReadingS[0],
+                        readingS[index]
+                    ),
                         colors = (['r', 'g', 'b'] as RGB[]).map(color => {
                             const str = Math.round(
                                 denormalize(
@@ -130,7 +119,7 @@ export default {
                 return {
                     color,
                     description: getDate(week, day).toLocaleDateString(
-                        toolkit.getGlobal('Zotero').locale
+                        addon.getGlobal('Zotero').locale
                     ),
                 };
             });
@@ -160,7 +149,6 @@ export default {
 
 .day-block:hover {
     box-shadow: 0 0 6px gold;
-    cursor: pointer;
 }
 
 #block-container {
@@ -185,7 +173,7 @@ export default {
     left: 0;
 }
 
-#week-layout > p {
+#week-layout>p {
     display: block;
     text-align: right;
     margin: 9px 0 0;
@@ -207,7 +195,7 @@ export default {
     width: 642px;
 }
 
-#month-layout > p {
+#month-layout>p {
     display: block;
     margin: 0;
 }

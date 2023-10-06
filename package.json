@@ -1,6 +1,6 @@
 {
     "name": "chartero",
-    "version": "2.0.0-beta.6",
+    "version": "2.0.0-beta.7",
     "type": "module",
     "config": {
         "addonName": "Chartero",
@@ -59,6 +59,7 @@
     "homepage": "https://gitee.com/const_volatile/chartero",
     "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
     "dependencies": {
+        "@highcharts/dashboards": "^1.1.1",
         "animejs": "^3.2.1",
         "compromise": "^14.10.0",
         "compromise-stats": "^0.1.0",

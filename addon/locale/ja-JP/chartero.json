@@ -46,7 +46,8 @@
         "pageTime": "毎ページの読み時間",
         "users": "ユーザー統計",
         "network": "文献関連ネットワーク",
-        "networkSub": "Ctrl+クリック ジャンプ"
+        "networkSub": "Ctrl+クリック ジャンプ",
+        "readToday": "今日の読み時間"
     },
     "summary": {
         "authorBubble": "作者气泡图",
@@ -123,5 +124,6 @@
     "help": "ヘルプ",
     "thisItem": "この項目",
     "relatedItems": "関連項目",
-    "collapsedItems": "折りたたまれた項目"
+    "collapsedItems": "折りたたまれた項目",
+    "itemsCount": "項目数"
 }

@@ -48,7 +48,8 @@
         "users": "每人阅读时长",
         "dateTime": "每日阅读时长",
         "pageTime": "每页阅读时长",
-        "pageTimeSub": "Ctrl+单击跳转到页面"
+        "pageTimeSub": "Ctrl+单击跳转到页面",
+        "readToday": "今日阅读时长"
     },
     "summary": {
         "authorBubble": "作者气泡图",
@@ -125,5 +126,8 @@
     "help": "帮助",
     "thisItem": "当前条目",
     "relatedItems": "相关条目",
-    "collapsedItems": "已折叠条目"
+    "collapsedItems": "已折叠条目",
+    "scheduleWeek": "一周内累计",
+    "scheduleHour": "一天内累计",
+    "itemsCount": "条目数"
 }

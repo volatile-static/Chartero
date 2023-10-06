@@ -120,6 +120,8 @@ _Chartero_ 这个名字是连接了 **Char**t 与 Zo**tero**，作为一个[Zote
 
 -   显示“所有图片”的侧边栏添加时给其他选项卡按钮添加了点击事件，可能导致冲突。
 
+-   打开“文库总览”时`contextPane.js`会抛出异常`extraData[ids[0]] is undefined`，忽略即可。
+
 ## 友情链接
 
 -    [🤩 Awesome Zotero Plugins](https://plugins.zotero-chinese.com/charts.html)
