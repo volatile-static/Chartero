@@ -71,3 +71,7 @@ export function toTimeString(seconds: number | string) {
         label += tim.second + addon.locale.seconds;
     return label;
 }
+
+export function accumulate<T>(arr: T[], key: keyof T): number {
+    return arr.reduce((acc, cur) => acc + Number(cur[key]), 0);
+}

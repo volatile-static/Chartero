@@ -1,3 +1,4 @@
+import { accumulate } from '$/utils';
 import type { ExportingMenuObject } from 'highcharts';
 import { DialogPlugin } from 'tdesign-vue-next';
 
@@ -38,4 +39,13 @@ export function helpMessageOption(msg: string) {
             },
         } as ExportingMenuObject,
     };
+}
+
+export function splitOtherData(data: Array<Highcharts.PointOptionsObject>) {
+    const sum = accumulate(data, 'y'),
+        isOther = (y: number) => y / Math.max(1, sum) < 0.02;
+    return [
+        data.filter(d => !isOther(d.y ?? 0)),
+        data.filter(d => isOther(d.y ?? 0))
+    ]
 }

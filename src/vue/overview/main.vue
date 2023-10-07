@@ -1,7 +1,8 @@
 <script lang="ts">
 import Skyline from './components/skyline.vue';
 import HistoryAnalyzer from '$/history/analyzer';
-import { toTimeString } from '$/utils';
+import { toTimeString, accumulate } from '$/utils';
+import { splitOtherData } from '@/utils';
 import { Dashboards } from '@/highcharts';
 import type {
     SeriesVariablepieOptions,
@@ -44,19 +45,19 @@ async function drawVariablePie() {
         return new HistoryAnalyzer(item).totalS;
     }
     function process(
-        arr: Array<[x: string, y: number, z: number]>,
+        arr: Array<PointOptionsObject>,
         item: Zotero.Item
     ) {  // 将item的数组转换为饼图数据
         const tags = item.getTags().map(t => t.tag);  // 标签字符串的数组
         const time = getTime(item);
         for (const tag of tags) {
-            const fan = arr.find(i => i[0] === tag);  // 0代表名字
+            const fan = arr.find(i => i.name === tag);  // 0代表名字
             if (fan) {  // 该标签已记录
-                ++fan[1];  // 1代表弧度
-                fan[2] += time;  // 2代表厚度
+                ++fan.y!;  // 1代表弧度
+                fan.z! += time;  // 2代表厚度
             }
             else
-                arr.push([tag, 1, time]);
+                arr.push({ name: tag, y: 1, z: time });
         }
         return arr;
     }
@@ -77,7 +78,18 @@ async function drawVariablePie() {
     for (const collection of collections) {
         const items = collection instanceof Zotero.Collection
             ? collection.getChildItems()
-            : Zotero.Items.get(await collection.search());
+            : Zotero.Items.get(await collection.search()),
+            drilldownData = items.reduce(process, []),
+            [major, minor] = splitOtherData(drilldownData);
+        if (major.length < 2 || minor.length < 2)
+            major.push(...minor);
+        else
+            major.push({
+                name: addon.locale.others,
+                sliced: true,
+                y: accumulate(minor, 'y'),
+                z: accumulate(minor, 'z')
+            });
         data.push({
             name: collection.name,
             drilldown: collection.name,
@@ -89,7 +101,7 @@ async function drawVariablePie() {
             name: collection.name,
             id: collection.name,
             type: data.at(-1)!.z! > 0 ? 'variablepie' : 'pie',
-            data: items.reduce(process, [])
+            data: major
         });
     }
     return { data, series };
@@ -112,9 +124,9 @@ export default {
                                         { cells: [{ id: 'cell-skyline', height: '130px' }] },
                                         {
                                             cells: [
-                                                { id: 'cell-pie' },
+                                                { id: 'cell-pie', width: '60%' },
                                                 // { id: 'cell-kpi' },
-                                                { id: 'cell-progress' }
+                                                { id: 'cell-progress', width: '40%' }
                                             ]
                                         }
                                     ]
