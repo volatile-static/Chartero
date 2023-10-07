@@ -111,12 +111,12 @@ export default {
                     </template>
                     <WordCloud :items="items" :theme="chartTheme" />
                 </t-tab-panel>
-                <t-tab-panel value="tagsPie" :style="panelStyle">
+                <!-- <t-tab-panel value="tagsPie" :style="panelStyle">
                     <template #label>
                         <ChartPieIcon /> {{ locale.tagsPie }}
                     </template>
                     <TagsPie :history="itemHistory" :theme="chartTheme" />
-                </t-tab-panel>
+                </t-tab-panel> -->
             </t-tabs>
         </t-content>
     </t-layout>
