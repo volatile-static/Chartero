@@ -13,7 +13,8 @@
         <t-skeleton :loading="loading" animation="gradient">
             <div id="block-container">
                 <TTooltip v-for="block of blocks" :content="block.description" show-arrow>
-                    <div class="day-block" :style="{ backgroundColor: block.color }"></div>
+                    <div class="day-block" :style="{ backgroundColor: block.color }" @click="onBlockClick(block.time)">
+                    </div>
                 </TTooltip>
             </div>
         </t-skeleton>
@@ -22,6 +23,8 @@
 
 <script lang="ts">
 import HistoryAnalyzer from '$/history/analyzer';
+import { toTimeString } from '$/utils';
+import { MessagePlugin } from 'tdesign-vue-next';
 import { nextTick } from 'vue';
 
 export default {
@@ -42,7 +45,11 @@ export default {
                 'Dec',
             ],
             now: new Date(),
-            blocks: [] as Array<{ color: string; description: string }>,
+            blocks: [] as Array<{
+                color: string;
+                time: string;
+                description: string
+            }>,
             loading: true,
         };
     },
@@ -118,6 +125,7 @@ export default {
                 }
                 return {
                     color,
+                    time: toTimeString(readingS[index]),
                     description: getDate(week, day).toLocaleDateString(
                         addon.getGlobal('Zotero').locale
                     ),
@@ -125,6 +133,9 @@ export default {
             });
             nextTick(() => (this.loading = false));
         },
+        onBlockClick(message: string) {
+            MessagePlugin.info(message);
+        }
     },
     mounted() {
         setTimeout(this.init, 10);
@@ -145,6 +156,7 @@ export default {
 .day-block {
     border-radius: 20%;
     transition: all 0.6s;
+    cursor: pointer;
 }
 
 .day-block:hover {
