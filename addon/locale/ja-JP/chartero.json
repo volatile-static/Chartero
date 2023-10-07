@@ -125,5 +125,6 @@
     "thisItem": "この項目",
     "relatedItems": "関連項目",
     "collapsedItems": "折りたたまれた項目",
-    "itemsCount": "項目数"
+    "itemsCount": "項目数",
+    "overallProgress": "全体の進捗状況"
 }

@@ -127,5 +127,6 @@
     "thisItem": "Thie Item",
     "relatedItems": "Related Items",
     "collapsedItems": "Collapsed Items",
-    "itemsCount": "Items Count"
+    "itemsCount": "Items Count",
+    "overallProgress": "Overall Progress"
 }

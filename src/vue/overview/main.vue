@@ -113,8 +113,8 @@ export default {
                                         {
                                             cells: [
                                                 { id: 'cell-pie' },
-                                                { id: 'cell-kpi' },
-                                                // { id: 'cell-progress' }
+                                                // { id: 'cell-kpi' },
+                                                { id: 'cell-progress' }
                                             ]
                                         }
                                     ]
@@ -165,6 +165,7 @@ export default {
                 chartOptions: {
                     title: { text: addon.locale.chartTitle.pie },
                     subtitle: { text: addon.locale.chartTitle.pieSub },
+                    exporting: { enabled: false },
                     tooltip: {
                         useHTML: true,
                         pointFormatter: function () {
@@ -187,16 +188,37 @@ export default {
                         data
                     } as SeriesVariablepieOptions]
                 } as Highcharts.Options
+            }, {
+                cell: 'cell-progress',
+                type: 'HTML',
+                elements: [{
+                    tagName: 'div',
+                    children: [{
+                        tagName: 'h2',
+                        textContent: addon.locale.overallProgress,
+                        style: { textAlign: 'center' }
+                    }]
+                }]
             }]
-        }, true),
-            component = board.mountedComponents.find(c => c.options.cell == 'cell-skyline')!;
-        // 等待DOM挂载后把组件移动到对应位置
-        component.component.contentElement.appendChild(document.getElementById('skyline')!);
+        }, true);
 
+        // 等待DOM挂载后把组件移动到对应位置
+        for (const component of board.mountedComponents)
+            switch (component.options.cell) {
+                case 'cell-skyline':
+                    component.component.contentElement.appendChild(document.getElementById('skyline')!);
+                    break;
+                case 'cell-progress':
+                    component.component.contentElement.appendChild(document.getElementById('progress')!);
+                    break;
+                default:
+                    break;
+            }
         addon.log('overview board loaded', board);
     },
     data() {
         return {
+            overallProgress: analyzer.progress,
             locale: addon.locale,
             theme: addon.getPref('useDarkTheme') ? 'light' : 'light'  // TODO: dark
         };
@@ -208,6 +230,13 @@ export default {
 <template>
     <div id="container" :className="'highcharts-' + theme"></div>
     <Skyline id="skyline" />
+    <TProgress id="progress" theme="circle" size="large" :percentage="overallProgress" />
 </template>
 
-<style scoped></style>
+<style scoped>
+#progress {
+    position: relative;
+    left: calc(50% - 80px);
+    top: calc(50% - 160px);
+}
+</style>

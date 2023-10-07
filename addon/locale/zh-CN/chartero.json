@@ -129,5 +129,6 @@
     "collapsedItems": "已折叠条目",
     "scheduleWeek": "一周内累计",
     "scheduleHour": "一天内累计",
-    "itemsCount": "条目数"
+    "itemsCount": "条目数",
+    "overallProgress": "文库阅读进度"
 }
