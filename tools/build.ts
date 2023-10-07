@@ -207,10 +207,18 @@ async function esbuild() {
 }
 
 function buildPrefs() {
+    function stringifyObj(val: unknown) {
+        if (typeof val == 'string')
+            return `'${val}'`;
+        else if (typeof val == 'object')
+            return `'${JSON.stringify(val)}'`;
+        else
+            return val;
+    }
     fs.writeFileSync(
         path.join(buildDir, 'addon/prefs.js'),
         Object.entries(prefs).map(
-            ([k, v]) => `pref('${details.config.addonPref}.${k}', ${JSON.stringify(v)});`
+            ([k, v]) => `pref('${details.config.addonPref}.${k}', ${stringifyObj(v)});`
         ).join('\n')
     );
     console.log('[Build] Build prefs.js OK');

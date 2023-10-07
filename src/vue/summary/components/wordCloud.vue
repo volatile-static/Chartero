@@ -132,13 +132,10 @@ export default {
             const ids = await Zotero.Tags.getAutomaticInLibrary(
                 this.items[0].libraryID
             );
-            this.allTags = ids.map(
-                id =>
-                ({
-                    label: Zotero.Tags.getName(id),
-                    value: id,
-                } as DataOption)
-            );
+            this.allTags = ids.map(id => ({
+                label: Zotero.Tags.getName(id),
+                value: id,
+            } as DataOption));
         },
     },
     props: {

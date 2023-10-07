@@ -36,6 +36,7 @@ The name _Chartero_ is a combination of **Char**t and Zo**tero**. As a [Zotero](
 |            ![column](doc/column.png)            | In `items tree` of library view, you can add a column to show reading progress.                                               |
 |         ![dashboard](doc/dashboard.jpg)         | Illustrates all information about a `top-level item`. Updating as soon as record changes when in a `Reader`.                  |
 |           ![summary](doc/summary.jpg)           | Summary of two or more `items`. _Will not_ be loaded if the number of selected items is larger than you set in preferences.   |
+|          ![overview](doc/overview.jpg)          | Click `Main menu -> View -> Overview` and jump to a new tab.                                                                  |
 |           ![minimap](doc/minimap.gif)           | Besides the scrollbar of `Reader`(PDF and ePub), gray scale blocks for read pages and color strips for annotations.           |
 | ![images](doc/images.png) ![more](doc/more.png) | At the left side-bar of `Reader`, you can see all images in the current document. Click to navigate and double-click to copy. |
 

@@ -45,6 +45,7 @@ _Chartero_ 这个名字是连接了 **Char**t 与 Zo**tero**，作为一个[Zote
 |           ![仪表盘](dashboard.jpg)            | 可视化与当前条目相关的所有信息，在阅读器的侧边栏可实时刷新。                                                                          |
 |           ![分类统计](summary.jpg)            | 总结多个条目之间的关系，若选中条目数超过首选项中设置的值，则不会加载。                                                                |
 |            ![小地图](minimap.gif)             | 在阅读器滚动条旁边，灰色块表示对应页面的阅读时长，彩色条表示注释。                                                                    |
+|           ![文库总览](overview.jpg)           | 点击`主菜单 → 查看 → 文库总览`后弹出标签页                                                                                            |
 | ![提取图片](images.png) ![加载更多](more.png) | 在阅读器左侧边栏显示当前文档中的所有图片。单击可跳转，双击可复制。若 PDF 图片过多，则每次只加载 10 页，点击最下方按钮可手动加载更多。 |
 
 </details>
@@ -124,7 +125,7 @@ _Chartero_ 这个名字是连接了 **Char**t 与 Zo**tero**，作为一个[Zote
 
 ## 友情链接
 
--    [🤩 Awesome Zotero Plugins](https://plugins.zotero-chinese.com/charts.html)
+-   [🤩 Awesome Zotero Plugins](https://plugins.zotero-chinese.com/charts.html)
 
 ---
 
