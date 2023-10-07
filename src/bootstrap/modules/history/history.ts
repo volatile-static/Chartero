@@ -221,7 +221,7 @@ export default class ReadingHistory extends ManagerTool {
      * @param [libraryID=1] 默认为用户文库
      * @returns 已有的或新建的主条目
      */
-    async getMainItem(libraryID: number = 1): Promise<Zotero.Item> {
+    async getMainItem(libraryID: number = Zotero.Libraries.userLibraryID): Promise<Zotero.Item> {
         if (this._mainItems[libraryID]) return this._mainItems[libraryID]!;
 
         const searcher = new Zotero.Search();
@@ -448,7 +448,7 @@ export default class ReadingHistory extends ManagerTool {
             .map((it) => this.getInTopLevel(it));
     }
 
-    getInLibrary(libraryID: number = 1) {
+    getInLibrary(libraryID: number = Zotero.Libraries.userLibraryID) {
         return this._cached.filter(
             (c) => c?.note.libraryID == libraryID
         ) as AttachmentHistory[];

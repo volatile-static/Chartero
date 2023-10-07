@@ -83,8 +83,9 @@ export async function onItemSelect() {
                 break;
             case 'library':
             case 'group':
+                // case 'feed':
                 renderSummaryPanelDebounced(
-                    await Zotero.Items.getAllIDs((row.ref as any).libraryID)
+                    await Zotero.Items.getAllIDs((row.ref as Zotero.DataObject).libraryID)
                 );
                 break;
 

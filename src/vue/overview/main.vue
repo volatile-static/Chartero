@@ -40,21 +40,15 @@ function drawSchedule() {
 }
 
 async function drawVariablePie() {
-    const data = new Array<PointOptionsObject>(),
-        series = new Array<SeriesVariablepieOptions | SeriesPieOptions>(),
-        collections = Zotero.Collections.getByLibrary(1, true);
-    function getTimeByKey(key: string) {
-        const item = Zotero.Items.getByLibraryAndKey(1, key);
-        if (item)
-            return new HistoryAnalyzer(item).totalS;
-        return 0;
+    function getTime(item: Zotero.Item) {
+        return new HistoryAnalyzer(item).totalS;
     }
     function process(
         arr: Array<[x: string, y: number, z: number]>,
         item: Zotero.Item
     ) {  // 将item的数组转换为饼图数据
         const tags = item.getTags().map(t => t.tag);  // 标签字符串的数组
-        const time = getTimeByKey(item.key);
+        const time = getTime(item);
         for (const tag of tags) {
             const fan = arr.find(i => i[0] === tag);  // 0代表名字
             if (fan) {  // 该标签已记录
@@ -66,16 +60,31 @@ async function drawVariablePie() {
         }
         return arr;
     }
+    const data = new Array<PointOptionsObject>(),
+        series = new Array<SeriesVariablepieOptions | SeriesPieOptions>(),
+        userLib = Zotero.Libraries.userLibraryID,
+        collections: Array<Zotero.Collection | Zotero.Search> =
+            Zotero.Collections.getByLibrary(userLib, true),
+        unfiled = new Zotero.Search({
+            libraryID: userLib,
+            name: addon.locale.unfiled
+        });
+    // 添加未分类条目
+    unfiled.addCondition('unfiled', 'true');
+    unfiled.addCondition('itemType', 'isNot', 'note');
+    collections.push(unfiled);
+
     for (const collection of collections) {
-        const items = collection.getChildItems();
+        const items = collection instanceof Zotero.Collection
+            ? collection.getChildItems()
+            : Zotero.Items.get(await collection.search());
         data.push({
             name: collection.name,
             drilldown: collection.name,
             y: items.length,  // 条目数作为扇形角度
             z: items.reduce((sum, item) =>
-                sum + getTimeByKey(item.key), 0)  // 从0开始加
+                sum + getTime(item), 0)  // 从0开始加
         });
-
         series.push({
             name: collection.name,
             id: collection.name,
@@ -83,20 +92,6 @@ async function drawVariablePie() {
             data: items.reduce(process, [])
         });
     }
-
-    // 添加未分类条目
-    let items = await Zotero.Items.getAll(1, true);
-    items = items.filter(it =>
-        it.isRegularItem() && it.getCollections().length === 0
-    );
-    const tottim = items.reduce((sum, item) => sum + getTimeByKey(item.key), 0);
-    data.push({
-        name: addon.locale.unfiled,
-        drilldown: 'unfiled',
-        y: items.length,
-        z: tottim
-    });
-    addon.log(data, series);
     return { data, series };
 }
 
@@ -170,10 +165,6 @@ export default {
                 chartOptions: {
                     title: { text: addon.locale.chartTitle.pie },
                     subtitle: { text: addon.locale.chartTitle.pieSub },
-                    plotOptions: {
-                        pie: { allowPointSelect: true },
-                        variablepie: { allowPointSelect: true }
-                    },
                     tooltip: {
                         useHTML: true,
                         pointFormatter: function () {
@@ -192,6 +183,7 @@ export default {
                         innerSize: '20%',
                         zMin: 0,
                         colorByPoint: true,
+                        allowPointSelect: false,
                         data
                     } as SeriesVariablepieOptions]
                 } as Highcharts.Options
