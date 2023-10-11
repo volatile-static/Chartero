@@ -84,36 +84,36 @@ function clearFolder(target: string) {
 }
 
 function replaceString() {
-    const replaceFrom = [
-        /__author__/g,
-        /__description__/g,
-        /__homepage__/g,
-        /__buildVersion__/g,
-        /__buildTime__/g,
-    ];
-    const replaceTo = [
-        details.author,
-        details.description,
-        details.homepage,
-        details.version,
-        buildTime
-    ];
+    const localeMap: Record<string, Record<string, { message: string }>> = {},
+        replaceMap = new Map(Object.keys(prefs).map(key => [
+            new RegExp(`__${key}__`, 'g'),
+            `id='${details.name}-${key}' preference='${details.config.addonPref}.${key}'`
+        ]));  // 首选项字段
+    replaceMap.set(/__author__/g, details.author);
+    replaceMap.set(/__buildVersion__/g, details.version);
+    replaceMap.set(/__buildTime__/g, buildTime);
 
-    replaceFrom.push(...[
-        ...Object.keys(details.config).filter(k => k != 'defaultSettings'),
-        ...Object.keys(prefs)
-    ].map((k) => new RegExp(`__${k}__`, "g")));
-    replaceTo.push(
-        ...Object.values(details.config).filter(v => typeof v == 'string') as string[]
-    );
-    replaceTo.push(...Object.keys(prefs).map(
-        key => `id='${details.name}-${key}' preference='${details.config.addonPref}.${key}'`
-    ));
-    if (replaceFrom.length != replaceTo.length) {
-        lodash.zip(replaceFrom, replaceTo).forEach(([from, to]) => {
-            console.debug(`[Build] Replace ${from} to ${to}`);
-        });
-        throw new Error("[Build] Replace string length not match.");
+    for (const [key, val] of Object.entries(details.config)) {
+        if (typeof val == 'string')  // 常规字段直接替换字符串
+            replaceMap.set(new RegExp(`__${key}__`, 'g'), val);
+        else if (key != 'defaultSettings' && typeof val == 'object') {  // 多语言字段
+            replaceMap.set(new RegExp(`__${key}__`, 'g'), `__MSG_${key}__`);
+            for (const lang in val) {
+                localeMap[lang] ??= {};
+                localeMap[lang][key] = {
+                    message: (val as Record<string, string>)[lang]
+                };
+            }
+        }
+    }
+    // console.debug(replaceMap);
+    for (const [lang, msg] of Object.entries(localeMap)) {  // 写入i18n文件
+        const dir = path.join(buildDir, `addon/_locales/${lang}`);
+        fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(
+            path.join(dir, "messages.json"),
+            JSON.stringify(msg),
+        );
     }
 
     const optionsAddon = {
@@ -124,8 +124,8 @@ function replaceString() {
             `${buildDir}/addon/manifest.json`,
             `${buildDir}/addon/bootstrap.js`,
         ],
-        from: replaceFrom,
-        to: replaceTo,
+        from: Array.from(replaceMap.keys()),
+        to: Array.from(replaceMap.values()),
         countMatches: true,
     };
     optionsAddon.files.push("tools/update.json");

@@ -4,8 +4,15 @@
     "type": "module",
     "config": {
         "addonName": "Chartero",
+        "description": {
+            "en": "Charts for Zotero",
+            "zh": "可视化文库"
+        },
         "addonPref": "extensions.zotero.chartero",
-        "issue": "https://github.com/volatile-static/Chartero/issues",
+        "issue": {
+            "en": "https://github.com/volatile-static/Chartero/issues",
+            "zh": "https://gitee.com/const_volatile/chartero/issues"
+        },
         "gitee": "https://gitee.com/const_volatile/chartero",
         "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
         "updateURL": "https://raw.githubusercontent.com/volatile-static/Chartero/main/tools/update.json",
