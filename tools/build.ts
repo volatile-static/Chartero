@@ -3,7 +3,6 @@ import { sassPlugin } from 'esbuild-sass-plugin';
 import { env, exit } from "process";
 import fs from "fs";
 import path from "path";
-import lodash from "lodash";
 import replaceInFile from "replace-in-file";
 import details from "../package.json" assert { type: "json" };
 
@@ -92,6 +91,9 @@ function replaceString() {
     replaceMap.set(/__author__/g, details.author);
     replaceMap.set(/__buildVersion__/g, details.version);
     replaceMap.set(/__buildTime__/g, buildTime);
+    replaceMap.set(/__homepage__/g, details.homepage);
+    replaceMap.set(/__releasepage__/g, details.releasepage);
+
 
     for (const [key, val] of Object.entries(details.config)) {
         if (typeof val == 'string')  // 常规字段直接替换字符串
@@ -123,19 +125,19 @@ function replaceString() {
             `${buildDir}/addon/**/*.json`,
             `${buildDir}/addon/manifest.json`,
             `${buildDir}/addon/bootstrap.js`,
+            'tools/update.json'
         ],
         from: Array.from(replaceMap.keys()),
         to: Array.from(replaceMap.values()),
         countMatches: true,
     };
-    optionsAddon.files.push("tools/update.json");
     const replaceResult = replaceInFileSync(optionsAddon);
 
     const localeMessage = new Set();
     const localeMessageMiss = new Set();
 
     const replaceResultFlt = replaceInFileSync({
-        files: [`${buildDir}/addon/locale/**/*.ftl`],
+        files: `${buildDir}/addon/locale/**/*.ftl`,
         //@ts-expect-error
         processor: (fltContent: string) => {
             const lines = fltContent.split("\n");
@@ -156,7 +158,7 @@ function replaceString() {
     });
 
     const replaceResultXhtml = replaceInFileSync({
-        files: [`${buildDir}/addon/**/*.xhtml`],
+        files: `${buildDir}/addon/**/*.xhtml`,
         //@ts-expect-error
         processor: (input) => {
             const matches = [...input.matchAll(/(data-l10n-id)="(\S*)"/g)];

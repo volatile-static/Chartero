@@ -9,12 +9,8 @@
             "zh": "可视化文库"
         },
         "addonPref": "extensions.zotero.chartero",
-        "issue": {
-            "en": "https://github.com/volatile-static/Chartero/issues",
-            "zh": "https://gitee.com/const_volatile/chartero/issues"
-        },
+        "issue": "https://github.com/volatile-static/Chartero/issues",
         "gitee": "https://gitee.com/const_volatile/chartero",
-        "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
         "updateURL": "https://raw.githubusercontent.com/volatile-static/Chartero/main/tools/update.json",
         "addonID": "chartero@volatile.static",
         "defaultSettings": {
@@ -63,7 +59,7 @@
     "bugs": {
         "url": "https://github.com/volatile-static/Chartero/issues"
     },
-    "homepage": "https://gitee.com/const_volatile/chartero",
+    "homepage": "https://github.com/volatile-static/Chartero",
     "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
     "dependencies": {
         "@highcharts/dashboards": "^1.1.1",
@@ -73,12 +69,12 @@
         "highcharts": "^11.1.0",
         "highcharts-vue": "^1.4.3",
         "segmentit": "^2.0.3",
-        "tdesign-vue-next": "^1.5.7",
-        "zotero-plugin-toolkit": "^2.3.8"
+        "tdesign-vue-next": "^1.6.2",
+        "zotero-plugin-toolkit": "^2.3.9"
     },
     "devDependencies": {
         "@types/animejs": "^3.1.8",
-        "@types/node": "^18.18.4",
+        "@types/node": "^18.18.5",
         "@types/react": "17.0.2",
         "@types/react-dom": "17.0.2",
         "@vitejs/plugin-vue": "^4.4.0",
@@ -101,7 +97,7 @@
         "unplugin-vue-components": "^0.22.12",
         "vite": "^4.4.11",
         "vue": "^3.3.4",
-        "vue-tsc": "^1.8.16",
+        "vue-tsc": "^1.8.19",
         "zotero-types": "file:../zotero-types"
     },
     "eslintConfig": {
