@@ -11,7 +11,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -21,4 +20,11 @@ jobs:
       with:
         node-version: "18.x"
     - run: npm install
-    - run: npm run build-pack
+    - run: npm run build-dev-all
+    - run: npm pack
+    
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: dev
+        files: build/chartero.xpi
