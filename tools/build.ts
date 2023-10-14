@@ -7,6 +7,7 @@ import replaceInFile from "replace-in-file";
 import details from "../package.json" assert { type: "json" };
 
 const buildDir = "build",
+    isDevBuild = env.NODE_ENV == 'development',
     prefs = details.config.defaultSettings,
     now = new Date(),
     buildTime = now.toLocaleString(),
@@ -89,10 +90,11 @@ function replaceString() {
             `id='${details.name}-${key}' preference='${details.config.addonPref}.${key}'`
         ]));  // 首选项字段
     replaceMap.set(/__author__/g, details.author);
-    replaceMap.set(/__buildVersion__/g, details.version);
     replaceMap.set(/__buildTime__/g, buildTime);
     replaceMap.set(/__homepage__/g, details.homepage);
     replaceMap.set(/__releasepage__/g, details.releasepage);
+    replaceMap.set(/__buildVersion__/g, details.version + (isDevBuild ? '-dev' : ''));
+    replaceMap.set(/__devBuild__/g, isDevBuild ? '<html:h2>Development Build, <html:span style="color: red;">Do NOT</html:span> Use!</html:h2>' : '');
 
 
     for (const [key, val] of Object.entries(details.config)) {

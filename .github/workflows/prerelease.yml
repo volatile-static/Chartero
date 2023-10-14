@@ -1,0 +1,34 @@
+name: Plug-in CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+
+    - run: npm install
+    - run: npm run build-dev-all
+    - run: zip -r chartero-dev ./build/addon/
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: ⚗️ Development Build
+        tag_name: dev
+        prerelease: true
+        generate_release_notes: true
+        append_body: |
+          # For testing purposes only, do NOT use in production!
+        files: chartero-dev.zip
