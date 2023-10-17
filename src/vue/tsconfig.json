@@ -1,5 +1,5 @@
 {
-    "extends": "@vue/tsconfig/tsconfig.web.json",
+    "extends": "@vue/tsconfig/tsconfig.dom.json",
     "include": [
         "./**/*.ts",
         "./**/*.vue",
@@ -17,8 +17,7 @@
         },
         "skipLibCheck": true,
         "preserveValueImports": false,
-        "importsNotUsedAsValues": "remove",
-        "verbatimModuleSyntax": true
+        "importsNotUsedAsValues": "remove"
     },
     "references": [
         {

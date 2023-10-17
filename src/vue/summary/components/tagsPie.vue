@@ -4,47 +4,39 @@ import Highcharts from '@/highcharts';
 import HistoryAnalyzer from '$/history/analyzer';
 import { helpMessageOption } from '@/utils';
 import type { AttachmentHistory } from '$/history/history';
-import type { theme } from 'highcharts';
+
 export default {
     components: { Chart },
     data() {
         return {
             locale: addon.locale,
+            dataOption: 'journal',
         };
+    },
+    methods: {
+        getJournalData(items: Zotero.Item[]) {
+            const journalMap: Record<string, number> = {};
+            for (const item of items) {
+                const name = item.getField('journalAbbreviation')
+                    || item.getField('publicationTitle')
+                    || item.getField('conferenceName')
+                    || item.getField('university');
+                if (typeof name == 'string')
+                    journalMap[name] = (journalMap[name] ?? 0) + 1;
+            }
+            addon.log(journalMap);
+            return Object.entries(journalMap).map(([name, y]) => ({
+                name,
+                y,
+                z: y,
+            }));
+        }
     },
     computed: {
         chartOpts(): Highcharts.Options {
-            const tagPieMap: { [name: string]: { rad: number; tim: number } } =
-                {};
-            for (const his of this.history) {
-                const topLevel = new HistoryAnalyzer([his]).parents[0];
-                if (!topLevel) continue;
+            const ha = new HistoryAnalyzer(this.history),
+                parents = ha.parents.filter(it => it?.isRegularItem()) as Zotero.Item[];
 
-                const tags = topLevel.getTags().map(tag => tag.tag),
-                    time = his.record.totalS;
-                for (const tag of tags) {
-                    tagPieMap[tag] ??= { rad: 0, tim: 0 };
-                    ++tagPieMap[tag].rad;
-                    tagPieMap[tag].tim += time;
-                }
-            }
-            let data = Object.keys(tagPieMap).map(tag => [
-                tag,
-                tagPieMap[tag].rad,
-                tagPieMap[tag].tim,
-            ])
-            //     others = [
-            //         addon.locale.others,
-            //         data.reduce(
-            //             (prev, curr) =>
-            //                 prev + Number(curr[1] == 1 && curr[2] == 0),
-            //             0
-            //         ),
-            //         0,
-            //     ];
-            // addon.log(data, others);
-            // data = data.filter(([, rad, tim]) => rad != 1 || tim != 0);
-            // if (others[1] > 0) data.push(others);
             return {
                 exporting: {
                     menuItemDefinitions: helpMessageOption(
@@ -55,7 +47,7 @@ export default {
                 series: [
                     {
                         type: 'variablepie',
-                        data,
+                        data: this.getJournalData(parents),
                         innerSize: '20%',
                     } as Highcharts.SeriesVariablepieOptions,
                 ],
@@ -76,7 +68,17 @@ export default {
 </script>
 
 <template>
-    <Chart :options="options" :key="theme"></Chart>
+    <t-space direction="vertical" style="width: 100%">
+        <t-space style="padding: 8px" break-line>
+            <b>{{ locale.selectDataSource }}</b>
+            <t-select v-model="dataOption" :placeholder="locale.sort" size="small" auto-width>
+                <t-option value="journal" :label="locale.tags"></t-option>
+                <t-option value="firstCreator" :label="locale.author"></t-option>
+                <t-option value="lastCreator" :label="locale.author"></t-option>
+            </t-select>
+        </t-space>
+        <Chart :options="options" :key="theme"></Chart>
+    </t-space>
 </template>
 
 <style scoped></style>
