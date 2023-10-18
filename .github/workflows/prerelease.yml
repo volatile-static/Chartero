@@ -19,7 +19,7 @@ jobs:
         node-version: 18.x
 
     - run: npm install
-    - run: npm run build-dev-all
+    - run: npm run build
     - run: zip -r chartero-dev ./build/addon/
 
     - name: Release
