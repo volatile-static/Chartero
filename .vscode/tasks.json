@@ -3,49 +3,7 @@
     "tasks": [
         {
             "type": "npm",
-            "script": "build-dev-all",
-            "problemMatcher": [],
-            "label": "Vue",
-            "detail": "cross-env NODE_ENV=development node ./tools/build.js"
-        },
-        {
-            "type": "npm",
-            "script": "type-check-all",
-            "problemMatcher": [
-                "$eslint-compact"
-            ],
-            "label": "npm: type-check-all",
-            "detail": "npm run type-check-vue & npm run type-check-bootstrap"
-        },
-        {
-            "type": "npm",
-            "script": "restart-all",
-            "problemMatcher": [
-                "$eslint-compact"
-            ],
-            "label": "npm: restart-all",
-            "detail": "npm run restart-all"
-        },
-        {
-            "type": "npm",
-            "script": "build-all",
-            "group": "build",
-            "problemMatcher": [],
-            "label": "npm: build-all",
-            "detail": "npm run build-bootstrap && npm run build-vue"
-        },
-        {
-            "type": "npm",
-            "script": "restart-bootstrap",
-            "problemMatcher": [
-                "$eslint-compact"
-            ],
-            "label": "npm: restart-bootstrap",
-            "detail": "npm run build-dev-bootstrap && npm run restart"
-        },
-        {
-            "type": "npm",
-            "script": "reload-bootstrap",
+            "script": "reload-dev",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -54,17 +12,6 @@
                 "$tsc-watch"
             ],
             "label": "npm: reload-bootstrap",
-            "detail": "npm run build-dev-bootstrap && node tools/reload.mjs",
-            "isBackground": true
-        },
-        {
-            "type": "npm",
-            "script": "reload-all",
-            "problemMatcher": [
-                "$vite"
-            ],
-            "label": "npm: reload-all",
-            "detail": "npm run build-dev-all && node tools/reload.mjs",
             "isBackground": true
         }
     ]

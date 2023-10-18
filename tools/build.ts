@@ -4,13 +4,13 @@ import { zip } from "compressing";
 import { sassPlugin } from 'esbuild-sass-plugin';
 import { env, exit } from 'process';
 import { execSync } from "child_process";
+import { createRequire } from 'module';
 import fs from 'fs';
 import path from 'path';
 import util from 'util';
 import lodash from 'lodash';
 import replaceInFile from 'replace-in-file';
 import details from '../package.json' assert { type: 'json' };
-import commands from "./zotero-cmd.json" assert { type: "json" };
 
 const buildDir = 'build',
     isDevBuild = env.NODE_ENV == 'development',
@@ -275,11 +275,13 @@ function buildPrefs() {
 }
 
 function reload() {
-    const url = `zotero://ztoolkit-debug/?run=${encodeURIComponent(util.format(
-        fs.readFileSync('tools/reload.js', 'utf-8'),
-        details.config.addonID,
-        details.config.addonName,
-        details.version
-    ))}`;
-    execSync(`${commands.startZotero} -url "${url}"`);
+    const require = createRequire(import.meta.url),
+        { startZotero } = require('./zotero-cmd.json'),
+        url = `zotero://ztoolkit-debug/?run=${encodeURIComponent(util.format(
+            fs.readFileSync('tools/reload.js', 'utf-8'),
+            details.config.addonID,
+            details.config.addonName,
+            details.version
+        ))}`;
+    execSync(`${startZotero} -url "${url}"`);
 }
