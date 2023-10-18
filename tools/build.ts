@@ -64,7 +64,8 @@ async function main() {
     console.log(
         `[Build] Finished in ${(new Date().getTime() - now.getTime()) / 1000} s.`,
     );
-    reload();
+    if (!env.CI)
+        reload();
 }
 
 function renameInFolder(folder: string, back = false) {
