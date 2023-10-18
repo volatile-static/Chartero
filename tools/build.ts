@@ -1,17 +1,24 @@
-import { build } from "esbuild";
+import { build } from 'esbuild';
+import { build as vite } from 'vite';
+import { zip } from "compressing";
 import { sassPlugin } from 'esbuild-sass-plugin';
-import { env, exit } from "process";
-import fs from "fs";
-import path from "path";
-import replaceInFile from "replace-in-file";
-import details from "../package.json" assert { type: "json" };
+import { env, exit } from 'process';
+import { execSync } from "child_process";
+import fs from 'fs';
+import path from 'path';
+import util from 'util';
+import lodash from 'lodash';
+import replaceInFile from 'replace-in-file';
+import details from '../package.json' assert { type: 'json' };
+import commands from "./zotero-cmd.json" assert { type: "json" };
 
-const buildDir = "build",
+const buildDir = 'build',
     isDevBuild = env.NODE_ENV == 'development',
     prefs = details.config.defaultSettings,
     now = new Date(),
     buildTime = now.toLocaleString(),
-    { replaceInFileSync } = replaceInFile;
+    { replaceInFileSync } = replaceInFile,
+    minifyFolder = ['node_modules/highcharts', 'node_modules/highcharts/modules'];
 
 main().catch((error) => {
     console.error(error);
@@ -36,9 +43,48 @@ async function main() {
     replaceString();
     console.log("[Build] Replace OK");
 
+    if (process.argv.includes('--full')) {
+        if (isDevBuild)
+            minifyFolder.forEach(folder => renameInFolder(folder));
+
+        await vite({
+            root: path.join(buildDir, "../src/vue"),
+            build: { minify: isDevBuild ? false : 'esbuild' }
+        }).catch(() => exit(1));
+
+        if (isDevBuild)
+            minifyFolder.forEach(folder => renameInFolder(folder, true));
+
+        zip.compressDir(
+            path.join('build', 'addon'),
+            path.join('build', details.name + '.xpi'),
+            { ignoreBase: true }
+        ).then(() => console.log('[Build] Addon pack OK!'));
+    }
     console.log(
         `[Build] Finished in ${(new Date().getTime() - now.getTime()) / 1000} s.`,
     );
+    reload();
+}
+
+function renameInFolder(folder: string, back = false) {
+    function forEachFiles(from: string[], to: string[], fun: (f: string, t: string) => void) {
+        for (const [f, t] of lodash.zip(from, to)) {
+            f && t && fun(path.join(folder, f), path.join(folder, t));
+        }
+    }
+    const files = fs.readdirSync(folder, { withFileTypes: true }).filter(f => f.isFile()),
+        js = files.filter(file => file.name.endsWith('.js')).map(f => f.name),
+        sources = js.filter(file => file.endsWith('.src.js')),
+        targets = sources.map(file => file.replace('.src.js', '.js')),
+        minified = sources.map(file => file.replace('.src.js', '.min.js'));
+
+    if (back) {  // 还原
+        forEachFiles(minified, targets, fs.renameSync);
+    } else {
+        forEachFiles(targets, minified, fs.renameSync);
+        forEachFiles(sources, targets, fs.copyFileSync);
+    }
 }
 
 function copyFileSync(source: string, target: string) {
@@ -226,4 +272,14 @@ function buildPrefs() {
         ).join('\n')
     );
     console.log('[Build] Build prefs.js OK');
+}
+
+function reload() {
+    const url = `zotero://ztoolkit-debug/?run=${encodeURIComponent(util.format(
+        fs.readFileSync('tools/reload.js', 'utf-8'),
+        details.config.addonID,
+        details.config.addonName,
+        details.version
+    ))}`;
+    execSync(`${commands.startZotero} -url "${url}"`);
 }
