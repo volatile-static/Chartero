@@ -47,13 +47,15 @@
         "users": "ユーザー統計",
         "network": "文献関連ネットワーク",
         "networkSub": "Ctrl+クリック ジャンプ",
-        "readToday": "今日の読み時間"
+        "readToday": "今日の読み時間",
+        "sankey": "サンキーダイアグラム"
     },
     "summary": {
         "authorBubble": "作者气泡图",
         "gantt": "历史甘特图",
         "wordCloud": "标题词云图",
-        "tagsPie": "关键词饼图"
+        "tagsPie": "关键词饼图",
+        "sankey": "文献关系图"
     },
     "images": {
         "allImages": "所有图片",
@@ -126,5 +128,8 @@
     "relatedItems": "関連項目",
     "collapsedItems": "折りたたまれた項目",
     "itemsCount": "項目数",
-    "overallProgress": "全体の進捗状況"
+    "overallProgress": "全体の進捗状況",
+    "firstCreator": "最初の著者",
+    "lastCreator": "最後の著者",
+    "journal": "ジャーナル"
 }

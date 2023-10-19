@@ -9,6 +9,8 @@ import WordCloudGraph from 'highcharts/modules/wordcloud';
 WordCloudGraph(Highcharts);
 import VariablePieGraph from 'highcharts/modules/variable-pie';
 VariablePieGraph(Highcharts);
+import SankeyGraph from 'highcharts/modules/sankey';
+SankeyGraph(Highcharts);
 // import MarkerCluster from 'highcharts/modules/marker-clusters';
 // MarkerCluster(Highcharts);
 import HighchartsColorAxis from 'highcharts/modules/coloraxis';
@@ -101,7 +103,7 @@ Highcharts.setOptions({
                 onclick: function () {
                     const points = this.getSelectedPoints(),
                         ids = points
-                            .map((p: any) => parseInt(p.custom?.itemID ?? p.id))
+                            .flatMap((p: any) => p.custom?.itemIDs ?? parseInt(p.custom?.itemID ?? p.id))
                             .filter(id => id >= 0);
                     if (ids.length > 0) viewItemsInLib(ids);
                     else MessagePlugin.warning(addon.locale.noItemToView);

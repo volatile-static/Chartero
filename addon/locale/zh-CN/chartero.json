@@ -49,13 +49,15 @@
         "dateTime": "每日阅读时长",
         "pageTime": "每页阅读时长",
         "pageTimeSub": "Ctrl+单击跳转到页面",
-        "readToday": "今日阅读时长"
+        "readToday": "今日阅读时长",
+        "sankey": "一作 | 通讯 | 期刊"
     },
     "summary": {
         "authorBubble": "作者气泡图",
         "gantt": "历史甘特图",
         "wordCloud": "标题词云图",
-        "tagsPie": "关键词饼图"
+        "tagsPie": "关键词饼图",
+        "sankey": "作者关系图"
     },
     "images": {
         "allImages": "所有图片",
@@ -130,5 +132,8 @@
     "scheduleWeek": "一周内累计",
     "scheduleHour": "一天内累计",
     "itemsCount": "条目数",
-    "overallProgress": "文库阅读进度"
+    "overallProgress": "文库阅读进度",
+    "firstCreator": "一作",
+    "lastCreator": "通讯",
+    "journal": "期刊"
 }

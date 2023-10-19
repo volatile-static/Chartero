@@ -8,12 +8,13 @@ import {
 } from 'tdesign-icons-vue-next';
 import Gantt from './components/gantt.vue';
 import AuthorBubble from './components/authorBubble.vue';
+import Sankey from './components/sankey.vue';
 import WordCloud from './components/wordCloud.vue';
 import TagsPie from './components/tagsPie.vue';
 import { GridLightTheme, DarkUnicaTheme } from '@/themes';
 import type { AttachmentHistory } from '$/history/history';
 export default {
-    components: { Gantt, AuthorBubble, WordCloud, TagsPie, ChartBubbleIcon, FormatVerticalAlignRightIcon, ForkIcon, CloudIcon, ChartPieIcon },
+    components: { Sankey, Gantt, AuthorBubble, WordCloud, TagsPie, ChartBubbleIcon, FormatVerticalAlignRightIcon, ForkIcon, CloudIcon, ChartPieIcon },
     data() {
         return {
             locale: addon.locale.summary,
@@ -88,11 +89,11 @@ export default {
         </t-header>
         <t-content>
             <t-tabs placement="bottom" default-value="gantt">
-                <t-tab-panel value="bubble" :style="panelStyle">
+                <t-tab-panel value="sankey" :style="panelStyle">
                     <template #label>
-                        <ChartBubbleIcon /> {{ locale.authorBubble }}
+                        <ChartBubbleIcon /> {{ locale.sankey }}
                     </template>
-                    <AuthorBubble :history="itemHistory" :theme="chartTheme" />
+                    <Sankey :history="itemHistory" :theme="chartTheme" />
                 </t-tab-panel>
                 <t-tab-panel value="gantt" :style="panelStyle">
                     <template #label>
