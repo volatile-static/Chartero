@@ -137,30 +137,30 @@ export default {
                     }
                 });
             }
+
             // 最后根据条目颜色合成其他结点颜色
-            for (const firstCreator of firstCreatorSet) {
-                const colors = Object.entries(first2last).filter(
-                    ([key, _]) => key.startsWith(firstCreator)
-                ).flatMap(
+            function mixColors(items: Array<[string, ItemInfo[]]>) {
+                const colors = items.flatMap(
                     ([_, val]) => val.map(i => Highcharts.color(colorMap[i.lastCreator]))
                 );
                 let mixedColor = colors[0];
                 for (let i = 1; i < colors.length; ++i)
-                    mixedColor = Highcharts.color(mixedColor.tweenTo(colors[i], 1 / colors.length)); 
-                addon.log(mixedColor) 
-                nodes.push({ id: firstCreator, column: 0, color: mixedColor.get() });
+                    mixedColor = Highcharts.color(
+                        mixedColor.tweenTo(colors[i], 1 / colors.length)
+                    );
+                return mixedColor.get();
+            }
+            for (const firstCreator of firstCreatorSet) {
+                const color = mixColors(Object.entries(first2last).filter(
+                    ([key, _]) => key.startsWith(firstCreator)
+                ));
+                nodes.push({ id: firstCreator, column: 0, color });
             }
             for (const journal of journalSet) {
-                const colors = Object.entries(last2journal).filter(
+                const color = mixColors(Object.entries(last2journal).filter(
                     ([key, _]) => key.endsWith(journal)
-                ).flatMap(
-                    ([_, val]) => val.map(i => Highcharts.color(colorMap[i.lastCreator]))
-                );
-                let mixedColor = colors[0];
-                for (let i = 1; i < colors.length; ++i)
-                    mixedColor = Highcharts.color(mixedColor.tweenTo(colors[i], 1 / colors.length)); 
-                addon.log(mixedColor) 
-                nodes.push({ id: journal, column: 2, color: mixedColor.get() });
+                ));
+                nodes.push({ id: journal, column: 2, color });
             }
             return {
                 chart: { animation: undefined },
