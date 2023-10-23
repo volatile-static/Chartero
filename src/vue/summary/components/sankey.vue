@@ -162,10 +162,13 @@ export default {
                 ));
                 nodes.push({ id: journal, column: 2, color });
             }
+            const maxRows = Math.max(
+                ...[0, 1, 2].map(col => nodes.filter(n => n.column === col).length)
+            );
             return {
-                chart: { animation: undefined },
+                chart: { animation: undefined, height: maxRows * 26 + 50 },
                 subtitle: { text: this.locale.chartTitle.sankey },
-                tooltip: { useHTML: true, formatter },
+                tooltip: { useHTML: true, outside: true, formatter },
                 series: [{
                     type: 'sankey',
                     data,
