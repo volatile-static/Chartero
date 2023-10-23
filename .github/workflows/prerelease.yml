@@ -20,10 +20,6 @@ jobs:
 
     - run: npm install
     - run: npm run build
-    - run: |
-      cd build/addon
-      zip -r ../../chartero-dev ./*
-      cd ~
 
     - name: Release
       uses: softprops/action-gh-release@v1
@@ -34,4 +30,4 @@ jobs:
         generate_release_notes: true
         append_body: |
           # For testing purposes only, do NOT use in production! ![cnt](https://img.shields.io/github/downloads/volatile-static/Chartero/dev/total)
-        files: chartero-dev.zip
+        files: build/chartero.xpi
