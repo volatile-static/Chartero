@@ -104,6 +104,7 @@
         },
         "github": {
             "release": true,
+            "pushRepo": "https://github.com/volatile-static/Chartero.git",
             "assets": [
                 "build/*.xpi"
             ]
