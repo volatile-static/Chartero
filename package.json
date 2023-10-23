@@ -27,10 +27,9 @@
     },
     "description": "Charts for Zotero",
     "scripts": {
-        "build": "npm run reload-dev-all",
+        "build": "cross-env NODE_ENV=development ts-node tools/build.ts --full",
         "reload-all": "ts-node tools/build.ts --full",
         "reload-dev": "cross-env NODE_ENV=development ts-node tools/build.ts",
-        "reload-dev-all": "cross-env NODE_ENV=development ts-node tools/build.ts --full",
         "type-check-vue": "vue-tsc --noEmit -p ./src/vue",
         "type-check-bootstrap": "tsc --noEmit -p ./src/bootstrap",
         "type-check-all": "npm run type-check-vue & npm run type-check-bootstrap",
