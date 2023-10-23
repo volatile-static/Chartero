@@ -3,7 +3,7 @@
         "chartero@volatile.static": {
             "updates": [
                 {
-                    "version": "2.0.0-dev",
+                    "version": "2.1.0",
                     "update_link": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
                     "applications": {
                         "zotero": {
