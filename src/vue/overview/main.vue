@@ -190,7 +190,7 @@ export default {
                     },
                     drilldown: { series },
                     series: [{
-                        name: Zotero.Libraries.getName(1),
+                        name: Zotero.Libraries.userLibrary.name,
                         type: 'variablepie',
                         minPointSize: 10,
                         innerSize: '20%',

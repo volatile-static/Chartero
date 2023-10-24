@@ -28,7 +28,7 @@ export default class ReadingHistory extends ManagerTool {
     private _secondState: ReaderState;
 
     private _intervalID: number;
-    private _mutex: boolean;
+    private _mutex: boolean = false;
     private _loadingPromise: _ZoteroTypes.DeferredPromise<void>;
 
     constructor(base: BasicTool | BasicOptions, hook: RecordHook) {
