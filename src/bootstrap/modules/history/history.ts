@@ -149,8 +149,12 @@ export default class ReadingHistory extends ManagerTool {
         if (this._activeReader?.itemID) {
             this._mutex = true;
             try {
+                if (__dev__)
+                    this.log('schedule locked');
                 const cache = await this.getCache(this._activeReader.itemID); // 当前PDF的缓存
                 this.record(cache.record); // 先记录到缓存
+                if (__dev__) 
+                    this.log('recorded: ', cache.record);
                 this.saveNote(cache).finally(() => this._mutex = false); // 保存本次记录
             } catch (error) {
                 addon.log(error);
