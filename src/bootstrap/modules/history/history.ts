@@ -28,7 +28,7 @@ export default class ReadingHistory extends ManagerTool {
     private _secondState: ReaderState;
 
     private _intervalID: number;
-    private _mutex: boolean = false;
+    private _mutex: boolean;
     private _loadingPromise: _ZoteroTypes.DeferredPromise<void>;
 
     constructor(base: BasicTool | BasicOptions, hook: RecordHook) {
@@ -60,9 +60,14 @@ export default class ReadingHistory extends ManagerTool {
 
     loadAll(): void {
         const loadLib = async (libID: number) => {
+            const lib = Zotero.Libraries.get(libID);
+            if (!lib || !lib.editable) {
+                this.log('跳过只读文库：', lib && lib.name);
+                return;
+            }
             const mainItem = await this.getMainItem(libID);
             await mainItem.loadDataType("childItems"); // 等待主条目数据库加载子条目
-            this.log(`${Zotero.Libraries.getName(libID)}读取到${mainItem.getNotes().length}条记录。`);
+            this.log(`${lib.name}读取到${mainItem.getNotes().length}条记录。`);
 
             mainItem.getNotes().forEach(async (noteID) => {
                 const noteItem = (await Zotero.Items.getAsync(
@@ -149,12 +154,8 @@ export default class ReadingHistory extends ManagerTool {
         if (this._activeReader?.itemID) {
             this._mutex = true;
             try {
-                if (__dev__)
-                    this.log('schedule locked');
                 const cache = await this.getCache(this._activeReader.itemID); // 当前PDF的缓存
                 this.record(cache.record); // 先记录到缓存
-                if (__dev__) 
-                    this.log('recorded: ', cache.record);
                 this.saveNote(cache).finally(() => this._mutex = false); // 保存本次记录
             } catch (error) {
                 addon.log(error);
