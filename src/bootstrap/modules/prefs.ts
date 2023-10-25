@@ -52,14 +52,14 @@ function onTagClick(event: MouseEvent) {
 
 async function onMergeClick(e: MouseEvent) {
     const btn = e.target as XUL.Button,
-        txt = btn.previousElementSibling as HTMLTextAreaElement,
+        txt = btn.parentElement!.previousElementSibling as HTMLTextAreaElement,
         str = txt.value;
     btn.disabled = true;
     importLegacyHistory(str);
 }
 
 function onJsonInput(e: Event) {
-    ((e.target as XUL.Element).nextElementSibling as XUL.Button).disabled =
+    ((e.target as XUL.Element).nextElementSibling!.lastChild as XUL.Button).disabled =
         false;
 }
 
