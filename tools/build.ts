@@ -33,7 +33,8 @@ async function main() {
     );
     clearFolder(buildDir);
 
-    copyFileSync("tools/update-template.json", "tools/update.json");
+    if (!isDevBuild)
+        copyFileSync("tools/update-template.json", "tools/update.json");
     copyFolderRecursiveSync("addon", buildDir);
     buildPrefs();
 
