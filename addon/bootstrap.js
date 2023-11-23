@@ -12,6 +12,7 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
     ["locale", "__addonName__", "en-US", rootURI + "locale/en-US/"],
     ["locale", "__addonName__", "zh-CN", rootURI + "locale/zh-CN/"],
     ["locale", "__addonName__", "ja-JP", rootURI + "locale/ja-JP/"],
+    ["locale", "__addonName__", "it-IT", rootURI + "locale/it-IT/"],
     ["content", "__addonName__", rootURI + "content/"],
   ]);
 
