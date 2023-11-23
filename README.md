@@ -73,6 +73,9 @@ The `config.defaultSettings` field of [package.json](package.json) defines the d
 
 ### Locales
 
+| Locales | [zh-CN](addon/locale/zh-CN/) | [en-US](addon/locale/en-US/) | [ja-JP](addon/locale/ja-JP/) | [it-IT](addon/locale/it-IT/)
+| :-----: | :---: | :---: | :---: | :---:
+
 All locale strings defined in [locale](addon/locale), which will be loaded dynamically when the plugin starts.
 
 ### Development Environment

@@ -35,6 +35,7 @@ function drawSchedule() {
             name: addon.locale.scheduleHour ?? 'hour',
             type: 'spline',
             data: hourData,
+            tooltip: { headerFormat: '{point.x}:00~{add point.x 1}:00<br/>' },
             xAxis: 1
         } as SeriesSplineOptions
     ];
