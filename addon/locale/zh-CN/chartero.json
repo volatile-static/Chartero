@@ -48,7 +48,7 @@
         "users": "每人阅读时长",
         "dateTime": "每日阅读时长",
         "pageTime": "每页阅读时长",
-        "pageTimeSub": "Ctrl+单击跳转到页面",
+        "pageTimeSub": "+单击跳转到页面",
         "readToday": "今日阅读时长",
         "sankey": "一作 | 通讯 | 期刊"
     },

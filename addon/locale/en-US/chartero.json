@@ -48,7 +48,7 @@
         "users": "Reading by Users",
         "dateTime": "Reading Time Per Day",
         "pageTime": "Reading Time Per Page",
-        "pageTimeSub": "Ctrl+Click to Open PDF at Page",
+        "pageTimeSub": "+Click to Open PDF at Page",
         "readToday": "Reading Time Today",
         "sankey": "First Author | Last Author | Journal"
     },

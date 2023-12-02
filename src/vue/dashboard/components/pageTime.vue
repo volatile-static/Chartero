@@ -19,7 +19,7 @@ import type { AttachmentHistory } from '$/history/history';
 import { toTimeString } from '$/utils';
 
 function onPointClick(this: Point, events: PointClickEventObject) {
-    if (events.ctrlKey)
+    if (events.ctrlKey || events.metaKey)
         Zotero.OpenPDF.openToPage(
             Zotero.Items.get(Number(this.series.options.id)),
             this.category
@@ -63,7 +63,9 @@ export default defineComponent({
                     title: { text: addon.locale.time },
                     labels: { formatter: ctx => toTimeString(ctx.value) },
                 },
-                subtitle: { text: addon.locale.chartTitle.pageTimeSub },
+                subtitle: { 
+                    text: (Zotero.isMac ? 'Meta' : 'Ctrl') + addon.locale.chartTitle.pageTimeSub
+                },
                 tooltip: { formatter: tooltipFormatter },
                 series: [{ type: 'bar' }],
                 chart: {

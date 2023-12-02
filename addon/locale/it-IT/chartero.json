@@ -48,7 +48,7 @@
         "users": "Lettura dagli utenti",
         "dateTime": "Tempo di lettura giornaliero",
         "pageTime": "Tempo di lettura per pagina",
-        "pageTimeSub": "Ctrl+Click per aprire il PDF alla pagina",
+        "pageTimeSub": "+Click per aprire il PDF alla pagina",
         "readToday": "Tempo di lettura odierno",
         "sankey": "Primo autore | Ultimo autore | Rivista"
     },
