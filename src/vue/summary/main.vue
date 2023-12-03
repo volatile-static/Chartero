@@ -93,7 +93,7 @@ export default {
                     <template #label>
                         <ChartBubbleIcon /> {{ locale.sankey }}
                     </template>
-                    <Sankey :history="itemHistory" :theme="chartTheme" />
+                    <Sankey :history="items" :theme="chartTheme" />
                 </t-tab-panel>
                 <t-tab-panel value="gantt" :style="panelStyle">
                     <template #label>

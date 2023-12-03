@@ -7,7 +7,6 @@ import type {
     SeriesSankeyNodesOptionsObject,
     TooltipFormatterContextObject
 } from 'highcharts';
-import type { AttachmentHistory } from '$/history/history';
 import { toTimeString } from '$/utils';
 import HistoryAnalyzer from '$/history/analyzer';
 import Highcharts from '@/highcharts';
@@ -69,28 +68,28 @@ export default {
     },
     computed: {
         chartOpts() {
-            const ha = new HistoryAnalyzer(this.history),
-                parents = ha.parents.filter(it => it?.isRegularItem()) as Zotero.Item[],
-                itemData = parents.map(item => {
-                    const firstCreator = item.firstCreator,
-                        lastCreatorData = item.getCreator(item.numCreators() - 1),
-                        lastCreator = lastCreatorData && (
-                            lastCreatorData.firstName!.length > 0
-                                ? lastCreatorData.firstName + ' ' + lastCreatorData.lastName
-                                : lastCreatorData.lastName
-                        ),
-                        journal = item.getField('journalAbbreviation')
-                            || item.getField('publicationTitle')
-                            || item.getField('conferenceName')
-                            || item.getField('university'),
-                        totalSeconds = new HistoryAnalyzer(item).totalS;
-                    return { itemID: item.id, firstCreator, lastCreator, journal, totalSeconds };
-                }).filter(
-                    it => it.firstCreator &&
-                        it.lastCreator &&
-                        it.journal &&
-                        it.firstCreator !== it.lastCreator
-                ) as Array<ItemInfo>,
+            const itemData = this.history.map(item => {
+                const firstCreator = item.firstCreator,
+                    lastCreatorData = item.getCreator(item.numCreators() - 1),
+                    lastCreator = lastCreatorData && (
+                        lastCreatorData.firstName!.length > 0
+                            ? lastCreatorData.firstName + ' ' + lastCreatorData.lastName
+                            : lastCreatorData.lastName
+                    ),
+                    journal = item.getField('journalAbbreviation')
+                        || item.getField('publicationTitle')
+                        || item.getField('conferenceName')
+                        || item.getField('proceedingsTitle')
+                        || item.getField('university'),
+                    totalSeconds = new HistoryAnalyzer(item).totalS;
+                // addon.log({firstCreator, lastCreator, journal, totalSeconds});
+                return { itemID: item.id, firstCreator, lastCreator, journal, totalSeconds };
+            }).filter(
+                it => it.firstCreator &&
+                    it.lastCreator &&
+                    it.journal &&
+                    it.firstCreator !== it.lastCreator
+            ) as Array<ItemInfo>,
                 first2last: Record<string, ItemInfo[]> = {},
                 last2journal: Record<string, ItemInfo[]> = {},
                 data = new Array<SeriesSankeyPointOptionsObject>(),
@@ -182,7 +181,7 @@ export default {
     },
     props: {
         history: {
-            type: Array<AttachmentHistory>,
+            type: Array<Zotero.Item>,
             required: true,
         },
         theme: Object,
