@@ -8,6 +8,7 @@ import type {
     TooltipFormatterContextObject
 } from 'highcharts';
 import { toTimeString } from '$/utils';
+import { helpMessageOption } from '@/utils';
 import HistoryAnalyzer from '$/history/analyzer';
 import Highcharts from '@/highcharts';
 
@@ -166,6 +167,7 @@ export default {
             );
             return {
                 chart: { animation: undefined, height: maxRows * 26 + 50 },
+                exporting: { menuItemDefinitions: helpMessageOption(this.locale.doc.sankey) },
                 subtitle: { text: this.locale.chartTitle.sankey },
                 tooltip: { useHTML: true, outside: true, formatter },
                 series: [{
