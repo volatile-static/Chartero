@@ -23,3 +23,4 @@ recordTimeout = オフライン検出 (記録の変更がない場合、記録�
 compressHistory = 記録データを圧縮する
 historySize = 現在の履歴データのサイズ：<b>{ $size }</b> KB
 maxSummaryItems = サイドバーにレンダリングしないエントリ数：
+lastAuthorSankey = 最後の著者のサンキーダイアグラム

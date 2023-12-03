@@ -64,13 +64,13 @@ function formatter(this: TooltipFormatterContextObject) {
 export default {
     components: { Chart },
     data() {
-        return { locale: addon.locale };
+        return { locale: addon.locale, lastAuthorIdx: addon.getPref('lastAuthorSankey') };
     },
     computed: {
         chartOpts() {
             const itemData = this.history.map(item => {
                 const firstCreator = item.firstCreator,
-                    lastCreatorData = item.getCreator(item.numCreators() - 1),
+                    lastCreatorData = item.getCreators().at(this.lastAuthorIdx % item.numCreators()),
                     lastCreator = lastCreatorData && (
                         lastCreatorData.firstName!.length > 0
                             ? lastCreatorData.firstName + ' ' + lastCreatorData.lastName

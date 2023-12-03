@@ -23,3 +23,4 @@ recordTimeout = 挂机检测 (连续几次记录无变化后停止记录)：
 compressHistory = 清理记录数据
 historySize = 当前历史记录共占用存储空间：<b>{ $size }</b> KB
 maxSummaryItems = 条目数量超过多少时不再渲染侧边栏：
+lastAuthorSankey = 作者关系图中通讯作者名次：

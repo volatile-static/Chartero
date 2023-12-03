@@ -23,3 +23,4 @@ recordTimeout = Timeout di registrazione (quanti record non modificati prima che
 compressHistory = Comprimi la cronologia
 historySize = Dimensione della cronologia attuale: <b>{ $size }</b> KB
 maxSummaryItems = Non creare l'indice quando il numero di elementi eccede:
+lastAuthorSankey = Visualizza il grafico di Sankey per gli ultimi autori:
