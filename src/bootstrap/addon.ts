@@ -14,6 +14,7 @@ import buildRecentMenu from './modules/recent';
 import { onHistoryRecord, onItemSelect, onNotify, openOverview } from './events';
 import { addDebugMenu } from './modules/debug';
 import addItemColumns from './modules/columns';
+import { showMessage } from './modules/utils';
 
 type DefaultPrefs = Omit<
     typeof config.defaultSettings,
@@ -59,6 +60,38 @@ export default class Addon extends toolBase.BasicTool {
             )
         );
         this.ui.basicOptions.ui.enableElementDOMLog = __dev__;
+    }
+
+    async translateLocaleStrings(): Promise<typeof this.locale> {
+        if (!Zotero.PDFTranslate?.api?.translate) {
+            showMessage(
+                'PDFTranslate not found, using default locale!',
+                'chrome://chartero/content/icons/exclamation.png'
+            );
+            return this.locale;
+        }
+        const locale = JSON.parse(
+            Zotero.File.getContentsFromURL(rootURI + 'locale/zh-CN/chartero.json')
+        ), translate = (str: string) =>
+            str.startsWith('http') ? str : Zotero.PDFTranslate.api.translate(str, {
+                pluginID: config.addonID,
+                langfrom: 'zh-CN',
+                langto: Zotero.locale
+            }).then(
+                (res: _ZoteroTypes.anyObj) => res.status == 'success' ? res.result : str
+            );
+        for (const key in locale)
+            if (typeof locale[key] == 'string')
+                locale[key] = await translate(locale[key]);
+            else if (Array.isArray(locale[key]))
+                locale[key] = await Promise.all(
+                    locale[key].map(translate)
+                );
+            else
+                for (const k in locale[key])
+                    locale[key][k] = await translate(locale[key][k]);
+        showMessage('Locale strings translated successfully!', 'chrome://chartero/content/icons/accept.png');
+        return locale;
     }
 
     getPref<K extends keyof DefaultPrefs>(key: K) {

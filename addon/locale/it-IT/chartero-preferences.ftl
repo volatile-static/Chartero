@@ -24,3 +24,4 @@ compressHistory = Comprimi la cronologia
 historySize = Dimensione della cronologia attuale: <b>{ $size }</b> KB
 maxSummaryItems = Non creare l'indice quando il numero di elementi eccede:
 lastAuthorSankey = Visualizza il grafico di Sankey per gli ultimi autori:
+translate = Traduci automaticamente le stringhe locali utilizzando il plugin <i>PDFTranslate</i>

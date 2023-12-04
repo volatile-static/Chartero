@@ -1,4 +1,5 @@
 import { importLegacyHistory, compressHistory } from "./history/misc";
+import { showMessage } from "./utils";
 
 export default function initPrefsPane(win: Window) {
     // 绑定事件
@@ -8,6 +9,7 @@ export default function initPrefsPane(win: Window) {
     btn.parentElement!.previousElementSibling!.addEventListener('input', onJsonInput);
     $('chartero-preferences-pane-history-compress')?.addEventListener('command', compressHistory);
     $('chartero-preferences-pane-history-auto-import')?.addEventListener('command', autoImportHistory);
+    $('chartero-preferences-pane-translate')?.addEventListener('command', translateLocale);
     $('chartero-preferences-pane-refreshTagsTable')?.addEventListener(
         'command',
         () => refreshExcludedTags(win.document)
@@ -89,5 +91,13 @@ function updateHistorySize(doc: Document) {
     )?.setAttribute(
         'data-l10n-args',
         JSON.stringify({ size: size.toFixed(2) })
+    );
+}
+
+function translateLocale() {
+    showMessage('Translating locale strings...', 'chrome://chartero/content/icons/information.png');
+    addon.translateLocaleStrings().then(
+        // @ts-expect-error
+        locale => addon.locale = locale
     );
 }
