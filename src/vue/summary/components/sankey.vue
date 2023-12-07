@@ -163,8 +163,12 @@ export default {
                 nodes.push({ id: journal, column: 2, color });
             }
             const maxRows = Math.max(
-                ...[0, 1, 2].map(col => nodes.filter(n => n.column === col).length)
+                journalSet.size,
+                firstCreatorSet.size,
+                lastCreatorSet.size
+                // ...[0, 1, 2].map(col => nodes.filter(n => n.column === col).length)
             );
+            addon.log(nodes)
             return {
                 chart: { animation: undefined, height: maxRows * 26 + 50 },
                 exporting: { menuItemDefinitions: helpMessageOption(this.locale.doc.sankey) },
