@@ -30,7 +30,7 @@
     "description": "Charts for Zotero",
     "scripts": {
         "build": "cross-env NODE_ENV=development ts-node tools/build.ts --full",
-        "reload-all": "ts-node tools/build.ts --full",
+        "reload-all": "ts-node-esm tools/build.ts --full",
         "reload-dev": "cross-env NODE_ENV=development ts-node tools/build.ts",
         "replace-update": "ts-node tools/build.ts --no-build",
         "type-check-vue": "vue-tsc --noEmit -p ./src/vue",
