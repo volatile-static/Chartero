@@ -12,7 +12,8 @@ import type {
     SeriesPieOptions
 } from 'highcharts';
 
-const libraryHistory = addon.history.getInLibrary(),
+const excludedTags = addon.getPref('excludedTags'),
+    libraryHistory = addon.history.getInLibrary(),
     analyzer = new HistoryAnalyzer(libraryHistory),
     Zotero = addon.getGlobal('Zotero');
 
@@ -49,7 +50,10 @@ async function drawVariablePie() {
         arr: Array<PointOptionsObject>,
         item: Zotero.Item
     ) {  // 将item的数组转换为饼图数据
-        const tags = item.getTags().map(t => t.tag);  // 标签字符串的数组
+        const tags = item.getTags().filter(t => t.type).map(t => t.tag).filter(t => {
+            const id = Zotero.Tags.getID(t);
+            return id && !excludedTags.includes(id);
+        });  // 标签字符串的数组
         const time = getTime(item);
         for (const tag of tags) {
             const fan = arr.find(i => i.name === tag);  // 0代表名字
