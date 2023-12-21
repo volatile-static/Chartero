@@ -23,7 +23,8 @@
             "maxSummaryItems": 99,
             "lastAuthorSankey": -1,
             "scanPeriod": 1,
-            "scanTimeout": 20
+            "scanTimeout": 20,
+            "completeThreshold": 20
         }
     },
     "description": "Charts for Zotero",

@@ -120,7 +120,8 @@ export class AttachmentRecord implements RecordBase {
 
   /** 获取有阅读记录的页数 */
   public get readPages(): number {
-    return this.pageArr.length;
+    const completeThreshold = addon.getPref("completeThreshold");
+    return this.pageArr.filter(page => (page.totalS ?? 0) > completeThreshold).length;
   }
 
   get firstPage() {
