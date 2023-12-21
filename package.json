@@ -34,7 +34,8 @@
         "type-check-vue": "vue-tsc --noEmit -p ./src/vue",
         "type-check-bootstrap": "tsc --noEmit -p ./src/bootstrap",
         "type-check-all": "npm run type-check-vue & npm run type-check-bootstrap",
-        "release": "release-it",
+        "release-minor": "release-it minor",
+        "release-patch": "release-it patch",
         "preview": "vite preview ./src/vue",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -101,10 +102,11 @@
     },
     "release-it": {
         "hooks": {
-            "after:bump": "npm run reload-all"
+            "after:bump": "npm run reload-dev",
+            "before:github:release": "npm run reload-all"
         },
         "github": {
-            "release": true,
+            "release": false,
             "pushRepo": "https://github.com/volatile-static/Chartero.git",
             "assets": [
                 "build/*.xpi"
