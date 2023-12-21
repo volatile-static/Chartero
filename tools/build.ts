@@ -38,8 +38,10 @@ async function main() {
     copyFolderRecursiveSync("addon", buildDir);
     buildPrefs();
 
-    await esbuild();
-    console.log("[Build] Run esbuild OK");
+    if (!process.argv.includes('--no-build')) {
+        await esbuild();
+        console.log("[Build] Run esbuild OK");
+    }
 
     replaceString();
     console.log("[Build] Replace OK");

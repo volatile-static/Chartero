@@ -32,6 +32,7 @@
         "build": "cross-env NODE_ENV=development ts-node tools/build.ts --full",
         "reload-all": "ts-node tools/build.ts --full",
         "reload-dev": "cross-env NODE_ENV=development ts-node tools/build.ts",
+        "replace-update": "ts-node tools/build.ts --no-build",
         "type-check-vue": "vue-tsc --noEmit -p ./src/vue",
         "type-check-bootstrap": "tsc --noEmit -p ./src/bootstrap",
         "type-check-all": "npm run type-check-vue & npm run type-check-bootstrap",
@@ -103,7 +104,7 @@
     },
     "release-it": {
         "hooks": {
-            "after:bump": "npm run reload-dev",
+            "after:bump": "npm run replace-update",
             "before:github:release": "npm run reload-all"
         },
         "github": {
