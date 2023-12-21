@@ -1,33 +1,33 @@
 name: Plug-in CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    push:
+        branches: ['main']
+    pull_request:
+        branches: ['main']
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v3
+        steps:
+            - uses: actions/checkout@v3
 
-    - name: Use Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18.x
+            - name: Use Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20
 
-    - run: npm install
-    - run: npm run build
+            - run: npm install
+            - run: npm run build
 
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      with:
-        name: ⚗️ Development Build
-        tag_name: dev
-        prerelease: true
-        generate_release_notes: true
-        append_body: |
-          # For testing purposes only, do NOT use in production! ![cnt](https://img.shields.io/github/downloads/volatile-static/Chartero/dev/total)
-        files: build/chartero.xpi
+            - name: Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  name: ⚗️ Development Build
+                  tag_name: dev
+                  prerelease: true
+                  generate_release_notes: true
+                  append_body: |
+                      # For testing purposes only, do NOT use in production! ![cnt](https://img.shields.io/github/downloads/volatile-static/Chartero/dev/total)
+                  files: build/chartero.xpi
