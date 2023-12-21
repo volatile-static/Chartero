@@ -44,7 +44,7 @@ export default {
                         item.getTags().forEach(tag => {
                             const tagName = tag.tag,
                                 id = Zotero.Tags.getID(tagName);
-                            if (id && !this.filteredTags.includes(id))
+                            if (tag.type && id && !this.filteredTags.includes(id))
                                 data.set(
                                     tagName,
                                     (data.get(tagName) ?? 0) + analyzer.totalS
