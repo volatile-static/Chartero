@@ -38,6 +38,7 @@
         "type-check-all": "npm run type-check-vue & npm run type-check-bootstrap",
         "release-minor": "release-it minor",
         "release-patch": "release-it patch",
+        "release": "release-it",
         "preview": "vite preview ./src/vue",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
