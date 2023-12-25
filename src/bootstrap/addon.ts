@@ -1,6 +1,5 @@
 import * as toolBase from 'zotero-plugin-toolkit/dist/basic';
 import { MenuManager } from 'zotero-plugin-toolkit/dist/managers/menu';
-import { PreferencePaneManager } from 'zotero-plugin-toolkit/dist/managers/preferencePane';
 import { ReaderInstanceManager } from 'zotero-plugin-toolkit/dist/managers/readerInstance';
 import { LibraryTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/libraryTabPanel';
 import { ReaderTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/readerTabPanel';
@@ -29,7 +28,6 @@ export default class Addon extends toolBase.BasicTool {
     readonly patcher: PatcherManager;
     readonly reader: ReaderInstanceManager;
     readonly libTab: LibraryTabPanelManager;
-    readonly prefPane: PreferencePaneManager;
     readonly readerTab: ReaderTabPanelManager;
     readonly history: ReadingHistory;
     readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
@@ -47,7 +45,6 @@ export default class Addon extends toolBase.BasicTool {
         }
         this.basicOptions.debug.disableDebugBridgePassword = __dev__;
         this.menu = new MenuManager(this);
-        this.prefPane = new PreferencePaneManager(this);
         this.libTab = new LibraryTabPanelManager(this);
         this.readerTab = new ReaderTabPanelManager(this);
         this.reader = new ReaderInstanceManager(this);
@@ -135,7 +132,7 @@ export default class Addon extends toolBase.BasicTool {
     init() {
         this.log('Initializing Chartero addon...');
         // 注册设置面板
-        this.prefPane.register({
+        Zotero.PreferencePanes.register({
             pluginID: config.addonID,
             src: rootURI + 'content/preferences.xhtml',
             stylesheets: [rootURI + 'content/preferences.css'],
