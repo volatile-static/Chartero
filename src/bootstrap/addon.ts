@@ -10,7 +10,7 @@ import ReadingHistory from './modules/history/history';
 import { hideDeleteMenuForHistory, patchedZoteroSearch } from './modules/history/misc';
 import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
-import { onHistoryRecord, onItemSelect, onNotify, openOverview } from './events';
+import { onHistoryRecord, onItemSelect, onNotify, openOverview, openReport } from './events';
 import { addDebugMenu } from './modules/debug';
 import addItemColumns from './modules/columns';
 import { showMessage } from './modules/utils';
@@ -152,6 +152,12 @@ export default class Addon extends toolBase.BasicTool {
             tag: 'menuitem',
             label: this.locale.overview,
             commandListener: openOverview,
+            icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
+        });
+        this.menu.register('menuView', {
+            tag: 'menuitem',
+            label: '2023年度总结',
+            commandListener: openReport,
             icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
         });
         buildRecentMenu();

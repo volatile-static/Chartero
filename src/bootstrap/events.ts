@@ -4,6 +4,16 @@ import { protectData } from './modules/history/misc';
 import { updateMinimap } from './modules/minimap/minimap';
 import initPrefsPane from './modules/prefs';
 
+export function openReport() {
+    Zotero.openInViewer(
+        `chrome://${config.addonName}/content/report/index.html`,
+        doc => {
+            (doc.defaultView as any).wrappedJSObject['addon'] = addon;
+            doc.defaultView?.postMessage('ready', '*')
+        }
+    );
+}
+
 export function openOverview(_: Event) {
     if (addon.overviewTabID) {
         Zotero_Tabs.select(addon.overviewTabID);

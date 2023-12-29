@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>2023年度总结</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module">
+    import { createApp } from 'vue';
+    import App from './main.vue';
+    import 'tdesign-vue-next/es/style/index.css';
+    import 'highcharts/css/highcharts.css';
+    import '@highcharts/dashboards/css/dashboards.css';
+    addEventListener('message', e => {
+      console.debug(e.data);
+      if (e.data != 'ready')
+        return;
+      window.Zotero = addon.getGlobal('Zotero');
+      createApp(App).mount('#app');
+    });
+  </script>
+</body>
+
+</html>
