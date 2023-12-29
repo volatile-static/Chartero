@@ -35,9 +35,6 @@ export default {
 
             switch (this.dataOption) {
                 case 'tag':
-                    // this.filteredTags = JSON.parse(
-                    //     addon.getPref('excludedTags') as string
-                    // );
                     for (const item of this.items) {
                         const his = addon.history.getInTopLevelSync(item),
                             analyzer = new HistoryAnalyzer(his);
