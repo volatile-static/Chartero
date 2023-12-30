@@ -23,7 +23,9 @@ export default {
 
 <style scoped>
 .user {
-    color: rgb(17, 149, 48);
+    color: rgb(13, 115, 37);
     font-weight: bold;
+    /* 调整阴影大小、颜色和透明度 */
+    text-shadow: 0 0 3px rgba(210, 210, 125, 0.6), 0 0 8px rgba(210, 210, 125, 0.6);
 }
 </style>
