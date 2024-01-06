@@ -33,6 +33,7 @@
         "reload-all": "tsx tools/build.ts --full",
         "reload-dev": "cross-env NODE_ENV=development tsx tools/build.ts",
         "replace-update": "tsx tools/build.ts --no-build",
+        "watch": "cross-env NODE_ENV=development tsx tools/build.ts --watch",
         "type-check-vue": "vue-tsc --noEmit -p ./src/vue",
         "type-check-bootstrap": "tsc --noEmit -p ./src/bootstrap",
         "type-check-all": "npm run type-check-vue & npm run type-check-bootstrap",
@@ -60,7 +61,7 @@
         "highcharts-vue": "^1.4.3",
         "segmentit": "^2.0.3",
         "tdesign-vue-next": "^1.7.2",
-        "zotero-plugin-toolkit": "^2.3.15"
+        "zotero-plugin-toolkit": "^2.3.16"
     },
     "devDependencies": {
         "@tsconfig/node18": "^18.2.2",
@@ -86,8 +87,8 @@
         "tsx": "^4.7.0",
         "unplugin-auto-import": "^0.17.3",
         "unplugin-vue-components": "^0.26.0",
-        "vite": "^5.0.10",
-        "vue": "^3.4.1",
+        "vite": "^5.0.11",
+        "vue": "^3.4.5",
         "vue-tsc": "^1.8.27",
         "zotero-types": "file:../zotero-types"
     },

@@ -1,3 +1,4 @@
+import type { RollupWatcher } from 'rollup';
 import { build } from 'esbuild';
 import { build as vite } from 'vite';
 import { zip } from "compressing";
@@ -63,6 +64,23 @@ async function main() {
             path.join('build', details.name + '.xpi'),
             { ignoreBase: true }
         ).then(() => console.log('[Build] Addon pack OK!'));
+    } else if (process.argv.includes('--watch')) {
+        const watcher = await vite({
+            root: path.join(buildDir, "../src/vue"),
+            build: { minify: false, watch: {} }
+        }) as RollupWatcher;
+        watcher.on('event', (event) => {
+            switch (event.code) {
+                case 'START':
+                    minifyFolder.forEach(folder => renameInFolder(folder));
+                    break;
+                case 'END':
+                    reload();
+                    minifyFolder.forEach(folder => renameInFolder(folder, true));
+                    break;
+            }
+        });
+        return;
     }
     console.log(
         `[Build] Finished in ${(new Date().getTime() - now.getTime()) / 1000} s.`,
