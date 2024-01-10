@@ -165,7 +165,6 @@ export default defineComponent({
     },
     methods: {
         updateChart(his: AttachmentHistory[]) {
-            if (his.length < 1) return;
             rawData = his
                 .map(attHis => {
                     const ha = new HistoryAnalyzer([attHis]);

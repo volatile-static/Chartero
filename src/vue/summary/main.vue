@@ -61,6 +61,7 @@ export default {
                 his = await Promise.all(attHisPro);
             this.items = topLevels;
             this.itemHistory = his.flat();
+            // addon.log(`Summary items: ${this.items.length}, history: ${this.itemHistory.length}`)
         });
         window.addEventListener('resize', () => {
             this.panelStyle.height = window.innerHeight - 70 + 'px';
