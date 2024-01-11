@@ -7,6 +7,7 @@ import type {
     SeriesSankeyNodesOptionsObject,
     TooltipFormatterContextObject
 } from 'highcharts';
+import type { CascaderValue, TreeNodeModel, TreeOptionData } from 'tdesign-vue-next';
 import { toTimeString } from '$/utils';
 import { helpMessageOption } from '@/utils';
 import HistoryAnalyzer from '$/history/analyzer';
@@ -65,9 +66,37 @@ function formatter(this: TooltipFormatterContextObject) {
 export default {
     components: { Chart },
     data() {
-        return { locale: addon.locale, lastAuthorIdx: addon.getPref('lastAuthorSankey') };
+        return {
+            locale: addon.locale,
+            lastAuthorIdx: addon.getPref('lastAuthorSankey'),
+            selectedCreator: [] as CascaderValue<TreeOptionData>,
+        };
+    },
+    methods: {
+        selectChange(val: CascaderValue<TreeOptionData<string | number>>) {
+            addon.log(val, JSON.stringify(this.selectedCreator));
+        },
+        async loadCreators(node: TreeNodeModel<TreeOptionData>) {
+            addon.log(node);
+            this.selectedCreator = [node.value, 2];
+            return [{ value: 1, label: 'test' }, { value: 2, label: 'test2' }]
+        }
     },
     computed: {
+        noHistoryFound() {
+            return this.history.length === 0;
+        },
+        creatorSelectOptions() {
+            return this.history.map(item => ({
+                value: item.id,
+                label: item.getField('title'),
+                children: true
+                // item.getCreators().map((creator, idx) => ({
+                //     value: idx,
+                //     label: creator.firstName + ' ' + creator.lastName,
+                // } as TreeOptionData))
+            } as TreeOptionData));
+        },
         chartOpts() {
             const itemData = this.history.map(item => {
                 const firstCreator = item.firstCreator,
@@ -168,7 +197,7 @@ export default {
                 lastCreatorSet.size
                 // ...[0, 1, 2].map(col => nodes.filter(n => n.column === col).length)
             );
-            addon.log(nodes)
+            // addon.log(nodes)
             return {
                 chart: { animation: undefined, height: maxRows * 26 + 50 },
                 exporting: { menuItemDefinitions: helpMessageOption(this.locale.doc.sankey) },
@@ -196,5 +225,24 @@ export default {
 </script>
 
 <template>
-    <Chart :options="options" :key="theme"></Chart>
+    <div>
+        <h1 v-if="noHistoryFound" class="center-label">
+            {{ locale.noHistoryFound }}
+        </h1>
+        <t-space v-else direction="vertical" style="width: 100%">
+            <t-space style="padding: 8px" break-line>
+                <t-cascader :options="creatorSelectOptions" @change="selectChange" :load="loadCreators"
+                    v-model="selectedCreator" value-type="full" trigger="hover" value-display="手动调整通讯作者" size="small" />
+            </t-space>
+            <Chart :options="options" :key="theme"></Chart>
+        </t-space>
+    </div>
 </template>
+
+<style scoped>
+.center-label {
+    text-align: center;
+    position: relative;
+    top: 38%;
+}
+</style>
