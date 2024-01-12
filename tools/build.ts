@@ -47,6 +47,8 @@ async function main() {
     replaceString();
     console.log("[Build] Replace OK");
 
+    patchLocaleStrings();
+
     if (process.argv.includes('--full')) {
         if (isDevBuild)
             minifyFolder.forEach(folder => renameInFolder(folder));
@@ -261,6 +263,18 @@ function replaceString() {
                 ...localeMessageMiss,
             )}] do not exist in addon's locale files.`,
         );
+    }
+}
+
+function patchLocaleStrings() {
+    const standard = JSON.parse(
+        fs.readFileSync('addon/locale/zh-CN/chartero.json', { encoding: 'utf-8' }),
+    );
+    for (const locale of ['en-US', 'it-IT', 'ja-JP']) {
+        const localeFile = path.join(buildDir, `addon/locale/${locale}/chartero.json`),
+            json = JSON.parse(fs.readFileSync(localeFile, { encoding: 'utf-8' })),
+            merged = lodash.defaultsDeep(json, standard);
+        fs.writeFileSync(localeFile, JSON.stringify(merged));
     }
 }
 
