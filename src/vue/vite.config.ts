@@ -16,7 +16,7 @@ export default defineConfig({
                 summary: resolve(__dirname, 'summary/index.html'),
                 overview: resolve(__dirname, 'overview/index.html'),
                 dashboard: resolve(__dirname, 'dashboard/index.html'),
-                report: resolve(__dirname, 'report/index.html'),
+                // report: resolve(__dirname, 'report/index.html'),
             },
         },
         cssMinify: true,

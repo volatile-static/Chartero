@@ -154,12 +154,12 @@ export default class Addon extends toolBase.BasicTool {
             commandListener: openOverview,
             icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
         });
-        this.menu.register('menuView', {
-            tag: 'menuitem',
-            label: '2023年度总结',
-            commandListener: openReport,
-            icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
-        });
+        // this.menu.register('menuView', {
+        //     tag: 'menuitem',
+        //     label: '2023年度总结',
+        //     commandListener: openReport,
+        //     icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
+        // });
         buildRecentMenu();
         if (__dev__)
             addDebugMenu();
