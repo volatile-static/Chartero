@@ -11,6 +11,8 @@ import VariablePieGraph from 'highcharts/modules/variable-pie';
 VariablePieGraph(Highcharts);
 import SankeyGraph from 'highcharts/modules/sankey';
 SankeyGraph(Highcharts);
+import DependencyWheelGraph from 'highcharts/modules/dependency-wheel';
+DependencyWheelGraph(Highcharts);
 // import MarkerCluster from 'highcharts/modules/marker-clusters';
 // MarkerCluster(Highcharts);
 import HighchartsColorAxis from 'highcharts/modules/coloraxis';

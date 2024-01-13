@@ -5,6 +5,7 @@ import type {
     SeriesSankeyOptions,
     SeriesSankeyPointOptionsObject,
     SeriesSankeyNodesOptionsObject,
+    SeriesDependencywheelOptions,
     TooltipFormatterContextObject
 } from 'highcharts';
 import type { CascaderValue, TreeNodeModel, TreeOptionData } from 'tdesign-vue-next';
@@ -213,6 +214,60 @@ export default {
         options() {
             return Highcharts.merge(this.chartOpts, this.theme);
         },
+        wheelOptions() {
+            return Highcharts.merge(this.wheelOpts, this.theme);
+        },
+        wheelOpts() {
+            const authorItems: Record<string, Zotero.Item[]> = {};
+            for (const item of this.history)
+                for (const creator of item.getCreators()) {
+                    const name = `${creator.firstName} ${creator.lastName}`.trim();
+                    if (name in authorItems)
+                        authorItems[name].push(item);
+                    else
+                        authorItems[name] = [item];
+                }
+            const authorList = Object.keys(authorItems).filter(
+                name => authorItems[name].length > 1
+            ),
+                data: Array<SeriesSankeyPointOptionsObject> = [];
+            // console.table(authorList);
+            for (let i = 0; i < authorList.length; ++i)
+                for (let j = i + 1; j < authorList.length; ++j) {
+                    const from = authorList[i],
+                        to = authorList[j],
+                        items = authorItems[from].filter(it => authorItems[to].includes(it));
+                    if (items.length > 0)
+                        data.push({
+                            from,
+                            to,
+                            weight: items.length,
+                            custom: {
+                                itemIDs: items.map(it => it.id),
+                            }
+                        });
+                }
+            // console.table(data);
+
+            return {
+                series: [{
+                    type: 'dependencywheel',
+                    data,
+                    size: '80%',
+                    dataLabels: {
+                        allowOverlap: true,
+                        overflow: 'allow',
+                        crop: false,
+                        color: '#333',
+                        textPath: {
+                            enabled: true,
+                        },
+                        distance: 10
+                    },
+                    allowPointSelect: false,
+                } as SeriesDependencywheelOptions]
+            } as Options;
+        }
     },
     props: {
         history: {
@@ -235,6 +290,7 @@ export default {
                     v-model="selectedCreator" value-type="full" trigger="hover" value-display="手动调整通讯作者" size="small" />
             </t-space>
             <Chart :options="options" :key="theme"></Chart>
+            <Chart :options="wheelOptions" :key="theme"></Chart>
         </t-space>
     </div>
 </template>
