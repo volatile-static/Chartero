@@ -11,10 +11,11 @@ import AuthorBubble from './components/authorBubble.vue';
 import Sankey from './components/sankey.vue';
 import WordCloud from './components/wordCloud.vue';
 import TagsPie from './components/tagsPie.vue';
+import ConnectedPapers from './components/connectedPapers.vue';
 import { GridLightTheme, DarkUnicaTheme } from '@/themes';
 import type { AttachmentHistory } from '$/history/history';
 export default {
-    components: { Sankey, Gantt, AuthorBubble, WordCloud, TagsPie, ChartBubbleIcon, FormatVerticalAlignRightIcon, ForkIcon, CloudIcon, ChartPieIcon },
+    components: { ConnectedPapers, Sankey, Gantt, AuthorBubble, WordCloud, TagsPie, ChartBubbleIcon, FormatVerticalAlignRightIcon, ForkIcon, CloudIcon, ChartPieIcon },
     data() {
         return {
             locale: addon.locale.summary,
@@ -102,11 +103,12 @@ export default {
                     </template>
                     <Gantt :history="itemHistory" :theme="chartTheme" />
                 </t-tab-panel>
-                <!-- <t-tab-panel value="network" :style="panelStyle">
+                <t-tab-panel value="network" :style="panelStyle">
                     <template #label>
-                        <ForkIcon /> {{ locale.network }}
+                        <ForkIcon /> network
                     </template>
-                </t-tab-panel> -->
+                    <ConnectedPapers :history="items" :theme="chartTheme" />
+                </t-tab-panel>
                 <t-tab-panel value="wordCloud" :style="panelStyle">
                     <template #label>
                         <CloudIcon /> {{ locale.wordCloud }}

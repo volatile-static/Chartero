@@ -221,4 +221,13 @@ export default class Addon extends toolBase.BasicTool {
         );
         toolBase.unregister(this);
     }
+
+    async test(it1: Zotero.Item, it2: Zotero.Item) {
+        const att1 = await it1.getBestAttachment(),
+            att2 = await it2.getBestAttachment(),
+            text1 = att1 && await att1.attachmentText,
+            text2 = att2 && await att2.attachmentText;
+        // if (text1 && text2)
+        //     this.log(jaccardSimilarity(text1, text2));
+    }
 }
