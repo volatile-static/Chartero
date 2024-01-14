@@ -69,7 +69,8 @@ async function main() {
     } else if (process.argv.includes('--watch')) {
         const watcher = await vite({
             root: path.join(buildDir, "../src/vue"),
-            build: { minify: false, watch: {} }
+            build: { minify: false, watch: {} },
+            define: { __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true' }
         }) as RollupWatcher;
         watcher.on('event', (event) => {
             switch (event.code) {
