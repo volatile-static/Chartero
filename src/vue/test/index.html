@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Chartero Live Test</title>
+  <link rel="icon" href="../../../addon/content/icons/icon.png" />
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module">
+    import './dummy/index.ts';
+    import { createApp } from 'vue';
+    import App from './main.vue';
+    import 'tdesign-vue-next/es/style/index.css';
+    import 'highcharts/css/highcharts.css';
+    import '@highcharts/dashboards/css/dashboards.css';
+    import HighchartsVue from 'highcharts-vue';
+    createApp(App).mount('#app');
+  </script>
+</body>
+
+</html>

@@ -208,6 +208,30 @@ export default class Addon extends toolBase.BasicTool {
                 }
             }]
         }, document.lastChild as HTMLElement);
+
+        if (__dev__)
+            // 路径以/test开头可绕过Zotero安全限制
+            Zotero.Server.Endpoints['/test/chartero'] = class implements _ZoteroTypes.Server.Endpoint {
+                supportedMethods = ['POST'];
+                init: _ZoteroTypes.Server.initMethodPromise = async function (options) {
+                    const headers = {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*' // 允许跨域
+                    };
+                    try {
+                        addon.log('eval cmd:', options.data);
+                        const result = eval(options.data);
+                        addon.log(result);
+                        return [200, headers, JSON.stringify(result.then ? await result : result)];
+                    } catch (error) {
+                        Zotero.logError(error);
+                        if (error instanceof Error)
+                            return [400, headers, JSON.stringify({ msg: error.message })];
+                        else
+                            return [500, headers, JSON.stringify(error)];
+                    }
+                };
+            }
     }
 
     unload() {
@@ -222,12 +246,6 @@ export default class Addon extends toolBase.BasicTool {
         toolBase.unregister(this);
     }
 
-    async test(it1: Zotero.Item, it2: Zotero.Item) {
-        const att1 = await it1.getBestAttachment(),
-            att2 = await it2.getBestAttachment(),
-            text1 = att1 && await att1.attachmentText,
-            text2 = att2 && await att2.attachmentText;
-        // if (text1 && text2)
-        //     this.log(jaccardSimilarity(text1, text2));
+    async test(cmd: string) {
     }
 }
