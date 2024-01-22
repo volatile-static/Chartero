@@ -6,6 +6,9 @@ import { TDesignResolver } from 'unplugin-vue-components/resolvers';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
+    build: { minify: false, sourcemap: true },
+    esbuild: { sourcemap: 'both' },
+    define: { __test__: true },
     plugins: [
         vue(),
         AutoImport({
@@ -20,6 +23,6 @@ export default defineConfig({
             '@': fileURLToPath(new URL('../utility', import.meta.url)),
             '$': fileURLToPath(new URL('../../bootstrap/modules', import.meta.url)),
         },
-        dedupe: ['vue'],  // Missing ref owner context. ref cannot be used on hoisted vnodes. A vnode with ref must be created inside the render function.
+        dedupe: ['vue'], // Missing ref owner context. ref cannot be used on hoisted vnodes. A vnode with ref must be created inside the render function.
     },
 });

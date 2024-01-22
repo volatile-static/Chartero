@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "macabeus.vscode-fluent",
+        "firefox-devtools.vscode-firefox-debug",
+        "vue.vscode-typescript-vue-plugin",
+        "vue.volar",
+    ]
+}

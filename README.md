@@ -64,8 +64,11 @@ Please disable all other plugins when necessary, and then file an issue with the
     -   [src/bootstrap](src/bootstrap): The entry point of the plugin.
         -   [src/bootstrap/modules](src/bootstrap/modules): Implementation of modules.
     -   [src/vue](src/vue): The `iframe` windows using [Vue](https://v3.vuejs.org/)
-        -   [src/vue/summary](src/vue/summary): The summary window.
-        -   [src/vue/dashboard](src/vue/dashboard): The dashboard window.
+        -   [src/vue/summary](src/vue/summary): At sidebar.
+        -   [src/vue/dashboard](src/vue/dashboard): At sidebar tab-panel.
+        -   [src/vue/overview](src/vue/overview): At new tab.
+        -   [src/vue/utility](src/vue/utility): The utility functions.
+        -   [src/vue/test](src/vue/test): The unit test for Vue components.
 
 ### Preferences
 
@@ -80,7 +83,19 @@ All locale strings defined in [locale](addon/locale), which will be loaded dynam
 
 ### Development Environment
 
-[package.json](package.json) defines the scripts for building and debugging. When use `build-dev` command, the global variable `__dev__` will be set to `true`, and the plugin switched to the development mode.
+[package.json](package.json) defines the scripts for building and debugging. When executing commands with `NODE_ENV=development`, the global variable `__dev__` will be set to `true`, and the plugin switched to the development mode.
+- Here are some useful scripts:
+    - `reload-all`: Build and reload the Zotero in **production** environment.
+    - `reload-dev`: Build in **development** environment without Vue pages and reload Zotero.
+    - `build`: Build in **development** environment and reload Zotero.
+    - `watch`: Watch changes of files in `src/vue` and reload Zotero.
+    - `dev`: Open a hot-reload server for `src/vue/test/`. 
+
+### ⚡Hot-reload and Breakpoints in Source
+
+With the Chartero running, you can run debug config `Vue` in sidebar of the VS Code. This will launch the Vue unit test in Firefox with hot-reload. You can then utilize [vue devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/) in Firefox as well as set breakpoints in VS Code for single-step debugging.
+
+When running in development environment, Chartero will register a `/test/chartero` route in [HTTP server](https://www.zotero.org/support/dev/client_coding/connector_http_server), accepting any command from a POST request and returning its `eval` results in JSON format. By accessing this `Endpoint`, the [Vue test module](src/vue/test/) provides a series of "dummy" classes to simulate the Zotero environment. This method is of great reference value for other Zotero client applications.
 
 ### Record Structure
 
