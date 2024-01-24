@@ -56,8 +56,8 @@ export function toTimeString(seconds: number | string) {
     function s2hour(s: number) {
         return {
             second: s % 60,
-            minute: Math.round(s / 60) % 60,
-            hour: Math.round(s / 3600),
+            minute: Math.floor(s / 60) % 60,
+            hour: Math.floor(s / 3600),
         };
     }
     const tim = s2hour(

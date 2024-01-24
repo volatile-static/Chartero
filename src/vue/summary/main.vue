@@ -103,12 +103,12 @@ export default {
                     </template>
                     <Gantt :history="itemHistory" :theme="chartTheme" />
                 </t-tab-panel>
-                <t-tab-panel value="network" :style="panelStyle">
+                <!-- <t-tab-panel value="network" :style="panelStyle">
                     <template #label>
                         <ForkIcon /> network
                     </template>
                     <ConnectedPapers :history="items" :theme="chartTheme" />
-                </t-tab-panel>
+                </t-tab-panel> -->
                 <t-tab-panel value="wordCloud" :style="panelStyle">
                     <template #label>
                         <CloudIcon /> {{ locale.wordCloud }}

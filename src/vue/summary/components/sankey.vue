@@ -74,14 +74,14 @@ export default {
         };
     },
     methods: {
-        selectChange(val: CascaderValue<TreeOptionData<string | number>>) {
-            addon.log(val, JSON.stringify(this.selectedCreator));
-        },
-        async loadCreators(node: TreeNodeModel<TreeOptionData>) {
-            addon.log(node);
-            this.selectedCreator = [node.value, 2];
-            return [{ value: 1, label: 'test' }, { value: 2, label: 'test2' }]
-        }
+        // selectChange(val: CascaderValue<TreeOptionData<string | number>>) {
+        //     addon.log(val, JSON.stringify(this.selectedCreator));
+        // },
+        // async loadCreators(node: TreeNodeModel<TreeOptionData>) {
+        //     addon.log(node);
+        //     this.selectedCreator = [node.value, 2];
+        //     return [{ value: 1, label: 'test' }, { value: 2, label: 'test2' }]
+        // }
     },
     computed: {
         noHistoryFound() {
@@ -285,12 +285,12 @@ export default {
             {{ locale.noHistoryFound }}
         </h1>
         <t-space v-else direction="vertical" style="width: 100%">
-            <t-space style="padding: 8px" break-line>
+            <!-- <t-space style="padding: 8px" break-line>
                 <t-cascader :options="creatorSelectOptions" @change="selectChange" :load="loadCreators"
                     v-model="selectedCreator" value-type="full" trigger="hover" value-display="手动调整通讯作者" size="small" />
-            </t-space>
+            </t-space> -->
             <Chart :options="options" :key="theme"></Chart>
-            <Chart :options="wheelOptions" :key="theme"></Chart>
+            <!-- <Chart :options="wheelOptions" :key="theme"></Chart> -->
         </t-space>
     </div>
 </template>
