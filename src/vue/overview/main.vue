@@ -237,7 +237,7 @@ export default {
         return {
             overallProgress: analyzer.progress,
             locale: addon.locale,
-            theme: addon.getPref('useDarkTheme') ? 'light' : 'light'  // TODO: dark
+            theme: 'light'  // TODO: dark
         };
     },
     components: { Skyline }
@@ -245,7 +245,7 @@ export default {
 </script>
 
 <template>
-    <div id="container" :className="'highcharts-' + theme"></div>
+    <div id="container"></div>
     <Skyline id="skyline" />
     <TProgress id="progress" theme="circle" size="large" :percentage="overallProgress" />
 </template>

@@ -75,17 +75,17 @@ import type { AttachmentHistory } from '$/history/history';
 export default {
     methods: {
         switchTheme() {
-            this.dark = !this.dark;
-            if (this.dark)
-                document.documentElement.setAttribute('theme-mode', 'dark');
-            else
-                document.documentElement.removeAttribute('theme-mode');
-            document
-                .querySelectorAll('div.highcharts-data-table')
-                .forEach(el => el.remove());
+            // this.dark = !this.dark;
+            // if (this.dark)
+            //     document.documentElement.setAttribute('theme-mode', 'dark');
+            // else
+            //     document.documentElement.removeAttribute('theme-mode');
+            // document
+            //     .querySelectorAll('div.highcharts-data-table')
+            //     .forEach(el => el.remove());
         },
         updateTheme() {
-            if (addon.getPref('useDarkTheme') != this.dark)
+            if (!window.matchMedia('(prefers-color-scheme: dark)'))
                 this.switchTheme();
         },
         onCollapseChange(val: CollapseValue) {

@@ -19,7 +19,7 @@ export default {
     data() {
         return {
             locale: addon.locale.summary,
-            isDark: false,
+            isDark: matchMedia('(prefers-color-scheme: dark)').matches,
             messageContent: '',
             itemHistory: new Array<AttachmentHistory>(),
             items: new Array<Zotero.Item>(),
@@ -30,17 +30,20 @@ export default {
         };
     },
     computed: {
-        themeIcon() {
-            return this.isDark ? '☀️' : '🌙';
-        },
         chartTheme(): object {
             return this.isDark ? DarkUnicaTheme : GridLightTheme;
         },
     },
     mounted() {
         window.addEventListener('message', async e => {
-            if (addon.getPref('useDarkTheme') != this.isDark)
-                this.switchTheme();
+            const colorScheme = matchMedia('(prefers-color-scheme: dark)');
+            colorScheme.addEventListener('change', (e) => {
+                this.isDark = e.matches;
+                if (e.matches)
+                    document.documentElement.setAttribute('theme-mode', 'dark');
+                else
+                    document.documentElement.removeAttribute('theme-mode');
+            });
             if (!Array.isArray(e.data) || e.data.length < 1)
                 return; // TODO: show message
 
@@ -67,19 +70,7 @@ export default {
         window.addEventListener('resize', () => {
             this.panelStyle.height = window.innerHeight - 70 + 'px';
         });
-    },
-    methods: {
-        switchTheme() {
-            this.isDark = !this.isDark;
-            if (this.isDark)
-                document.documentElement.setAttribute('theme-mode', 'dark');
-            else
-                document.documentElement.removeAttribute('theme-mode');
-            document
-                .querySelectorAll('div.highcharts-data-table')
-                .forEach(el => el.remove());
-        },
-    },
+    }
 };
 </script>
 
@@ -87,7 +78,7 @@ export default {
     <t-layout>
         <t-header class="layout-header" height="22px">
             <span>{{ messageContent }}</span>
-            <t-button @click="switchTheme" size="small" variant="text" shape="circle">{{ themeIcon }}</t-button>
+            <!-- <t-button @click="switchTheme" size="small" variant="text" shape="circle">{{ themeIcon }}</t-button> -->
         </t-header>
         <t-content>
             <t-tabs placement="bottom" default-value="gantt">

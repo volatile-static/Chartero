@@ -247,5 +247,6 @@ export default class Addon extends toolBase.BasicTool {
     }
 
     async test(cmd: string) {
+        this.log(window.matchMedia('(prefers-color-scheme: dark)'));
     }
 }
