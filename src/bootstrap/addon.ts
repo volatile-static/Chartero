@@ -1,16 +1,13 @@
 import * as toolBase from 'zotero-plugin-toolkit/dist/basic';
 import { MenuManager } from 'zotero-plugin-toolkit/dist/managers/menu';
-import { ReaderInstanceManager } from 'zotero-plugin-toolkit/dist/managers/readerInstance';
-import { LibraryTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/libraryTabPanel';
-import { ReaderTabPanelManager } from 'zotero-plugin-toolkit/dist/managers/readerTabPanel';
-import { PatcherManager } from 'zotero-plugin-toolkit/dist/managers/patch';
+import { PatchHelper } from 'zotero-plugin-toolkit/dist/helpers/patch';
 import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
 import { config, name as packageName } from '../../package.json';
 import ReadingHistory from './modules/history/history';
 import { hideDeleteMenuForHistory, patchedZoteroSearch } from './modules/history/misc';
 import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
-import { onHistoryRecord, onItemSelect, onNotify, openOverview, openReport } from './events';
+import { onHistoryRecord, onItemSelect, onNotify, openOverview } from './events';
 import { addDebugMenu } from './modules/debug';
 import addItemColumns from './modules/columns';
 import { showMessage } from './modules/utils';
@@ -25,10 +22,7 @@ type DefaultPrefs = Omit<
 export default class Addon extends toolBase.BasicTool {
     readonly ui: UITool;
     readonly menu: MenuManager;
-    readonly patcher: PatcherManager;
-    readonly reader: ReaderInstanceManager;
-    readonly libTab: LibraryTabPanelManager;
-    readonly readerTab: ReaderTabPanelManager;
+    readonly patchSearch: PatchHelper;
     readonly history: ReadingHistory;
     readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
 
@@ -45,12 +39,9 @@ export default class Addon extends toolBase.BasicTool {
         }
         this.basicOptions.debug.disableDebugBridgePassword = __dev__;
         this.menu = new MenuManager(this);
-        this.libTab = new LibraryTabPanelManager(this);
-        this.readerTab = new ReaderTabPanelManager(this);
-        this.reader = new ReaderInstanceManager(this);
         this.ui = new UITool(this);
         this.history = new ReadingHistory(this, onHistoryRecord);
-        this.patcher = new PatcherManager(this);
+        this.patchSearch = new PatchHelper();
         this.locale = JSON.parse(
             Zotero.File.getContentsFromURL(
                 'chrome://chartero/locale/chartero.json'
@@ -154,12 +145,6 @@ export default class Addon extends toolBase.BasicTool {
             commandListener: openOverview,
             icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
         });
-        // this.menu.register('menuView', {
-        //     tag: 'menuitem',
-        //     label: '2023年度总结',
-        //     commandListener: openReport,
-        //     icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
-        // });
         buildRecentMenu();
         if (__dev__)
             addDebugMenu();
@@ -188,26 +173,13 @@ export default class Addon extends toolBase.BasicTool {
         }, 'excludedTags');
 
         this.history.register(addon.getPref("scanPeriod"));
-        this.patcher.register(
-            Zotero.Search.prototype,
-            "search",
-            patchedZoteroSearch
-        );
+        this.patchSearch.setData({
+            target: Zotero.Search.prototype,
+            funcSign: 'search',
+            enabled: true,
+            patcher: patchedZoteroSearch
+        });
         this.log('Chartero initialized successfully!');
-
-        // 这两个图标要先在主窗口加载出来才能在reader里显示
-        this.ui.appendElement({
-            tag: 'div',
-            styles: {
-                backgroundImage: "url('chrome://chartero/content/icons/images-toggled.png')"
-            },
-            children: [{
-                tag: 'div',
-                styles: {
-                    backgroundImage: "url('chrome://chartero/content/icons/images.png')"
-                }
-            }]
-        }, document.lastChild as HTMLElement);
 
         if (__dev__)
             // 路径以/test开头可绕过Zotero安全限制
@@ -235,6 +207,7 @@ export default class Addon extends toolBase.BasicTool {
     }
 
     unload() {
+        this.patchSearch.disable();
         this.overviewTabID && Zotero_Tabs.close(this.overviewTabID);
         this.notifierID && Zotero.Notifier.unregisterObserver(this.notifierID);
         this.prefsObserverIDs.forEach(id => Zotero.Prefs.unregisterObserver(id));

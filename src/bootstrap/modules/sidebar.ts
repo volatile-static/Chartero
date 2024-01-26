@@ -47,26 +47,26 @@ async function renderDashboard(
  * 初始化侧边栏TabPanel
  */
 export function registerPanels() {
-    addon.readerTab.register(
-        addon.locale.dashboard,
-        (
-            panel: XUL.TabPanel,
-            ownerDeck: XUL.Deck,
-            ownerWindow: Window,
-            reader: _ZoteroTypes.ReaderInstance
-        ) => renderDashboard(panel, reader)
-    );
-    addon.libTab.register(addon.locale.dashboard, (panel: XUL.TabPanel) =>
-        renderDashboard(panel)
-    );
-    addon.reader.register('initialized', 'chartero', async reader => {
-        await reader._waitForReader();
-        await waitForReader(reader);
-        if (addon.getPref('enableMinimap'))
-            mountMinimap(reader);
-        if (addon.getPref('enableAllImages'))
-            addImagesPanelForReader(reader);
-    });
+    // addon.readerTab.register(
+    //     addon.locale.dashboard,
+    //     (
+    //         panel: XUL.TabPanel,
+    //         ownerDeck: XUL.Deck,
+    //         ownerWindow: Window,
+    //         reader: _ZoteroTypes.ReaderInstance
+    //     ) => renderDashboard(panel, reader)
+    // );
+    // addon.libTab.register(addon.locale.dashboard, (panel: XUL.TabPanel) =>
+    //     renderDashboard(panel)
+    // );
+    // addon.reader.register('initialized', 'chartero', async reader => {
+    //     await reader._waitForReader();
+    //     await waitForReader(reader);
+    //     if (addon.getPref('enableMinimap'))
+    //         mountMinimap(reader);
+    //     if (addon.getPref('enableAllImages'))
+    //         addImagesPanelForReader(reader);
+    // });
 }
 
 export function renderSummaryPanel(ids: number[]) {

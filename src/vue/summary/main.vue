@@ -34,16 +34,20 @@ export default {
             return this.isDark ? DarkUnicaTheme : GridLightTheme;
         },
     },
+    methods: {
+        switchTheme(dark: boolean) {
+            this.isDark = dark;
+            if (dark)
+                document.documentElement.setAttribute('theme-mode', 'dark');
+            else
+                document.documentElement.removeAttribute('theme-mode');
+        }
+    },
     mounted() {
+        const colorScheme = matchMedia('(prefers-color-scheme: dark)');
+        colorScheme.addEventListener('change', (e) => this.switchTheme(e.matches));
+
         window.addEventListener('message', async e => {
-            const colorScheme = matchMedia('(prefers-color-scheme: dark)');
-            colorScheme.addEventListener('change', (e) => {
-                this.isDark = e.matches;
-                if (e.matches)
-                    document.documentElement.setAttribute('theme-mode', 'dark');
-                else
-                    document.documentElement.removeAttribute('theme-mode');
-            });
             if (!Array.isArray(e.data) || e.data.length < 1)
                 return; // TODO: show message
 
@@ -78,7 +82,6 @@ export default {
     <t-layout>
         <t-header class="layout-header" height="22px">
             <span>{{ messageContent }}</span>
-            <!-- <t-button @click="switchTheme" size="small" variant="text" shape="circle">{{ themeIcon }}</t-button> -->
         </t-header>
         <t-content>
             <t-tabs placement="bottom" default-value="gantt">
