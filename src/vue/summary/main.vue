@@ -74,6 +74,7 @@ export default {
         window.addEventListener('resize', () => {
             this.panelStyle.height = window.innerHeight - 70 + 'px';
         });
+        this.switchTheme(this.isDark);
     }
 };
 </script>
