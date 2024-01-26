@@ -21,6 +21,13 @@
     import 'highcharts/css/highcharts.css';
     import '@highcharts/dashboards/css/dashboards.css';
     createApp(App).mount('#app');
+
+    function switchTheme(e) {
+      document.documentElement.setAttribute('theme-mode', e.matches ? 'dark' : 'light');
+    }
+    const darkQuery = matchMedia('(prefers-color-scheme: dark)');
+    darkQuery.addListener(switchTheme);
+    switchTheme(darkQuery);
   </script>
 </body>
 

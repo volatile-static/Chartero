@@ -54,7 +54,7 @@ export default {
         };
     },
     methods: {
-        init() {
+        init(isDark: boolean) {
             const now = this.now,
                 firstDay = new Date(
                     now.getFullYear(),
@@ -114,8 +114,8 @@ export default {
                         colors = (['r', 'g', 'b'] as RGB[]).map(color => {
                             const str = Math.round(
                                 denormalize(
-                                    colorMin[color],
-                                    colorMax[color],
+                                    isDark ? colorMax[color] : colorMin[color],
+                                    isDark ? colorMin[color] : colorMax[color],
                                     percent
                                 )
                             ).toString(16);
@@ -139,6 +139,8 @@ export default {
     },
     mounted() {
         setTimeout(this.init, 10);
+        const colorScheme = matchMedia('(prefers-color-scheme: dark)');
+        colorScheme.addEventListener('change', (e) => this.init(e.matches));
     },
 };
 
