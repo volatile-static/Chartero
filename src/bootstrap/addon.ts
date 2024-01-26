@@ -143,7 +143,7 @@ export default class Addon extends toolBase.BasicTool {
             tag: 'menuitem',
             label: this.locale.overview,
             commandListener: openOverview,
-            icon: `chrome://${config.addonName}/content/icons/icon@16px.png`,
+            icon: `chrome://${config.addonName}/content/icons/icon32.png`,
         });
         buildRecentMenu();
         if (__dev__)
