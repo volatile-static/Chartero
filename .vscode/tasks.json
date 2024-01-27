@@ -19,6 +19,9 @@
             "script": "dev",
             "label": "npm: dev",
             "isBackground": true,
+            "problemMatcher": [
+                "$vite"
+            ]
         }
     ]
 }
