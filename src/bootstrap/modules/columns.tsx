@@ -13,7 +13,7 @@ export default function addItemColumns() {
                 className='icon icon-bg'
                 style={{
                     backgroundImage: `url(
-                        chrome://${config.addonName}/content/icons/icon32.png
+                        chrome://${config.addonName}/content/icons/icon.svg
                     )` }}
             />
             &nbsp;

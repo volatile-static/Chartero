@@ -89,7 +89,7 @@ abstract class ReaderImages {
         this.popMsg = new Zotero.ProgressWindow();
         this.popMsg.changeHeadline(
             '',
-            'chrome://chartero/content/icons/icon.png',
+            'chrome://chartero/content/icons/icon.svg',
             'Chartero'
         );
         this.popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');

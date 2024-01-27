@@ -5,7 +5,7 @@ export function addDebugMenu() {
     addon.menu.register('item', {
         tag: 'menuitem',
         label: 'log to console',
-        icon: `chrome://${config.addonName}/content/icons/icon32.png`,
+        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
         commandListener: () => addon.log(ZoteroPane.getSelectedItems())
     });
 
@@ -13,7 +13,7 @@ export function addDebugMenu() {
     addon.menu.register('collection', {
         tag: 'menuitem',
         label: 'log to console',
-        icon: `chrome://${config.addonName}/content/icons/icon32.png`,
+        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
         commandListener: () => addon.log(ZoteroPane.getCollectionTreeRow()?.ref)
     });
 
@@ -21,19 +21,19 @@ export function addDebugMenu() {
     addon.menu.register('menuHelp', {
         tag: 'menuitem',
         label: 'log reader to console',
-        icon: `chrome://${config.addonName}/content/icons/icon32.png`,
+        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
         commandListener: () => addon.log(Zotero.Reader.getByTabID(Zotero_Tabs.selectedID))
     });
     addon.menu.register('menuHelp', {
         tag: 'menuitem',
         label: 'log main items to console',
-        icon: `chrome://${config.addonName}/content/icons/icon32.png`,
+        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
         commandListener: () => addon.log((<any>addon.history)._mainItems)
     });
     addon.menu.register('menuHelp', {
         tag: 'menuitem',
         label: 'open dev tools',
-        icon: `chrome://${config.addonName}/content/icons/icon32.png`,
+        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
         commandListener: () => {
             const env =
                 Services.env ||
