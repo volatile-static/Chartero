@@ -46,4 +46,13 @@ export default class Addon {
             return res.map(createAttachmentHistory);
         }
     }
+    extraField = {
+        _method: 'Zotero.Chartero.extraField.getExtraField(Zotero.Items.get(',
+        getExtraField(item: Zotero.Item, field: string): string {
+            return fetchSync(`${this._method}${item.id}), '${field}')`);
+        },
+        setExtraField(item: Zotero.Item, field: string, value: string): void {
+            fetchSync(`${this._method}${item.id}), '${field}', '${value}')`);
+        }
+    }
 }

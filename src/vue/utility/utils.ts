@@ -67,3 +67,7 @@ export function jaccardSimilarity(text1: string, text2: string) {
 
     return intersection.size / union.size;
 }
+
+export function creator2str(creator: Zotero.Item.CreatorJSON): string {
+    return creator.name ?? `${creator.firstName} ${creator.lastName}`.trim();
+}

@@ -24,7 +24,7 @@ export default {
             itemHistory: new Array<AttachmentHistory>(),
             items: new Array<Zotero.Item>(),
             panelStyle: {
-                height: window.innerHeight - 70 + 'px',
+                height: window.innerHeight - 71 + 'px',
                 overflow: 'scroll',
             } as CSSStyleDeclaration,
         };
@@ -72,7 +72,7 @@ export default {
             // addon.log(`Summary items: ${this.items.length}, history: ${this.itemHistory.length}`)
         });
         window.addEventListener('resize', () => {
-            this.panelStyle.height = window.innerHeight - 70 + 'px';
+            this.panelStyle.height = window.innerHeight - 71 + 'px';
         });
         this.switchTheme(this.isDark);
     }
@@ -81,11 +81,8 @@ export default {
 
 <template>
     <t-layout>
-        <t-header class="layout-header" height="22px">
-            <span>{{ messageContent }}</span>
-        </t-header>
         <t-content>
-            <t-tabs placement="bottom" default-value="gantt">
+            <t-tabs default-value="gantt">
                 <t-tab-panel value="sankey" :style="panelStyle">
                     <template #label>
                         <ChartBubbleIcon /> {{ locale.sankey }}
@@ -98,12 +95,12 @@ export default {
                     </template>
                     <Gantt :history="itemHistory" :theme="chartTheme" />
                 </t-tab-panel>
-                <!-- <t-tab-panel value="network" :style="panelStyle">
+                <t-tab-panel value="network" :style="panelStyle">
                     <template #label>
                         <ForkIcon /> network
                     </template>
                     <ConnectedPapers :history="items" :theme="chartTheme" />
-                </t-tab-panel> -->
+                </t-tab-panel>
                 <t-tab-panel value="wordCloud" :style="panelStyle">
                     <template #label>
                         <CloudIcon /> {{ locale.wordCloud }}
@@ -118,6 +115,9 @@ export default {
                 </t-tab-panel> -->
             </t-tabs>
         </t-content>
+        <t-header class="layout-header" height="22px">
+            <span>{{ messageContent }}</span>
+        </t-header>
     </t-layout>
 </template>
 

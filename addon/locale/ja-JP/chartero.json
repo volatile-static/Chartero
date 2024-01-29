@@ -131,5 +131,6 @@
     "overallProgress": "全体の進捗状況",
     "firstCreator": "最初の著者",
     "lastCreator": "最後の著者",
-    "journal": "ジャーナル"
+    "journal": "ジャーナル",
+    "selectCorrespondingAuthor": "責任著者を選択する"
 }

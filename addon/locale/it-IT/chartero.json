@@ -50,7 +50,7 @@
         "pageTime": "Tempo di lettura per pagina",
         "pageTimeSub": "+Click per aprire il PDF alla pagina",
         "readToday": "Tempo di lettura odierno",
-        "sankey": "Primo autore | Ultimo autore | Rivista"
+        "sankey": "Primo autore | Corrispondente autore | Rivista"
     },
     "summary": {
         "authorBubble": "Bolla degli autori",
@@ -133,5 +133,6 @@
     "overallProgress": "Progresso generale",
     "firstCreator": "Primo autore",
     "lastCreator": "Ultimo autore",
-    "journal": "Rivista"
+    "journal": "Rivista",
+    "selectCorrespondingAuthor": "Seleziona autore corrispondente"
 }

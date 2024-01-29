@@ -23,6 +23,5 @@ recordTimeout = Record timeout (How many unchanged records before recording stop
 compressHistory = Compress history data
 historySize = Current history size: <b>{ $size }</b> KB
 maxSummaryItems = Do not render Summary when the number of items exceeds this value:
-lastAuthorSankey = Index of the last author in Sankey graph:
 translate = Auto translate locale strings using <i>PDFTranslate</i> Plugin (Experimental)
 completeThreshold = Complete threshold for progress (seconds):

@@ -1,4 +1,5 @@
 import * as toolBase from 'zotero-plugin-toolkit/dist/basic';
+import { ExtraFieldTool } from 'zotero-plugin-toolkit/dist/tools/extraField';
 import { MenuManager } from 'zotero-plugin-toolkit/dist/managers/menu';
 import { PatchHelper } from 'zotero-plugin-toolkit/dist/helpers/patch';
 import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
@@ -20,6 +21,7 @@ type DefaultPrefs = Omit<
 };
 
 export default class Addon extends toolBase.BasicTool {
+    readonly extraField: ExtraFieldTool;
     readonly ui: UITool;
     readonly menu: MenuManager;
     readonly patchSearch: PatchHelper;
@@ -40,6 +42,7 @@ export default class Addon extends toolBase.BasicTool {
         this.basicOptions.debug.disableDebugBridgePassword = __dev__;
         this.menu = new MenuManager(this);
         this.ui = new UITool(this);
+        this.extraField = new ExtraFieldTool(this);
         this.history = new ReadingHistory(this, onHistoryRecord);
         this.patchSearch = new PatchHelper();
         this.locale = JSON.parse(

@@ -20,7 +20,7 @@ export default {
     },
     async mounted() {
         await this.$nextTick();
-        postMessage(this.selectedItems);
+        postMessage([...this.selectedItems]);
     },
     computed: {
         history() {

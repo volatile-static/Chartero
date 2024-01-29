@@ -6,13 +6,13 @@ import type {
     SeriesSankeyPointOptionsObject,
     SeriesSankeyNodesOptionsObject,
     SeriesDependencywheelOptions,
-    TooltipFormatterContextObject
+    TooltipFormatterContextObject,
 } from 'highcharts';
-import type { CascaderValue, TreeNodeModel, TreeOptionData } from 'tdesign-vue-next';
 import { toTimeString } from '$/utils';
-import { helpMessageOption } from '@/utils';
+import { creator2str, helpMessageOption } from '@/utils';
 import HistoryAnalyzer from '$/history/analyzer';
 import Highcharts from '@/highcharts';
+import DualSelect from './dualSelect.vue';
 
 interface ItemInfo {
     firstCreator: string;
@@ -29,16 +29,18 @@ function formatter(this: TooltipFormatterContextObject) {
         borderStyle = `border-left: 1px solid ${this.color}; border-top: solid ${this.color};`,
         breakStyle = 'white-space: normal;',
         tdStyle = `style='${borderStyle} ${breakStyle}'`,
-        table = items?.map(it => {
-            const title = Items.get(it.itemID).getField('title');
-            return `<tr>
+        table = items
+            ?.map(it => {
+                const title = Items.get(it.itemID).getField('title');
+                return `<tr>
                 <td ${tdStyle}>${title}</td>
                 <td ${tdStyle}>${it.journal}</td>
                 <td ${tdStyle}>${it.firstCreator}</td>
                 <td ${tdStyle}>${it.lastCreator}</td>
                 <td ${tdStyle}>${toTimeString(it.totalSeconds)}</td>
             </tr>`;
-        }).join('');
+            })
+            .join('');
     if (table)
         return `
             <table>
@@ -65,62 +67,43 @@ function formatter(this: TooltipFormatterContextObject) {
 }
 
 export default {
-    components: { Chart },
+    components: { Chart, DualSelect },
     data() {
         return {
             locale: addon.locale,
-            lastAuthorIdx: addon.getPref('lastAuthorSankey'),
-            selectedCreator: [] as CascaderValue<TreeOptionData>,
+            // lastAuthorIdx: addon.getPref('lastAuthorSankey'),
         };
-    },
-    methods: {
-        // selectChange(val: CascaderValue<TreeOptionData<string | number>>) {
-        //     addon.log(val, JSON.stringify(this.selectedCreator));
-        // },
-        // async loadCreators(node: TreeNodeModel<TreeOptionData>) {
-        //     addon.log(node);
-        //     this.selectedCreator = [node.value, 2];
-        //     return [{ value: 1, label: 'test' }, { value: 2, label: 'test2' }]
-        // }
     },
     computed: {
         noHistoryFound() {
             return this.history.length === 0;
         },
-        creatorSelectOptions() {
-            return this.history.map(item => ({
-                value: item.id,
-                label: item.getField('title'),
-                children: true
-                // item.getCreators().map((creator, idx) => ({
-                //     value: idx,
-                //     label: creator.firstName + ' ' + creator.lastName,
-                // } as TreeOptionData))
-            } as TreeOptionData));
-        },
         chartOpts() {
-            const itemData = this.history.map(item => {
-                const firstCreator = item.firstCreator,
-                    lastCreatorData = item.getCreators().at(this.lastAuthorIdx % item.numCreators()),
-                    lastCreator = lastCreatorData && (
-                        lastCreatorData.firstName!.length > 0
-                            ? lastCreatorData.firstName + ' ' + lastCreatorData.lastName
-                            : lastCreatorData.lastName
-                    ),
-                    journal = item.getField('journalAbbreviation')
-                        || item.getField('publicationTitle')
-                        || item.getField('conferenceName')
-                        || item.getField('proceedingsTitle')
-                        || item.getField('university'),
-                    totalSeconds = new HistoryAnalyzer(item).totalS;
-                // addon.log({firstCreator, lastCreator, journal, totalSeconds});
-                return { itemID: item.id, firstCreator, lastCreator, journal, totalSeconds };
-            }).filter(
-                it => it.firstCreator &&
-                    it.lastCreator &&
-                    it.journal &&
-                    it.firstCreator !== it.lastCreator
-            ) as Array<ItemInfo>,
+            const itemData = this.history
+                .map(item => {
+                    const firstCreator = item.firstCreator,
+                        corrAuthorIdx = addon.extraField.getExtraField(item, 'CorrespondingAuthorIndex'),
+                        lastCreatorData = item
+                            .getCreatorsJSON()
+                            .at(corrAuthorIdx ? parseInt(corrAuthorIdx) : -1),
+                        lastCreator = lastCreatorData && creator2str(lastCreatorData),
+                        journal =
+                            item.getField('journalAbbreviation') ||
+                            item.getField('publicationTitle') ||
+                            item.getField('conferenceName') ||
+                            item.getField('proceedingsTitle') ||
+                            item.getField('university'),
+                        totalSeconds = new HistoryAnalyzer(item).totalS;
+                    // addon.log({firstCreator, lastCreator, journal, totalSeconds});
+                    return { itemID: item.id, firstCreator, lastCreator, journal, totalSeconds };
+                })
+                .filter(
+                    it =>
+                        it.firstCreator &&
+                        it.lastCreator &&
+                        it.journal &&
+                        it.firstCreator !== it.lastCreator,
+                ) as Array<ItemInfo>,
                 first2last: Record<string, ItemInfo[]> = {},
                 last2journal: Record<string, ItemInfo[]> = {},
                 data = new Array<SeriesSankeyPointOptionsObject>(),
@@ -133,8 +116,8 @@ export default {
             for (const item of itemData) {
                 const first_last = item.firstCreator + '\n' + item.lastCreator,
                     last_journal = item.lastCreator + '\n' + item.journal,
-                    f2l = first2last[first_last] ??= new Array<ItemInfo>(),
-                    l2j = last2journal[last_journal] ??= new Array<ItemInfo>();
+                    f2l = (first2last[first_last] ??= new Array<ItemInfo>()),
+                    l2j = (last2journal[last_journal] ??= new Array<ItemInfo>());
                 f2l.push(item);
                 l2j.push(item);
                 firstCreatorSet.add(item.firstCreator);
@@ -150,12 +133,9 @@ export default {
                 colorCnt %= 10;
             }
             // 然后根据通讯的颜色分配条目的颜色
-            for (const [key, val] of [
-                ...Object.entries(first2last),
-                ...Object.entries(last2journal)
-            ]) {
+            for (const [key, val] of [...Object.entries(first2last), ...Object.entries(last2journal)]) {
                 const [from, to] = key.split('\n'),
-                    col = first2last[key] ? 0 : 1;  // powered by GitHub Copilot
+                    col = first2last[key] ? 0 : 1; // powered by GitHub Copilot
                 data.push({
                     from,
                     to,
@@ -163,39 +143,37 @@ export default {
                     color: colorMap[col ? from : to],
                     custom: {
                         itemIDs: val.map(it => it.itemID),
-                        items: val
-                    }
+                        items: val,
+                    },
                 });
             }
 
             // 最后根据条目颜色合成其他结点颜色
             function mixColors(items: Array<[string, ItemInfo[]]>) {
-                const colors = items.flatMap(
-                    ([_, val]) => val.map(i => Highcharts.color(colorMap[i.lastCreator]))
+                const colors = items.flatMap(([_, val]) =>
+                    val.map(i => Highcharts.color(colorMap[i.lastCreator])),
                 );
                 let mixedColor = colors[0];
                 for (let i = 1; i < colors.length; ++i)
-                    mixedColor = Highcharts.color(
-                        mixedColor.tweenTo(colors[i], 1 / colors.length)
-                    );
+                    mixedColor = Highcharts.color(mixedColor.tweenTo(colors[i], 1 / colors.length));
                 return mixedColor.get();
             }
             for (const firstCreator of firstCreatorSet) {
-                const color = mixColors(Object.entries(first2last).filter(
-                    ([key, _]) => key.startsWith(firstCreator)
-                ));
+                const color = mixColors(
+                    Object.entries(first2last).filter(([key, _]) => key.startsWith(firstCreator)),
+                );
                 nodes.push({ id: firstCreator, column: 0, color });
             }
             for (const journal of journalSet) {
-                const color = mixColors(Object.entries(last2journal).filter(
-                    ([key, _]) => key.endsWith(journal)
-                ));
+                const color = mixColors(
+                    Object.entries(last2journal).filter(([key, _]) => key.endsWith(journal)),
+                );
                 nodes.push({ id: journal, column: 2, color });
             }
             const maxRows = Math.max(
                 journalSet.size,
                 firstCreatorSet.size,
-                lastCreatorSet.size
+                lastCreatorSet.size,
                 // ...[0, 1, 2].map(col => nodes.filter(n => n.column === col).length)
             );
             // addon.log(nodes)
@@ -204,32 +182,30 @@ export default {
                 exporting: { menuItemDefinitions: helpMessageOption(this.locale.doc.sankey) },
                 subtitle: { text: this.locale.chartTitle.sankey },
                 tooltip: { useHTML: true, outside: true, formatter },
-                series: [{
-                    type: 'sankey',
-                    data,
-                    nodes
-                } as SeriesSankeyOptions],
+                series: [
+                    {
+                        type: 'sankey',
+                        data,
+                        nodes,
+                    } as SeriesSankeyOptions,
+                ],
             } as Options;
         },
         options() {
             return Highcharts.merge(this.chartOpts, this.theme);
         },
-        wheelOptions() {
-            return Highcharts.merge(this.wheelOpts, this.theme);
-        },
+        // wheelOptions() {
+        //     return Highcharts.merge(this.wheelOpts, this.theme);
+        // },
         wheelOpts() {
             const authorItems: Record<string, Zotero.Item[]> = {};
             for (const item of this.history)
                 for (const creator of item.getCreators()) {
                     const name = `${creator.firstName} ${creator.lastName}`.trim();
-                    if (name in authorItems)
-                        authorItems[name].push(item);
-                    else
-                        authorItems[name] = [item];
+                    if (name in authorItems) authorItems[name].push(item);
+                    else authorItems[name] = [item];
                 }
-            const authorList = Object.keys(authorItems).filter(
-                name => authorItems[name].length > 1
-            ),
+            const authorList = Object.keys(authorItems).filter(name => authorItems[name].length > 1),
                 data: Array<SeriesSankeyPointOptionsObject> = [];
             // console.table(authorList);
             for (let i = 0; i < authorList.length; ++i)
@@ -244,7 +220,7 @@ export default {
                             weight: items.length,
                             custom: {
                                 itemIDs: items.map(it => it.id),
-                            }
+                            },
                         });
                 }
             // console.table(data);
@@ -259,15 +235,13 @@ export default {
                         overflow: 'allow',
                         crop: false,
                         color: '#333',
-                        textPath: {
-                            enabled: true,
-                        },
-                        distance: 10
+                        textPath: { enabled: true },
+                        distance: 10,
                     },
                     allowPointSelect: false,
                 } as SeriesDependencywheelOptions]
             } as Options;
-        }
+        },
     },
     props: {
         history: {
@@ -284,11 +258,8 @@ export default {
         <h1 v-if="noHistoryFound" class="center-label">
             {{ locale.noHistoryFound }}
         </h1>
-        <t-space v-else direction="vertical" style="width: 100%">
-            <!-- <t-space style="padding: 8px" break-line>
-                <t-cascader :options="creatorSelectOptions" @change="selectChange" :load="loadCreators"
-                    v-model="selectedCreator" value-type="full" trigger="hover" value-display="手动调整通讯作者" size="small" />
-            </t-space> -->
+        <t-space v-else direction="vertical" style="width: 100%" size="small">
+            <DualSelect :items="history" />
             <Chart :options="options" :key="theme"></Chart>
             <!-- <Chart :options="wheelOptions" :key="theme"></Chart> -->
         </t-space>

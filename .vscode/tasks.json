@@ -22,6 +22,15 @@
             "problemMatcher": [
                 "$vite"
             ]
+        },
+        {
+            "type": "npm",
+            "script": "type-check-all",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "label": "npm: type-check-all",
+            "detail": "npm run type-check-vue & npm run type-check-bootstrap"
         }
     ]
 }

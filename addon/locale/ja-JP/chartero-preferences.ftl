@@ -23,6 +23,5 @@ recordTimeout = オフライン検出 (記録の変更がない場合、記録�
 compressHistory = 記録データを圧縮する
 historySize = 現在の履歴データのサイズ：<b>{ $size }</b> KB
 maxSummaryItems = サイドバーにレンダーする項目の最大数：
-lastAuthorSankey = サンキーグラフ（著者関係図）における責任著者の順位：
 translate = <i>PDFtranslate</i>プラグイン自動翻訳インタフェース言語を呼び出す
 completeThreshold = 完了進捗閾値（秒）：
