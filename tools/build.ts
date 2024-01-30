@@ -271,7 +271,7 @@ function patchLocaleStrings() {
     const standard = JSON.parse(
         fs.readFileSync('addon/locale/zh-CN/chartero.json', { encoding: 'utf-8' }),
     );
-    for (const locale of ['en-US', 'it-IT', 'ja-JP']) {
+    for (const locale of ['en-US', 'it-IT', 'ja-JP', 'nl-NL']) {
         const localeFile = path.join(buildDir, `addon/locale/${locale}/chartero.json`),
             json = JSON.parse(fs.readFileSync(localeFile, { encoding: 'utf-8' })),
             merged = lodash.defaultsDeep(json, standard);
