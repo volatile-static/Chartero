@@ -1,5 +1,5 @@
 enableRealTimeDashboard = 
-    .label = Enable real time dashboard
+    .label = Enable realtime dashboard
 darkTheme = 
     .label = Dark mode
 minimap = 
@@ -7,7 +7,7 @@ minimap =
 allImages = 
     .label = Show all images at Reader sidebar
 readerAlert = 
-    .label = Alert reader when record stops
+    .label = Alert reader when recording stops
 plotTitle = Visualization
 tags = Tags
 excludedTags = Excluded tags in Summary

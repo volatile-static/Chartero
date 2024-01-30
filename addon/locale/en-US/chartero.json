@@ -41,7 +41,7 @@
         "showAuthor": "Show Author"
     },
     "chartTitle": {
-        "pie": "Proportion of Total Reading Time",
+        "pie": "Percentage of Total Reading Time",
         "pieSub": "Click a Pie for Details",
         "schedule": "Daily Routines",
         "network": "Relation Network",
@@ -55,8 +55,8 @@
     "summary": {
         "authorBubble": "Author Bubble",
         "gantt": "Timeline",
-        "wordCloud": "标题词云图",
-        "tagsPie": "关键词饼图",
+        "wordCloud": "Word Cloud",
+        "tagsPie": "Tag Piechart",
         "sankey": "Author Flow"
     },
     "images": {
@@ -69,7 +69,7 @@
     "history": {
         "mainItemTitle": "Reading History Records",
         "mainItemDescription": "Reading history data recorded by Chartero.\nDo NOT modify!",
-        "deletingItem": "Do NOT delate history record items!",
+        "deletingItem": "Do NOT delete history record items!",
         "modifyingNote": "Do NOT modify history record manually!",
         "jsonParseError": "JSON parse error!"
     },
@@ -89,7 +89,7 @@
     "times": "Times",
     "pages": "Pages",
     "totalTime": "Total Time",
-    "readingProgressTip": "Proportion of Pages Read",
+    "readingProgressTip": "Percentage of Pages Read",
     "pageNum": "Page Label",
     "unfiled": "unfiled",
     "selectDataSource": "Select Data Source",
@@ -115,18 +115,18 @@
     "sort": "sort",
     "filter": "filter",
     "tableHeader": "table header",
-    "tableHeaderTip": "Widen the Panel to Display Header",
+    "tableHeaderTip": "Widen the Panel to Display Table Header",
     "zoomingTip": "Press Shift to Pan",
     "dashboard": "Dashboard",
     "svg": "SVG",
     "saveSVG": "Save SVG",
     "copy": "Copy to Clipboard",
-    "drawInProgress": "Draw in Progress...",
+    "drawInProgress": "Drawing in Progress...",
     "overview": "Library Overview",
     "recent": "Open Recent",
     "others": "others",
     "help": "help",
-    "thisItem": "Thie Item",
+    "thisItem": "This Item",
     "relatedItems": "Related Items",
     "collapsedItems": "Collapsed Items",
     "itemsCount": "Items Count",

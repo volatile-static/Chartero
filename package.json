@@ -7,6 +7,7 @@
         "description": {
             "en": "Charts for Zotero",
             "zh": "可视化文库"
+            "nl": "Grafieken voor Zotero"
         },
         "addonPref": "extensions.zotero.chartero",
         "issue": "https://github.com/volatile-static/Chartero/issues",
