@@ -57,7 +57,15 @@
         "gantt": "Linea temporale",
         "wordCloud": "Word cloud dei titoli",
         "tagsPie": "Diagramma a torta dei tag",
-        "sankey": "Flusso degli autori"
+        "sankey": "Flusso degli autori",
+        "kpiGauge": "Progresso di lettura",
+        "jcrPie": "Diagramma a torta JCR",
+        "authorIF": "IF autore"
+    },
+    "gaugeSeries": {
+        "item": "Elemento",
+        "page": "Pagine",
+        "done": "Done"
     },
     "images": {
         "allImages": "Tutte le immagini",

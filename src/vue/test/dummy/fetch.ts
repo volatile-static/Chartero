@@ -4,7 +4,7 @@ export default function fetchSync(cmd: string) {
     const req = new XMLHttpRequest();
     req.open('POST', `http://localhost:23119/test/chartero`, false);
     req.send(cmd);
-    const res = JSON.parse(req.responseText);
+    const res = req.responseText && JSON.parse(req.responseText);
     if (import.meta.hot) import.meta.hot.data[cmd] = res;
 
     // console.groupCollapsed(cmd, res)

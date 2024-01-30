@@ -5,6 +5,7 @@
         "denormalize",
         "epub",
         "gantt",
+        "greenfrog",
         "groupbox",
         "highcharts",
         "modeless",
@@ -12,6 +13,7 @@
         "Packedbubble",
         "prefs",
         "Sankey",
+        "solidgauge",
         "tdesign",
         "unfiled",
         "unplugin",
@@ -47,6 +49,6 @@
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "[markdown]": {
-        "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
 }

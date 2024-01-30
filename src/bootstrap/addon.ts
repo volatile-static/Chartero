@@ -11,7 +11,7 @@ import buildRecentMenu from './modules/recent';
 import { onHistoryRecord, onItemSelect, onNotify, openOverview } from './events';
 import { addDebugMenu } from './modules/debug';
 import addItemColumns from './modules/columns';
-import { showMessage } from './modules/utils';
+import { DebuggerBackend, showMessage } from './modules/utils';
 
 type DefaultPrefs = Omit<
     typeof config.defaultSettings,
@@ -186,27 +186,7 @@ export default class Addon extends toolBase.BasicTool {
 
         if (__dev__)
             // 路径以/test开头可绕过Zotero安全限制
-            Zotero.Server.Endpoints['/test/chartero'] = class implements _ZoteroTypes.Server.Endpoint {
-                supportedMethods = ['POST'];
-                init: _ZoteroTypes.Server.initMethodPromise = async function (options) {
-                    const headers = {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*' // 允许跨域
-                    };
-                    try {
-                        addon.log('eval cmd:', options.data);
-                        const result = eval(options.data);
-                        addon.log(result);
-                        return [200, headers, JSON.stringify(result.then ? await result : result)];
-                    } catch (error) {
-                        Zotero.logError(error);
-                        if (error instanceof Error)
-                            return [400, headers, JSON.stringify({ msg: error.message })];
-                        else
-                            return [500, headers, JSON.stringify(error)];
-                    }
-                };
-            }
+            Zotero.Server.Endpoints['/test/chartero'] = DebuggerBackend;
     }
 
     unload() {

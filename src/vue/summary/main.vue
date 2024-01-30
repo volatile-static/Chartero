@@ -1,6 +1,9 @@
 <script lang="ts">
 import {
-    ChartBubbleIcon,
+    TreeRoundDotVerticalIcon,
+    ChartRadialIcon,
+    ChartColumIcon,
+    ChartRingIcon,
     FormatVerticalAlignRightIcon,
     ForkIcon,
     CloudIcon,
@@ -11,11 +14,14 @@ import AuthorBubble from './components/authorBubble.vue';
 import Sankey from './components/sankey.vue';
 import WordCloud from './components/wordCloud.vue';
 import TagsPie from './components/tagsPie.vue';
+import KpiGauge from './components/kpiGauge.vue';
+import JCR from './components/jcr.vue';
+import authorIF from './components/authorIF.vue';
 import ConnectedPapers from './components/connectedPapers.vue';
 import { GridLightTheme, DarkUnicaTheme } from '@/themes';
 import type { AttachmentHistory } from '$/history/history';
 export default {
-    components: { ConnectedPapers, Sankey, Gantt, AuthorBubble, WordCloud, TagsPie, ChartBubbleIcon, FormatVerticalAlignRightIcon, ForkIcon, CloudIcon, ChartPieIcon },
+    components: { ConnectedPapers, Sankey, Gantt, AuthorBubble, WordCloud, TagsPie, TreeRoundDotVerticalIcon, FormatVerticalAlignRightIcon, ForkIcon, CloudIcon, ChartPieIcon, ChartColumIcon, ChartRadialIcon, ChartRingIcon, KpiGauge, JCR, authorIF },
     data() {
         return {
             locale: addon.locale.summary,
@@ -27,6 +33,7 @@ export default {
                 height: window.innerHeight - 71 + 'px',
                 overflow: 'scroll',
             } as CSSStyleDeclaration,
+            greenFrog: 'greenfrog' in addon.getGlobal('Zotero'),
         };
     },
     computed: {
@@ -85,7 +92,7 @@ export default {
             <t-tabs default-value="gantt">
                 <t-tab-panel value="sankey" :style="panelStyle">
                     <template #label>
-                        <ChartBubbleIcon /> {{ locale.sankey }}
+                        <TreeRoundDotVerticalIcon /> {{ locale.sankey }}
                     </template>
                     <Sankey :history="items" :theme="chartTheme" />
                 </t-tab-panel>
@@ -106,6 +113,24 @@ export default {
                         <CloudIcon /> {{ locale.wordCloud }}
                     </template>
                     <WordCloud :items="items" :theme="chartTheme" />
+                </t-tab-panel>
+                <t-tab-panel value="kpiGauge" :style="panelStyle">
+                    <template #label>
+                        <ChartRadialIcon /> {{ locale.kpiGauge }}
+                    </template>
+                    <KpiGauge :history="itemHistory" :theme="chartTheme" :items-count="items.length" />
+                </t-tab-panel>
+                <t-tab-panel v-if="greenFrog" value="jcr" :style="panelStyle">
+                    <template #label>
+                        <ChartRingIcon /> {{ locale.jcrPie }}
+                    </template>
+                    <JCR :items="items" :theme="chartTheme" />
+                </t-tab-panel>
+                <t-tab-panel v-if="greenFrog" value="authorIF" :style="panelStyle">
+                    <template #label>
+                        <ChartColumIcon /> {{ locale.authorIF }}
+                    </template>
+                    <authorIF :items="items" :theme="chartTheme" />
                 </t-tab-panel>
                 <!-- <t-tab-panel value="tagsPie" :style="panelStyle">
                     <template #label>

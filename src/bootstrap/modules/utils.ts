@@ -75,3 +75,25 @@ export function toTimeString(seconds: number | string) {
 export function accumulate<T>(arr: T[], key: keyof T): number {
     return arr.reduce((acc, cur) => acc + Number(cur[key]), 0);
 }
+
+export class DebuggerBackend implements _ZoteroTypes.Server.Endpoint {
+    supportedMethods = ['POST'];
+    init: _ZoteroTypes.Server.initMethodPromise = async function (options) {
+        const headers = {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*' // 允许跨域
+        };
+        try {
+            addon.log('eval cmd:', options.data);
+            const result = eval(options.data);
+            addon.log(result);
+            return [200, headers, JSON.stringify(result?.then ? await result : result)];
+        } catch (error) {
+            Zotero.logError(error);
+            if (error instanceof Error)
+                return [400, headers, JSON.stringify({ msg: error.message })];
+            else
+                return [500, headers, JSON.stringify(error)];
+        }
+    };
+}

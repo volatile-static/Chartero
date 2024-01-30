@@ -55,7 +55,15 @@
         "gantt": "ガントチャート",
         "wordCloud": "標題ワードクラウド",
         "tagsPie": "キーワード円グラフ",
-        "sankey": "サンキーグラフ"
+        "sankey": "サンキーグラフ",
+        "kpiGauge": "読み進め度ゲージ",
+        "jcrPie": "ジャーナル区分図",
+        "authorIF": "影響因子ランキング"
+    },
+    "gaugeSeries": {
+        "item": "读过的文献",
+        "page": "已读页数",
+        "done": "读完的文献"
     },
     "images": {
         "allImages": "すべての画像",

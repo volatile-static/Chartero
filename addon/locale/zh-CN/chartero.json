@@ -57,7 +57,15 @@
         "gantt": "历史甘特图",
         "wordCloud": "标题词云图",
         "tagsPie": "关键词饼图",
-        "sankey": "作者关系图"
+        "sankey": "作者关系图",
+        "kpiGauge": "阅读进度图",
+        "jcrPie": "期刊分区比例",
+        "authorIF": "影响因子排行榜"
+    },
+    "gaugeSeries": {
+        "item": "读过的文献",
+        "page": "已读页数",
+        "done": "读完的文献"
     },
     "images": {
         "allImages": "所有图片",

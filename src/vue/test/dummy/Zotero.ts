@@ -57,4 +57,5 @@ export default class Zotero {
     Utilities = {
         debounce,
     };
+    greenfrog = {};
 }

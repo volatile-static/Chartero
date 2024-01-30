@@ -57,7 +57,15 @@
         "gantt": "Timeline",
         "wordCloud": "标题词云图",
         "tagsPie": "关键词饼图",
-        "sankey": "Author Flow"
+        "sankey": "Author Flow",
+        "kpiGauge": "Reading Progress",
+        "jcrPie": "JCR Pie",
+        "authorIF": "Impact Factor"
+    },
+    "gaugeSeries": {
+        "item": "ITEMS",
+        "page": "PAGES",
+        "done": "DONE"
     },
     "images": {
         "allImages": "All Images",
