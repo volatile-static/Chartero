@@ -55,8 +55,8 @@
     "summary": {
         "authorBubble": "Author Bubble",
         "gantt": "Timeline",
-        "wordCloud": "标题词云图",
-        "tagsPie": "关键词饼图",
+        "wordCloud": "Word Cloud",
+        "tagsPie": "Tag Piechart",
         "sankey": "Author Flow"
     },
     "images": {
