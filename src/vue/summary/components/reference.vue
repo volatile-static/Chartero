@@ -157,6 +157,13 @@ export default {
 
             nextTick(this.doProcess);
         },
+        theme() {  // 更新结点图标
+            this.seriesNode = this.seriesNode.map(n => {
+                const it = Zotero.Items.get(Number(n.id));
+                n.marker!.symbol = `url(${it.getImageSrc()})`;
+                return n;
+            });
+        }
     },
     props: {
         history: {

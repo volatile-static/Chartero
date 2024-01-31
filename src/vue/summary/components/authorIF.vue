@@ -5,7 +5,12 @@ import Highcharts from '@/highcharts';
 export default {
     components: { Chart },
     data() {
-        return { locale: addon.locale };
+        return { locale: addon.locale, isDark: false };
+    },
+    mounted() {
+        const colorScheme = matchMedia('(prefers-color-scheme: dark)');
+        this.isDark = colorScheme.matches;
+        colorScheme.addEventListener('change', (e) => this.isDark = e.matches);
     },
     computed: {
         chartOpts() {
@@ -31,21 +36,14 @@ export default {
                     .filter(Boolean),
                 categories = Object.keys(ifs).sort((a, b) => ifs[b] - ifs[a]);
             return {
+                chart: { styledMode: true },
                 series,
                 plotOptions: {
-                    series: { stacking: 'normal' },
+                    series: { stacking: 'normal', dataLabels: { enabled: true } },
                 },
-                xAxis: {
-                    type: 'category',
-                    // categories
-                },
-                yAxis: {
-                    title: { text: undefined },
-                },
+                xAxis: { type: 'category' },
+                yAxis: { title: { text: undefined } },
             } as Options;
-        },
-        options() {
-            return Highcharts.merge(this.chartOpts, this.theme);
         },
     },
     props: {
@@ -59,7 +57,5 @@ export default {
 </script>
 
 <template>
-    <Chart :options="options" :key="theme"></Chart>
+    <Chart :options="chartOpts" :key="theme" :class="{ 'highcharts-dark': isDark }"></Chart>
 </template>
-
-<style scoped></style>

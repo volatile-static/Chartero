@@ -9,21 +9,27 @@ export default {
     data() {
         return {
             locale: addon.locale,
+            isDark: false,
             trackColors: Highcharts.getOptions().colors!.map(color =>
                 new Highcharts.Color(color).setOpacity(0.3).get(),
             ),
         };
+    },
+    mounted() {
+        const colorScheme = matchMedia('(prefers-color-scheme: dark)');
+        this.isDark = colorScheme.matches;
+        colorScheme.addEventListener('change', e => (this.isDark = e.matches));
     },
     computed: {
         chartOpts() {
             const ha = new HistoryAnalyzer(this.history);
             let finished = 0;
             for (const h of this.history)
-                if (h.record.pageArr.length / (h.record.numPages ?? Infinity) >= 0.98)
-                    ++finished;
+                if (h.record.pageArr.length / (h.record.numPages ?? Infinity) >= 0.98) ++finished;
             console.debug(finished);
             return {
                 title: { text: undefined },
+                chart: { type: 'solidgauge', styledMode: false },
                 tooltip: {
                     borderWidth: 0,
                     backgroundColor: 'none',
@@ -32,7 +38,7 @@ export default {
                     valueSuffix: '%',
                     pointFormat:
                         '{series.name}<br>' +
-                        '<span style="font-size: 2em; color: {point.color}; ' +
+                        '<span style="font-size: 2em; color: var(--highcharts-color-{point.colorIndex}); ' +
                         'font-weight: bold">{point.y}</span>',
                     positioner: function (labelWidth) {
                         return {
@@ -89,9 +95,10 @@ export default {
                         data: [
                             {
                                 color: Highcharts.getOptions().colors![0],
+                                colorIndex: 0,
                                 radius: '112%',
                                 innerRadius: '88%',
-                                y: parseFloat((this.history.length / this.itemsCount * 100).toFixed(2)),
+                                y: parseFloat(((this.history.length / this.itemsCount) * 100).toFixed(2)),
                             },
                         ],
                     },
@@ -101,6 +108,7 @@ export default {
                         data: [
                             {
                                 color: Highcharts.getOptions().colors![1],
+                                colorIndex: 3,
                                 radius: '87%',
                                 innerRadius: '63%',
                                 y: ha.progress,
@@ -113,9 +121,10 @@ export default {
                         data: [
                             {
                                 color: Highcharts.getOptions().colors![2],
+                                colorIndex: 2,
                                 radius: '62%',
                                 innerRadius: '38%',
-                                y: parseFloat((finished / this.itemsCount * 100).toFixed(2)),
+                                y: parseFloat(((finished / this.itemsCount) * 100).toFixed(2)),
                             },
                         ],
                     },
@@ -141,5 +150,5 @@ export default {
 </script>
 
 <template>
-    <Chart :options="options" :key="theme"></Chart>
+    <Chart :options="options" :key="theme" :class="{ 'highcharts-dark': isDark }"></Chart>
 </template>
