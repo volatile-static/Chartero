@@ -23,6 +23,7 @@ export default defineConfig({
         outDir: '../../build/addon/content/',
         reportCompressedSize: false
     },
+    define: { __test__: false },
     plugins: [
         vue(),
         AutoImport({

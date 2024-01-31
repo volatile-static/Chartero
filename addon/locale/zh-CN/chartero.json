@@ -60,7 +60,8 @@
         "sankey": "作者关系图",
         "kpiGauge": "阅读进度图",
         "jcrPie": "期刊分区比例",
-        "authorIF": "影响因子排行榜"
+        "authorIF": "影响因子排行榜",
+        "reference": "引文关系图"
     },
     "gaugeSeries": {
         "item": "读过的文献",

@@ -58,7 +58,8 @@
         "sankey": "サンキーグラフ",
         "kpiGauge": "読み進め度ゲージ",
         "jcrPie": "ジャーナル区分図",
-        "authorIF": "影響因子ランキング"
+        "authorIF": "影響因子ランキング",
+        "reference": "文献ネットワーク"
     },
     "gaugeSeries": {
         "item": "读过的文献",

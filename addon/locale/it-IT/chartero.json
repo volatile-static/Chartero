@@ -60,7 +60,8 @@
         "sankey": "Flusso degli autori",
         "kpiGauge": "Progresso di lettura",
         "jcrPie": "Diagramma a torta JCR",
-        "authorIF": "IF autore"
+        "authorIF": "IF autore",
+        "reference": "Rete delle citazioni"
     },
     "gaugeSeries": {
         "item": "Elemento",

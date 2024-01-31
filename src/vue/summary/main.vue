@@ -5,7 +5,7 @@ import {
     ChartColumIcon,
     ChartRingIcon,
     FormatVerticalAlignRightIcon,
-    ForkIcon,
+    BlockchainIcon,
     CloudIcon,
     ChartPieIcon,
 } from 'tdesign-icons-vue-next';
@@ -17,11 +17,11 @@ import TagsPie from './components/tagsPie.vue';
 import KpiGauge from './components/kpiGauge.vue';
 import JCR from './components/jcr.vue';
 import authorIF from './components/authorIF.vue';
-import ConnectedPapers from './components/connectedPapers.vue';
+import Reference from './components/reference.vue';
 import { GridLightTheme, DarkUnicaTheme } from '@/themes';
 import type { AttachmentHistory } from '$/history/history';
 export default {
-    components: { ConnectedPapers, Sankey, Gantt, AuthorBubble, WordCloud, TagsPie, TreeRoundDotVerticalIcon, FormatVerticalAlignRightIcon, ForkIcon, CloudIcon, ChartPieIcon, ChartColumIcon, ChartRadialIcon, ChartRingIcon, KpiGauge, JCR, authorIF },
+    components: { Reference, Sankey, Gantt, AuthorBubble, WordCloud, TagsPie, TreeRoundDotVerticalIcon, FormatVerticalAlignRightIcon, BlockchainIcon, CloudIcon, ChartPieIcon, ChartColumIcon, ChartRadialIcon, ChartRingIcon, KpiGauge, JCR, authorIF },
     data() {
         return {
             locale: addon.locale.summary,
@@ -104,9 +104,9 @@ export default {
                 </t-tab-panel>
                 <t-tab-panel value="network" :style="panelStyle">
                     <template #label>
-                        <ForkIcon /> network
+                        <BlockchainIcon />{{ locale.reference }}
                     </template>
-                    <ConnectedPapers :history="items" :theme="chartTheme" />
+                    <Reference :history="items" :theme="chartTheme" />
                 </t-tab-panel>
                 <t-tab-panel value="wordCloud" :style="panelStyle">
                     <template #label>

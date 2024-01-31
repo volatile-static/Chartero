@@ -60,7 +60,8 @@
         "sankey": "Author Flow",
         "kpiGauge": "Reading Progress",
         "jcrPie": "JCR Pie",
-        "authorIF": "Impact Factor"
+        "authorIF": "Impact Factor",
+        "reference": "Reference Network"
     },
     "gaugeSeries": {
         "item": "ITEMS",
