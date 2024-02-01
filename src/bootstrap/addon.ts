@@ -28,6 +28,7 @@ export default class Addon extends toolBase.BasicTool {
     readonly history: ReadingHistory;
     readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
 
+    private readonly worker = new Worker(`chrome://chartero/content/${config.addonName}-worker.js`);
     readonly rootURI = rootURI;
     overviewTabID?: string;
     private notifierID?: string;
@@ -202,7 +203,18 @@ export default class Addon extends toolBase.BasicTool {
         toolBase.unregister(this);
     }
 
-    async test(cmd: string) {
-        this.log(window.matchMedia('(prefers-color-scheme: dark)'));
+    async test(cmd: number) {
+        const data = new Array(cmd).fill(Zotero.randomString(1024));
+        // const encoder = new TextEncoder();
+        // window.console.time('encode');
+        // const buffer = encoder.encode(data).buffer;
+        // window.console.timeEnd('encode');
+        // window.console.time('worker');
+        // this.worker.postMessage(buffer, [buffer]);
+        // window.console.timeEnd('worker');
+        
+        window.console.time('worker');
+        this.worker.postMessage(data);
+        window.console.timeEnd('worker');
     }
 }

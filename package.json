@@ -59,7 +59,7 @@
         "highcharts": "^11.3.0",
         "highcharts-vue": "^1.4.3",
         "segmentit": "^2.0.3",
-        "tdesign-vue-next": "^1.8.0",
+        "tdesign-vue-next": "^1.8.1",
         "vue": "3.4.12",
         "zotero-plugin-toolkit": "^2.3.19"
     },

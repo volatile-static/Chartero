@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": [
+            "WebWorker"
+        ],
+        "strict": true,
+        "skipLibCheck": true,
+    },
+}

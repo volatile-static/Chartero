@@ -1,10 +1,11 @@
 import type { RollupWatcher } from 'rollup';
 import { build } from 'esbuild';
+import type { BuildOptions } from 'esbuild';
 import { build as vite } from 'vite';
-import { zip } from "compressing";
+import { zip } from 'compressing';
 import { sassPlugin } from 'esbuild-sass-plugin';
 import { env, exit } from 'process';
-import { execSync } from "child_process";
+import { execSync } from 'child_process';
 import { createRequire } from 'module';
 import fs from 'fs';
 import path from 'path';
@@ -21,7 +22,7 @@ const buildDir = 'build',
     { replaceInFileSync } = replaceInFile,
     minifyFolder = ['node_modules/highcharts', 'node_modules/highcharts/modules'];
 
-main().catch((error) => {
+main().catch(error => {
     console.error(error);
     exit(1);
 });
@@ -34,45 +35,40 @@ async function main() {
     );
     clearFolder(buildDir);
 
-    if (!isDevBuild)
-        copyFileSync("tools/update-template.json", "tools/update.json");
-    copyFolderRecursiveSync("addon", buildDir);
+    if (!isDevBuild) copyFileSync('tools/update-template.json', 'tools/update.json');
+    copyFolderRecursiveSync('addon', buildDir);
     buildPrefs();
 
     if (!process.argv.includes('--no-build')) {
         await esbuild();
-        console.log("[Build] Run esbuild OK");
+        console.log('[Build] Run esbuild OK');
     }
 
     replaceString();
-    console.log("[Build] Replace OK");
+    console.log('[Build] Replace OK');
 
     patchLocaleStrings();
 
     if (process.argv.includes('--full')) {
-        if (isDevBuild)
-            minifyFolder.forEach(folder => renameInFolder(folder));
+        if (isDevBuild) minifyFolder.forEach(folder => renameInFolder(folder));
 
         await vite({
-            root: path.join(buildDir, "../src/vue"),
-            build: { minify: isDevBuild ? false : 'esbuild' }
+            root: path.join(buildDir, '../src/vue'),
+            build: { minify: isDevBuild ? false : 'esbuild' },
         }).catch(() => exit(1));
 
-        if (isDevBuild)
-            minifyFolder.forEach(folder => renameInFolder(folder, true));
+        if (isDevBuild) minifyFolder.forEach(folder => renameInFolder(folder, true));
 
-        zip.compressDir(
-            path.join('build', 'addon'),
-            path.join('build', details.name + '.xpi'),
-            { ignoreBase: true }
-        ).then(() => console.log('[Build] Addon pack OK!'));
+        zip.compressDir(path.join('build', 'addon'), path.join('build', details.name + '.xpi'), {
+            ignoreBase: true,
+        }).then(() => console.log('[Build] Addon pack OK!'));
     } else if (process.argv.includes('--watch')) {
-        const watcher = await vite({
-            root: path.join(buildDir, "../src/vue"),
+        const watcher = (await vite({
+            root: path.join(buildDir, '../src/vue'),
             build: { minify: false, watch: {} },
-            define: { __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true' }
-        }) as RollupWatcher;
-        watcher.on('event', (event) => {
+            define: { __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true' },
+        })) as RollupWatcher;
+        watcher.on('event', event => {
             switch (event.code) {
                 case 'START':
                     minifyFolder.forEach(folder => renameInFolder(folder));
@@ -85,11 +81,8 @@ async function main() {
         });
         return;
     }
-    console.log(
-        `[Build] Finished in ${(new Date().getTime() - now.getTime()) / 1000} s.`,
-    );
-    if (!env.CI)
-        reload();
+    console.log(`[Build] Finished in ${(new Date().getTime() - now.getTime()) / 1000} s.`);
+    if (!env.CI) reload();
 }
 
 function renameInFolder(folder: string, back = false) {
@@ -104,7 +97,8 @@ function renameInFolder(folder: string, back = false) {
         targets = sources.map(file => file.replace('.src.js', '.js')),
         minified = sources.map(file => file.replace('.src.js', '.min.js'));
 
-    if (back) {  // 还原
+    if (back) {
+        // 还原
         forEachFiles(minified, targets, fs.renameSync);
     } else {
         forEachFiles(targets, minified, fs.renameSync);
@@ -149,46 +143,51 @@ function copyFolderRecursiveSync(source: string, target: string) {
 }
 
 function clearFolder(target: string) {
-    if (fs.existsSync(target))
-        fs.rmSync(target, { recursive: true, force: true });
+    if (fs.existsSync(target)) fs.rmSync(target, { recursive: true, force: true });
     fs.mkdirSync(target, { recursive: true });
 }
 
 function replaceString() {
     const localeMap: Record<string, Record<string, { message: string }>> = {},
-        replaceMap = new Map(Object.keys(prefs).map(key => [
-            new RegExp(`__${key}__`, 'g'),
-            `id='${details.name}-${key}' preference='${details.config.addonPref}.${key}'`
-        ]));  // 首选项字段
+        replaceMap = new Map(
+            Object.keys(prefs).map(key => [
+                new RegExp(`__${key}__`, 'g'),
+                `id='${details.name}-${key}' preference='${details.config.addonPref}.${key}'`,
+            ]),
+        ); // 首选项字段
     replaceMap.set(/__author__/g, details.author);
     replaceMap.set(/__buildTime__/g, buildTime);
     replaceMap.set(/__homepage__/g, details.homepage);
     replaceMap.set(/__releasepage__/g, details.releasepage);
     replaceMap.set(/__buildVersion__/g, details.version + (isDevBuild ? '-dev' : ''));
-    replaceMap.set(/__devBuild__/g, isDevBuild ? '<html:h2>Development Build, <html:span style="color: red;">Do NOT</html:span> Use!</html:h2>' : '');
-
+    replaceMap.set(
+        /__devBuild__/g,
+        isDevBuild
+            ? '<html:h2>Development Build, <html:span style="color: red;">Do NOT</html:span> Use!</html:h2>'
+            : '',
+    );
 
     for (const [key, val] of Object.entries(details.config)) {
-        if (typeof val == 'string')  // 常规字段直接替换字符串
+        if (typeof val == 'string')
+            // 常规字段直接替换字符串
             replaceMap.set(new RegExp(`__${key}__`, 'g'), val);
-        else if (key != 'defaultSettings' && typeof val == 'object') {  // 多语言字段
+        else if (key != 'defaultSettings' && typeof val == 'object') {
+            // 多语言字段
             replaceMap.set(new RegExp(`__${key}__`, 'g'), `__MSG_${key}__`);
             for (const lang in val) {
                 localeMap[lang] ??= {};
                 localeMap[lang][key] = {
-                    message: (val as Record<string, string>)[lang]
+                    message: (val as Record<string, string>)[lang],
                 };
             }
         }
     }
     // console.debug(replaceMap);
-    for (const [lang, msg] of Object.entries(localeMap)) {  // 写入i18n文件
+    for (const [lang, msg] of Object.entries(localeMap)) {
+        // 写入i18n文件
         const dir = path.join(buildDir, `addon/_locales/${lang}`);
         fs.mkdirSync(dir, { recursive: true });
-        fs.writeFileSync(
-            path.join(dir, "messages.json"),
-            JSON.stringify(msg),
-        );
+        fs.writeFileSync(path.join(dir, 'messages.json'), JSON.stringify(msg));
     }
 
     const optionsAddon = {
@@ -198,7 +197,7 @@ function replaceString() {
             `${buildDir}/addon/**/*.json`,
             `${buildDir}/addon/manifest.json`,
             `${buildDir}/addon/bootstrap.js`,
-            'tools/update.json'
+            'tools/update.json',
         ],
         from: Array.from(replaceMap.keys()),
         to: Array.from(replaceMap.values()),
@@ -213,12 +212,10 @@ function replaceString() {
         files: `${buildDir}/addon/locale/**/*.ftl`,
         //@ts-expect-error
         processor: (fltContent: string) => {
-            const lines = fltContent.split("\n");
-            const prefixedLines = lines.map((line) => {
+            const lines = fltContent.split('\n');
+            const prefixedLines = lines.map(line => {
                 // https://regex101.com/r/lQ9x5p/1
-                const match = line.match(
-                    /^(?<message>[a-zA-Z]\S*)([ ]*=[ ]*)(?<pattern>.*)$/m,
-                );
+                const match = line.match(/^(?<message>[a-zA-Z]\S*)([ ]*=[ ]*)(?<pattern>.*)$/m);
                 if (match) {
                     localeMessage.add(match.groups?.message);
                     return `${details.name}-${line}`;
@@ -226,21 +223,18 @@ function replaceString() {
                     return line;
                 }
             });
-            return prefixedLines.join("\n");
+            return prefixedLines.join('\n');
         },
     });
 
     const replaceResultXhtml = replaceInFileSync({
         files: `${buildDir}/addon/**/*.xhtml`,
         //@ts-expect-error
-        processor: (input) => {
+        processor: input => {
             const matches = [...input.matchAll(/(data-l10n-id)="(\S*)"/g)];
-            matches.map((match) => {
+            matches.map(match => {
                 if (localeMessage.has(match[2])) {
-                    input = input.replace(
-                        match[0],
-                        `${match[1]}="${details.name}-${match[2]}"`,
-                    );
+                    input = input.replace(match[0], `${match[1]}="${details.name}-${match[2]}"`);
                 } else {
                     localeMessageMiss.add(match[2]);
                 }
@@ -250,12 +244,12 @@ function replaceString() {
     });
 
     console.log(
-        "[Build] Run replace in ",
+        '[Build] Run replace in ',
         replaceResult
-            .filter((f) => f.hasChanged)
-            .map((f) => `${f.file} : ${f.numReplacements} / ${f.numMatches}`),
-        replaceResultFlt.filter((f) => f.hasChanged).map((f) => `${f.file} : OK`),
-        replaceResultXhtml.filter((f) => f.hasChanged).map((f) => `${f.file} : OK`),
+            .filter(f => f.hasChanged)
+            .map(f => `${f.file} : ${f.numReplacements} / ${f.numMatches}`),
+        replaceResultFlt.filter(f => f.hasChanged).map(f => `${f.file} : OK`),
+        replaceResultXhtml.filter(f => f.hasChanged).map(f => `${f.file} : OK`),
     );
 
     if (localeMessageMiss.size !== 0) {
@@ -268,9 +262,7 @@ function replaceString() {
 }
 
 function patchLocaleStrings() {
-    const standard = JSON.parse(
-        fs.readFileSync('addon/locale/zh-CN/chartero.json', { encoding: 'utf-8' }),
-    );
+    const standard = JSON.parse(fs.readFileSync('addon/locale/zh-CN/chartero.json', { encoding: 'utf-8' }));
     for (const locale of ['en-US', 'it-IT', 'ja-JP']) {
         const localeFile = path.join(buildDir, `addon/locale/${locale}/chartero.json`),
             json = JSON.parse(fs.readFileSync(localeFile, { encoding: 'utf-8' })),
@@ -280,33 +272,38 @@ function patchLocaleStrings() {
 }
 
 async function esbuild() {
-    return build({
+    const options = {
         target: 'firefox102',
-        entryPoints: [path.join(buildDir, "../src/bootstrap/index.ts")],
-        define: {
-            __dev__: String(env.NODE_ENV == 'development'),
-        },
+        define: { __dev__: String(env.NODE_ENV == 'development') },
         plugins: [sassPlugin({ type: 'css-text', style: 'compressed' })],
         bundle: true,
         minify: env.NODE_ENV != 'development',
-        outfile: path.join(buildDir, `addon/content/${details.config.addonName}.js`)
-    }).catch(() => exit(1));
+    } as BuildOptions,
+        indexes = [
+            ['../src/bootstrap/index.ts', `addon/content/${details.config.addonName}.js`],
+            ['../src/worker/index.ts', `addon/content/${details.config.addonName}-worker.js`],
+        ],
+        builds = indexes.map(([entry, outfile]) =>
+            build({
+                ...options,
+                entryPoints: [path.join(buildDir, entry)],
+                outfile: path.join(buildDir, outfile),
+            }),
+        );
+    return Promise.all(builds).catch(() => exit(1));
 }
 
 function buildPrefs() {
     function stringifyObj(val: unknown) {
-        if (typeof val == 'string')
-            return `'${val}'`;
-        else if (typeof val == 'object')
-            return `'${JSON.stringify(val)}'`;
-        else
-            return val;
+        if (typeof val == 'string') return `'${val}'`;
+        else if (typeof val == 'object') return `'${JSON.stringify(val)}'`;
+        else return val;
     }
     fs.writeFileSync(
         path.join(buildDir, 'addon/prefs.js'),
-        Object.entries(prefs).map(
-            ([k, v]) => `pref('${details.config.addonPref}.${k}', ${stringifyObj(v)});`
-        ).join('\n')
+        Object.entries(prefs)
+            .map(([k, v]) => `pref('${details.config.addonPref}.${k}', ${stringifyObj(v)});`)
+            .join('\n'),
     );
     console.log('[Build] Build prefs.js OK');
 }
@@ -314,11 +311,13 @@ function buildPrefs() {
 function reload() {
     const require = createRequire(import.meta.url),
         { startZotero } = require('./zotero-cmd.json'),
-        url = `zotero://ztoolkit-debug/?run=${encodeURIComponent(util.format(
-            fs.readFileSync('tools/reload.js', 'utf-8'),
-            details.config.addonID,
-            details.config.addonName,
-            details.version
-        ))}`;
+        url = `zotero://ztoolkit-debug/?run=${encodeURIComponent(
+            util.format(
+                fs.readFileSync('tools/reload.js', 'utf-8'),
+                details.config.addonID,
+                details.config.addonName,
+                details.version,
+            ),
+        )}`;
     execSync(`${startZotero} -url "${url}"`);
 }
