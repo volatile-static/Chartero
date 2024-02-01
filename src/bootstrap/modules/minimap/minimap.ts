@@ -1,5 +1,5 @@
 import renderMinimap from "./components";
-import stylesheet from "./minimap.css";
+import stylesheet from "./minimap.sass";
 
 export function mountMinimap(reader: _ZoteroTypes.ReaderInstance) {
     const doc = reader._iframeWindow!.document,

@@ -1,0 +1,33 @@
+#chartero-minimap-container
+    display: block
+    position: relative
+    width: 8px
+    opacity: 0.7
+    transition: all 0.3s
+
+    &:hover
+        opacity: 1
+        overflow: visible
+
+        .chartero-minimap-page
+            width: 16px
+            left: -8px
+            opacity: 0.6
+
+        .chartero-minimap-note
+            opacity: 0.6
+
+.chartero-minimap-page
+    position: relative
+    display: block
+    width: 100%
+    left: 0
+    transition: all 0.3s
+
+.chartero-minimap-note
+    position: absolute
+    display: inline-block
+    right: 0
+    width: 8px
+    min-height: 1px
+    opacity: 0.9
