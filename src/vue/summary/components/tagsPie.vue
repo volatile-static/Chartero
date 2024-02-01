@@ -17,12 +17,12 @@ export default {
         getJournalData(items: Zotero.Item[]) {
             const journalMap: Record<string, number> = {};
             for (const item of items) {
-                const name = item.getField('journalAbbreviation')
-                    || item.getField('publicationTitle')
-                    || item.getField('conferenceName')
-                    || item.getField('university');
-                if (typeof name == 'string')
-                    journalMap[name] = (journalMap[name] ?? 0) + 1;
+                const name =
+                    item.getField('journalAbbreviation') ||
+                    item.getField('publicationTitle') ||
+                    item.getField('conferenceName') ||
+                    item.getField('university');
+                if (typeof name == 'string') journalMap[name] = (journalMap[name] ?? 0) + 1;
             }
             addon.log(journalMap);
             return Object.entries(journalMap).map(([name, y]) => ({
@@ -30,7 +30,7 @@ export default {
                 y,
                 z: y,
             }));
-        }
+        },
     },
     computed: {
         chartOpts(): Highcharts.Options {
@@ -39,9 +39,7 @@ export default {
 
             return {
                 exporting: {
-                    menuItemDefinitions: helpMessageOption(
-                        addon.locale.doc.pie
-                    )
+                    menuItemDefinitions: helpMessageOption(addon.locale.doc.pie),
                 },
                 plotOptions: { variablepie: { allowPointSelect: true } },
                 series: [

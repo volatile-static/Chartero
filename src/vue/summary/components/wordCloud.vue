@@ -42,10 +42,7 @@ export default {
                             const tagName = tag.tag,
                                 id = Zotero.Tags.getID(tagName);
                             if (tag.type && id && !this.filteredTags.includes(id))
-                                data.set(
-                                    tagName,
-                                    (data.get(tagName) ?? 0) + analyzer.totalS
-                                );
+                                data.set(tagName, (data.get(tagName) ?? 0) + analyzer.totalS);
                         });
                     }
                     break;
@@ -55,9 +52,7 @@ export default {
                     break;
 
                 case 'title':
-                    setData(
-                        this.items.map(item => item.getField('title') as string)
-                    );
+                    setData(this.items.map(item => item.getField('title') as string));
                     break;
 
                 case 'annotation':
@@ -70,7 +65,7 @@ export default {
                             .map(att => att.getAnnotations())
                             .flat()
                             .map(anno => anno.annotationText)
-                            .filter(text => text)
+                            .filter(text => text),
                     );
                     break;
 
@@ -86,16 +81,12 @@ export default {
             return {
                 exporting: {
                     buttons,
-                    menuItemDefinitions: helpMessageOption(
-                        addon.locale.doc.wordCloud
-                    ),
+                    menuItemDefinitions: helpMessageOption(addon.locale.doc.wordCloud),
                 },
                 tooltip: {
                     formatter: function () {
                         const weight = this.point.options.weight!,
-                            context = isTag
-                                ? toTimeString(weight)
-                                : weight + addon.locale.occurrences;
+                            context = isTag ? toTimeString(weight) : weight + addon.locale.occurrences;
                         return `
                             <span style="color: ${this.color}">\u25CF</span>
                             <b>${this.key}</b><br/>
@@ -126,13 +117,14 @@ export default {
         async openDialog() {
             this.dialogVisible = true;
             if (this.items.length < 1) return;
-            const ids = await Zotero.Tags.getAutomaticInLibrary(
-                this.items[0].libraryID
+            const ids = await Zotero.Tags.getAutomaticInLibrary(this.items[0].libraryID);
+            this.allTags = ids.map(
+                id =>
+                    ({
+                        label: Zotero.Tags.getName(id),
+                        value: id,
+                    }) as DataOption,
             );
-            this.allTags = ids.map(id => ({
-                label: Zotero.Tags.getName(id),
-                value: id,
-            } as DataOption));
         },
     },
     props: {
@@ -141,8 +133,7 @@ export default {
     },
     mounted() {
         addEventListener('message', e => {
-            if (e.data != 'updateExcludedTags')
-                return;
+            if (e.data != 'updateExcludedTags') return;
             this.filteredTags = addon.getPref('excludedTags');
         });
     },
@@ -165,11 +156,24 @@ export default {
         </t-space>
         <Chart :options="options" :key="theme"></Chart>
     </t-space>
-    <t-dialog v-model:visible="dialogVisible" :on-confirm="saveTagFilter" :header="locale.filterTags"
-        :confirmBtn="locale.save" mode="modeless" width="96%" confirm-on-enter draggable>
+    <t-dialog
+        v-model:visible="dialogVisible"
+        :on-confirm="saveTagFilter"
+        :header="locale.filterTags"
+        :confirmBtn="locale.save"
+        mode="modeless"
+        width="96%"
+        confirm-on-enter
+        draggable
+    >
         <div style="display: block; width: 500px">
-            <t-transfer :title="[locale.allTags, locale.excludedTags]" :data="allTags" v-model="filteredTags"
-                theme="primary" search />
+            <t-transfer
+                :title="[locale.allTags, locale.excludedTags]"
+                :data="allTags"
+                v-model="filteredTags"
+                theme="primary"
+                search
+            />
         </div>
     </t-dialog>
 </template>

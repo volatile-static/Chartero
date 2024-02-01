@@ -68,7 +68,7 @@ function filterData(opts: string[], data: GanttItem[]): GanttItem[] {
                 default:
                     return true;
             }
-        })
+        }),
     );
 }
 
@@ -86,9 +86,9 @@ function pointFormatter(this: Point) {
 }
 
 const colTitleOpt = {
-    title: { text: addon.locale.fileName },
-    labels: { format: '{point.name}' },
-},
+        title: { text: addon.locale.fileName },
+        labels: { format: '{point.name}' },
+    },
     colAuthorOpt = {
         title: { text: addon.locale.author },
         labels: { format: '{point.custom.author}' },
@@ -99,9 +99,7 @@ export default defineComponent({
         return {
             chartOpts: {
                 exporting: {
-                    menuItemDefinitions: helpMessageOption(
-                        addon.locale.doc.gantt
-                    ),
+                    menuItemDefinitions: helpMessageOption(addon.locale.doc.gantt),
                 },
                 chart: { zooming: { type: undefined } },
                 navigator: {
@@ -133,11 +131,9 @@ export default defineComponent({
             filterOption: new Array<string>(),
             titleOption: ['title'],
             isLandscape: window.innerWidth > 500,
-            onResizeDebounced: addon
-                .getGlobal('Zotero')
-                .Utilities.debounce(this.onResize, 100) as () => void,
+            onResizeDebounced: Zotero.Utilities.debounce(this.onResize, 100) as () => void,
             reloadChart: 0,
-            noHistoryFound: true
+            noHistoryFound: true,
         };
     },
     watch: {
@@ -145,12 +141,8 @@ export default defineComponent({
             this.seriesData = sortData(opt, this.seriesData);
         },
         filterOption(opt) {
-            this.seriesData = sortData(
-                this.sortOption,
-                filterData(opt, rawData)
-            );
-            (this.chartOpts.navigator!.yAxis as NavigatorYAxisOptions).max =
-                this.seriesData.length - 1;
+            this.seriesData = sortData(this.sortOption, filterData(opt, rawData));
+            (this.chartOpts.navigator!.yAxis as NavigatorYAxisOptions).max = this.seriesData.length - 1;
             ++this.reloadChart;
         },
         titleOption(opt) {
@@ -183,16 +175,11 @@ export default defineComponent({
                 .filter(point => point.start! + point.end! > 0);
             this.noHistoryFound = rawData.length < 1;
 
-            this.seriesData = sortData(
-                this.sortOption,
-                filterData(this.filterOption, rawData)
-            );
-            (this.chartOpts.navigator!.yAxis as NavigatorYAxisOptions).max =
-                this.seriesData.length - 1;
+            this.seriesData = sortData(this.sortOption, filterData(this.filterOption, rawData));
+            (this.chartOpts.navigator!.yAxis as NavigatorYAxisOptions).max = this.seriesData.length - 1;
         },
         onResize() {
-            (this.chartOpts.yAxis as YAxisOptions).visible = this.isLandscape =
-                window.innerWidth > 500;
+            (this.chartOpts.yAxis as YAxisOptions).visible = this.isLandscape = window.innerWidth > 500;
         },
     },
     computed: {
@@ -202,15 +189,14 @@ export default defineComponent({
         },
         seriesData: {
             get(): GanttItem[] {
-                return (this.chartOpts.series![0] as SeriesGanttOptions)
-                    .data as GanttItem[];
+                return (this.chartOpts.series![0] as SeriesGanttOptions).data as GanttItem[];
             },
             set(data: GanttItem[]) {
                 data.forEach((point, i) => (point.y = i));
                 (this.chartOpts.series![0] as SeriesGanttOptions).data = data;
                 ++this.reloadChart;
             },
-        }
+        },
     },
     props: {
         history: {
@@ -237,17 +223,28 @@ export default defineComponent({
         </h1>
         <t-space v-else direction="vertical" style="width: 100%">
             <t-space style="padding: 8px" break-line>
-                <t-select v-if="isLandscape" :placeholder="locale.tableHeader" v-model="titleOption" size="small" multiple
-                    clearable auto-width>
-                    <t-option value="title" :label="locale.ganttMenu.showTitle">
-                    </t-option>
-                    <t-option value="author" :label="locale.ganttMenu.showAuthor">
-                    </t-option>
+                <t-select
+                    v-if="isLandscape"
+                    :placeholder="locale.tableHeader"
+                    v-model="titleOption"
+                    size="small"
+                    multiple
+                    clearable
+                    auto-width
+                >
+                    <t-option value="title" :label="locale.ganttMenu.showTitle"> </t-option>
+                    <t-option value="author" :label="locale.ganttMenu.showAuthor"> </t-option>
                 </t-select>
-                <t-select v-else disabled auto-width size="small" :placeholder="locale.tableHeaderTip"></t-select>
+                <t-select
+                    v-else
+                    disabled
+                    auto-width
+                    size="small"
+                    :placeholder="locale.tableHeaderTip"
+                ></t-select>
                 <t-select v-model="sortOption" :placeholder="locale.sort" size="small" auto-width>
                     <template #prefixIcon>
-                        <SwapIcon style="transform: rotate(90deg);" />
+                        <SwapIcon style="transform: rotate(90deg)" />
                     </template>
                     <t-option value="startAscending" :label="locale.ganttMenu.startAscending"></t-option>
                     <t-option value="startDescending" :label="locale.ganttMenu.startDescending"></t-option>
@@ -256,26 +253,42 @@ export default defineComponent({
                     <t-option value="timeAscending" :label="locale.ganttMenu.timeAscending"></t-option>
                     <t-option value="timeDescending" :label="locale.ganttMenu.timeDescending"></t-option>
                 </t-select>
-                <t-select v-model="filterOption" :placeholder="locale.filter" size="small" multiple clearable auto-width>
+                <t-select
+                    v-model="filterOption"
+                    :placeholder="locale.filter"
+                    size="small"
+                    multiple
+                    clearable
+                    auto-width
+                >
                     <template #prefixIcon>
                         <FilterIcon />
                     </template>
-                    <t-option value="completed" :label="locale.ganttMenu.completed"
-                        :disabled="filterOption.includes('incomplete')"></t-option>
-                    <t-option value="incomplete" :label="locale.ganttMenu.incomplete"
-                        :disabled="filterOption.includes('completed')"></t-option>
-                    <t-option value="month" :label="locale.ganttMenu.month" :disabled="filterOption.some(val =>
-                        ['week', 'day'].includes(val)
-                    )
-                        "></t-option>
-                    <t-option value="week" :label="locale.ganttMenu.week" :disabled="filterOption.some(val =>
-                        ['month', 'day'].includes(val)
-                    )
-                        "></t-option>
-                    <t-option value="day" :label="locale.ganttMenu.day" :disabled="filterOption.some(val =>
-                        ['month', 'week'].includes(val)
-                    )
-                        "></t-option>
+                    <t-option
+                        value="completed"
+                        :label="locale.ganttMenu.completed"
+                        :disabled="filterOption.includes('incomplete')"
+                    ></t-option>
+                    <t-option
+                        value="incomplete"
+                        :label="locale.ganttMenu.incomplete"
+                        :disabled="filterOption.includes('completed')"
+                    ></t-option>
+                    <t-option
+                        value="month"
+                        :label="locale.ganttMenu.month"
+                        :disabled="filterOption.some(val => ['week', 'day'].includes(val))"
+                    ></t-option>
+                    <t-option
+                        value="week"
+                        :label="locale.ganttMenu.week"
+                        :disabled="filterOption.some(val => ['month', 'day'].includes(val))"
+                    ></t-option>
+                    <t-option
+                        value="day"
+                        :label="locale.ganttMenu.day"
+                        :disabled="filterOption.some(val => ['month', 'week'].includes(val))"
+                    ></t-option>
                     <!-- <t-option
                         value="fit"
                         :label="locale.ganttMenu.fitLength"
@@ -283,7 +296,13 @@ export default defineComponent({
                 </t-select>
             </t-space>
 
-            <Chart constructor-type="ganttChart" :options="options" :key="reloadChart" ref="chart" style="width: 100%">
+            <Chart
+                constructor-type="ganttChart"
+                :options="options"
+                :key="reloadChart"
+                ref="chart"
+                style="width: 100%"
+            >
             </Chart>
         </t-space>
     </div>

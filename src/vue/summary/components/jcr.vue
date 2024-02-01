@@ -18,10 +18,12 @@ export default {
             console.debug(q);
             if (q.every(v => v === 0)) return { series: [] };
             return {
-                series: [{
-                    type: 'pie',
-                    data: q.map((v, i) => ({ name: `Q${i + 1}`, y: v })),
-                } as Highcharts.SeriesPieOptions],
+                series: [
+                    {
+                        type: 'pie',
+                        data: q.map((v, i) => ({ name: `Q${i + 1}`, y: v })),
+                    } as Highcharts.SeriesPieOptions,
+                ],
             } as Options;
         },
         options() {

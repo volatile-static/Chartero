@@ -23,15 +23,14 @@ interface ItemInfo {
 }
 
 function formatter(this: TooltipFormatterContextObject) {
-    const Items = addon.getGlobal('Zotero').Items,
-        items: ItemInfo[] | undefined = (this.point as any).custom?.items,
+    const items: ItemInfo[] | undefined = (this.point as any).custom?.items,
         colName = [addon.locale.firstCreator, addon.locale.lastCreator, addon.locale.journal],
         borderStyle = `border-left: 1px solid ${this.color}; border-top: solid ${this.color};`,
         breakStyle = 'white-space: normal;',
         tdStyle = `style='${borderStyle} ${breakStyle}'`,
         table = items
             ?.map(it => {
-                const title = Items.get(it.itemID).getField('title');
+                const title = Zotero.Items.get(it.itemID).getField('title');
                 return `<tr>
                 <td ${tdStyle}>${title}</td>
                 <td ${tdStyle}>${it.journal}</td>
@@ -80,30 +79,30 @@ export default {
         },
         chartOpts() {
             const itemData = this.history
-                .map(item => {
-                    const firstCreator = item.firstCreator,
-                        corrAuthorIdx = addon.extraField.getExtraField(item, 'CorrespondingAuthorIndex'),
-                        lastCreatorData = item
-                            .getCreatorsJSON()
-                            .at(corrAuthorIdx ? parseInt(corrAuthorIdx) : -1),
-                        lastCreator = lastCreatorData && creator2str(lastCreatorData),
-                        journal =
-                            item.getField('journalAbbreviation') ||
-                            item.getField('publicationTitle') ||
-                            item.getField('conferenceName') ||
-                            item.getField('proceedingsTitle') ||
-                            item.getField('university'),
-                        totalSeconds = new HistoryAnalyzer(item).totalS;
-                    // addon.log({firstCreator, lastCreator, journal, totalSeconds});
-                    return { itemID: item.id, firstCreator, lastCreator, journal, totalSeconds };
-                })
-                .filter(
-                    it =>
-                        it.firstCreator &&
-                        it.lastCreator &&
-                        it.journal &&
-                        it.firstCreator !== it.lastCreator,
-                ) as Array<ItemInfo>,
+                    .map(item => {
+                        const firstCreator = item.firstCreator,
+                            corrAuthorIdx = addon.extraField.getExtraField(item, 'CorrespondingAuthorIndex'),
+                            lastCreatorData = item
+                                .getCreatorsJSON()
+                                .at(corrAuthorIdx ? parseInt(corrAuthorIdx) : -1),
+                            lastCreator = lastCreatorData && creator2str(lastCreatorData),
+                            journal =
+                                item.getField('journalAbbreviation') ||
+                                item.getField('publicationTitle') ||
+                                item.getField('conferenceName') ||
+                                item.getField('proceedingsTitle') ||
+                                item.getField('university'),
+                            totalSeconds = new HistoryAnalyzer(item).totalS;
+                        // addon.log({firstCreator, lastCreator, journal, totalSeconds});
+                        return { itemID: item.id, firstCreator, lastCreator, journal, totalSeconds };
+                    })
+                    .filter(
+                        it =>
+                            it.firstCreator &&
+                            it.lastCreator &&
+                            it.journal &&
+                            it.firstCreator !== it.lastCreator,
+                    ) as Array<ItemInfo>,
                 first2last: Record<string, ItemInfo[]> = {},
                 last2journal: Record<string, ItemInfo[]> = {},
                 data = new Array<SeriesSankeyPointOptionsObject>(),
@@ -193,54 +192,6 @@ export default {
         },
         options() {
             return Highcharts.merge(this.chartOpts, this.theme);
-        },
-        // wheelOptions() {
-        //     return Highcharts.merge(this.wheelOpts, this.theme);
-        // },
-        wheelOpts() {
-            const authorItems: Record<string, Zotero.Item[]> = {};
-            for (const item of this.history)
-                for (const creator of item.getCreators()) {
-                    const name = `${creator.firstName} ${creator.lastName}`.trim();
-                    if (name in authorItems) authorItems[name].push(item);
-                    else authorItems[name] = [item];
-                }
-            const authorList = Object.keys(authorItems).filter(name => authorItems[name].length > 1),
-                data: Array<SeriesSankeyPointOptionsObject> = [];
-            // console.table(authorList);
-            for (let i = 0; i < authorList.length; ++i)
-                for (let j = i + 1; j < authorList.length; ++j) {
-                    const from = authorList[i],
-                        to = authorList[j],
-                        items = authorItems[from].filter(it => authorItems[to].includes(it));
-                    if (items.length > 0)
-                        data.push({
-                            from,
-                            to,
-                            weight: items.length,
-                            custom: {
-                                itemIDs: items.map(it => it.id),
-                            },
-                        });
-                }
-            // console.table(data);
-
-            return {
-                series: [{
-                    type: 'dependencywheel',
-                    data,
-                    size: '80%',
-                    dataLabels: {
-                        allowOverlap: true,
-                        overflow: 'allow',
-                        crop: false,
-                        color: '#333',
-                        textPath: { enabled: true },
-                        distance: 10,
-                    },
-                    allowPointSelect: false,
-                } as SeriesDependencywheelOptions]
-            } as Options;
         },
     },
     props: {
