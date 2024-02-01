@@ -33,18 +33,18 @@ The name _Chartero_ is a combination of **Char**t and Zo**tero**. As a [Zotero](
 | :---------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------- |
 |      ![history recording](doc/record.jpg)       | The kernel of `Chartero`. It records page numbers and timestamps when you read.                                               |
 |         ![open recent](doc/recent.png)          | In the main menu `File`, you can open the recently read documents.                                                            |
-|            ![column](doc/column.png)            | In `items tree` of library view, you can add a column to show reading progress.                                               |
+|            ![column](doc/column.png)            | In `items tree` of the library view, you can add a column to show reading progress.                                               |
 |         ![dashboard](doc/dashboard.jpg)         | Illustrates all information about a `top-level item`. Updating as soon as record changes when in a `Reader`.                  |
 |           ![summary](doc/summary.jpg)           | Summary of two or more `items`. _Will not_ be loaded if the number of selected items is larger than you set in preferences.   |
 |          ![overview](doc/overview.jpg)          | Click `Main menu -> View -> Overview` and jump to a new tab.                                                                  |
-|           ![minimap](doc/minimap.gif)           | Besides the scrollbar of `Reader`(PDF and ePub), gray scale blocks for read pages and color strips for annotations.           |
-| ![images](doc/images.png) ![more](doc/more.png) | At the left side-bar of `Reader`, you can see all images in the current document. Click to navigate and double-click to copy. |
+|           ![minimap](doc/minimap.gif)           | Besides the scrollbar of `Reader`(PDF and ePub), grayscale blocks for read pages and color strips for annotations.           |
+| ![images](doc/images.png) ![more](doc/more.png) | At the left sidebar of `Reader`, you can see all images in the current document. Click to navigate and double-click to copy. |
 
 </details>
 
 ### Troubleshooting
 
-Please disable all other plugins when necessary, and then file an issue with the exported debug output. Feel free to ask anything in issue😁
+Please disable all other plugins when necessary, then file an issue with the exported debug output. Feel free to ask anything in issue😁
 
 > [Known Issues](https://github.com/volatile-static/Chartero/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
 
@@ -54,7 +54,7 @@ Please disable all other plugins when necessary, and then file an issue with the
 -   Using [![Highcharts](https://img.shields.io/github/package-json/dependency-version/volatile-static/Chartero/highcharts?logo=npm)](https://www.npmjs.com/package/highcharts) to generate charts
 -   [Minimap](src/bootstrap/modules/minimap/) is rendered by [![GitHub package.json dependency version (dev dep on branch)](https://img.shields.io/github/package-json/dependency-version/volatile-static/chartero/dev/%40types%2Freact?logo=npm)](https://17.reactjs.org/)
 -   UI components are from [![T-Design](https://img.shields.io/github/package-json/dependency-version/volatile-static/Chartero/tdesign-vue-next?logo=npm)](https://tdesign.tencent.com/vue-next)
--   For legacy Zotero `6` version, please check out [this branch](https://github.com/volatile-static/Chartero/tree/js_overlay).
+-   For the legacy Zotero `6` version, please check out [this branch](https://github.com/volatile-static/Chartero/tree/js_overlay).
 
 ### Directory Structure
 
@@ -72,18 +72,18 @@ Please disable all other plugins when necessary, and then file an issue with the
 
 ### Preferences
 
-The `config.defaultSettings` field of [package.json](package.json) defines the default values of preferences. The keys will be automatically replaced when compile [addon](addon).
+The `config.defaultSettings` field of [package.json](package.json) defines the default values of preferences. The keys will be automatically replaced when compiling [addon](addon).
 
 ### Locales
 
 | Locales | [zh-CN](addon/locale/zh-CN/) | [en-US](addon/locale/en-US/) | [ja-JP](addon/locale/ja-JP/) | [it-IT](addon/locale/it-IT/)
 | :-----: | :---: | :---: | :---: | :---:
 
-All locale strings defined in [locale](addon/locale), which will be loaded dynamically when the plugin starts.
+All locale strings are defined in [locale](addon/locale), which will be loaded dynamically when the plugin starts.
 
 ### Development Environment
 
-[package.json](package.json) defines the scripts for building and debugging. When executing commands with `NODE_ENV=development`, the global variable `__dev__` will be set to `true`, and the plugin switched to the development mode.
+[package.json](package.json) defines the scripts for building and debugging. When executing commands with `NODE_ENV=development`, the global variable `__dev__` will be set to `true`, and the plugin will switch to the development mode.
 - Here are some useful scripts:
     - `reload-all`: Build and reload the Zotero in **production** environment.
     - `reload-dev`: Build in **development** environment without Vue pages and reload Zotero.
@@ -93,13 +93,13 @@ All locale strings defined in [locale](addon/locale), which will be loaded dynam
 
 ### ⚡Hot-reload and Breakpoints in Source
 
-With the Chartero running, you can run debug config `Vue` in sidebar of the VS Code. This will launch the Vue unit test in Firefox with hot-reload. You can then utilize [vue devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/) in Firefox as well as set breakpoints in VS Code for single-step debugging.
+With the Chartero running, you can run debug config `Vue` in the sidebar of the VS Code. This will launch the Vue unit test in Firefox with hot-reload. You can then utilize [vue devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/) in Firefox as well as set breakpoints in VS Code for single-step debugging.
 
 When running in development environment, Chartero will register a `/test/chartero` route in [HTTP server](https://www.zotero.org/support/dev/client_coding/connector_http_server), accepting any command from a POST request and returning its `eval` results in JSON format. By accessing this `Endpoint`, the [Vue test module](src/vue/test/) provides a series of "dummy" classes to simulate the Zotero environment. This method is of great reference value for other Zotero client applications.
 
 ### Record Structure
 
-The data structure of history records are defined in [history/data.ts](src/bootstrap/modules/history/data.ts), and the JSON string is like this:
+The data structure of history records is defined in [history/data.ts](src/bootstrap/modules/history/data.ts), and the JSON string is like this:
 
 ```json
 {
@@ -118,9 +118,9 @@ The data structure of history records are defined in [history/data.ts](src/boots
 
 > This section is for developers who have suspected compatibility issues with `Chartero`.
 
--   Patched the `search` method of object `Zotero.Search` to hide the note items which records the reading history.
+-   Patched the `search` method of object `Zotero.Search` to hide the note items that record the reading history.
 -   Add click events to tabs in the left side-bar of `Reader`.
--   When adding "Overview" tab, `contextPane.js` throws `extraData[ids[0]] is undefined` error, caused by the `type` of this tab is `library`.
+-   When adding "Overview" tab, `contextPane.js` throws `extraData[ids[0]] is undefined` error, caused by the `type` of this tab being `library`.
 
 ## See Also
 
