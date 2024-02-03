@@ -97,3 +97,7 @@ export class DebuggerBackend implements _ZoteroTypes.Server.Endpoint {
         }
     };
 }
+
+export function isValid<T>(x: T | undefined | null): x is T {
+    return Boolean(x);
+}

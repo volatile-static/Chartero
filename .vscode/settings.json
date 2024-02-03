@@ -8,13 +8,18 @@
         "greenfrog",
         "groupbox",
         "highcharts",
+        "menuseparator",
         "modeless",
         "Networkgraph",
         "Packedbubble",
+        "popupshowing",
         "prefs",
         "Sankey",
         "solidgauge",
         "tdesign",
+        "toolbarbutton",
+        "toolbaritem",
+        "tooltiptext",
         "unfiled",
         "unplugin",
         "wordcloud",
@@ -23,12 +28,12 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
+        "editor.defaultFormatter": "Vue.volar"
     },
     "typescript.tsdk": "node_modules/typescript/lib",
     "editor.suggestSelection": "recentlyUsed",
     "[javascript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[vue]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -46,7 +51,7 @@
         "editor.defaultFormatter": "vscode.css-language-features"
     },
     "[typescriptreact]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"

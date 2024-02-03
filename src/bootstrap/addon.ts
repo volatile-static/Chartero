@@ -33,6 +33,7 @@ export default class Addon extends toolBase.BasicTool {
     overviewTabID?: string;
     private notifierID?: string;
     private readonly prefsObserverIDs: Symbol[] = [];
+    private readonly listenerMap = new Map<[Node, string], EventListenerOrEventListenerObject>();
 
     constructor() {
         super();
@@ -121,6 +122,11 @@ export default class Addon extends toolBase.BasicTool {
         );
     }
 
+    registerListener(node: Node, type: string, listener: EventListenerOrEventListenerObject) {
+        node.addEventListener(type, listener);
+        this.listenerMap.set([node, type], listener);
+    }
+
     /**
      * 初始化插件时调用
      */
@@ -136,7 +142,8 @@ export default class Addon extends toolBase.BasicTool {
             label: config.addonName,
         });
 
-        document.getElementById('zotero-itemmenu')?.addEventListener(
+        this.registerListener(
+            document.getElementById('zotero-itemmenu')!,
             'popupshowing',
             hideDeleteMenuForHistory
         );
@@ -195,11 +202,10 @@ export default class Addon extends toolBase.BasicTool {
         this.overviewTabID && Zotero_Tabs.close(this.overviewTabID);
         this.notifierID && Zotero.Notifier.unregisterObserver(this.notifierID);
         this.prefsObserverIDs.forEach(id => Zotero.Prefs.unregisterObserver(id));
-        ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
-        document.getElementById('zotero-itemmenu')?.removeEventListener(
-            'popupshowing',
-            hideDeleteMenuForHistory
+        this.listenerMap.forEach((listener, [node, type]) =>
+            node.removeEventListener(type, listener)
         );
+        ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
         toolBase.unregister(this);
     }
 
