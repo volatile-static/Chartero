@@ -16,6 +16,17 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
     ["content", "__addonName__", rootURI + "content/"],
   ]);
 
+  const resProto = Cc[
+    "@mozilla.org/network/protocol;1?name=resource"
+  ].getService(Ci.nsISubstitutingProtocolHandler),
+    uri = Services.io.newURI(rootURI + 'content/');
+  Zotero.debug(uri);
+  resProto.setSubstitutionWithFlags(
+    "__addonName__",
+    uri,
+    resProto.ALLOW_CONTENT_ACCESS
+  );
+
   const window = Zotero.getMainWindow();
   // Global variables for plugin code
   const ctx = {

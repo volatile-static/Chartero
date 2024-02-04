@@ -209,18 +209,23 @@ export default class Addon extends toolBase.BasicTool {
         toolBase.unregister(this);
     }
 
-    async test(cmd: number) {
-        const data = new Array(cmd).fill(Zotero.randomString(1024));
-        // const encoder = new TextEncoder();
-        // window.console.time('encode');
-        // const buffer = encoder.encode(data).buffer;
-        // window.console.timeEnd('encode');
-        // window.console.time('worker');
-        // this.worker.postMessage(buffer, [buffer]);
-        // window.console.timeEnd('worker');
-        
-        window.console.time('worker');
-        this.worker.postMessage(data);
-        window.console.timeEnd('worker');
+    async test(key: string) { // create a new file attachment
+        const item = Zotero.Items.get(411);
+        const attachment = new Zotero.Item('attachment');
+        attachment.libraryID = item.libraryID;
+        attachment.parentID = item.id;
+        attachment.attachmentLinkMode = Zotero.Attachments.LINK_MODE_IMPORTED_FILE;
+        attachment.attachmentFilename = key + '.json';
+        attachment.attachmentPath = `storage:${key}.json`;
+        attachment.attachmentContentType = 'application/json';
+        attachment.setField('title', key);
+        await attachment.saveTx({ skipSelect: true, skipNotifier: true });
+        const path = await Zotero.Attachments.createDirectoryForItem(attachment);
+        const file = Zotero.File.pathToFile(PathUtils.join(path, key + '.json'));
+        Zotero.File.putContents(file, JSON.stringify({ key }));
+
+        // this.log(await attachment.getFilePathAsync());
+        const res = await fetch(attachment.getLocalFileURL());
+        this.log(await res.json());
     }
 }
