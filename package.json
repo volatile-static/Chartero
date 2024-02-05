@@ -27,17 +27,15 @@
     },
     "description": "Charts for Zotero",
     "scripts": {
-        "build": "cross-env NODE_ENV=development tsx tools/build.ts --full",
+        "build": "tsx tools/build.ts --full --dev",
         "reload-all": "tsx tools/build.ts --full",
-        "reload-dev": "cross-env NODE_ENV=development tsx tools/build.ts",
+        "reload-dev": "tsx tools/build.ts --dev",
         "replace-update": "tsx tools/build.ts --no-build",
-        "watch": "cross-env NODE_ENV=development tsx tools/build.ts --watch",
+        "watch": "tsx tools/build.ts --watch --dev",
         "dev": "vite ./src/vue/test",
-        "type-check-vue": "vue-tsc --noEmit -p ./src/vue",
-        "type-check-bootstrap": "tsc --noEmit -p ./src/bootstrap",
-        "type-check-all": "npm run type-check-vue & npm run type-check-bootstrap",
         "release": "release-it",
         "preview": "vite preview ./src/vue",
+        "lint": "eslint . --ext .vue,.ts,.tsx,.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -69,15 +67,15 @@
         "@types/node": "^18.18.6",
         "@types/react": "17.0.2",
         "@types/react-dom": "17.0.2",
+        "@typescript-eslint/eslint-plugin": "^6.20.0",
         "@vitejs/plugin-vue": "^5.0.3",
         "@vue/tsconfig": "^0.5.1",
         "bluebird": "^3.7.2",
         "compressing": "^1.10.0",
-        "cross-env": "^7.0.3",
         "esbuild-sass-plugin": "^3.0.0",
         "eslint": "^8.56.0",
-        "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-prettier": "^5.1.3",
+        "eslint-plugin-mozilla": "^3.3.2",
+        "eslint-plugin-vue": "^9.21.1",
         "lodash": "^4.17.21",
         "prettier": "3.2.5",
         "release-it": "^17.0.3",
@@ -93,8 +91,39 @@
     },
     "eslintConfig": {
         "extends": [
-            "plugin:prettier/recommended"
-        ]
+            "eslint:recommended",
+            "plugin:mozilla/recommended",
+            "plugin:vue/vue3-recommended",
+            "plugin:@typescript-eslint/recommended"
+        ],
+        "plugins": [
+            "mozilla",
+            "vue",
+            "@typescript-eslint"
+        ],
+        "env": {
+            "browser": true,
+            "es6": true
+        },
+        "parser": "vue-eslint-parser",
+        "parserOptions": {
+            "parser": "@typescript-eslint/parser",
+            "ecmaVersion": "latest",
+            "sourceType": "module"
+        },
+        "rules": {
+            "curly": "off",
+            "no-undef": "off",
+            "vue/max-attributes-per-line": "off",
+            "mozilla/consistent-if-bracing": "off",
+            "@typescript-eslint/no-unused-vars": "warn",
+            "@typescript-eslint/no-explicit-any": [
+                "off",
+                {
+                    "ignoreRestArgs": true
+                }
+            ]
+        }
     },
     "prettier": {
         "tabWidth": 4,

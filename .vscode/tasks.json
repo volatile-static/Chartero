@@ -8,9 +8,6 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": [
-                "$tsc-watch"
-            ],
             "label": "npm: reload-bootstrap",
             "isBackground": true
         },
@@ -25,12 +22,12 @@
         },
         {
             "type": "npm",
-            "script": "type-check-all",
+            "script": "lint",
             "problemMatcher": [
-                "$tsc"
+                "$eslint-stylish"
             ],
-            "label": "npm: type-check-all",
-            "detail": "npm run type-check-vue & npm run type-check-bootstrap"
+            "label": "npm: lint",
+            "detail": "eslint . --ext .ts,.tsx,.vue"
         }
     ]
 }

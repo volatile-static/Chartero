@@ -4,7 +4,7 @@ import type { BuildOptions } from 'esbuild';
 import { build as vite } from 'vite';
 import { zip } from 'compressing';
 import { sassPlugin } from 'esbuild-sass-plugin';
-import { env, exit } from 'process';
+import { env, exit, argv } from 'process';
 import { execSync } from 'child_process';
 import { createRequire } from 'module';
 import fs from 'fs';
@@ -15,7 +15,7 @@ import replaceInFile from 'replace-in-file';
 import details from '../package.json' assert { type: 'json' };
 
 const buildDir = 'build',
-    isDevBuild = env.NODE_ENV == 'development',
+    isDevBuild = argv.includes('dev'),
     prefs = details.config.defaultSettings,
     now = new Date(),
     buildTime = now.toLocaleString(),
@@ -39,7 +39,7 @@ async function main() {
     copyFolderRecursiveSync('addon', buildDir);
     buildPrefs();
 
-    if (!process.argv.includes('--no-build')) {
+    if (!argv.includes('--no-build')) {
         await esbuild();
         console.log('[Build] Run esbuild OK');
     }
@@ -49,7 +49,7 @@ async function main() {
 
     patchLocaleStrings();
 
-    if (process.argv.includes('--full')) {
+    if (argv.includes('--full')) {
         if (isDevBuild) minifyFolder.forEach(folder => renameInFolder(folder));
 
         await vite({
@@ -62,7 +62,7 @@ async function main() {
         zip.compressDir(path.join('build', 'addon'), path.join('build', details.name + '.xpi'), {
             ignoreBase: true,
         }).then(() => console.log('[Build] Addon pack OK!'));
-    } else if (process.argv.includes('--watch')) {
+    } else if (argv.includes('--watch')) {
         const watcher = (await vite({
             root: path.join(buildDir, '../src/vue'),
             build: { minify: false, watch: {} },
@@ -274,10 +274,10 @@ function patchLocaleStrings() {
 async function esbuild() {
     const options = {
         target: 'firefox102',
-        define: { __dev__: String(env.NODE_ENV == 'development') },
+        define: { __dev__: String(isDevBuild) },
         plugins: [sassPlugin({ type: 'css-text', style: 'compressed' })],
         bundle: true,
-        minify: env.NODE_ENV != 'development',
+        minify: !isDevBuild,
     } as BuildOptions,
         indexes = [
             ['../src/bootstrap/index.ts', `addon/content/${details.config.addonName}.js`],
