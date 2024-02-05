@@ -33,7 +33,11 @@ export default class Addon extends toolBase.BasicTool {
     overviewTabID?: string;
     private notifierID?: string;
     private readonly prefsObserverIDs: Symbol[] = [];
-    private readonly listenerMap = new Map<[Node, string], EventListenerOrEventListenerObject>();
+    private readonly listeners = new Array<{
+        target: EventTarget;
+        type: string;
+        listener: EventListenerOrEventListenerObject;
+    }>();
 
     constructor() {
         super();
@@ -122,9 +126,18 @@ export default class Addon extends toolBase.BasicTool {
         );
     }
 
-    registerListener(node: Node, type: string, listener: EventListenerOrEventListenerObject) {
-        node.addEventListener(type, listener);
-        this.listenerMap.set([node, type], listener);
+    registerListener(target: EventTarget, type: string, listener: EventListenerOrEventListenerObject): boolean;
+    registerListener<T extends EventTarget, K extends keyof GlobalEventHandlersEventMap>(
+        target: T,
+        type: K,
+        listener: (this: T, ev: GlobalEventHandlersEventMap[K]) => any,
+        options?: AddEventListenerOptions | boolean
+    ) {
+        if (typeof target?.addEventListener != "function")
+            return false;
+        target.addEventListener(type, listener as EventListener, options);
+        this.listeners.push({ target, type, listener });
+        return true;
     }
 
     /**
@@ -202,8 +215,8 @@ export default class Addon extends toolBase.BasicTool {
         this.overviewTabID && Zotero_Tabs.close(this.overviewTabID);
         this.notifierID && Zotero.Notifier.unregisterObserver(this.notifierID);
         this.prefsObserverIDs.forEach(id => Zotero.Prefs.unregisterObserver(id));
-        this.listenerMap.forEach((listener, [node, type]) =>
-            node.removeEventListener(type, listener)
+        this.listeners.forEach(({ target, type, listener }) =>
+            target.removeEventListener(type, listener)
         );
         ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
         toolBase.unregister(this);
