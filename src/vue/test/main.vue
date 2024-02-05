@@ -5,13 +5,12 @@
 </template>
 
 <script lang="ts">
-import ComponentToTest from '../summary/main.vue';
+import ComponentToTest from '../summary/components/reference.vue';
 import { DarkUnicaTheme } from '../utility/themes';
 import fetchSync from './dummy/fetch';
-import { Chart } from 'highcharts-vue';
 
 export default {
-    components: { ComponentToTest, Chart },
+    components: { ComponentToTest },
     data() {
         return {
             theme: DarkUnicaTheme,

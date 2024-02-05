@@ -76,6 +76,20 @@ export function accumulate<T>(arr: T[], key: keyof T): number {
     return arr.reduce((acc, cur) => acc + Number(cur[key]), 0);
 }
 
+async function patchFileURL(url: string) {
+    if (!/chrome:\/\//.test(url)) return url;
+    const res = await fetch(url),
+        blob = await res.blob(),
+        reader = new FileReader();
+    return new Promise(resolve => {
+        reader.onload = event => {
+            resolve(event.target?.result as string);
+        };
+        reader.onerror = error => { throw error; };
+        reader.readAsDataURL(blob);
+    });
+}
+
 export class DebuggerBackend implements _ZoteroTypes.Server.Endpoint {
     supportedMethods = ['POST'];
     init: _ZoteroTypes.Server.initMethodPromise = async function (options) {
@@ -85,8 +99,13 @@ export class DebuggerBackend implements _ZoteroTypes.Server.Endpoint {
         };
         try {
             addon.log('eval cmd:', options.data);
-            const result = new Function(`return ${options.data}`)();
+            let result = new Function(
+                'Zotero', 'ZoteroPane', 'addon', 'return ' + options.data
+            )(Zotero, ZoteroPane, addon);
             addon.log(result);
+
+            if (typeof result == 'string')
+                result = await patchFileURL(result);
             return [200, headers, JSON.stringify(result?.then ? await result : result)];
         } catch (error) {
             Zotero.logError(error);

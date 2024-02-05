@@ -54,6 +54,14 @@ export default class Zotero {
             return fetchSync(`Zotero.Tags.getAutomaticInLibrary(${libraryID})`);
         }
     };
+    Prefs = {
+        get(pref: string) {
+            return fetchSync(`Zotero.Prefs.get('${pref}')`);
+        },
+        set() {
+            // no-op
+        },
+    };
     Utilities = {
         debounce,
     };

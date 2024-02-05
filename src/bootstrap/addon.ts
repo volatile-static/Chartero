@@ -126,7 +126,7 @@ export default class Addon extends toolBase.BasicTool {
         );
     }
 
-    registerListener(target: EventTarget, type: string, listener: EventListenerOrEventListenerObject): boolean;
+    registerListener(target: EventTarget, type: string, listener: EventListener): boolean;
     registerListener<T extends EventTarget, K extends keyof GlobalEventHandlersEventMap>(
         target: T,
         type: K,
