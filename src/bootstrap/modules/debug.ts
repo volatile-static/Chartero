@@ -41,7 +41,8 @@ export function addDebugMenu() {
             Zotero.Prefs.set('devtools.debugger.chrome-debugging-websocket', false, true);
 
             const env =
-                // @ts-expect-error
+                // @ts-expect-error Cc Ci
+                // eslint-disable-next-line mozilla/use-services
                 Services.env || Cc['@mozilla.org/process/environment;1'].getService(Ci.nsIEnvironment);
 
             env.set('MOZ_BROWSER_TOOLBOX_PORT', 6100);
@@ -65,7 +66,7 @@ export function addDebugMenu() {
 
             function waitUntil(
                 condition: () => unknown,
-                callback: Function,
+                callback: () => void,
                 interval = 100,
                 timeout = 10000,
             ) {

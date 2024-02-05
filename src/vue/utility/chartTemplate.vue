@@ -5,6 +5,16 @@ import { Chart } from 'highcharts-vue';
 import Highcharts from '@/highcharts';
 export default {
     components: { Chart },
+    props: {
+        history: {
+            type: Array<AttachmentHistory>,
+            required: true,
+        },
+        theme: {
+            type: Object,
+            required: true,
+        },
+    },
     data() {
         return { locale: addon.locale };
     },
@@ -18,18 +28,11 @@ export default {
             return Highcharts.merge(this.chartOpts, this.theme);
         },
     },
-    props: {
-        history: {
-            type: Array<AttachmentHistory>,
-            required: true,
-        },
-        theme: Object,
-    },
 };
 </script>
 
 <template>
-    <Chart :options="options" :key="theme"></Chart>
+  <Chart :key="theme" :options="options" />
 </template>
 
 <style scoped></style>

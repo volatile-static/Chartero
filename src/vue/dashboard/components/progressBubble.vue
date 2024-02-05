@@ -65,7 +65,7 @@ import { Chart } from 'highcharts-vue';
 </script>
 
 <template>
-    <Chart :options="options" :key="theme"></Chart>
+  <Chart :key="theme" :options="options" />
 </template>
 
 <style scoped></style>

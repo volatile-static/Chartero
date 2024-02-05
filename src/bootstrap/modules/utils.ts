@@ -85,15 +85,14 @@ export class DebuggerBackend implements _ZoteroTypes.Server.Endpoint {
         };
         try {
             addon.log('eval cmd:', options.data);
-            const result = eval(options.data);
+            const result = new Function(`return ${options.data}`)();
             addon.log(result);
             return [200, headers, JSON.stringify(result?.then ? await result : result)];
         } catch (error) {
             Zotero.logError(error);
             if (error instanceof Error)
                 return [400, headers, JSON.stringify({ msg: error.message })];
-            else
-                return [500, headers, JSON.stringify(error)];
+            return [500, headers, JSON.stringify(error)];
         }
     };
 }

@@ -15,7 +15,7 @@ import replaceInFile from 'replace-in-file';
 import details from '../package.json' assert { type: 'json' };
 
 const buildDir = 'build',
-    isDevBuild = argv.includes('dev'),
+    isDevBuild = argv.includes('--dev'),
     prefs = details.config.defaultSettings,
     now = new Date(),
     buildTime = now.toLocaleString(),
@@ -107,7 +107,7 @@ function renameInFolder(folder: string, back = false) {
 }
 
 function copyFileSync(source: string, target: string) {
-    var targetFile = target;
+    let targetFile = target;
 
     // If target is a directory, a new file with the same name will be created
     if (fs.existsSync(target)) {
@@ -120,10 +120,10 @@ function copyFileSync(source: string, target: string) {
 }
 
 function copyFolderRecursiveSync(source: string, target: string) {
-    var files = [];
+    let files = [];
 
     // Check if folder needs to be created or integrated
-    var targetFolder = path.join(target, path.basename(source));
+    const targetFolder = path.join(target, path.basename(source));
     if (!fs.existsSync(targetFolder)) {
         fs.mkdirSync(targetFolder);
     }
@@ -132,7 +132,7 @@ function copyFolderRecursiveSync(source: string, target: string) {
     if (fs.lstatSync(source).isDirectory()) {
         files = fs.readdirSync(source);
         files.forEach(function (file) {
-            var curSource = path.join(source, file);
+            const curSource = path.join(source, file);
             if (fs.lstatSync(curSource).isDirectory()) {
                 copyFolderRecursiveSync(curSource, targetFolder);
             } else {
@@ -210,8 +210,8 @@ function replaceString() {
 
     const replaceResultFlt = replaceInFileSync({
         files: `${buildDir}/addon/locale/**/*.ftl`,
-        //@ts-expect-error
-        processor: (fltContent: string) => {
+        //@ts-expect-error https://github.com/adamreisnz/replace-in-file/issues/170
+        processor(fltContent: string) {
             const lines = fltContent.split('\n');
             const prefixedLines = lines.map(line => {
                 // https://regex101.com/r/lQ9x5p/1
@@ -219,9 +219,8 @@ function replaceString() {
                 if (match) {
                     localeMessage.add(match.groups?.message);
                     return `${details.name}-${line}`;
-                } else {
-                    return line;
                 }
+                return line;
             });
             return prefixedLines.join('\n');
         },
@@ -229,7 +228,7 @@ function replaceString() {
 
     const replaceResultXhtml = replaceInFileSync({
         files: `${buildDir}/addon/**/*.xhtml`,
-        //@ts-expect-error
+        //@ts-expect-error https://github.com/adamreisnz/replace-in-file/issues/170
         processor: input => {
             const matches = [...input.matchAll(/(data-l10n-id)="(\S*)"/g)];
             matches.map(match => {
@@ -297,7 +296,7 @@ function buildPrefs() {
     function stringifyObj(val: unknown) {
         if (typeof val == 'string') return `'${val}'`;
         else if (typeof val == 'object') return `'${JSON.stringify(val)}'`;
-        else return val;
+        return val;
     }
     fs.writeFileSync(
         path.join(buildDir, 'addon/prefs.js'),

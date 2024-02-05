@@ -10,6 +10,16 @@ export default {
             required: true,
         },
     },
+    data() {
+        return {
+            items: new Array<{
+                dot: 'default' | 'primary' | 'warning';
+                date: Date;
+                content: string;
+                title?: string;
+            }>(),
+        };
+    },
     watch: {
         history(newHis: AttachmentHistory[]) {
             this.items.length = 0;
@@ -53,28 +63,24 @@ export default {
             );
         },
     },
-    data() {
-        return {
-            items: new Array<{
-                dot: 'default' | 'primary' | 'warning';
-                date: Date;
-                content: string;
-                title?: string;
-            }>(),
-        };
-    },
 };
 </script>
 
 <template>
-    <div class="timeline">
-        <t-timeline style="margin: auto">
-            <t-timeline-item v-for="item of items" :label="item.date.toLocaleDateString()" :dot-color="item.dot">
-                <t-tag v-if="item.title" theme="success" variant="light" max-width="220px">{{ item.title }}</t-tag>
-                <p>{{ item.content }}</p>
-            </t-timeline-item>
-        </t-timeline>
-    </div>
+  <div class="timeline">
+    <t-timeline style="margin: auto">
+      <t-timeline-item
+        v-for="item of items" :key="item.date.getTime()" 
+        :label="item.date.toLocaleDateString()" 
+        :dot-color="item.dot"
+      >
+        <t-tag v-if="item.title" theme="success" variant="light" max-width="220px">
+          {{ item.title }}
+        </t-tag>
+        <p>{{ item.content }}</p>
+      </t-timeline-item>
+    </t-timeline>
+  </div>
 </template>
 
 <style scoped>

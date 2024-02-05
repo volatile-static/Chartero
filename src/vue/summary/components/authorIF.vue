@@ -4,13 +4,15 @@ import { Chart } from 'highcharts-vue';
 import Highcharts from '@/highcharts';
 export default {
     components: { Chart },
+    props: {
+        items: {
+            type: Array<Zotero.Item>,
+            required: true,
+        },
+        theme: Object,
+    },
     data() {
         return { locale: addon.locale, isDark: false };
-    },
-    mounted() {
-        const colorScheme = matchMedia('(prefers-color-scheme: dark)');
-        this.isDark = colorScheme.matches;
-        colorScheme.addEventListener('change', (e) => this.isDark = e.matches);
     },
     computed: {
         chartOpts() {
@@ -46,16 +48,14 @@ export default {
             } as Options;
         },
     },
-    props: {
-        items: {
-            type: Array<Zotero.Item>,
-            required: true,
-        },
-        theme: Object,
+    mounted() {
+        const colorScheme = matchMedia('(prefers-color-scheme: dark)');
+        this.isDark = colorScheme.matches;
+        colorScheme.addEventListener('change', e => (this.isDark = e.matches));
     },
 };
 </script>
 
 <template>
-    <Chart :options="chartOpts" :key="theme" :class="{ 'highcharts-dark': isDark }"></Chart>
+  <Chart :key="theme" :options="chartOpts" :class="{ 'highcharts-dark': isDark }" />
 </template>

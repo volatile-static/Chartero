@@ -4,6 +4,13 @@ import { Chart } from 'highcharts-vue';
 import Highcharts from '@/highcharts';
 export default {
     components: { Chart },
+    props: {
+        items: {
+            type: Array<Zotero.Item>,
+            required: true,
+        },
+        theme: Object,
+    },
     data() {
         return { locale: addon.locale };
     },
@@ -30,18 +37,11 @@ export default {
             return Highcharts.merge(this.chartOpts, this.theme);
         },
     },
-    props: {
-        items: {
-            type: Array<Zotero.Item>,
-            required: true,
-        },
-        theme: Object,
-    },
 };
 </script>
 
 <template>
-    <Chart :options="options" :key="theme"></Chart>
+  <Chart :key="theme" :options="options" />
 </template>
 
 <style scoped></style>

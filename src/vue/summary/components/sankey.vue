@@ -57,8 +57,7 @@ function formatter(this: TooltipFormatterContextObject) {
                 </tbody>
             </table>
         `;
-    else
-        return `
+    return `
             <span style='color: ${this.color}'>\u25CF </span>
             ${colName[(this.point as any).column]}:
             <b> ${this.point.name}</b>
@@ -67,6 +66,13 @@ function formatter(this: TooltipFormatterContextObject) {
 
 export default {
     components: { Chart, DualSelect },
+    props: {
+        history: {
+            type: Array<Zotero.Item>,
+            required: true,
+        },
+        theme: Object,
+    },
     data() {
         return {
             locale: addon.locale,
@@ -194,27 +200,20 @@ export default {
             return Highcharts.merge(this.chartOpts, this.theme);
         },
     },
-    props: {
-        history: {
-            type: Array<Zotero.Item>,
-            required: true,
-        },
-        theme: Object,
-    },
 };
 </script>
 
 <template>
-    <div>
-        <h1 v-if="noHistoryFound" class="center-label">
-            {{ locale.noHistoryFound }}
-        </h1>
-        <t-space v-else direction="vertical" style="width: 100%" size="small">
-            <DualSelect :items="history" />
-            <Chart :options="options" :key="theme"></Chart>
-            <!-- <Chart :options="wheelOptions" :key="theme"></Chart> -->
-        </t-space>
-    </div>
+  <div>
+    <h1 v-if="noHistoryFound" class="center-label">
+      {{ locale.noHistoryFound }}
+    </h1>
+    <t-space v-else direction="vertical" style="width: 100%" size="small">
+      <DualSelect :items="history" />
+      <Chart :key="theme" :options="options" />
+      <!-- <Chart :options="wheelOptions" :key="theme"></Chart> -->
+    </t-space>
+  </div>
 </template>
 
 <style scoped>

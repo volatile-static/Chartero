@@ -4,15 +4,7 @@ import { toTimeString } from '$/utils';
 import User from './components/user.vue';
 
 export default {
-    mounted() {
-        console.time('mount');
-        this.getKeywords();
-        this.getFavoriteItem();
-        this.getFavoriteAJ();
-        this.getAddedItems();
-        this.getCombo();
-        console.timeEnd('mount');
-    },
+    components: { User },
     data() {
         return {
             TS: toTimeString,
@@ -38,6 +30,64 @@ export default {
                 count: 'loading...',
             }
         };
+    },
+    computed: {
+        userName() {
+            return Zotero.Users.getCurrentName();
+        },
+        firstDate() {
+            return new Date(this.history.firstTime * 1000).toLocaleDateString(Zotero.locale, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        },
+        itemCount() {
+            return this.history.validAttachments.length.toString();
+        },
+        totalTime() {
+            return toTimeString(this.history.totalS);
+        },
+        overallProgress() {
+            return this.history.progress.toString();
+        },
+        keywordName() {
+            return Zotero.Tags.getName(this.keyword.id) || 'undefined';
+        },
+        keywordTime() {
+            return toTimeString(this.keyword.time);
+        },
+        keywordCount() {
+            return this.keywords[this.keyword.id]?.length.toString() || '0';
+        },
+        favoriteTitle() {
+            return (this.favoriteItem?.getField('title') || 'undefined') as string;
+        },
+        hardMonth() {
+            let hardMonth = 0, maxDays = 0;
+            for (let month = 0; month < 12; ++month) {
+                let count = 0;
+
+                // 遍历stats中的每个键
+                for (const date of this.readDates)
+                    if (date.getMonth() === month)
+                        ++count;
+                if (count > maxDays) {
+                    hardMonth = month;
+                    maxDays = count;
+                }
+            }
+            return String(hardMonth + 1);
+        },
+    },
+    mounted() {
+        console.time('mount');
+        this.getKeywords();
+        this.getFavoriteItem();
+        this.getFavoriteAJ();
+        this.getAddedItems();
+        this.getCombo();
+        console.timeEnd('mount');
     },
     methods: {
         getKeywords() {
@@ -104,7 +154,7 @@ export default {
                     };
                 if (!totalSeconds) continue;
 
-                if (typeof journal == 'string' && journal.length > 0)
+                if (typeof journal == 'string' && journal.length)
                     updateMap(journalTime, journal);
                 for (const creator of creators)
                     updateMap(authorTime, creator);
@@ -169,107 +219,57 @@ export default {
                 day: 'numeric'
             });
         },
-    },
-    computed: {
-        userName() {
-            return Zotero.Users.getCurrentName();
-        },
-        firstDate() {
-            return new Date(this.history.firstTime * 1000).toLocaleDateString(Zotero.locale, {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        },
-        itemCount() {
-            return this.history.validAttachments.length.toString();
-        },
-        totalTime() {
-            return toTimeString(this.history.totalS);
-        },
-        overallProgress() {
-            return this.history.progress.toString();
-        },
-        keywordName() {
-            return Zotero.Tags.getName(this.keyword.id) || 'undefined';
-        },
-        keywordTime() {
-            return toTimeString(this.keyword.time);
-        },
-        keywordCount() {
-            return this.keywords[this.keyword.id]?.length.toString() || '0';
-        },
-        favoriteTitle() {
-            return (this.favoriteItem?.getField('title') || 'undefined') as string;
-        },
-        hardMonth() {
-            let hardMonth = 0, maxDays = 0;
-            for (let month = 0; month < 12; ++month) {
-                let count = 0;
-
-                // 遍历stats中的每个键
-                for (const date of this.readDates)
-                    if (date.getMonth() === month)
-                        ++count;
-                if (count > maxDays) {
-                    hardMonth = month;
-                    maxDays = count;
-                }
-            }
-            return String(hardMonth + 1);
-        },
-    },
-    components: { User }
+    }
 };
 </script>
 
 <template>
-    <h1 class="title">
-        🌟
-        <User :text="userName" />的2023年度总结 🌟
-    </h1>
-    <ul class="list">
-        <li>
-            <User :text="firstDate" />这一天，你安装了Chartero，命运的齿轮开始转动……
-        </li>
-        <li>
-            在2023年，你用
-            <User :text="totalTime" />阅读了
-            <User :text="itemCount" />篇文献，读完了文库中
-            <User :text="overallProgress" />%的页面，再接再厉！
-        </li>
-        <li>
-            你的年度关键词是：
-            <User :text="keywordName" />，你花了
-            <User :text="keywordTime" />阅读其中的
-            <User :text="keywordCount" />篇文献。
-        </li>
-        <li>
-            今年你最爱看的文献是：
-            <User :text="favoriteTitle" />，其中第
-            <User :text="favoritePage" />页你读了
-            <User :text="TS(favoritePageTime)" />，还记得吗？
-        </li>
-        <li>
-            你最爱看的期刊是
-            <User :text="favoriteJournal" />，最关注的作者是
-            <User :text="favoriteCreator" />。祝你2024年多发
-            <User :text="favoriteJournal" />！
-        </li>
-        <li>
-            过去的一年里，你在Zotero中添加了
-            <User :text="newItems.length.toString()" />篇文献，其中有
-            <User :text="newCount" />篇你还没有打开过，加油呀~
-        </li>
-        <li>
-            2023年的
-            <User :text="hardMonth" />
-            月是你阅读天数最多的月份。你从
-            <User :text="combo.begin" />到
-            <User :text="combo.end" />连续阅读了
-            <User :text="combo.count" />天，真是太棒了！
-        </li>
-    </ul>
+  <h1 class="title">
+    🌟
+    <User :text="userName" />的2023年度总结 🌟
+  </h1>
+  <ul class="list">
+    <li>
+      <User :text="firstDate" />这一天，你安装了Chartero，命运的齿轮开始转动……
+    </li>
+    <li>
+      在2023年，你用
+      <User :text="totalTime" />阅读了
+      <User :text="itemCount" />篇文献，读完了文库中
+      <User :text="overallProgress" />%的页面，再接再厉！
+    </li>
+    <li>
+      你的年度关键词是：
+      <User :text="keywordName" />，你花了
+      <User :text="keywordTime" />阅读其中的
+      <User :text="keywordCount" />篇文献。
+    </li>
+    <li>
+      今年你最爱看的文献是：
+      <User :text="favoriteTitle" />，其中第
+      <User :text="favoritePage" />页你读了
+      <User :text="TS(favoritePageTime)" />，还记得吗？
+    </li>
+    <li>
+      你最爱看的期刊是
+      <User :text="favoriteJournal" />，最关注的作者是
+      <User :text="favoriteCreator" />。祝你2024年多发
+      <User :text="favoriteJournal" />！
+    </li>
+    <li>
+      过去的一年里，你在Zotero中添加了
+      <User :text="newItems.length.toString()" />篇文献，其中有
+      <User :text="newCount" />篇你还没有打开过，加油呀~
+    </li>
+    <li>
+      2023年的
+      <User :text="hardMonth" />
+      月是你阅读天数最多的月份。你从
+      <User :text="combo.begin" />到
+      <User :text="combo.end" />连续阅读了
+      <User :text="combo.count" />天，真是太棒了！
+    </li>
+  </ul>
 </template>
 
 <style scoped>

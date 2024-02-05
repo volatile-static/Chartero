@@ -22,8 +22,7 @@ export default function initPrefsPane(win: Window) {
 function refreshExcludedTags(doc: Document) {
     const tags = addon.getPref('excludedTags'),
         table = doc.getElementById('chartero-preferences-pane-excludedTagsTable') as HTMLDivElement;
-    while (table.firstChild)
-        table.removeChild(table.firstChild);
+    table.replaceChildren();
     try {
         tags.forEach((tag: number) => addon.ui.appendElement({
             tag: 'div',
@@ -97,7 +96,7 @@ function updateHistorySize(doc: Document) {
 function translateLocale() {
     showMessage('Translating locale strings...', 'chrome://chartero/content/icons/information.png');
     addon.translateLocaleStrings().then(
-        // @ts-expect-error
+        // @ts-expect-error override
         locale => addon.locale = locale
     );
 }

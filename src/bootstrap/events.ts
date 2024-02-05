@@ -7,14 +7,16 @@ import initPrefsPane from './modules/prefs';
 export function openReport() {
     Zotero.openInViewer(
         `chrome://${config.addonName}/content/report/index.html`,
-        doc => {
-            (doc.defaultView as any).wrappedJSObject['addon'] = addon;
-            doc.defaultView?.postMessage('ready', '*')
+        {
+            onLoad(doc) {
+                (doc.defaultView as any).wrappedJSObject.addon = addon;
+                doc.defaultView?.postMessage('ready', '*')
+            }
         }
     );
 }
 
-export function openOverview(_: Event) {
+export function openOverview() {
     if (addon.overviewTabID) {
         Zotero_Tabs.select(addon.overviewTabID);
         return;

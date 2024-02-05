@@ -10,6 +10,13 @@ import type {
 } from 'highcharts';
 export default {
     components: { Chart },
+    props: {
+        history: {
+            type: Array<Zotero.Item>,
+            required: true,
+        },
+        theme: Object,
+    },
     data() {
         return {
             locale: addon.locale,
@@ -57,6 +64,27 @@ export default {
             }
         },
     },
+    watch: {
+        history() {
+            // 初始化状态
+            this.seriesNode = [];
+            this.seriesData = [];
+            this.cancelToken.cancelled = true;
+
+            nextTick(this.doProcess);
+        },
+        theme() {
+            // 更新结点图标
+            this.seriesNode = this.seriesNode.map(n => {
+                const it = Zotero.Items.get(Number(n.id));
+                n.marker!.symbol = `url(${it.getImageSrc()})`;
+                return n;
+            });
+        },
+    },
+    mounted() {
+        this.doProcess();
+    },
     methods: {
         async processReferenceNetwork(cancelToken?: { cancelled: boolean }) {
             function getAttachmentText(att: Zotero.Item) {
@@ -78,7 +106,7 @@ export default {
             if (cacheKey in caches) {
                 // 缓存命中
                 this.seriesData = caches[cacheKey];
-                addon.log(`Found ${cacheKey} in cache`, [...this.seriesData]);
+                // addon.log(`Found ${cacheKey} in cache`, [...this.seriesData]);
             } else {
                 // 缓存未命中
                 const promiseList = this.history.map(async (it, index, { length }) => {
@@ -140,48 +168,20 @@ export default {
                 });
         },
     },
-    mounted() {
-        this.doProcess();
-    },
-    watch: {
-        history() {
-            // 初始化状态
-            this.seriesNode = [];
-            this.seriesData = [];
-            this.cancelToken.cancelled = true;
-
-            nextTick(this.doProcess);
-        },
-        theme() {
-            // 更新结点图标
-            this.seriesNode = this.seriesNode.map(n => {
-                const it = Zotero.Items.get(Number(n.id));
-                n.marker!.symbol = `url(${it.getImageSrc()})`;
-                return n;
-            });
-        },
-    },
-    props: {
-        history: {
-            type: Array<Zotero.Item>,
-            required: true,
-        },
-        theme: Object,
-    },
 };
 </script>
 
 <template>
-    <Transition>
-        <t-progress
-            v-if="progress != 1"
-            :percentage="percentage"
-            status="active"
-            theme="plump"
-            class="progress"
-        />
-    </Transition>
-    <Chart :options="options" :key="options" ref="chartRef"></Chart>
+  <Transition>
+    <t-progress
+      v-if="progress != 1"
+      :percentage="percentage"
+      status="active"
+      theme="plump"
+      class="progress"
+    />
+  </Transition>
+  <Chart :key="options" ref="chartRef" :options="options" />
 </template>
 
 <style scoped>

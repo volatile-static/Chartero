@@ -73,7 +73,7 @@ Highcharts.setOptions({
             // mouseWheel: { enabled: true },
         },
         events: {
-            selection: _ => {
+            selection: () => {
                 if (!infoFlag) {
                     MessagePlugin.info(addon.locale.zoomingTip);
                     infoFlag = true;
@@ -92,24 +92,24 @@ Highcharts.setOptions({
     exporting: {
         menuItemDefinitions: {
             downloadSVG: {
-                onclick: function () {
+                onclick() {
                     saveSVG((this as any).getSVGForExport());
                 },
             },
             downloadJPEG: {
-                onclick: function () {
+                onclick() {
                     copySVG2JPG((this as any).getSVGForExport());
                     MessagePlugin.success(addon.locale.imageCopied);
                 },
                 text: addon.locale.copyPNG,
             },
             showInLibrary: {
-                onclick: function () {
+                onclick() {
                     const points = this.getSelectedPoints(),
                         ids = points
                             .flatMap((p: any) => p.custom?.itemIDs ?? parseInt(p.custom?.itemID ?? p.id))
                             .filter(id => id >= 0);
-                    if (ids.length > 0) viewItemsInLib(ids);
+                    if (ids.length) viewItemsInLib(ids);
                     else MessagePlugin.warning(addon.locale.noItemToView);
                 },
                 text: addon.locale.showSelectedInLibrary,

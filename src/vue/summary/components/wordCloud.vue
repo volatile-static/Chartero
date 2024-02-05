@@ -11,6 +11,10 @@ const Zotero = addon.getGlobal('Zotero');
 
 export default {
     components: { Chart },
+    props: {
+        items: { type: Array<Zotero.Item>, required: true },
+        theme: Object,
+    },
     data() {
         return {
             locale: addon.locale,
@@ -84,7 +88,7 @@ export default {
                     menuItemDefinitions: helpMessageOption(addon.locale.doc.wordCloud),
                 },
                 tooltip: {
-                    formatter: function () {
+                    formatter() {
                         const weight = this.point.options.weight!,
                             context = isTag ? toTimeString(weight) : weight + addon.locale.occurrences;
                         return `
@@ -109,6 +113,12 @@ export default {
             return Highcharts.merge(this.chartOpts, this.theme);
         },
     },
+    mounted() {
+        addEventListener('message', e => {
+            if (e.data != 'updateExcludedTags') return;
+            this.filteredTags = addon.getPref('excludedTags');
+        });
+    },
     methods: {
         saveTagFilter() {
             this.dialogVisible = false;
@@ -127,55 +137,45 @@ export default {
             );
         },
     },
-    props: {
-        items: { type: Array<Zotero.Item>, required: true },
-        theme: Object,
-    },
-    mounted() {
-        addEventListener('message', e => {
-            if (e.data != 'updateExcludedTags') return;
-            this.filteredTags = addon.getPref('excludedTags');
-        });
-    },
 };
 </script>
 
 <template>
-    <t-space direction="vertical" style="width: 100%">
-        <t-space style="padding: 8px" break-line>
-            <b>{{ locale.selectDataSource }}</b>
-            <t-select v-model="dataOption" :placeholder="locale.sort" size="small" auto-width>
-                <t-option value="tag" :label="locale.tags"></t-option>
-                <t-option value="author" :label="locale.author"></t-option>
-                <t-option value="title" :label="locale.itemTitle"></t-option>
-                <t-option value="annotation" :label="locale.pdfAnnotation"></t-option>
-            </t-select>
-            <t-button v-show="dataOption === 'tag'" size="small" @click="openDialog">
-                {{ locale.filterTags }}
-            </t-button>
-        </t-space>
-        <Chart :options="options" :key="theme"></Chart>
+  <t-space direction="vertical" style="width: 100%">
+    <t-space style="padding: 8px" break-line>
+      <b>{{ locale.selectDataSource }}</b>
+      <t-select v-model="dataOption" :placeholder="locale.sort" size="small" auto-width>
+        <t-option value="tag" :label="locale.tags" />
+        <t-option value="author" :label="locale.author" />
+        <t-option value="title" :label="locale.itemTitle" />
+        <t-option value="annotation" :label="locale.pdfAnnotation" />
+      </t-select>
+      <t-button v-show="dataOption === 'tag'" size="small" @click="openDialog">
+        {{ locale.filterTags }}
+      </t-button>
     </t-space>
-    <t-dialog
-        v-model:visible="dialogVisible"
-        :on-confirm="saveTagFilter"
-        :header="locale.filterTags"
-        :confirmBtn="locale.save"
-        mode="modeless"
-        width="96%"
-        confirm-on-enter
-        draggable
-    >
-        <div style="display: block; width: 500px">
-            <t-transfer
-                :title="[locale.allTags, locale.excludedTags]"
-                :data="allTags"
-                v-model="filteredTags"
-                theme="primary"
-                search
-            />
-        </div>
-    </t-dialog>
+    <Chart :key="theme" :options="options" />
+  </t-space>
+  <t-dialog
+    v-model:visible="dialogVisible"
+    :on-confirm="saveTagFilter"
+    :header="locale.filterTags"
+    :confirm-btn="locale.save"
+    mode="modeless"
+    width="96%"
+    confirm-on-enter
+    draggable
+  >
+    <div style="display: block; width: 500px">
+      <t-transfer
+        v-model="filteredTags"
+        :title="[locale.allTags, locale.excludedTags]"
+        :data="allTags"
+        theme="primary"
+        search
+      />
+    </div>
+  </t-dialog>
 </template>
 
 <style scoped></style>

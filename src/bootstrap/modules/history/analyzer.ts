@@ -76,7 +76,7 @@ export default class HistoryAnalyzer {
         const read = accumulate(this.data, his => his.record.readPages),
             total = accumulate(this.data, his => his.record.numPages ?? 0);
         if (total == 0) return 0;
-        else return Math.round((100 * read) / total);
+        return Math.round((100 * read) / total);
     }
     get totalS() {
         return accumulate(this.data, his => his.record.totalS);
@@ -98,7 +98,7 @@ export default class HistoryAnalyzer {
     private accumulatePeriodIf(predicate: (time: Date) => boolean) {
         const attachmentsPages = this.data
             .map(history => history.record.pageArr)
-            .filter(pages => pages.length > 0);
+            .filter(pages => !!pages.length);
 
         return accumulate(attachmentsPages, pageRecords => {
             const pagesPeriod = pageRecords
@@ -128,7 +128,7 @@ export default class HistoryAnalyzer {
 }
 
 function accumulate<T>(arr: readonly T[], callback: (e: T) => number) {
-    if (arr.length > 0)
+    if (arr.length)
         return arr.reduce((sum: number, e) => sum + callback(e), 0);
-    else return 0;
+    return 0;
 }

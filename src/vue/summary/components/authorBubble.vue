@@ -36,10 +36,7 @@ async function processSeries(creatorIDs: number[], themeColors: string[]) {
         if (dataPro.length < 2) return;
         return {
             type: 'packedbubble',
-            name:
-                creator.firstName!.length > 0
-                    ? creator.firstName + ' ' + creator.lastName
-                    : creator.lastName,
+            name: creator.firstName!.length ? creator.firstName + ' ' + creator.lastName : creator.lastName,
             data: await Promise.all(dataPro),
         } as SeriesPackedbubbleOptions;
     }
@@ -58,24 +55,31 @@ async function processSeries(creatorIDs: number[], themeColors: string[]) {
 }
 
 export default defineComponent({
+    components: { Chart },
+    props: {
+        history: {
+            type: Array<AttachmentHistory>,
+            required: true,
+        },
+        theme: Object,
+    },
     data() {
         const onPointClick = (e: PointClickEventObject) => {
             const opts: any = this.chartOpts,
                 series = opts.series as SeriesPackedbubbleOptions[],
                 selectID = (e.point as PointOptionsObject).custom?.itemID;
-            selectID && series.forEach(s =>
-                (s.data as PointOptionsObject[]).forEach(d => {
-                    if (d.custom?.itemID == selectID) d.selected = !d.selected;
-                })
-            );
+            selectID &&
+                series.forEach(s =>
+                    (s.data as PointOptionsObject[]).forEach(d => {
+                        if (d.custom?.itemID == selectID) d.selected = !d.selected;
+                    }),
+                );
         };
         return {
             chartOpts: {
                 chart: { animation: undefined },
                 exporting: {
-                    menuItemDefinitions: helpMessageOption(
-                        addon.locale.doc.authorBubble
-                    ),
+                    menuItemDefinitions: helpMessageOption(addon.locale.doc.authorBubble),
                 },
                 plotOptions: {
                     packedbubble: {
@@ -88,9 +92,9 @@ export default defineComponent({
                             parentNodeOptions: {
                                 marker: {
                                     fillColor: 'gray',
-                                    fillOpacity: 0.25
-                                }
-                            }
+                                    fillOpacity: 0.25,
+                                },
+                            },
                         },
                         point: { events: { click: onPointClick } },
                         dataLabels: {
@@ -113,7 +117,7 @@ export default defineComponent({
                 },
                 tooltip: {
                     useHTML: true,
-                    pointFormatter: function () {
+                    pointFormatter() {
                         const icon = this.options.custom!.icon,
                             style = `
                                 display: inline-block;
@@ -123,9 +127,7 @@ export default defineComponent({
                                 float: left;
                                 background-image: url('${icon}');
                             `,
-                            lib = addon
-                                .getGlobal('Zotero')
-                                .Libraries.get(this.options.custom!.libraryID),
+                            lib = addon.getGlobal('Zotero').Libraries.get(this.options.custom!.libraryID),
                             libraryName = lib ? lib.name : '',
                             time = toTimeString(this.options.value!);
                         return `
@@ -146,13 +148,19 @@ export default defineComponent({
             return Highcharts.merge(this.chartOpts, this.theme);
         },
     },
+    watch: {
+        history(his: AttachmentHistory[]) {
+            this.updateSeries(his);
+        },
+    },
+    mounted() {
+        this.updateSeries(this.history);
+    },
     methods: {
         updateSeries(his: AttachmentHistory[]) {
             const ha = new HistoryAnalyzer(his),
                 topLevels = ha.parents,
-                creatorIDs = topLevels
-                    .map(it => it && (it as any)._creatorIDs)
-                    .flat(),
+                creatorIDs = topLevels.map(it => it && (it as any)._creatorIDs).flat(),
                 uniqueCreatorIDs = Array.from(new Set(creatorIDs)),
                 themeColors =
                     typeof this.theme?.colors[0] == 'string'
@@ -164,11 +172,9 @@ export default defineComponent({
             processSeries(uniqueCreatorIDs, themeColors).then(series => {
                 this.chartOpts.series = series;
                 nextTick(() => {
-                    if (chart.series.length)
-                        (chart as any).hideNoData();
-                    else
-                        (chart as any).showNoData();
-                    for (let i = 6; i < chart.series.length; ++i)
+                    if (chart.series.length) (chart as any).hideNoData();
+                    else (chart as any).showNoData();
+                    for (let i = 6; i < chart.series.length; ++i) 
                         chart.series[i].setVisible(false, false); // TODO: 切换时似乎未执行
                     chart.hideLoading();
                 });
@@ -176,24 +182,8 @@ export default defineComponent({
             // addon.log(chart);
         },
     },
-    watch: {
-        history(his: AttachmentHistory[]) {
-            this.updateSeries(his);
-        },
-    },
-    mounted() {
-        this.updateSeries(this.history);
-    },
-    props: {
-        history: {
-            type: Array<AttachmentHistory>,
-            required: true,
-        },
-        theme: Object,
-    },
-    components: { Chart },
 });
 </script>
 <template>
-    <Chart :options="options" :key="theme" ref="chart" style="height: 100%"></Chart>
+  <Chart :key="theme" ref="chart" :options="options" style="height: 100%" />
 </template>

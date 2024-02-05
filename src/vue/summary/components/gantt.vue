@@ -95,6 +95,14 @@ const colTitleOpt = {
     };
 
 export default defineComponent({
+    components: { Chart, FilterIcon, SwapIcon },
+    props: {
+        history: {
+            type: Array<AttachmentHistory>,
+            required: true,
+        },
+        theme: Object,
+    },
     data() {
         return {
             chartOpts: {
@@ -136,6 +144,22 @@ export default defineComponent({
             noHistoryFound: true,
         };
     },
+    computed: {
+        options() {
+            ++this.reloadChart;
+            return Highcharts.merge(this.chartOpts, this.theme);
+        },
+        seriesData: {
+            get(): GanttItem[] {
+                return (this.chartOpts.series![0] as SeriesGanttOptions).data as GanttItem[];
+            },
+            set(data: GanttItem[]) {
+                data.forEach((point, i) => (point.y = i));
+                (this.chartOpts.series![0] as SeriesGanttOptions).data = data;
+                ++this.reloadChart;
+            },
+        },
+    },
     watch: {
         sortOption(opt) {
             this.seriesData = sortData(opt, this.seriesData);
@@ -154,6 +178,13 @@ export default defineComponent({
         history(his: AttachmentHistory[]) {
             this.updateChart(his);
         },
+    },
+    beforeUnmount() {
+        window.removeEventListener('resize', this.onResizeDebounced);
+    },
+    mounted() {
+        this.updateChart(this.history);
+        window.addEventListener('resize', this.onResizeDebounced);
     },
     methods: {
         updateChart(his: AttachmentHistory[]) {
@@ -182,130 +213,92 @@ export default defineComponent({
             (this.chartOpts.yAxis as YAxisOptions).visible = this.isLandscape = window.innerWidth > 500;
         },
     },
-    computed: {
-        options() {
-            ++this.reloadChart;
-            return Highcharts.merge(this.chartOpts, this.theme);
-        },
-        seriesData: {
-            get(): GanttItem[] {
-                return (this.chartOpts.series![0] as SeriesGanttOptions).data as GanttItem[];
-            },
-            set(data: GanttItem[]) {
-                data.forEach((point, i) => (point.y = i));
-                (this.chartOpts.series![0] as SeriesGanttOptions).data = data;
-                ++this.reloadChart;
-            },
-        },
-    },
-    props: {
-        history: {
-            type: Array<AttachmentHistory>,
-            required: true,
-        },
-        theme: Object,
-    },
-    mounted() {
-        this.updateChart(this.history);
-        window.addEventListener('resize', this.onResizeDebounced);
-    },
-    beforeUnmount() {
-        window.removeEventListener('resize', this.onResizeDebounced);
-    },
-    components: { Chart, FilterIcon, SwapIcon },
 });
 </script>
 
 <template>
-    <div>
-        <h1 v-if="noHistoryFound" class="center-label">
-            {{ locale.noHistoryFound }}
-        </h1>
-        <t-space v-else direction="vertical" style="width: 100%">
-            <t-space style="padding: 8px" break-line>
-                <t-select
-                    v-if="isLandscape"
-                    :placeholder="locale.tableHeader"
-                    v-model="titleOption"
-                    size="small"
-                    multiple
-                    clearable
-                    auto-width
-                >
-                    <t-option value="title" :label="locale.ganttMenu.showTitle"> </t-option>
-                    <t-option value="author" :label="locale.ganttMenu.showAuthor"> </t-option>
-                </t-select>
-                <t-select
-                    v-else
-                    disabled
-                    auto-width
-                    size="small"
-                    :placeholder="locale.tableHeaderTip"
-                ></t-select>
-                <t-select v-model="sortOption" :placeholder="locale.sort" size="small" auto-width>
-                    <template #prefixIcon>
-                        <SwapIcon style="transform: rotate(90deg)" />
-                    </template>
-                    <t-option value="startAscending" :label="locale.ganttMenu.startAscending"></t-option>
-                    <t-option value="startDescending" :label="locale.ganttMenu.startDescending"></t-option>
-                    <t-option value="endAscending" :label="locale.ganttMenu.endAscending"></t-option>
-                    <t-option value="endDescending" :label="locale.ganttMenu.endDescending"></t-option>
-                    <t-option value="timeAscending" :label="locale.ganttMenu.timeAscending"></t-option>
-                    <t-option value="timeDescending" :label="locale.ganttMenu.timeDescending"></t-option>
-                </t-select>
-                <t-select
-                    v-model="filterOption"
-                    :placeholder="locale.filter"
-                    size="small"
-                    multiple
-                    clearable
-                    auto-width
-                >
-                    <template #prefixIcon>
-                        <FilterIcon />
-                    </template>
-                    <t-option
-                        value="completed"
-                        :label="locale.ganttMenu.completed"
-                        :disabled="filterOption.includes('incomplete')"
-                    ></t-option>
-                    <t-option
-                        value="incomplete"
-                        :label="locale.ganttMenu.incomplete"
-                        :disabled="filterOption.includes('completed')"
-                    ></t-option>
-                    <t-option
-                        value="month"
-                        :label="locale.ganttMenu.month"
-                        :disabled="filterOption.some(val => ['week', 'day'].includes(val))"
-                    ></t-option>
-                    <t-option
-                        value="week"
-                        :label="locale.ganttMenu.week"
-                        :disabled="filterOption.some(val => ['month', 'day'].includes(val))"
-                    ></t-option>
-                    <t-option
-                        value="day"
-                        :label="locale.ganttMenu.day"
-                        :disabled="filterOption.some(val => ['month', 'week'].includes(val))"
-                    ></t-option>
-                    <!-- <t-option
+  <div>
+    <h1 v-if="noHistoryFound" class="center-label">
+      {{ locale.noHistoryFound }}
+    </h1>
+    <t-space v-else direction="vertical" style="width: 100%">
+      <t-space style="padding: 8px" break-line>
+        <t-select
+          v-if="isLandscape"
+          v-model="titleOption"
+          :placeholder="locale.tableHeader"
+          size="small"
+          multiple
+          clearable
+          auto-width
+        >
+          <t-option value="title" :label="locale.ganttMenu.showTitle" />
+          <t-option value="author" :label="locale.ganttMenu.showAuthor" />
+        </t-select>
+        <t-select v-else disabled auto-width size="small" :placeholder="locale.tableHeaderTip" />
+        <t-select v-model="sortOption" :placeholder="locale.sort" size="small" auto-width>
+          <template #prefixIcon>
+            <SwapIcon style="transform: rotate(90deg)" />
+          </template>
+          <t-option value="startAscending" :label="locale.ganttMenu.startAscending" />
+          <t-option value="startDescending" :label="locale.ganttMenu.startDescending" />
+          <t-option value="endAscending" :label="locale.ganttMenu.endAscending" />
+          <t-option value="endDescending" :label="locale.ganttMenu.endDescending" />
+          <t-option value="timeAscending" :label="locale.ganttMenu.timeAscending" />
+          <t-option value="timeDescending" :label="locale.ganttMenu.timeDescending" />
+        </t-select>
+        <t-select
+          v-model="filterOption"
+          :placeholder="locale.filter"
+          size="small"
+          multiple
+          clearable
+          auto-width
+        >
+          <template #prefixIcon>
+            <FilterIcon />
+          </template>
+          <t-option
+            value="completed"
+            :label="locale.ganttMenu.completed"
+            :disabled="filterOption.includes('incomplete')"
+          />
+          <t-option
+            value="incomplete"
+            :label="locale.ganttMenu.incomplete"
+            :disabled="filterOption.includes('completed')"
+          />
+          <t-option
+            value="month"
+            :label="locale.ganttMenu.month"
+            :disabled="filterOption.some(val => ['week', 'day'].includes(val))"
+          />
+          <t-option
+            value="week"
+            :label="locale.ganttMenu.week"
+            :disabled="filterOption.some(val => ['month', 'day'].includes(val))"
+          />
+          <t-option
+            value="day"
+            :label="locale.ganttMenu.day"
+            :disabled="filterOption.some(val => ['month', 'week'].includes(val))"
+          />
+          <!-- <t-option
                         value="fit"
                         :label="locale.ganttMenu.fitLength"
                     ></t-option> -->
-                </t-select>
-            </t-space>
+        </t-select>
+      </t-space>
 
-            <Chart
-                constructor-type="ganttChart"
-                :options="options"
-                :key="reloadChart"
-                ref="chart"
-                style="width: 100%"
-            >
-            </Chart>
-        </t-space>
-    </div>
+      <Chart
+        :key="reloadChart"
+        ref="chart"
+        constructor-type="ganttChart"
+        :options="options"
+        style="width: 100%"
+      />
+    </t-space>
+  </div>
 </template>
 
 <style scoped>

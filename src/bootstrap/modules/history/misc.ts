@@ -3,9 +3,11 @@ import { AttachmentRecord } from './data';
 import { AttachmentHistory } from './history';
 import readerStyles from './reader.css';
 
+
+type SearchPatcher<T = (this: Zotero.Search, asTempTable: boolean) => Promise<number[]>> = (origin: T) => T;
 // 防止阅读器侧边栏搜索到主条目下的笔记
-export const patchedZoteroSearch = (origin: Function) =>
-    async function (this: Zotero.Search, asTempTable: boolean) {
+export const patchedZoteroSearch: SearchPatcher = origin =>
+    async function (asTempTable) {
         const ids: number[] = await origin.apply(this, asTempTable), // 原始搜索结果
             conditions = this.getConditions(); // 当前搜索的条件
         if (
@@ -24,7 +26,7 @@ export const patchedZoteroSearch = (origin: Function) =>
             return ids.filter(
                 (id) => Zotero.Items.get(id).parentItemKey != mainItemKey
             );
-        } else return ids;
+        } return ids;
     }
 
 export function protectData(event: string, ids: number[] | string[]) {

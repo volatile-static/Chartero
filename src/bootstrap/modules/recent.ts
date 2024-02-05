@@ -30,7 +30,7 @@ export default function () {
                         tag: 'menuitem',
                         classList: ['menuitem-iconic'],
                         styles: {
-                            // @ts-ignore
+                            // @ts-expect-error list-style-image
                             'list-style-image': `url('${image}')`,
                         },
                         attributes: {
@@ -99,7 +99,7 @@ async function addRecentTabsMenu() {
                 classList: ['zotero-tabs-menu-entry'],
                 attributes: { tabindex: ++tabIndex },
                 styles: {
-                    // @ts-ignore
+                    // @ts-expect-error list-style-image
                     'list-style-image': 'url(chrome://chartero/content/icons/history.svg)',
                     border: '0px',
                     color: 'var(--fill-secondary)',

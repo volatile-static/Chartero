@@ -21,7 +21,7 @@ export const buttons = {
 export function helpMessageOption(msg: string) {
     return {
         help: {
-            onclick: function () {
+            onclick () {
                 DialogPlugin.alert({
                     header: addon.locale.help,
                     body: h =>

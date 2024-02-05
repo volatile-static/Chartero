@@ -1,28 +1,32 @@
 <template>
-    <t-space style="margin: 8px" size="small" break-line>
-        {{ locale.selectCorrespondingAuthor }}
-        <t-select
-            v-model="selectedItem"
-            :options="itemOptions"
-            size="small"
-            :placeholder="locale.itemTitle"
-            clearable
-        />
-        <t-select
-            v-model="selectedAuthor"
-            :options="authorOptions"
-            size="small"
-            :placeholder="locale.author"
-            :disabled="selectedItem == undefined"
-            @change="onChange"
-        />
-    </t-space>
+  <t-space style="margin: 8px" size="small" break-line>
+    {{ locale.selectCorrespondingAuthor }}
+    <t-select
+      v-model="selectedItem"
+      :options="itemOptions"
+      size="small"
+      :placeholder="locale.itemTitle"
+      clearable
+    />
+    <t-select
+      v-model="selectedAuthor"
+      :options="authorOptions"
+      size="small"
+      :placeholder="locale.author"
+      :disabled="selectedItem == undefined"
+      @change="onChange"
+    />
+  </t-space>
 </template>
 
 <script lang="ts">
 import { creator2str } from '@/utils';
 import type { SelectValue } from 'tdesign-vue-next';
 export default {
+    props: {
+        items: { type: Array<Zotero.Item>, required: true },
+    },
+    emits: { change: null },
     data() {
         return {
             locale: addon.locale,
@@ -40,6 +44,7 @@ export default {
                 index = item && addon.extraField.getExtraField(item, 'CorrespondingAuthorIndex');
             if (!authors) return [];
 
+            // eslint-disable-next-line vue/no-side-effects-in-computed-properties
             this.selectedAuthor = index ? parseInt(index) : authors.length - 1;
             return authors.map((name, idx) => ({ value: idx, label: `${idx + 1}. ${name}` }));
         },
@@ -50,9 +55,6 @@ export default {
             addon.extraField.setExtraField(item, 'CorrespondingAuthorIndex', value as string);
             this.$emit('change');
         },
-    },
-    props: {
-        items: { type: Array<Zotero.Item>, required: true },
     },
 };
 </script>

@@ -39,5 +39,5 @@ export default {
 </script>
 
 <template>
-    <Chart :options="options" :key="theme"></Chart>
+  <Chart :key="theme" :options="options" />
 </template>

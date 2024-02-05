@@ -6,6 +6,17 @@ import Highcharts from '@/highcharts';
 import HistoryAnalyzer from '$/history/analyzer';
 export default {
     components: { Chart },
+    props: {
+        history: {
+            type: Array<AttachmentHistory>,
+            required: true,
+        },
+        itemsCount: {
+            type: Number,
+            required: true,
+        },
+        theme: Object,
+    },
     data() {
         return {
             locale: addon.locale,
@@ -14,11 +25,6 @@ export default {
                 new Highcharts.Color(color).setOpacity(0.3).get(),
             ),
         };
-    },
-    mounted() {
-        const colorScheme = matchMedia('(prefers-color-scheme: dark)');
-        this.isDark = colorScheme.matches;
-        colorScheme.addEventListener('change', e => (this.isDark = e.matches));
     },
     computed: {
         chartOpts() {
@@ -40,7 +46,7 @@ export default {
                         '{series.name}<br>' +
                         '<span style="font-size: 2em; color: var(--highcharts-color-{point.colorIndex}); ' +
                         'font-weight: bold">{point.y}</span>',
-                    positioner: function (labelWidth) {
+                    positioner(labelWidth) {
                         return {
                             x: (this.chart.chartWidth - labelWidth) / 2,
                             y: this.chart.plotHeight / 2 - 25,
@@ -135,20 +141,14 @@ export default {
             return Highcharts.merge(this.chartOpts, this.theme);
         },
     },
-    props: {
-        history: {
-            type: Array<AttachmentHistory>,
-            required: true,
-        },
-        itemsCount: {
-            type: Number,
-            required: true,
-        },
-        theme: Object,
+    mounted() {
+        const colorScheme = matchMedia('(prefers-color-scheme: dark)');
+        this.isDark = colorScheme.matches;
+        colorScheme.addEventListener('change', e => (this.isDark = e.matches));
     },
 };
 </script>
 
 <template>
-    <Chart :options="options" :key="theme" :class="{ 'highcharts-dark': isDark }"></Chart>
+  <Chart :key="theme" :options="options" :class="{ 'highcharts-dark': isDark }" />
 </template>

@@ -35,7 +35,7 @@
         "dev": "vite ./src/vue/test",
         "release": "release-it",
         "preview": "vite preview ./src/vue",
-        "lint": "eslint . --ext .vue,.ts,.tsx,.js",
+        "lint": "eslint . --ext .vue,.ts,.tsx,.js --ignore-path .gitignore --fix",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -69,6 +69,8 @@
         "@types/react-dom": "17.0.2",
         "@typescript-eslint/eslint-plugin": "^6.20.0",
         "@vitejs/plugin-vue": "^5.0.3",
+        "@vue/eslint-config-prettier": "^9.0.0",
+        "@vue/eslint-config-typescript": "^12.0.0",
         "@vue/tsconfig": "^0.5.1",
         "bluebird": "^3.7.2",
         "compressing": "^1.10.0",
@@ -92,6 +94,9 @@
     "eslintConfig": {
         "extends": [
             "eslint:recommended",
+            "prettier",
+            "@vue/eslint-config-typescript",
+            "@vue/eslint-config-prettier/skip-formatting",
             "plugin:mozilla/recommended",
             "plugin:vue/vue3-recommended",
             "plugin:@typescript-eslint/recommended"
@@ -112,10 +117,21 @@
             "sourceType": "module"
         },
         "rules": {
+            "max-len": [
+                "warn",
+                {
+                    "code": 110
+                }
+            ],
             "curly": "off",
             "no-undef": "off",
+            "consistent-return": "off",
             "vue/max-attributes-per-line": "off",
+            "vue/multi-word-component-names": "warn",
+            "vue/no-unused-components": "warn",
+            "vue/no-side-effects-in-computed-properties": "warn",
             "mozilla/consistent-if-bracing": "off",
+            "mozilla/use-ownerGlobal": "warn",
             "@typescript-eslint/no-unused-vars": "warn",
             "@typescript-eslint/no-explicit-any": [
                 "off",

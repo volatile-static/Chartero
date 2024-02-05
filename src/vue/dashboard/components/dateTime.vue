@@ -1,5 +1,5 @@
 <template>
-    <Chart :options="options" :key="theme" ref="chart"></Chart>
+  <Chart :key="theme" ref="chart" :options="options" />
 </template>
 
 <script lang="ts">

@@ -317,11 +317,10 @@ export default class ReadingHistory extends ManagerTool {
                         thisState as EPUBReaderState,
                         thatState as _ZoteroTypes.Reader.EPUBViewState
                     );
-                else
-                    return checkPDFState(
-                        thisState as PDFReaderState,
-                        thatState as _ZoteroTypes.Reader.State
-                    );
+                return checkPDFState(
+                    thisState as PDFReaderState,
+                    thatState as _ZoteroTypes.Reader.State
+                );
             },
             checkPDFState = (
                 thisState: PDFReaderState,
@@ -330,7 +329,7 @@ export default class ReadingHistory extends ManagerTool {
                 if (
                     thisState.pageIndex == thatState.pageIndex &&
                     thisState.top == thatState.top &&
-                    thatState.left == thatState.left
+                    thisState.left == thatState.left
                 )
                     ++thisState.counter;
                 else {
@@ -386,8 +385,9 @@ export default class ReadingHistory extends ManagerTool {
             if (!page.period) return;
             let start = 0, // 开始合并的时间戳
                 total = 0, // 连续时长
-                processing = false, // 是否正在合并
-                compressed: { [timestamp: number]: number } = {}; // 压缩后的period
+                processing = false; // 是否正在合并
+            // 压缩后的period
+            const compressed: { [timestamp: number]: number } = {};
 
             Object.keys(page.period)
                 .map((t) => parseInt(t))

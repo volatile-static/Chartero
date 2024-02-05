@@ -113,6 +113,14 @@ async function drawVariablePie() {
 }
 
 export default {
+    components: { Skyline },
+    data() {
+        return {
+            overallProgress: analyzer.progress,
+            locale: addon.locale,
+            theme: 'light'  // TODO: dark
+        };
+    },
     async mounted() {
         const { data, series } = await drawVariablePie();
         const board = await Dashboards.board('container', {
@@ -160,7 +168,7 @@ export default {
                         labels: { formatter: ctx => toTimeString(ctx.value) },
                     },
                     tooltip: {
-                        pointFormatter: function () {
+                        pointFormatter () {
                             return toTimeString(this.y ?? 0);
                         },
                     },
@@ -185,7 +193,7 @@ export default {
                     exporting: { enabled: false },
                     tooltip: {
                         useHTML: true,
-                        pointFormatter: function () {
+                        pointFormatter () {
                             const dot = `<span style="color: var(--highcharts-color-${this.colorIndex})">\u25CF</span>`;
                             return `
                                 ${dot} ${addon.locale.itemsCount}: <b>${this.y}</b><br/>
@@ -232,22 +240,14 @@ export default {
                     break;
             }
         addon.log('overview board loaded', board);
-    },
-    data() {
-        return {
-            overallProgress: analyzer.progress,
-            locale: addon.locale,
-            theme: 'light'  // TODO: dark
-        };
-    },
-    components: { Skyline }
+    }
 };
 </script>
 
 <template>
-    <div id="container"></div>
-    <Skyline id="skyline" />
-    <TProgress id="progress" theme="circle" size="large" :percentage="overallProgress" />
+  <div id="container" />
+  <Skyline id="skyline" />
+  <TProgress id="progress" theme="circle" size="large" :percentage="overallProgress" />
 </template>
 
 <style scoped>

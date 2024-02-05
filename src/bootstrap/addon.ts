@@ -32,7 +32,7 @@ export default class Addon extends toolBase.BasicTool {
     readonly rootURI = rootURI;
     overviewTabID?: string;
     private notifierID?: string;
-    private readonly prefsObserverIDs: Symbol[] = [];
+    private readonly prefsObserverIDs: symbol[] = [];
     private readonly listeners = new Array<{
         target: EventTarget;
         type: string;
@@ -219,7 +219,14 @@ export default class Addon extends toolBase.BasicTool {
             target.removeEventListener(type, listener)
         );
         ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
-        toolBase.unregister(this);
+        try {
+            toolBase.unregister(this);
+        } catch (error) {  // 工具箱注销时未定义
+            if (error instanceof TypeError)
+                this.log(error.message);
+            else
+                throw error;
+        }
     }
 
     async test(key: string) { // create a new file attachment

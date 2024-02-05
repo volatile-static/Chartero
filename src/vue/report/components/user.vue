@@ -1,8 +1,8 @@
 <template>
-    <span class="user">
-        <slot v-if="hasSlotContent">{{ text }}</slot>
-        <template v-else>{{ text }}</template>
-    </span>
+  <span class="user">
+    <slot v-if="hasSlotContent">{{ text }}</slot>
+    <template v-else>{{ text }}</template>
+  </span>
 </template>
 
 <script lang="ts">

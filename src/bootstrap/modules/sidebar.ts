@@ -71,7 +71,7 @@ export function registerPanels() {
 
 export function renderSummaryPanel(ids: number[]) {
     if (
-        ids.length == 0 ||
+        !ids.length ||
         ids.length > addon.getPref('maxSummaryItems')
     )
         return;

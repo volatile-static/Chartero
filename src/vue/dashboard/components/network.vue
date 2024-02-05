@@ -1,5 +1,5 @@
 <template>
-    <Chart :options="options" :key="refresh" ref="chartRef"></Chart>
+  <Chart :key="refresh" ref="chartRef" :options="options" />
 </template>
 
 <script lang="ts">
@@ -32,6 +32,30 @@ function layoutPosition(this: any) {
 
 export default defineComponent({
     components: { Chart },
+    props: {
+        topLevel: Object as PropType<Zotero.Item>,
+        theme: Object,
+        itemID: Number,
+        show: Boolean
+    },
+    data() {
+        return {
+            restorePosition: false,
+            refresh: 0,  // 强制刷新图表
+            loading: false,  // 互斥锁
+            thisID: this.topLevel?.id,
+            thisColor: 'blue',
+            thatColor: 'red',
+            graphData: [] as GraphData,
+            graphNodes: [] as SeriesNetworkgraphNodesOptions[],
+            loadedNodes: {} as { [id: string]: boolean },
+            visitedNodes: new Set<number>(),
+            cachedTree: new Tree(this.topLevel?.id),
+            svgStr: Zotero.File.getResource(
+                'chrome://chartero/content/icons/star.svg'
+            )
+        }
+    },
     computed: {
         options() {
             // addon.log('network options', JSON.parse(JSON.stringify(this.graphNodes)));
@@ -62,7 +86,7 @@ export default defineComponent({
                     }
                 },
                 tooltip: {
-                    formatter: function () {
+                    formatter () {
                         if ('custom' in this.point)
                             return `
                                 <b>${(this.point as any).custom.title}</b><br>
@@ -140,22 +164,31 @@ export default defineComponent({
             )})`;
         }
     },
-    data() {
-        return {
-            restorePosition: false,
-            refresh: 0,  // 强制刷新图表
-            loading: false,  // 互斥锁
-            thisID: this.topLevel?.id,
-            thisColor: 'blue',
-            thatColor: 'red',
-            graphData: [] as GraphData,
-            graphNodes: [] as SeriesNetworkgraphNodesOptions[],
-            loadedNodes: {} as { [id: string]: boolean },
-            visitedNodes: new Set<number>(),
-            cachedTree: new Tree(this.topLevel?.id),
-            svgStr: Zotero.File.getResource(
-                'chrome://chartero/content/icons/star.svg'
-            )
+    watch: {
+        itemID(newID?: number, oldID?: number) {
+            if (newID && !this.loading && this.show) {
+                this.thisID = newID;
+                if (this.visitedNodes.has(newID))
+                    this.updateGraph(newID, oldID);
+                else
+                    this.initGraph(newID);
+            }
+        },
+        show(newVal: boolean) {
+            if (!newVal)
+                return;
+            if (this.visitedNodes.has(this.topLevel!.id))
+                this.updateGraph(this.topLevel!.id, this.thisID);
+            else
+                this.initGraph(this.topLevel!.id);
+            this.thisID = this.topLevel?.id;
+        },
+        loading(newVal) {
+            const chartRef = (this.$refs.chartRef as Chart)?.chart;
+            if (newVal)
+                chartRef?.showLoading();
+            else
+                chartRef?.hideLoading();
         }
     },
     methods: {
@@ -333,39 +366,6 @@ export default defineComponent({
                     );
             ++this.refresh;
         }
-    },
-    watch: {
-        itemID(newID?: number, oldID?: number) {
-            if (newID && !this.loading && this.show) {
-                this.thisID = newID;
-                if (this.visitedNodes.has(newID))
-                    this.updateGraph(newID, oldID);
-                else
-                    this.initGraph(newID);
-            }
-        },
-        show(newVal: boolean) {
-            if (!newVal)
-                return;
-            if (this.visitedNodes.has(this.topLevel!.id))
-                this.updateGraph(this.topLevel!.id, this.thisID);
-            else
-                this.initGraph(this.topLevel!.id);
-            this.thisID = this.topLevel?.id;
-        },
-        loading(newVal) {
-            const chartRef = (this.$refs.chartRef as Chart)?.chart;
-            if (newVal)
-                chartRef?.showLoading();
-            else
-                chartRef?.hideLoading();
-        }
-    },
-    props: {
-        topLevel: Object as PropType<Zotero.Item>,
-        theme: Object,
-        itemID: Number,
-        show: Boolean
     },
 });
 </script>

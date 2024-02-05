@@ -1,57 +1,61 @@
 <template>
-    <t-collapse :default-value="['progress', 'date']" :value="collapseValue" @change="onCollapseChange"
-        expand-icon-placement="right">
-        <t-collapse-panel value="progress" :header="locale.readingProgress">
-            <t-space align="center" size="small" class="progress-space">
-                <t-tooltip :content="locale.readingProgressTip" :show-arrow="false">
-                    <t-progress theme="circle" size="small" :percentage="readingProgress" />
-                </t-tooltip>
-                <div class="progress-info">
-                    <span>{{
-                        `🔖 ${locale.progressLabel.read} ${readPages} ${locale.pages} / ${locale.progressLabel.total}
+  <t-collapse
+    :default-value="['progress', 'date']" :value="collapseValue" expand-icon-placement="right"
+    @change="onCollapseChange"
+  >
+    <t-collapse-panel value="progress" :header="locale.readingProgress">
+      <t-space align="center" size="small" class="progress-space">
+        <t-tooltip :content="locale.readingProgressTip" :show-arrow="false">
+          <t-progress theme="circle" size="small" :percentage="readingProgress" />
+        </t-tooltip>
+        <div class="progress-info">
+          <span>{{
+            `🔖 ${locale.progressLabel.read} ${readPages} ${locale.pages} / ${locale.progressLabel.total}
                                             ${numPages} ${locale.pages}`
-                    }}</span>
-                    <span>{{
-                        `📚 ${numAttachment} ${locale.progressLabel.PDFs} / ${locale.progressLabel.total} ${attachmentSize}
+          }}</span>
+          <span>{{
+            `📚 ${numAttachment} ${locale.progressLabel.PDFs} / ${locale.progressLabel.total} ${attachmentSize}
                         MB`
-                    }}</span>
-                    <span>📝 {{ noteNum }} {{ locale.progressLabel.notes }} /
-                        {{ locale.progressLabel.total }} {{ noteWords }}
-                        {{ locale.progressLabel.words }}</span>
-                </div>
-                <template #separator>
-                    <t-divider layout="vertical" />
-                </template>
-            </t-space>
-        </t-collapse-panel>
+          }}</span>
+          <span>📝 {{ noteNum }} {{ locale.progressLabel.notes }} /
+            {{ locale.progressLabel.total }} {{ noteWords }}
+            {{ locale.progressLabel.words }}</span>
+        </div>
+        <template #separator>
+          <t-divider layout="vertical" />
+        </template>
+      </t-space>
+    </t-collapse-panel>
 
-        <!-- <t-collapse-panel value="bubble" :disabled="collapseDisabled">
+    <!-- <t-collapse-panel value="bubble" :disabled="collapseDisabled">
             <ProgressBubble :history="itemHistory" :theme="chartTheme" />
         </t-collapse-panel> -->
 
-        <t-collapse-panel value="page" :header="locale.chartTitle.pageTime" :disabled="collapseDisabled">
-            <PageTime :history="itemHistory" :theme="chartTheme"></PageTime>
-        </t-collapse-panel>
+    <t-collapse-panel value="page" :header="locale.chartTitle.pageTime" :disabled="collapseDisabled">
+      <PageTime :history="itemHistory" :theme="chartTheme" />
+    </t-collapse-panel>
 
-        <t-collapse-panel value="date" :header="locale.chartTitle.dateTime" :disabled="collapseDisabled">
-            <DateTime :history="itemHistory" :theme="chartTheme"></DateTime>
-        </t-collapse-panel>
+    <t-collapse-panel value="date" :header="locale.chartTitle.dateTime" :disabled="collapseDisabled">
+      <DateTime :history="itemHistory" :theme="chartTheme" />
+    </t-collapse-panel>
 
-        <t-collapse-panel value="users" :header="locale.chartTitle.users" v-if="!isUserLib">
-            <UserPie :history="itemHistory" :theme="chartTheme"></UserPie>
-        </t-collapse-panel>
+    <t-collapse-panel v-if="!isUserLib" value="users" :header="locale.chartTitle.users">
+      <UserPie :history="itemHistory" :theme="chartTheme" />
+    </t-collapse-panel>
 
-        <t-collapse-panel value="network" :header="locale.chartTitle.network">
-            <Network :topLevel="topLevel" :theme="chartTheme" :itemID="topLevel?.id"
-                :show="collapseValue.includes('network')"></Network>
-        </t-collapse-panel>
+    <t-collapse-panel value="network" :header="locale.chartTitle.network">
+      <Network
+        :top-level="topLevel" :theme="chartTheme" :item-i-d="topLevel?.id"
+        :show="collapseValue.includes('network')"
+      />
+    </t-collapse-panel>
 
-        <t-collapse-panel value="timeline" :header="locale.timeline" :disabled="collapseDisabled">
-            <TimeLine :history="itemHistory"></TimeLine>
-        </t-collapse-panel>
-    </t-collapse>
+    <t-collapse-panel value="timeline" :header="locale.timeline" :disabled="collapseDisabled">
+      <TimeLine :history="itemHistory" />
+    </t-collapse-panel>
+  </t-collapse>
 
-    <!-- <div class="theme-button">
+  <!-- <div class="theme-button">
         <t-button @click="switchTheme" size="large" shape="circle">{{
             themeBtn
         }}</t-button>
@@ -73,6 +77,95 @@ import HistoryAnalyzer from '$/history/analyzer';
 import type { AttachmentHistory } from '$/history/history';
 
 export default {
+    components: { PageTime, DateTime, TimeLine, Network, UserPie },
+    data() {
+        return {
+            dark: false,
+            locale: addon.locale,
+            noteNum: 0,
+            noteWords: 0,
+            readPages: 0,
+            numPages: 0,
+            numAttachment: 0,
+            attachmentSize: '',
+            collapseValue: ['progress'] as Array<string | number>,
+            item: null as null | Zotero.Item,
+            animateInt: {
+                round: 1,
+                duration: 260,
+                targets: this,
+            } as anime.AnimeParams,
+            realtimeUpdating: false,
+        };
+    },
+    computed: {
+        isUserLib(): boolean {
+            return this.item?.libraryID == Zotero.Libraries.userLibraryID;
+        },
+        readingProgress(): number {
+            if (this.itemHistory.length < 1) return 0;
+            const ha = new HistoryAnalyzer(this.itemHistory);
+            return ha.progress;
+        },
+        chartTheme(): object {
+            return this.dark ? DarkUnicaTheme : GridLightTheme;
+        },
+        themeBtn(): string {
+            return this.dark ? '☀️' : '🌙';
+        },
+        collapseDisabled(): boolean {
+            return this.itemHistory.length < 1;
+        },
+        /** 2 */
+        topLevel(): Zotero.Item | undefined {
+            return this.isReader
+                ? this.item?.parentItem
+                : this.item ?? undefined;
+        },
+        /** 1 */
+        isReader(): boolean {
+            return !this.item?.isRegularItem();
+        },
+        /** 3 */
+        itemHistory(): AttachmentHistory[] {
+            if (this.realtimeUpdating) {
+                // no-op: 未更换条目时强制刷新历史记录
+            }
+            if (this.topLevel)
+                return addon.history.getInTopLevelSync(this.topLevel);
+            
+                const his =
+                    this.item && addon.history.getByAttachment(this.item);
+                // addon.log('itemHistory: ', his);
+                return his ? [his] : [];
+            
+        },
+    },
+    watch: {
+        collapseDisabled(val: boolean) {
+            if (val) this.collapseValue = ['progress'];
+        },
+    },
+    mounted() {
+        window.addEventListener('message', e => {
+            // 判断消息是否包含ID
+            if (typeof e.data.id != 'number')
+                return;
+            this.item = Zotero.Items.get(e.data.id); // 获取传入的条目
+            if (addon.getPref('enableRealTimeDashboard'))  // 强制刷新
+                this.realtimeUpdating = !this.realtimeUpdating;
+            this.updateTheme();
+            nextTick(() => {
+                try {
+                    this.updateNotes();
+                    this.updateProgress();
+                    this.updateSize();
+                } catch (error) {
+                    addon.log(error);
+                }
+            });
+        });
+    },
     methods: {
         switchTheme() {
             // this.dark = !this.dark;
@@ -152,95 +245,6 @@ export default {
             });
         },
     },
-    mounted() {
-        window.addEventListener('message', e => {
-            // 判断消息是否包含ID
-            if (typeof e.data.id != 'number')
-                return;
-            this.item = Zotero.Items.get(e.data.id); // 获取传入的条目
-            if (addon.getPref('enableRealTimeDashboard'))  // 强制刷新
-                this.realtimeUpdating = !this.realtimeUpdating;
-            this.updateTheme();
-            nextTick(() => {
-                try {
-                    this.updateNotes();
-                    this.updateProgress();
-                    this.updateSize();
-                } catch (error) {
-                    addon.log(error);
-                }
-            });
-        });
-    },
-    computed: {
-        isUserLib(): boolean {
-            return this.item?.libraryID == Zotero.Libraries.userLibraryID;
-        },
-        readingProgress(): number {
-            if (this.itemHistory.length < 1) return 0;
-            const ha = new HistoryAnalyzer(this.itemHistory);
-            return ha.progress;
-        },
-        chartTheme(): object {
-            return this.dark ? DarkUnicaTheme : GridLightTheme;
-        },
-        themeBtn(): string {
-            return this.dark ? '☀️' : '🌙';
-        },
-        collapseDisabled(): boolean {
-            return this.itemHistory.length < 1;
-        },
-        /** 2 */
-        topLevel(): Zotero.Item | undefined {
-            return this.isReader
-                ? this.item?.parentItem
-                : this.item ?? undefined;
-        },
-        /** 1 */
-        isReader(): boolean {
-            return !this.item?.isRegularItem();
-        },
-        /** 3 */
-        itemHistory(): AttachmentHistory[] {
-            if (this.realtimeUpdating) {
-                // no-op: 未更换条目时强制刷新历史记录
-            }
-            if (this.topLevel)
-                return addon.history.getInTopLevelSync(this.topLevel);
-            else {
-                const his =
-                    this.item && addon.history.getByAttachment(this.item);
-                // addon.log('itemHistory: ', his);
-                return his ? [his] : [];
-            }
-        },
-    },
-    watch: {
-        collapseDisabled(val: boolean) {
-            if (val) this.collapseValue = ['progress'];
-        },
-    },
-    data() {
-        return {
-            dark: false,
-            locale: addon.locale,
-            noteNum: 0,
-            noteWords: 0,
-            readPages: 0,
-            numPages: 0,
-            numAttachment: 0,
-            attachmentSize: '',
-            collapseValue: ['progress'] as Array<string | number>,
-            item: null as null | Zotero.Item,
-            animateInt: {
-                round: 1,
-                duration: 260,
-                targets: this,
-            } as anime.AnimeParams,
-            realtimeUpdating: false,
-        };
-    },
-    components: { PageTime, DateTime, TimeLine, Network, UserPie },
 };
 </script>
 

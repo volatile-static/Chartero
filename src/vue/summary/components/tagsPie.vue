@@ -7,30 +7,18 @@ import type { AttachmentHistory } from '$/history/history';
 
 export default {
     components: { Chart },
+    props: {
+        history: {
+            type: Array<AttachmentHistory>,
+            required: true,
+        },
+        theme: Object,
+    },
     data() {
         return {
             locale: addon.locale,
             dataOption: 'journal',
         };
-    },
-    methods: {
-        getJournalData(items: Zotero.Item[]) {
-            const journalMap: Record<string, number> = {};
-            for (const item of items) {
-                const name =
-                    item.getField('journalAbbreviation') ||
-                    item.getField('publicationTitle') ||
-                    item.getField('conferenceName') ||
-                    item.getField('university');
-                if (typeof name == 'string') journalMap[name] = (journalMap[name] ?? 0) + 1;
-            }
-            addon.log(journalMap);
-            return Object.entries(journalMap).map(([name, y]) => ({
-                name,
-                y,
-                z: y,
-            }));
-        },
     },
     computed: {
         chartOpts(): Highcharts.Options {
@@ -55,28 +43,40 @@ export default {
             return Highcharts.merge(this.chartOpts, this.theme);
         },
     },
-    props: {
-        history: {
-            type: Array<AttachmentHistory>,
-            required: true,
+    methods: {
+        getJournalData(items: Zotero.Item[]) {
+            const journalMap: Record<string, number> = {};
+            for (const item of items) {
+                const name =
+                    item.getField('journalAbbreviation') ||
+                    item.getField('publicationTitle') ||
+                    item.getField('conferenceName') ||
+                    item.getField('university');
+                if (typeof name == 'string') journalMap[name] = (journalMap[name] ?? 0) + 1;
+            }
+            addon.log(journalMap);
+            return Object.entries(journalMap).map(([name, y]) => ({
+                name,
+                y,
+                z: y,
+            }));
         },
-        theme: Object,
     },
 };
 </script>
 
 <template>
-    <t-space direction="vertical" style="width: 100%">
-        <t-space style="padding: 8px" break-line>
-            <b>{{ locale.selectDataSource }}</b>
-            <t-select v-model="dataOption" :placeholder="locale.sort" size="small" auto-width>
-                <t-option value="journal" :label="locale.tags"></t-option>
-                <t-option value="firstCreator" :label="locale.author"></t-option>
-                <t-option value="lastCreator" :label="locale.author"></t-option>
-            </t-select>
-        </t-space>
-        <Chart :options="options" :key="theme"></Chart>
+  <t-space direction="vertical" style="width: 100%">
+    <t-space style="padding: 8px" break-line>
+      <b>{{ locale.selectDataSource }}</b>
+      <t-select v-model="dataOption" :placeholder="locale.sort" size="small" auto-width>
+        <t-option value="journal" :label="locale.tags" />
+        <t-option value="firstCreator" :label="locale.author" />
+        <t-option value="lastCreator" :label="locale.author" />
+      </t-select>
     </t-space>
+    <Chart :key="theme" :options="options" />
+  </t-space>
 </template>
 
 <style scoped></style>

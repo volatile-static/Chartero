@@ -16,16 +16,17 @@ export default class Addon {
         return localeJSON;
     }
     getGlobal(_: 'Zotero') {
+        _;
         return Zotero;
     }
-    log() {
-        console.debug(...arguments);
+    log(...args: any[]) {
+        console.debug(...args);
     }
     getPref(key: string) {
         return fetchSync(`Zotero.Chartero.getPref('${key}')`);
     }
     setPref() {
-        return;  // No-op
+        // No-op
     }
     history = {
         getByAttachment(att: Zotero.Item | number): AttachmentHistory | null {

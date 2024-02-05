@@ -1,24 +1,29 @@
 <template>
-    <div id="skyline-layout">
-        <div id="week-layout">
-            <p class="skyline-label">Mon</p>
-            <p class="skyline-label">Wed</p>
-            <p class="skyline-label">Fri</p>
-        </div>
-        <div id="month-layout">
-            <p v-for="month in 13" class="skyline-label" :id="'month-label-' + month">
-                {{ monthStrings[(now.getMonth() + month - 1) % 12] }}
-            </p>
-        </div>
-        <t-skeleton :loading="loading" animation="gradient">
-            <div id="block-container">
-                <TTooltip v-for="block of blocks" :content="block.description" show-arrow>
-                    <div class="day-block" :style="{ backgroundColor: block.color }" @click="onBlockClick(block.time)">
-                    </div>
-                </TTooltip>
-            </div>
-        </t-skeleton>
+  <div id="skyline-layout">
+    <div id="week-layout">
+      <p class="skyline-label">
+        Mon
+      </p>
+      <p class="skyline-label">
+        Wed
+      </p>
+      <p class="skyline-label">
+        Fri
+      </p>
     </div>
+    <div id="month-layout">
+      <p v-for="month in 13" :id="'month-label-' + month" :key="month" class="skyline-label">
+        {{ monthStrings[(now.getMonth() + month - 1) % 12] }}
+      </p>
+    </div>
+    <t-skeleton :loading="loading" animation="gradient">
+      <div id="block-container">
+        <TTooltip v-for="block of blocks" :key="block.time" :content="block.description" show-arrow>
+          <div class="day-block" :style="{ backgroundColor: block.color }" @click="onBlockClick(block.time)" />
+        </TTooltip>
+      </div>
+    </t-skeleton>
+  </div>
 </template>
 
 <script lang="ts">
@@ -48,28 +53,26 @@ export default {
             blocks: [] as Array<{
                 color: string;
                 time: string;
-                description: string
+                description: string;
             }>,
             loading: true,
         };
     },
+    mounted() {
+        setTimeout(this.init, 10);
+        const colorScheme = matchMedia('(prefers-color-scheme: dark)');
+        colorScheme.addEventListener('change', e => this.init(e.matches));
+    },
     methods: {
         init(isDark: boolean) {
             const now = this.now,
-                firstDay = new Date(
-                    now.getFullYear(),
-                    now.getMonth(),
-                    now.getDate() - now.getDay() - 364
-                );
+                firstDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay() - 364);
 
             /** 遍历每个格子 */
-            function forEachBlock<T>(
-                fun: (week: number, day: number) => T
-            ): T[] {
-                const result = new Array();
+            function forEachBlock<T>(fun: (week: number, day: number) => T): T[] {
+                const result = [];
                 for (let i = 0; i < 53; ++i)
-                    for (let j = 0; j <= (i < 52 ? 6 : now.getDay()); ++j)
-                        result.push(fun(i, j));
+                    for (let j = 0; j <= (i < 52 ? 6 : now.getDay()); ++j) result.push(fun(i, j));
                 return result;
             }
 
@@ -93,31 +96,23 @@ export default {
                 history = new HistoryAnalyzer(addon.history.getInLibrary()),
                 stats = history.dateTimeMap,
                 readingS = forEachBlock(
-                    (week: number, day: number) =>
-                        stats[getDate(week, day).toLocaleDateString()]?.time ??
-                        0
+                    (week: number, day: number) => stats[getDate(week, day).toLocaleDateString()]?.time ?? 0,
                 ),
-                orderlyReadingS = readingS
-                    .filter(e => e > 0)
-                    .sort((l, r) => l - r); // 升序排
+                orderlyReadingS = readingS.filter(e => e > 0).sort((l, r) => l - r); // 升序排
 
             this.blocks = forEachBlock((week: number, day: number) => {
                 const index = week * 7 + day;
                 let color = 'var(--td-bg-color-component)';
                 if (readingS[index] > orderlyReadingS[0]) {
                     type RGB = 'r' | 'g' | 'b';
-                    const percent = normalize(
-                        orderlyReadingS.at(-1)!,
-                        orderlyReadingS[0],
-                        readingS[index]
-                    ),
+                    const percent = normalize(orderlyReadingS.at(-1)!, orderlyReadingS[0], readingS[index]),
                         colors = (['r', 'g', 'b'] as RGB[]).map(color => {
                             const str = Math.round(
                                 denormalize(
                                     isDark ? colorMax[color] : colorMin[color],
                                     isDark ? colorMin[color] : colorMax[color],
-                                    percent
-                                )
+                                    percent,
+                                ),
                             ).toString(16);
                             return str.length == 1 ? '0' + str : str;
                         });
@@ -126,21 +121,14 @@ export default {
                 return {
                     color,
                     time: toTimeString(readingS[index]),
-                    description: getDate(week, day).toLocaleDateString(
-                        addon.getGlobal('Zotero').locale
-                    ),
+                    description: getDate(week, day).toLocaleDateString(addon.getGlobal('Zotero').locale),
                 };
             });
             nextTick(() => (this.loading = false));
         },
         onBlockClick(message: string) {
             MessagePlugin.info(message);
-        }
-    },
-    mounted() {
-        setTimeout(this.init, 10);
-        const colorScheme = matchMedia('(prefers-color-scheme: dark)');
-        colorScheme.addEventListener('change', (e) => this.init(e.matches));
+        },
     },
 };
 
