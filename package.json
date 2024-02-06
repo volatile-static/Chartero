@@ -120,7 +120,9 @@
             "max-len": [
                 "warn",
                 {
-                    "code": 110
+                    "code": 110,
+                    "ignoreComments": true,
+                    "ignoreStrings": true
                 }
             ],
             "curly": "off",
@@ -141,6 +143,11 @@
             ]
         }
     },
+    "eslintIgnore": [
+        "build",
+        "src/modules",
+        "node_modules"
+    ],
     "prettier": {
         "tabWidth": 4,
         "printWidth": 110,

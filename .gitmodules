@@ -1,0 +1,6 @@
+[submodule "src/modules/vite"]
+	path = src/modules/vite
+	url = https://github.com/vitejs/vite
+[submodule "src/modules/tdesign"]
+	path = src/modules/tdesign
+	url = https://github.com/Tencent/tdesign-vue-next

@@ -19,8 +19,7 @@ const buildDir = 'build',
     prefs = details.config.defaultSettings,
     now = new Date(),
     buildTime = now.toLocaleString(),
-    { replaceInFileSync } = replaceInFile,
-    minifyFolder = ['node_modules/highcharts', 'node_modules/highcharts/modules'];
+    { replaceInFileSync } = replaceInFile;
 
 main().catch(error => {
     console.error(error);
@@ -50,14 +49,10 @@ async function main() {
     patchLocaleStrings();
 
     if (argv.includes('--full')) {
-        if (isDevBuild) minifyFolder.forEach(folder => renameInFolder(folder));
-
         await vite({
             root: path.join(buildDir, '../src/vue'),
             build: { minify: isDevBuild ? false : 'esbuild' },
         }).catch(() => exit(1));
-
-        if (isDevBuild) minifyFolder.forEach(folder => renameInFolder(folder, true));
 
         zip.compressDir(path.join('build', 'addon'), path.join('build', details.name + '.xpi'), {
             ignoreBase: true,
@@ -69,15 +64,8 @@ async function main() {
             define: { __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true' },
         })) as RollupWatcher;
         watcher.on('event', event => {
-            switch (event.code) {
-                case 'START':
-                    minifyFolder.forEach(folder => renameInFolder(folder));
-                    break;
-                case 'END':
-                    reload();
-                    minifyFolder.forEach(folder => renameInFolder(folder, true));
-                    break;
-            }
+            if (event.code === 'END')
+                reload();
         });
         return;
     }
@@ -85,26 +73,25 @@ async function main() {
     if (!env.CI) reload();
 }
 
-function renameInFolder(folder: string, back = false) {
-    function forEachFiles(from: string[], to: string[], fun: (f: string, t: string) => void) {
-        for (const [f, t] of lodash.zip(from, to)) {
-            f && t && fun(path.join(folder, f), path.join(folder, t));
-        }
-    }
-    const files = fs.readdirSync(folder, { withFileTypes: true }).filter(f => f.isFile()),
-        js = files.filter(file => file.name.endsWith('.js')).map(f => f.name),
-        sources = js.filter(file => file.endsWith('.src.js')),
-        targets = sources.map(file => file.replace('.src.js', '.js')),
-        minified = sources.map(file => file.replace('.src.js', '.min.js'));
-
-    if (back) {
-        // 还原
-        forEachFiles(minified, targets, fs.renameSync);
-    } else {
-        forEachFiles(targets, minified, fs.renameSync);
-        forEachFiles(sources, targets, fs.copyFileSync);
-    }
-}
+// function renameInFolder(folder: string, back = false) {
+//     function forEachFiles(from: string[], to: string[], fun: (f: string, t: string) => void) {
+//         for (const [f, t] of lodash.zip(from, to)) {
+//             f && t && fun(path.join(folder, f), path.join(folder, t));
+//         }
+//     }
+//     const files = fs.readdirSync(folder, { withFileTypes: true }).filter(f => f.isFile()),
+//         js = files.filter(file => file.name.endsWith('.js')).map(f => f.name),
+//         sources = js.filter(file => file.endsWith('.src.js')),
+//         targets = sources.map(file => file.replace('.src.js', '.js')),
+//         minified = sources.map(file => file.replace('.src.js', '.min.js'));
+//     if (back) {
+//         // 还原
+//         forEachFiles(minified, targets, fs.renameSync);
+//     } else {
+//         forEachFiles(targets, minified, fs.renameSync);
+//         forEachFiles(sources, targets, fs.copyFileSync);
+//     }
+// }
 
 function copyFileSync(source: string, target: string) {
     let targetFile = target;

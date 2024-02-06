@@ -13,16 +13,20 @@
             "firefoxExecutable": "F:\\Firefox\\firefox.exe",
             "pathMappings": [
                 {
+                    "url": "http://localhost:5173/@vite/client.ts",
+                    "path": "${workspaceFolder}/src/modules/vite/packages/vite/src/client/client.ts"
+                },
+                {
                     "url": "http://localhost:5173/@fs/E:/zotero/chartero/src",
                     "path": "${workspaceFolder}/src"
                 },
                 {
-                    "url": "http://localhost:5173/@fs/E:/zotero/chartero/node_modules",
-                    "path": "${workspaceFolder}/node_modules"
+                    "url": "http://localhost:5173/@fs/E:/zotero/chartero/node_modules/tdesign-vue-next",
+                    "path": "${workspaceFolder}/src/modules/tdesign"
                 },
                 {
-                    "url": "http://localhost:5173/@vite",
-                    "path": "${workspaceFolder}/src/vue/test/vite/packages/vite"
+                    "url": "http://localhost:5173/@fs/E:/zotero/chartero/node_modules",
+                    "path": "${workspaceFolder}/node_modules"
                 },
                 {
                     "url": "http://localhost:5173",
