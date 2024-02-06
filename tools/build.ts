@@ -1,6 +1,7 @@
 import type { RollupWatcher } from 'rollup';
 import { build } from 'esbuild';
 import type { BuildOptions } from 'esbuild';
+import type { AliasOptions, InlineConfig } from 'vite';
 import { build as vite } from 'vite';
 import { zip } from 'compressing';
 import { sassPlugin } from 'esbuild-sass-plugin';
@@ -19,7 +20,23 @@ const buildDir = 'build',
     prefs = details.config.defaultSettings,
     now = new Date(),
     buildTime = now.toLocaleString(),
-    { replaceInFileSync } = replaceInFile;
+    { replaceInFileSync } = replaceInFile,
+    viteResolveConfig: AliasOptions = [
+        {
+            find: /^highcharts\/(.*)(?<!\.css)$/,
+            replacement: 'highcharts/$1.src',
+        },
+        {
+            find: 'highcharts-vue',
+            replacement: 'highcharts-vue/dist/highcharts-vue.js',
+        }
+    ],
+    viteConfig: InlineConfig = {
+        root: path.join(buildDir, '../src/vue'),
+        build: { minify: isDevBuild ? false : 'esbuild' },
+        define: { __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: String(isDevBuild) },
+        resolve: isDevBuild ? { alias: viteResolveConfig } : undefined,
+    };
 
 main().catch(error => {
     console.error(error);
@@ -49,20 +66,12 @@ async function main() {
     patchLocaleStrings();
 
     if (argv.includes('--full')) {
-        await vite({
-            root: path.join(buildDir, '../src/vue'),
-            build: { minify: isDevBuild ? false : 'esbuild' },
-        }).catch(() => exit(1));
-
+        await vite(viteConfig).catch(() => exit(1));
         zip.compressDir(path.join('build', 'addon'), path.join('build', details.name + '.xpi'), {
             ignoreBase: true,
         }).then(() => console.log('[Build] Addon pack OK!'));
     } else if (argv.includes('--watch')) {
-        const watcher = (await vite({
-            root: path.join(buildDir, '../src/vue'),
-            build: { minify: false, watch: {} },
-            define: { __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true' },
-        })) as RollupWatcher;
+        const watcher = (await vite(viteConfig)) as RollupWatcher;
         watcher.on('event', event => {
             if (event.code === 'END')
                 reload();
