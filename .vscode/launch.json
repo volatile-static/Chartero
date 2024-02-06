@@ -10,10 +10,19 @@
             "request": "launch",
             "reAttach": true,
             "url": "http://localhost:5173/",
+            "firefoxExecutable": "F:\\Firefox\\firefox.exe",
             "pathMappings": [
                 {
-                    "url": "http://localhost:5173/@fs/F:/zotero%20add-on/Chartero/src",
+                    "url": "http://localhost:5173/@fs/E:/zotero/chartero/src",
                     "path": "${workspaceFolder}/src"
+                },
+                {
+                    "url": "http://localhost:5173/@fs/E:/zotero/chartero/node_modules",
+                    "path": "${workspaceFolder}/node_modules"
+                },
+                {
+                    "url": "http://localhost:5173/@vite",
+                    "path": "${workspaceFolder}/src/vue/test/vite/packages/vite"
                 },
                 {
                     "url": "http://localhost:5173",
