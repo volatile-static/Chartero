@@ -28,7 +28,7 @@ export default class Addon extends toolBase.BasicTool {
     readonly history: ReadingHistory;
     readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
 
-    private readonly worker = new Worker(`chrome://chartero/content/${config.addonName}-worker.js`);
+    private readonly worker: PromiseWorker;
     readonly rootURI = rootURI;
     overviewTabID?: string;
     private notifierID?: string;
@@ -57,6 +57,9 @@ export default class Addon extends toolBase.BasicTool {
             )
         );
         this.ui.basicOptions.ui.enableElementDOMLog = __dev__;
+
+        const { BasePromiseWorker } = ChromeUtils.import('resource://gre/modules/PromiseWorker.jsm');
+        this.worker = new BasePromiseWorker(`chrome://chartero/content/${config.addonName}-worker.js`);
     }
 
     async translateLocaleStrings(): Promise<typeof this.locale> {
@@ -218,6 +221,7 @@ export default class Addon extends toolBase.BasicTool {
         this.listeners.forEach(({ target, type, listener }) =>
             target.removeEventListener(type, listener)
         );
+        this.worker.terminate();
         ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
         try {
             toolBase.unregister(this);

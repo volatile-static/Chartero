@@ -36,6 +36,14 @@ const buildDir = 'build',
         build: { minify: isDevBuild ? false : 'esbuild' },
         define: { __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: String(isDevBuild) },
         resolve: isDevBuild ? { alias: viteResolveConfig } : undefined,
+    },
+    esbuildConfig: BuildOptions = {
+        target: 'firefox102',
+        define: { __dev__: String(isDevBuild) },
+        plugins: [sassPlugin({ type: 'css-text', style: 'compressed' })],
+        bundle: true,
+        minify: !isDevBuild,
+        external: ['resource://*', 'chrome://*']
     };
 
 main().catch(error => {
@@ -267,20 +275,13 @@ function patchLocaleStrings() {
 }
 
 async function esbuild() {
-    const options = {
-        target: 'firefox102',
-        define: { __dev__: String(isDevBuild) },
-        plugins: [sassPlugin({ type: 'css-text', style: 'compressed' })],
-        bundle: true,
-        minify: !isDevBuild,
-    } as BuildOptions,
-        indexes = [
-            ['../src/bootstrap/index.ts', `addon/content/${details.config.addonName}.js`],
-            ['../src/worker/index.ts', `addon/content/${details.config.addonName}-worker.js`],
-        ],
+    const indexes = [
+        ['../src/bootstrap/index.ts', `addon/content/${details.config.addonName}.js`],
+        ['../src/worker/index.ts', `addon/content/${details.config.addonName}-worker.js`],
+    ],
         builds = indexes.map(([entry, outfile]) =>
             build({
-                ...options,
+                ...esbuildConfig,
                 entryPoints: [path.join(buildDir, entry)],
                 outfile: path.join(buildDir, outfile),
             }),
