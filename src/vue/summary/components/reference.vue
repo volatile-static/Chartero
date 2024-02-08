@@ -37,7 +37,7 @@ export default {
                         nodes: this.seriesNode,
                         layoutAlgorithm: {
                             enableSimulation: true,
-                            linkLength: Math.min(innerHeight, innerWidth) / 12,
+                            linkLength: Math.min(innerHeight, innerWidth) / 8,
                         },
                         dataLabels: {
                             enabled: true,
@@ -87,13 +87,17 @@ export default {
     },
     methods: {
         async processReferenceNetwork(cancelToken?: { cancelled: boolean }) {
-            function getAttachmentText(att: Zotero.Item) {
+            async function getAttachmentText(att: Zotero.Item) {
                 if (cancelToken?.cancelled) return ''; // 取消执行当前promise
-                if (__test__) return att.attachmentText; // 测试环境不处理异常
-                return att.attachmentText.catch(e => {
-                    if (e.name == 'InvalidPDFException') addon.log(`Invalid PDF: ${att.getField('title')}`);
-                    else addon.log(e, att);
-                });
+                const path = await att.getFilePathAsync(),
+                    text = path && await addon.worker.query('processPDF', path);
+                console.info(text)
+                return text && (text as any).text;
+                // if (__test__) return att.attachmentText; // 测试环境不处理异常
+                // return att.attachmentText.catch(e => {
+                //     if (e.name == 'InvalidPDFException') addon.log(`Invalid PDF: ${att.getField('title')}`);
+                //     else addon.log(e, att);
+                // });
             }
             // 进度条
             const chartRef = (this.$refs.chartRef as Chart)?.chart;
