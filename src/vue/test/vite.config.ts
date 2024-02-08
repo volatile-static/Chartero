@@ -10,14 +10,6 @@ export default defineConfig({
     esbuild: { sourcemap: 'both' },
     define: { __test__: true },
     plugins: [
-        // {
-        //     name: 'hc-source',
-        //     enforce: 'pre',
-        //     async resolveId(id, importer) {
-        //         if (id.startsWith('highcharts/'))
-        //             return this.resolve(id + '.src.js', importer, { skipSelf: true });
-        //     },
-        // },
         vue(),
         AutoImport({
             resolvers: [TDesignResolver({ library: 'vue-next' })],
@@ -33,6 +25,10 @@ export default defineConfig({
                 replacement: 'highcharts/$1.src',
             },
             {
+                find: /^highcharts$/,
+                replacement: 'highcharts/highcharts.src.js',
+            },
+            {
                 find: 'highcharts-vue',
                 replacement: 'highcharts-vue/dist/highcharts-vue.js',
             },
@@ -45,6 +41,5 @@ export default defineConfig({
                 replacement: fileURLToPath(new URL('../../bootstrap/modules', import.meta.url)),
             },
         ],
-        // dedupe: ['vue'], // Missing ref owner context. ref cannot be used on hoisted vnodes. A vnode with ref must be created inside the render function.
     },
 });
