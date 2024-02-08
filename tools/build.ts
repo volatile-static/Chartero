@@ -29,7 +29,7 @@ const buildDir = 'build',
         {
             find: 'highcharts-vue',
             replacement: 'highcharts-vue/dist/highcharts-vue.js',
-        }
+        },
     ],
     viteConfig: InlineConfig = {
         root: path.join(buildDir, '../src/vue'),
@@ -43,7 +43,7 @@ const buildDir = 'build',
         plugins: [sassPlugin({ type: 'css-text', style: 'compressed' })],
         bundle: true,
         minify: !isDevBuild,
-        external: ['resource://*', 'chrome://*']
+        external: ['resource://*', 'chrome://*'],
     };
 
 main().catch(error => {
@@ -79,10 +79,10 @@ async function main() {
             ignoreBase: true,
         }).then(() => console.log('[Build] Addon pack OK!'));
     } else if (argv.includes('--watch')) {
-        const watcher = (await vite(viteConfig)) as RollupWatcher;
+        const config = lodash.merge(viteConfig, { build: { watch: {} } }),
+            watcher = (await vite(config)) as RollupWatcher;
         watcher.on('event', event => {
-            if (event.code === 'END')
-                reload();
+            if (event.code === 'END') reload();
         });
         return;
     }
