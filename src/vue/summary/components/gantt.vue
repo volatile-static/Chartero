@@ -140,13 +140,11 @@ export default defineComponent({
             titleOption: ['title'],
             isLandscape: window.innerWidth > 500,
             onResizeDebounced: Zotero.Utilities.debounce(this.onResize, 100) as () => void,
-            reloadChart: 0,
             noHistoryFound: true,
         };
     },
     computed: {
         options() {
-            ++this.reloadChart;
             return Highcharts.merge(this.chartOpts, this.theme);
         },
         seriesData: {
@@ -156,7 +154,6 @@ export default defineComponent({
             set(data: GanttItem[]) {
                 data.forEach((point, i) => (point.y = i));
                 (this.chartOpts.series![0] as SeriesGanttOptions).data = data;
-                ++this.reloadChart;
             },
         },
     },
@@ -167,7 +164,6 @@ export default defineComponent({
         filterOption(opt) {
             this.seriesData = sortData(this.sortOption, filterData(opt, rawData));
             (this.chartOpts.navigator!.yAxis as NavigatorYAxisOptions).max = this.seriesData.length - 1;
-            ++this.reloadChart;
         },
         titleOption(opt) {
             const col = (this.chartOpts.yAxis as YAxisOptions).grid!.columns!;
@@ -291,7 +287,7 @@ export default defineComponent({
       </t-space>
 
       <Chart
-        :key="reloadChart"
+        :key="theme"
         ref="chart"
         constructor-type="ganttChart"
         :options="options"

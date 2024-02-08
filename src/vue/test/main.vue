@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import ComponentToTest from '../summary/components/reference.vue';
+import ComponentToTest from '../summary/main.vue';
 import { DarkUnicaTheme } from '../utility/themes';
 import fetchSync from './dummy/fetch';
 
