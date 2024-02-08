@@ -2,6 +2,7 @@
 import { nextTick } from 'vue';
 import { Chart } from 'highcharts-vue';
 import Highcharts from '@/highcharts';
+import { helpMessageOption } from '@/utils';
 import type {
     Options,
     PointOptionsObject,
@@ -29,6 +30,7 @@ export default {
     computed: {
         chartOpts() {
             return {
+                exporting: { menuItemDefinitions: helpMessageOption(this.locale.doc.reference) },
                 tooltip: { format: '{point.name}' },
                 series: [
                     {
@@ -115,16 +117,16 @@ export default {
                 // 缓存未命中
                 let progressMeter = 0;
                 const promiseList = this.history.map(async (it, index, { length }) => {
-                        const attachments = Zotero.Items.get(it.getAttachments()),
-                            attText = await Promise.all(attachments.map(getAttachmentText));
-                        if (cancelToken?.cancelled) return '';
+                    const attachments = Zotero.Items.get(it.getAttachments()),
+                        attText = await Promise.all(attachments.map(getAttachmentText));
+                    if (cancelToken?.cancelled) return '';
 
-                        // 刷新进度条
-                        this.progress = ++progressMeter / (length + 1);
-                        chartRef.showLoading(it.getField('title'));
+                    // 刷新进度条
+                    this.progress = ++progressMeter / (length + 1);
+                    chartRef.showLoading(it.getField('title'));
 
-                        return attText.filter(Boolean).join('\n'); // 连接所有附件的全文
-                    }),
+                    return attText.filter(Boolean).join('\n'); // 连接所有附件的全文
+                }),
                     textList = await Promise.all(promiseList);
                 if (cancelToken?.cancelled) return; // 取消执行当前promise
 

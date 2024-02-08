@@ -2,6 +2,7 @@
 import type { Options } from 'highcharts';
 import { Chart } from 'highcharts-vue';
 import Highcharts from '@/highcharts';
+import { helpMessageOption } from '@/utils';
 export default {
     components: { Chart },
     props: {
@@ -38,6 +39,7 @@ export default {
                     .filter(Boolean),
                 categories = Object.keys(ifs).sort((a, b) => ifs[b] - ifs[a]);
             return {
+                exporting: { menuItemDefinitions: helpMessageOption(this.locale.doc.authorIF) },
                 chart: { styledMode: true },
                 series,
                 plotOptions: {

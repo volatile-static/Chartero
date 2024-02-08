@@ -3,6 +3,7 @@ import type { Options } from 'highcharts';
 import type { AttachmentHistory } from '$/history/history';
 import { Chart } from 'highcharts-vue';
 import Highcharts from '@/highcharts';
+import { helpMessageOption } from '@/utils';
 import HistoryAnalyzer from '$/history/analyzer';
 export default {
     components: { Chart },
@@ -34,6 +35,7 @@ export default {
                 if (h.record.pageArr.length / (h.record.numPages ?? Infinity) >= 0.98) ++finished;
             console.debug(finished);
             return {
+                exporting: { menuItemDefinitions: helpMessageOption(this.locale.doc.kpiGauge) },
                 title: { text: undefined },
                 chart: { type: 'solidgauge', styledMode: false },
                 tooltip: {
