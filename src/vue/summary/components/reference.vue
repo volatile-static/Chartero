@@ -89,15 +89,15 @@ export default {
         async processReferenceNetwork(cancelToken?: { cancelled: boolean }) {
             async function getAttachmentText(att: Zotero.Item) {
                 if (cancelToken?.cancelled) return ''; // 取消执行当前promise
-                const path = await att.getFilePathAsync(),
-                    text = path && await addon.worker.query('processPDF', path);
-                console.info(text)
-                return text && (text as any).text;
-                // if (__test__) return att.attachmentText; // 测试环境不处理异常
-                // return att.attachmentText.catch(e => {
-                //     if (e.name == 'InvalidPDFException') addon.log(`Invalid PDF: ${att.getField('title')}`);
-                //     else addon.log(e, att);
-                // });
+                // const path = await att.getFilePathAsync(),
+                //     text = path && await addon.worker.query('processPDF', path);
+                // console.info(text)
+                // return text && (text as any).text;
+                if (__test__) return att.attachmentText; // 测试环境不处理异常
+                return att.attachmentText.catch(e => {
+                    if (e.name == 'InvalidPDFException') addon.log(`Invalid PDF: ${att.getField('title')}`);
+                    else addon.log(e, att);
+                });
             }
             // 进度条
             const chartRef = (this.$refs.chartRef as Chart)?.chart;
@@ -113,13 +113,14 @@ export default {
                 // addon.log(`Found ${cacheKey} in cache`, [...this.seriesData]);
             } else {
                 // 缓存未命中
+                let progressMeter = 0;
                 const promiseList = this.history.map(async (it, index, { length }) => {
                         const attachments = Zotero.Items.get(it.getAttachments()),
                             attText = await Promise.all(attachments.map(getAttachmentText));
                         if (cancelToken?.cancelled) return '';
 
                         // 刷新进度条
-                        this.progress = (index + 1) / (length + 1);
+                        this.progress = ++progressMeter / (length + 1);
                         chartRef.showLoading(it.getField('title'));
 
                         return attText.filter(Boolean).join('\n'); // 连接所有附件的全文
