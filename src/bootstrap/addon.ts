@@ -11,7 +11,7 @@ import buildRecentMenu from './modules/recent';
 import { onHistoryRecord, onItemSelect, onNotify, openOverview } from './events';
 import { addDebugMenu } from './modules/debug';
 import addItemColumns from './modules/columns';
-import { DebuggerBackend, showMessage } from './modules/utils';
+import { DebuggerBackend, showMessage, WorkerManager } from './modules/utils';
 
 type DefaultPrefs = Omit<
     typeof config.defaultSettings,
@@ -26,9 +26,11 @@ export default class Addon extends toolBase.BasicTool {
     readonly menu: MenuManager;
     readonly patchSearch: PatchHelper;
     readonly history: ReadingHistory;
+    readonly worker = new WorkerManager(
+        new ChromeWorker(`chrome://${packageName}/content/${config.addonName}-worker.js`)
+    );
     readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
 
-    private readonly worker: PromiseWorker;
     readonly rootURI = rootURI;
     overviewTabID?: string;
     private notifierID?: string;
@@ -57,9 +59,6 @@ export default class Addon extends toolBase.BasicTool {
             )
         );
         this.ui.basicOptions.ui.enableElementDOMLog = __dev__;
-
-        const { BasePromiseWorker } = ChromeUtils.import('resource://gre/modules/PromiseWorker.jsm');
-        this.worker = new BasePromiseWorker(`chrome://chartero/content/${config.addonName}-worker.js`);
     }
 
     async translateLocaleStrings(): Promise<typeof this.locale> {
@@ -221,7 +220,6 @@ export default class Addon extends toolBase.BasicTool {
         this.listeners.forEach(({ target, type, listener }) =>
             target.removeEventListener(type, listener)
         );
-        this.worker.terminate();
         ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
         try {
             toolBase.unregister(this);

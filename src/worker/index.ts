@@ -1,17 +1,23 @@
-importScripts('resource://gre/modules/workers/require.js');
-const { AbstractWorker } = require('resource://gre/modules/workers/PromiseWorker.js');
+import { processPDF } from './pdf';
+import { WorkerManagerBase, WorkerRequest, WorkerResponse } from './manager';
 
-class CharteroWorker extends AbstractWorker {
-    postMessage = self.postMessage.bind(self);
-    close = self.close;
-    log = console.debug;
-
-    dispatch(method: string, args: any[]) {
-        const target = (self as any)[method];
-        if (typeof target !== 'function')
-            return target;
-        return target(...args);
+class WorkerManager extends WorkerManagerBase<DedicatedWorkerGlobalScope> {
+    protected async onRequest(request: WorkerRequest) {
+        const response: WorkerResponse = {
+            id: request.id,
+            result: await process(request.method, request.params),
+        };
+        postMessage({ response });
     }
 }
-const worker = new CharteroWorker();
-onmessage = worker.handleMessage.bind(worker);
+export const workerManager = new WorkerManager(self);
+
+function process(method: string, params?: any[]) {
+    switch (method) {
+        case 'processPDF':
+            return processPDF(params![0]);
+
+        default:
+            console.log('Unknown method:', method);
+    }
+}

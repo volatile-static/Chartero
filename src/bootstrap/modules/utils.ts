@@ -1,5 +1,6 @@
 import { ClipboardHelper } from 'zotero-plugin-toolkit/dist/helpers/clipboard';
 import { FilePickerHelper } from 'zotero-plugin-toolkit/dist/helpers/filePicker';
+import { WorkerManagerBase, WorkerRequest, WorkerResponse } from '../../worker/manager';
 
 export function copySVG2JPG(svg: string) {
     const img = new window.Image();
@@ -90,6 +91,18 @@ async function patchFileURL(url: string) {
     });
 }
 
+async function evalCmd(cmd: string) {
+    addon.log('eval cmd:', cmd);
+    const result = new Function(
+        'Zotero', 'ZoteroPane', 'addon', 'return ' + cmd
+    )(Zotero, ZoteroPane, addon);
+    addon.log(result);
+
+    if (typeof result == 'string')
+        return patchFileURL(result);
+    return result;
+}
+
 export class DebuggerBackend implements _ZoteroTypes.Server.Endpoint {
     supportedMethods = ['POST'];
     init: _ZoteroTypes.Server.initMethodPromise = async function (options) {
@@ -98,15 +111,8 @@ export class DebuggerBackend implements _ZoteroTypes.Server.Endpoint {
             'Access-Control-Allow-Origin': '*' // 允许跨域
         };
         try {
-            addon.log('eval cmd:', options.data);
-            let result = new Function(
-                'Zotero', 'ZoteroPane', 'addon', 'return ' + options.data
-            )(Zotero, ZoteroPane, addon);
-            addon.log(result);
-
-            if (typeof result == 'string')
-                result = await patchFileURL(result);
-            return [200, headers, JSON.stringify(result?.then ? await result : result)];
+            const result = await evalCmd(options.data);
+            return [200, headers, JSON.stringify(result)];
         } catch (error) {
             Zotero.logError(error);
             if (error instanceof Error)
@@ -114,6 +120,27 @@ export class DebuggerBackend implements _ZoteroTypes.Server.Endpoint {
             return [500, headers, JSON.stringify(error)];
         }
     };
+}
+
+export class WorkerManager extends WorkerManagerBase<Worker> {
+    protected async onRequest(request: WorkerRequest) {
+        try {
+            const result = await evalCmd(request.method),
+                response: WorkerResponse = { id: request.id, result };
+            this.that.postMessage({ response });
+        } catch (error) {
+            addon.log(error);
+            this.that.postMessage({
+                response: {
+                    id: request.id,
+                    result: error
+                } as WorkerResponse
+            });
+        }
+    }
+    unregisterAll() {
+        this.that.terminate();
+    }
 }
 
 export function isValid<T>(x: T | undefined | null): x is T {
