@@ -26,6 +26,14 @@ export function addDebugMenu() {
     });
     addon.menu.register('menuHelp', {
         tag: 'menuitem',
+        label: 'log iframe window to console',
+        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
+        commandListener: () => addon.log((
+            <_ZoteroTypes.Reader.PDFView>Zotero.Reader.getByTabID(Zotero_Tabs.selectedID)._primaryView
+        )._iframeWindow)
+    });
+    addon.menu.register('menuHelp', {
+        tag: 'menuitem',
         label: 'log main items to console',
         icon: `chrome://${config.addonName}/content/icons/icon.svg`,
         commandListener: () => addon.log((<any>addon.history)._mainItems),
