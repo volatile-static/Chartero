@@ -6,9 +6,8 @@ import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
 import { config, name as packageName } from '../../package.json';
 import ReadingHistory from './modules/history/history';
 import { hideDeleteMenuForHistory, patchedZoteroSearch } from './modules/history/misc';
-import { registerPanels } from './modules/sidebar';
 import buildRecentMenu from './modules/recent';
-import { onHistoryRecord, onItemSelect, onNotify, openOverview } from './events';
+import { onHistoryRecord, onItemSelect, onNotify, onOpenReader, openOverview } from './events';
 import { addDebugMenu } from './modules/debug';
 import addItemColumns from './modules/columns';
 import { DebuggerBackend, showMessage, WorkerManager } from './modules/utils';
@@ -183,7 +182,7 @@ export default class Addon extends toolBase.BasicTool {
             { notify: onNotify },
             ['tab', 'setting', 'item']
         );
-        registerPanels();
+        Zotero.Reader.registerEventListener('renderToolbar', onOpenReader, config.addonID);
 
         this.addPrefsObserver(() => {
             if (this.getPref('scanPeriod') < 1)

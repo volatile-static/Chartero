@@ -41,16 +41,10 @@ export function showMessage(msg: string, icon: string) {
 }
 
 export async function waitForReader(reader: _ZoteroTypes.ReaderInstance) {
-    for (let i = 0; i < 500; ++i)
-        if (
-            reader._internalReader &&
-            (reader._lastView as any)?._iframeWindow &&
-            Object.keys(reader._state.primaryViewStats).length
-        )
-            return true;
-        else
-            await Zotero.Promise.delay(20);
-    throw new Error('Reader not found');
+    await reader._initPromise;
+    await reader._lastView.initializedPromise;
+    if (isPDFReader(reader))
+        await reader._lastView._iframeWindow!.PDFViewerApplication.initializedPromise;
 }
 
 export function toTimeString(seconds: number | string) {
@@ -145,4 +139,16 @@ export class WorkerManager extends WorkerManagerBase<Worker> {
 
 export function isValid<T>(x: T | undefined | null): x is T {
     return Boolean(x);
+}
+
+export function isPDFReader(
+    reader: _ZoteroTypes.ReaderInstance
+): reader is _ZoteroTypes.ReaderInstance<'pdf'> {
+    return reader.type == 'pdf';
+}
+
+export function isEpubReader(
+    reader: _ZoteroTypes.ReaderInstance
+): reader is _ZoteroTypes.ReaderInstance<'epub'> {
+    return reader.type == 'epub';
 }
