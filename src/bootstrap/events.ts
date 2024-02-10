@@ -129,6 +129,8 @@ export async function onNotify(
 export async function onOpenReader(
     event: _ZoteroTypes.Reader.EventParams<'renderToolbar'>
 ) {
+    if (!addon.getPref('enableAllImages'))
+        return;
     await waitForReader(event.reader);
     addImagesPanelForReader(event.reader);
 }
