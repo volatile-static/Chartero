@@ -74,6 +74,7 @@
         "@vue/tsconfig": "^0.5.1",
         "bluebird": "^3.7.2",
         "compressing": "^1.10.0",
+        "esbuild-plugin-svg": "^0.1.0",
         "esbuild-sass-plugin": "^3.0.0",
         "eslint": "^8.56.0",
         "eslint-plugin-mozilla": "^3.3.2",

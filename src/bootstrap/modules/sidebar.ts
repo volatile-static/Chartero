@@ -1,6 +1,3 @@
-import addImagesPanelForReader from './images/images';
-import { mountMinimap } from './minimap/minimap';
-import { waitForReader } from './utils';
 import { initReaderAlert } from './history/misc';
 
 const dashboards: { [id: number]: HTMLIFrameElement } = {};

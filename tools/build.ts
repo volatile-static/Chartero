@@ -4,6 +4,8 @@ import type { BuildOptions } from 'esbuild';
 import type { AliasOptions, InlineConfig } from 'vite';
 import { build as vite } from 'vite';
 import { zip } from 'compressing';
+//@ts-expect-error no types
+import svg from 'esbuild-plugin-svg';
 import { sassPlugin } from 'esbuild-sass-plugin';
 import { env, exit, argv } from 'process';
 import { execSync } from 'child_process';
@@ -40,7 +42,7 @@ const buildDir = 'build',
     esbuildConfig: BuildOptions = {
         target: 'firefox102',
         define: { __dev__: String(isDevBuild) },
-        plugins: [sassPlugin({ type: 'css-text', style: 'compressed' })],
+        plugins: [svg(), sassPlugin({ type: 'css-text', style: 'compressed' })],
         bundle: true,
         minify: !isDevBuild,
         external: ['resource://*', 'chrome://*'],

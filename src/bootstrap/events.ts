@@ -4,6 +4,7 @@ import { protectData } from './modules/history/misc';
 import { updateMinimap } from './modules/minimap/minimap';
 import initPrefsPane from './modules/prefs';
 import { isEpubReader, isPDFReader, waitForReader } from './modules/utils';
+import addImagesPanelForReader from './modules/images/images';
 
 export function openReport() {
     Zotero.openInViewer(
@@ -129,12 +130,5 @@ export async function onOpenReader(
     event: _ZoteroTypes.Reader.EventParams<'renderToolbar'>
 ) {
     await waitForReader(event.reader);
-    switch (true) {
-        case isPDFReader(event.reader):
-            break; // PDFViewerApplication.eventBus?.on('pagechanging'
-        case isEpubReader(event.reader):
-            break;
-        default:
-            break;
-    }
+    addImagesPanelForReader(event.reader);
 }

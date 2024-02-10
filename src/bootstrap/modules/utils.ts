@@ -152,3 +152,9 @@ export function isEpubReader(
 ): reader is _ZoteroTypes.ReaderInstance<'epub'> {
     return reader.type == 'epub';
 }
+
+export function isWebReader(
+    reader: _ZoteroTypes.ReaderInstance
+): reader is _ZoteroTypes.ReaderInstance<'snapshot'> {
+    return reader.type == 'snapshot';
+}

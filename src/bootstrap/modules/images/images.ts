@@ -1,47 +1,58 @@
-import { ClipboardHelper } from "zotero-plugin-toolkit/dist/helpers/clipboard";
 import type { TagElementProps } from "zotero-plugin-toolkit/dist/tools/ui";
-import stylesheet from "./images.css";
+import { ClipboardHelper } from "zotero-plugin-toolkit/dist/helpers/clipboard";
+import { isPDFReader, isEpubReader, isWebReader } from "../utils";
+import stylesheet from "./images.sass";
+import icon from './viewImages.svg';
 
 /**
  * 给阅读器左侧边栏添加图片预览
  */
 export default async function addImagesPanelForReader(reader: _ZoteroTypes.ReaderInstance) {
-    switch (reader.type) {
-        case 'pdf': new PDFImages(reader); break;
-        case 'epub': new EPUBImages(reader); break;
-        case 'snapshot': new SnapshotImages(reader); break;
-        default: break;
+    switch (true) {
+        case isPDFReader(reader):
+            new PDFImages(reader);
+            break; // PDFViewerApplication.eventBus?.on('pagechanging'
+        case isEpubReader(reader):
+            new EPUBImages(reader);
+            break;
+        case isWebReader(reader):
+            new SnapshotImages(reader);
+            break;
+        default:
+            addon.log('Unknown reader type:', reader);
+            break;
     }
 }
 
-abstract class ReaderImages {
+abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap>{
     protected readonly doc: Document;
-    protected readonly primaryView: _ZoteroTypes.Reader.PDFView | _ZoteroTypes.Reader.EPUBView | _ZoteroTypes.Reader.SnapshotView;
+    protected readonly primaryView: _ZoteroTypes.Reader.ViewTypeMap[T];
     protected readonly imagesView: HTMLDivElement;
     protected readonly viewImages: HTMLButtonElement;
     protected popMsg: Zotero.ProgressWindow;
     protected progMeter: typeof Zotero.ProgressWindow.ItemProgress;
     protected loadedImages = 0;
 
-    constructor(reader: _ZoteroTypes.ReaderInstance) {
+    constructor(protected readonly reader: _ZoteroTypes.ReaderInstance<T>) {
         this.doc = reader._iframeWindow!.document;
-        this.primaryView = reader._primaryView;
+        this.primaryView = reader._primaryView as _ZoteroTypes.Reader.ViewTypeMap[T];
 
-        const btnAnnotations = this.doc.querySelector('#toolbarSidebar #viewAnnotations'),
-            sidebarCont = this.doc.getElementById('sidebarContent'),
-            toolButtons = this.doc.getElementById('toolbarSidebar')!.getElementsByTagName('button');
+        const sidebarCont = this.doc.getElementById('sidebarContent'),
+            btnCont = this.doc.querySelector('#sidebarContainer .start')!;
 
-        this.viewImages = addon.ui.insertElementBefore({
+        this.viewImages = addon.ui.appendElement({
             tag: 'button',
             namespace: 'html',
             id: 'viewImages',
-            classList: ['toolbarButton'],
+            classList: ['toolbar-button'],
             attributes: {
                 title: addon.locale.images.allImages,
                 tabindex: '-1'
             },
-            children: [{ tag: 'span' }]  // 背景
-        }, btnAnnotations!) as HTMLButtonElement;
+            properties: {
+                innerHTML: icon
+            }
+        }, btnCont) as HTMLButtonElement;
         this.imagesView = addon.ui.appendElement({
             tag: 'div',
             id: 'imagesView',
@@ -57,26 +68,27 @@ abstract class ReaderImages {
         }, this.doc.head);
 
         // 标签按钮切换的额外操作
-        for (const btn of toolButtons)
-            btn.onclick = (e: MouseEvent) => {
-                addon.log(e);
-                const b = e.target as HTMLButtonElement;
-                if (b.id == 'viewImages' || b.parentElement?.id == 'viewImages') {
-                    reader.setSidebarView('chartero');
-                    this.viewImages.classList.toggle('toggled', true);
-                    this.imagesView.classList.toggle('hidden', false);
-                    if (!this.loadedImages)
-                        this.loadAllImages();
-                } else {
-                    b.ownerDocument
-                        .getElementById('viewImages')?.classList
-                        .toggle('toggled', false);
-                    b.ownerDocument
-                        .getElementById('imagesView')?.classList
-                        .toggle('hidden', true);
-                    addon.log('hide images');
-                }
-            };
+        addon.registerListener(btnCont, 'click', e => {
+            addon.log(e);
+            if ((e.target as Element).tagName == 'DIV')
+                return;
+            const b = (e.target as Element).closest('button')!;
+            if (b.id == 'viewImages') {
+                reader.setSidebarView('chartero');
+                this.viewImages.classList.toggle('active', true);
+                this.imagesView.classList.toggle('hidden', false);
+                if (!this.loadedImages)
+                    this.loadAllImages();
+            } else {
+                b.ownerDocument
+                    .getElementById('viewImages')?.classList
+                    .toggle('active', false);
+                b.ownerDocument
+                    .getElementById('imagesView')?.classList
+                    .toggle('hidden', true);
+                addon.log('hide images');
+            }
+        });
     }
 
     protected abstract loadMoreImages(): Promise<void>;
@@ -99,7 +111,7 @@ abstract class ReaderImages {
         );
         this.popMsg.show();
 
-        await this.loadMoreImages();
+        await this.loadMoreImages().catch(addon.log);
 
         this.updateProgress(100);
         this.viewImages.removeAttribute('disabled');
@@ -134,8 +146,7 @@ abstract class ReaderImages {
     protected abstract updateProgress(percentage: number): void;
 }
 
-class PDFImages extends ReaderImages {
-    private readonly reader: _ZoteroTypes.ReaderInstance;
+class PDFImages extends ReaderImages<'pdf'> {
     private readonly btnLoadMore: HTMLButtonElement;
     private readonly positions = new Array<{
         pageIndex: number,
@@ -143,9 +154,8 @@ class PDFImages extends ReaderImages {
     }>();
     private loadedPages = 0;
 
-    constructor(reader: _ZoteroTypes.ReaderInstance) {
+    constructor(reader: _ZoteroTypes.ReaderInstance<'pdf'>) {
         super(reader);
-        this.reader = reader;
         this.btnLoadMore = addon.ui.appendElement({
             tag: 'button',
             namespace: 'html',
@@ -174,7 +184,7 @@ class PDFImages extends ReaderImages {
 
     async loadMoreImages() {
         this.btnLoadMore.classList.toggle('hidden', true);
-        const win = (this.primaryView as _ZoteroTypes.Reader.PDFView)._iframeWindow!,
+        const win = this.primaryView._iframeWindow!,
             viewerApp = win.PDFViewerApplication;
 
         await viewerApp.pdfLoadingTask?.promise;
@@ -189,7 +199,7 @@ class PDFImages extends ReaderImages {
             const pdfPage: _ZoteroTypes.Reader.PDFPageProxy =
                 viewerApp.pdfViewer!._pages![this.loadedPages].pdfPage,
                 opList = await pdfPage.getOperatorList(),
-                svgGfx = new win.pdfjsLib.SVGGraphics(pdfPage.commonObjs, pdfPage.objs),
+                svgGfx = new win.pdfjsLib.SVGGraphics!(pdfPage.commonObjs, pdfPage.objs),
                 // 页面转换为svg
                 svg: unknown = await svgGfx.getSVG(opList, pdfPage.getViewport({ scale: 1 })),
                 imgArr = Array.from((svg as SVGElement).getElementsByTagName('svg:image')),
@@ -237,7 +247,7 @@ class PDFImages extends ReaderImages {
     }
 }
 
-abstract class DOMImages<DOMImageElement extends (SVGImageElement | HTMLImageElement)> extends ReaderImages {
+abstract class DOMImages<DOMImageElement extends (SVGImageElement | HTMLImageElement)> extends ReaderImages<'epub' | 'snapshot'>{
     protected readonly imageLinks = new Array<DOMImageElement>();
     protected readonly abstract imageSelector: string;
 
