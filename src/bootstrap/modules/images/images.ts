@@ -78,7 +78,7 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap>{
                 this.viewImages.classList.toggle('active', true);
                 this.imagesView.classList.toggle('hidden', false);
                 if (!this.loadedImages)
-                    this.loadAllImages();
+                    this.loadAll();  // 初始化
             } else {
                 b.ownerDocument
                     .getElementById('viewImages')?.classList
@@ -91,10 +91,10 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap>{
         });
     }
 
-    protected abstract loadMoreImages(): Promise<void>;
     protected abstract onImageClick(e: MouseEvent): void;
+    protected abstract loadAllImages(): Promise<void>;
 
-    protected async loadAllImages() {
+    private async loadAll() {
         this.viewImages.setAttribute('disabled', '1');
 
         // 初始化右下角弹窗
@@ -111,10 +111,91 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap>{
         );
         this.popMsg.show();
 
-        await this.loadMoreImages().catch(addon.log.bind(addon));
+        await this.loadAllImages().catch(addon.log.bind(addon));
 
         this.updateProgress(100);
         this.viewImages.removeAttribute('disabled');
+    }
+
+    protected abstract updateProgress(percentage: number): void;
+}
+
+class PDFImages extends ReaderImages<'pdf'> {
+    private readonly hrList: Record<number, HTMLHRElement> = {};
+    protected onImageClick() { }
+
+    private onRenderImage(page: number, { data, rect }: {
+        data: ImageBitmap,
+        rect: { left: number, top: number, bottom: number, right: number }
+    }) {
+        const canvas = this.doc.createElement('canvas'),
+            ctx = canvas.getContext('2d')!;
+        canvas.width = data.width;
+        canvas.height = data.height;
+        ctx.drawImage(data, 0, 0);
+        canvas.classList.add('previewImg');
+        canvas.setAttribute('title', addon.locale.images.dblClickToCopy);
+        canvas.addEventListener('click', () => this.reader.navigate({
+            position: {
+                pageIndex: page,
+                rects: [[rect.left, rect.bottom, rect.right, rect.top]]
+            }
+        }));
+        canvas.addEventListener(
+            'dblclick',
+            () => new ClipboardHelper().addImage(canvas.toDataURL()).copy()
+        );
+        this.imagesView.insertBefore(canvas, this.addHR(page));
+    }
+
+    private addHR(page: number) {
+        const lastPage = Object.keys(this.hrList).at(-1),
+            lastHR = lastPage && this.hrList[parseInt(lastPage)],
+            hrProps: TagElementProps = {
+                tag: 'hr',
+                classList: ['hr-text'],
+                attributes: { 'data-content': page }
+            };
+        return this.hrList[page] ??= (
+            lastHR ?
+                addon.ui.insertElementBefore(hrProps, lastHR) :
+                addon.ui.appendElement(hrProps, this.imagesView)
+        ) as HTMLHRElement;
+    }
+
+    async loadAllImages() {
+        const viewerApp = this.primaryView._iframeWindow!.PDFViewerApplication,
+            dat = await (this.reader as any)._getData() as { url: string };
+        await viewerApp.pdfLoadingTask?.promise;
+        await viewerApp.pdfViewer?.pagesPromise;
+        addon.worker.subscribePDF(dat.url, this.onRenderImage.bind(this));
+        await addon.worker.query('getAllImages', dat.url);
+    }
+
+    protected updateProgress(percentage: number, page: number = 0) {
+        if (percentage >= 100) {
+            this.progMeter.setProgress(100);
+            this.progMeter.setText(addon.locale.images.imagesLoaded);
+            this.popMsg.startCloseTimer(2333);
+        } else {
+            this.progMeter.setProgress(percentage);
+            this.progMeter.setText('Scanning images in page ' + page);
+        }
+    }
+}
+
+abstract class DOMImages<DOMImageElement extends (SVGImageElement | HTMLImageElement)> extends ReaderImages<'epub' | 'snapshot'>{
+    protected readonly imageLinks = new Array<DOMImageElement>();
+    protected readonly abstract imageSelector: string;
+
+    async loadAllImages() {
+        const doc = (this.primaryView as any)._iframeDocument as Document,
+            imgList: NodeListOf<DOMImageElement> = doc.querySelectorAll(this.imageSelector);
+        Array.prototype.forEach.call(imgList, (img: DOMImageElement) => {
+            const url = img instanceof window.SVGImageElement ? img.href.baseVal : img.src;
+            addon.ui.appendElement(this.renderImage(url), this.imagesView);
+            this.imageLinks.push(img);
+        });
     }
 
     protected renderImage(url: string): TagElementProps {
@@ -134,6 +215,14 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap>{
         }
     }
 
+    protected onImageClick(e: MouseEvent): void {
+        const idx = (e.target as HTMLImageElement).id.split('-').at(-1);
+        if (idx)
+            this.imageLinks[parseInt(idx)].scrollIntoView({ behavior: 'smooth' });
+        else
+            addon.log('No image to scroll.');
+    }
+
     protected onImageDblClick(this: HTMLImageElement) {
         addon.log(this);
         const canvas = this.ownerDocument.createElement('canvas');
@@ -141,168 +230,6 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap>{
         canvas.height = this.naturalHeight;
         canvas.getContext('2d')?.drawImage(this, 0, 0);
         new ClipboardHelper().addImage(canvas.toDataURL()).copy();
-    }
-
-    protected abstract updateProgress(percentage: number): void;
-}
-
-class PDFImages extends ReaderImages<'pdf'> {
-    private readonly btnLoadMore: HTMLButtonElement;
-    private readonly positions = new Array<{
-        pageIndex: number,
-        rects: Array<[number, number, number, number]>
-    }>();
-    private loadedPages = 0;
-
-    constructor(reader: _ZoteroTypes.ReaderInstance<'pdf'>) {
-        super(reader);
-        this.btnLoadMore = addon.ui.appendElement({
-            tag: 'button',
-            namespace: 'html',
-            id: 'btnLoadMore',
-            properties: { innerHTML: addon.locale.images.loadMore },
-            listeners: [{ type: 'click', listener: this.loadAllImages.bind(this) }]
-        }, this.imagesView) as HTMLButtonElement;
-        addon.worker.subscribePDF(reader._data.url, (page: number, payload: {
-            data: ImageBitmap,
-            transform: number[]
-        }) => {
-            const canvas = this.doc.createElement('canvas'),
-                ctx = canvas.getContext('2d')!;
-            canvas.width = payload.data.width;
-            canvas.height = payload.data.height;
-            ctx.drawImage(payload.data, 0, 0);
-            canvas.classList.add('previewImg');
-            this.imagesView.insertBefore(canvas, this.btnLoadMore);
-        });
-    }
-
-    /**
-     * 计算图片在页面中的位置
-     */
-    private calcRect(elm: SVGGElement): [number, number, number, number] {
-        const childMatrix = elm.transform.baseVal.consolidate()!.matrix,
-            parentMatrix = (elm.parentNode as SVGGElement).transform.baseVal.consolidate()!.matrix,
-            width = Number(elm.attributes.getNamedItem('width')!.value.slice(0, -2)),
-            height = Number(elm.attributes.getNamedItem('height')!.value.slice(0, -2)),
-            tWidth = Math.abs(width * childMatrix.a * parentMatrix.a),
-            tHeight = Math.abs(height * childMatrix.d * parentMatrix.d),
-            bottom = childMatrix.f + parentMatrix.f,
-            left = childMatrix.e + parentMatrix.e;
-        window.console.table([childMatrix, parentMatrix]);
-        // addon.log(left, top, right, bottom);
-        return [left, bottom, left + tWidth, bottom + tHeight];
-    }
-
-    async loadMoreImages() {
-        this.btnLoadMore.classList.toggle('hidden', true);
-        const win = this.primaryView._iframeWindow!,
-            viewerApp = win.PDFViewerApplication;
-
-        await viewerApp.pdfLoadingTask?.promise;
-        await viewerApp.pdfViewer?.pagesPromise;
-
-        async function f1(page: _ZoteroTypes.Reader.PDFPageProxy) {
-            const opList = await page.getOperatorList({
-                annotationMode: win.pdfjsLib.AnnotationMode.DISABLE
-            }),
-                ops = zip(opList.fnArray, opList.argsArray),
-                svgGfx = new win.pdfjsLib.SVGGraphics!(page.commonObjs, page.objs),
-                result = win.document.createDocumentFragment();  // Restricted
-            for (const [fn, args] of ops) {
-                if (fn === win.pdfjsLib.OPS.paintImageXObject) {
-                    const img = page.objs.get(args[0]);
-                    svgGfx.paintInlineImageXObject(img, result);
-                }
-            }
-            return Array.from(result.children);
-        }
-        async function f2(page: _ZoteroTypes.Reader.PDFPageProxy) {
-            const opList = await page.getOperatorList(),
-                svgGfx = new win.pdfjsLib.SVGGraphics!(page.commonObjs, page.objs),
-                svg: unknown = await svgGfx.getSVG(opList, page.getViewport({ scale: 1 }));
-            return Array.from((svg as SVGElement).getElementsByTagName('svg:image'));
-        }
-
-        window.console.time('getAllImages');
-        await addon.worker.query('getAllImages', this.reader._data.url)
-        window.console.timeEnd('getAllImages');
-        return;
-
-        for (
-            let i = 0;
-            i < 10 && this.loadedPages < viewerApp.pdfDocument!.numPages;
-            ++this.loadedPages
-        ) {
-            this.updateProgress(i * 10, this.loadedPages);
-            const pdfPage: _ZoteroTypes.Reader.PDFPageProxy =
-                viewerApp.pdfViewer!._pages![this.loadedPages].pdfPage,
-                imgArr = await f2(pdfPage),
-                urlArr = imgArr.map(img => img.getAttribute('xlink:href'));  // 获取所有图片的链接
-            if (urlArr.length < 1 || urlArr.length > 60)  // 每页超过多少张图不显示
-                continue;
-            ++i;
-            this.positions.push(...imgArr.map(img => ({
-                pageIndex: this.loadedPages,
-                rects: [this.calcRect(img as SVGGElement)]
-            })));
-
-            for (const url of urlArr)
-                addon.ui.insertElementBefore(
-                    this.renderImage(url || ''),
-                    this.btnLoadMore
-                );
-            // addon.ui.insertElementBefore({
-            //     tag: 'hr',
-            //     classList: ['hr-text'],
-            //     attributes: { 'data-content': pdfPage.pageNumber }
-            // }, this.btnLoadMore);
-        }
-        window.console.timeEnd('getAllImages');
-        if (this.loadedPages < viewerApp.pdfDocument!.numPages)
-            this.btnLoadMore.classList.toggle('hidden', false);
-    }
-
-    protected onImageClick(this: PDFImages, e: MouseEvent) {
-        const idx = (e.target as HTMLImageElement).id.split('-').at(-1),
-            pos = idx && this.positions[parseInt(idx) - 1];
-        if (__dev__)
-            addon.log(pos);
-        pos && this.reader.navigate({ position: pos });
-    }
-
-    protected updateProgress(percentage: number, page: number = 0) {
-        if (percentage >= 100) {
-            this.progMeter.setProgress(100);
-            this.progMeter.setText(addon.locale.images.imagesLoaded);
-            this.popMsg.startCloseTimer(2333);
-        } else {
-            this.progMeter.setProgress(percentage);
-            this.progMeter.setText('Scanning images in page ' + page);
-        }
-    }
-}
-
-abstract class DOMImages<DOMImageElement extends (SVGImageElement | HTMLImageElement)> extends ReaderImages<'epub' | 'snapshot'>{
-    protected readonly imageLinks = new Array<DOMImageElement>();
-    protected readonly abstract imageSelector: string;
-
-    async loadMoreImages() {
-        const doc = (this.primaryView as any)._iframeDocument as Document,
-            imgList: NodeListOf<DOMImageElement> = doc.querySelectorAll(this.imageSelector);
-        Array.prototype.forEach.call(imgList, (img: DOMImageElement) => {
-            const url = img instanceof window.SVGImageElement ? img.href.baseVal : img.src;
-            addon.ui.appendElement(this.renderImage(url), this.imagesView);
-            this.imageLinks.push(img);
-        });
-    }
-
-    protected onImageClick(e: MouseEvent): void {
-        const idx = (e.target as HTMLImageElement).id.split('-').at(-1);
-        if (idx)
-            this.imageLinks[parseInt(idx)].scrollIntoView({ behavior: 'smooth' });
-        else
-            addon.log('No image to scroll.');
     }
 
     protected updateProgress(): void {

@@ -2,8 +2,8 @@ export abstract class WorkerManagerBase<T extends Worker | DedicatedWorkerGlobal
     private readonly queue = new TaskQueue();
     constructor(protected readonly that: T) {
         that.onmessage = event => {
-            if (event.data.response) this.onResponse(event.data.response);
-            else if (event.data.request) this.onRequest(event.data.request);
+            if (event.data?.response) this.onResponse(event.data.response);
+            else if (event.data?.request) this.onRequest(event.data.request);
             else this.onDefault(event.data);
         };
     }
