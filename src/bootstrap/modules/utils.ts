@@ -158,3 +158,8 @@ export function isWebReader(
 ): reader is _ZoteroTypes.ReaderInstance<'snapshot'> {
     return reader.type == 'snapshot';
 }
+
+export function zip<T, U>(a: T[], b: U[]): [T, U][] {
+    const length = Math.min(a.length, b.length);
+    return Array.from({ length }, (v, i) => [a[i], b[i]]);
+}

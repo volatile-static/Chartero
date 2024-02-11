@@ -80,6 +80,7 @@
         "eslint-plugin-mozilla": "^3.3.2",
         "eslint-plugin-vue": "^9.21.1",
         "lodash": "^4.17.21",
+        "pdfjs-dist": "~3.8.0",
         "prettier": "3.2.5",
         "release-it": "^17.0.3",
         "replace-in-file": "^7.1.0",

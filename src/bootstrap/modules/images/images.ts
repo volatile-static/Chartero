@@ -1,6 +1,6 @@
 import type { TagElementProps } from "zotero-plugin-toolkit/dist/tools/ui";
 import { ClipboardHelper } from "zotero-plugin-toolkit/dist/helpers/clipboard";
-import { isPDFReader, isEpubReader, isWebReader } from "../utils";
+import { isPDFReader, isEpubReader, isWebReader, zip } from "../utils";
 import stylesheet from "./images.sass";
 import icon from './viewImages.svg';
 
@@ -111,7 +111,7 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap>{
         );
         this.popMsg.show();
 
-        await this.loadMoreImages().catch(addon.log);
+        await this.loadMoreImages().catch(addon.log.bind(addon));
 
         this.updateProgress(100);
         this.viewImages.removeAttribute('disabled');
@@ -189,7 +189,29 @@ class PDFImages extends ReaderImages<'pdf'> {
 
         await viewerApp.pdfLoadingTask?.promise;
         await viewerApp.pdfViewer?.pagesPromise;
-        viewerApp.pdfLinkService?.goToDestination
+
+        async function f1(page: _ZoteroTypes.Reader.PDFPageProxy) {
+            const opList = await page.getOperatorList({
+                annotationMode: win.pdfjsLib.AnnotationMode.DISABLE
+            }),
+                ops = zip(opList.fnArray, opList.argsArray),
+                svgGfx = new win.pdfjsLib.SVGGraphics!(page.commonObjs, page.objs),
+                result = win.document.createDocumentFragment();  // Restricted
+            for (const [fn, args] of ops) {
+                if (fn === win.pdfjsLib.OPS.paintImageXObject) {
+                    const img = page.objs.get(args[0]);
+                    svgGfx.paintInlineImageXObject(img, result);
+                }
+            }
+            return Array.from(result.children);
+        }
+        async function f2(page: _ZoteroTypes.Reader.PDFPageProxy) {
+            const opList = await page.getOperatorList(),
+                svgGfx = new win.pdfjsLib.SVGGraphics!(page.commonObjs, page.objs),
+                svg: unknown = await svgGfx.getSVG(opList, page.getViewport({ scale: 1 }));
+            return Array.from((svg as SVGElement).getElementsByTagName('svg:image'));
+        }
+
         for (
             let i = 0;
             i < 10 && this.loadedPages < viewerApp.pdfDocument!.numPages;
@@ -198,11 +220,7 @@ class PDFImages extends ReaderImages<'pdf'> {
             this.updateProgress(i * 10, this.loadedPages);
             const pdfPage: _ZoteroTypes.Reader.PDFPageProxy =
                 viewerApp.pdfViewer!._pages![this.loadedPages].pdfPage,
-                opList = await pdfPage.getOperatorList(),
-                svgGfx = new win.pdfjsLib.SVGGraphics!(pdfPage.commonObjs, pdfPage.objs),
-                // 页面转换为svg
-                svg: unknown = await svgGfx.getSVG(opList, pdfPage.getViewport({ scale: 1 })),
-                imgArr = Array.from((svg as SVGElement).getElementsByTagName('svg:image')),
+                imgArr = await f2(pdfPage),
                 urlArr = imgArr.map(img => img.getAttribute('xlink:href'));  // 获取所有图片的链接
             if (urlArr.length < 1 || urlArr.length > 60)  // 每页超过多少张图不显示
                 continue;

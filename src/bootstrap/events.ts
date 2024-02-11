@@ -3,7 +3,7 @@ import { renderSummaryPanel, updateDashboard } from './modules/sidebar';
 import { protectData } from './modules/history/misc';
 import { updateMinimap } from './modules/minimap/minimap';
 import initPrefsPane from './modules/prefs';
-import { isEpubReader, isPDFReader, waitForReader } from './modules/utils';
+import { waitForReader } from './modules/utils';
 import addImagesPanelForReader from './modules/images/images';
 
 export function openReport() {
