@@ -4,10 +4,13 @@ export abstract class WorkerManagerBase<T extends Worker | DedicatedWorkerGlobal
         that.onmessage = event => {
             if (event.data.response) this.onResponse(event.data.response);
             else if (event.data.request) this.onRequest(event.data.request);
-            else throw new Error('Unknown message from worker');
+            else this.onDefault(event.data);
         };
     }
     protected abstract onRequest(request: WorkerRequest): void;
+    protected onDefault(data: any) {
+        throw new Error('Unknown message: ' + JSON.stringify(data));
+    }
     private onResponse(response: WorkerResponse) {
         const { resolve } = this.queue.pop(response.id);
         resolve(response.result);

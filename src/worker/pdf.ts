@@ -1,5 +1,3 @@
-import { zip } from '../bootstrap/modules/utils';
-
 export function processPDF(url: string) {
     return new Promise(resolve => processInPromise(url, resolve));
 }
@@ -22,65 +20,32 @@ async function processInPromise(url: string, resolve: (value: string) => void) {
 }
 
 export async function getPdfDoc(url: string) {
-    const file = await fetch('zotero://attachment/library/items/9NZ29NR8'),
-        data = await file.arrayBuffer(),
-        pdf = await pdfjsLib.getDocument({
-            // data: file.buffer,
-            data,
-            useWorkerFetch: false,
-            // ownerDocument: {
-            //     createElement(name: string) {
-            //         if (name === 'canvas')
-            //             return new OffscreenCanvas(1, 1);
-            //         // console.trace('createElement', name);
-            //         return null;
-            //     }
-            // }
-        }).promise;
+    const file = await fetch(url),
+        data = await file.arrayBuffer();
+    return pdfjsLib.getDocument({ data, useWorkerFetch: false }).promise;
+}
+
+export async function getAllImages(url: string) {
+    const pdf = await getPdfDoc(url);
+        // result = new Array<[ImageBitmap, number[]]>();
     for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i),
-            opList = await page.getOperatorList(),
-            ops = zip(opList.fnArray, opList.argsArray);
-        // for (const [fn, args] of ops)
-        //     if (fn == pdfjsLib.OPS.paintImageXObject)
-        //         console.warn(page.objs.get(args[0]));
-
-        for (let i = 0; i < ops.length; i++)
+            opList = await page.getOperatorList();
+        for (let i = 0; i < opList.fnArray.length; i++)
             if (opList.fnArray[i] == pdfjsLib.OPS.paintImageXObject) {
+                console.table(opList.argsArray.slice(i - 10, i + 5));
                 const transform = opList.argsArray[i - 2],
-                    data = page.objs.get(opList.argsArray[i][0]);
-                console.debug(data, transform);
-                return data.bitmap;
+                    data = page.objs.get(opList.argsArray[i][0]).bitmap;
+                postMessage({
+                    stream: {
+                        payload: {data, transform},
+                        method: 'allImages',
+                        url,
+                        page: i,
+                        pages: pdf.numPages,
+                    }
+                }, [data]);
             }
-
-        //             viewport = page.getViewport({ scale: 1 }),
-        //             canvas = new OffscreenCanvas(viewport.width, viewport.height),
-        //             ctx = canvas.getContext('2d');
-        //         ctx!.fillText = () => {};
-        //         await page.render({
-        //             canvasContext: ctx!,
-        //             viewport,
-        //             intent: 'print',
-        //             annotationMode: pdfjsLib.AnnotationMode.DISABLE
-        //         }).promise.catch(console.error);
-        //         console.debug(page.objs);
-        //     }
-        // return pdf;
-
-        // const page = await pdf.getPage(2),
-        //     opList = await page.getOperatorList(),
-        // const svgGfx = new pdfjsLib.SVGGraphics!(page.commonObjs, page.objs);
-
-        // const svg = await svgGfx.getSVG(opList, page.getViewport({ scale: 1 })).catch(console.trace);
-        // console.info(svg.find('im'));
-        // return svg;
-
-        // fnList.map(([fn, args]) => {
-        //     const op = Object.entries(pdfjsLib.OPS).find(
-        //         ([, value]) => value === fn
-        //     )![0],
-        //         obj = page.objs.get(args[0]);
-        //     return { op, obj };
-        // });
     }
+    return pdf.numPages;
 }

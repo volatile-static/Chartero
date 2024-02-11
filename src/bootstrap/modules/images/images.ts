@@ -163,6 +163,18 @@ class PDFImages extends ReaderImages<'pdf'> {
             properties: { innerHTML: addon.locale.images.loadMore },
             listeners: [{ type: 'click', listener: this.loadAllImages.bind(this) }]
         }, this.imagesView) as HTMLButtonElement;
+        addon.worker.subscribePDF(reader._data.url, (page: number, payload: {
+            data: ImageBitmap,
+            transform: number[]
+        }) => {
+            const canvas = this.doc.createElement('canvas'),
+                ctx = canvas.getContext('2d')!;
+            canvas.width = payload.data.width;
+            canvas.height = payload.data.height;
+            ctx.drawImage(payload.data, 0, 0);
+            canvas.classList.add('previewImg');
+            this.imagesView.insertBefore(canvas, this.btnLoadMore);
+        });
     }
 
     /**
@@ -212,6 +224,11 @@ class PDFImages extends ReaderImages<'pdf'> {
             return Array.from((svg as SVGElement).getElementsByTagName('svg:image'));
         }
 
+        window.console.time('getAllImages');
+        await addon.worker.query('getAllImages', this.reader._data.url)
+        window.console.timeEnd('getAllImages');
+        return;
+
         for (
             let i = 0;
             i < 10 && this.loadedPages < viewerApp.pdfDocument!.numPages;
@@ -235,12 +252,13 @@ class PDFImages extends ReaderImages<'pdf'> {
                     this.renderImage(url || ''),
                     this.btnLoadMore
                 );
-            addon.ui.insertElementBefore({
-                tag: 'hr',
-                classList: ['hr-text'],
-                attributes: { 'data-content': pdfPage.pageNumber }
-            }, this.btnLoadMore);
+            // addon.ui.insertElementBefore({
+            //     tag: 'hr',
+            //     classList: ['hr-text'],
+            //     attributes: { 'data-content': pdfPage.pageNumber }
+            // }, this.btnLoadMore);
         }
+        window.console.timeEnd('getAllImages');
         if (this.loadedPages < viewerApp.pdfDocument!.numPages)
             this.btnLoadMore.classList.toggle('hidden', false);
     }
