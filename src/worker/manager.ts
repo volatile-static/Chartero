@@ -51,7 +51,7 @@ export abstract class WorkerManagerBase<T extends WorkerMode> {
 export interface WorkerRequest<T extends WorkerMode, K extends keyof WorkerMethods = any> {
     id: number;
     method: T extends Worker ? K : 'eval';
-    params?: T extends Worker ? WorkerMethodParams<K> : object;
+    params?: T extends Worker ? WorkerMethodParams<K> : any[];
 }
 
 export interface WorkerResponse {

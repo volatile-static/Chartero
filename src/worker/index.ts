@@ -7,7 +7,7 @@ pdfjsLib.GlobalWorkerOptions.workerPort = new Worker(
 );
 
 class WorkerSlave extends WorkerManagerBase<DedicatedWorkerGlobalScope> {
-    protected async onRequest(request: WorkerRequest) {
+    protected async onRequest(request: WorkerRequest<DedicatedWorkerGlobalScope>) {
         const [result, transfer] = await process(request.method, request.params),
             response: WorkerResponse = { id: request.id, result };
         postMessage({ response }, transfer);
