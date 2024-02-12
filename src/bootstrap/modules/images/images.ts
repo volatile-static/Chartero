@@ -1,6 +1,6 @@
 import type { TagElementProps } from "zotero-plugin-toolkit/dist/tools/ui";
 import { ClipboardHelper } from "zotero-plugin-toolkit/dist/helpers/clipboard";
-import { isPDFReader, isEpubReader, isWebReader, zip } from "../utils";
+import { isPDFReader, isEpubReader, isWebReader, PdfImageListener } from "../utils";
 import stylesheet from "./images.sass";
 import icon from './viewImages.svg';
 
@@ -124,10 +124,7 @@ class PDFImages extends ReaderImages<'pdf'> {
     private readonly hrList: Record<number, HTMLHRElement> = {};
     protected onImageClick() { }
 
-    private onRenderImage(page: number, { data, rect }: {
-        data: ImageBitmap,
-        rect: { left: number, top: number, bottom: number, right: number }
-    }) {
+    private onRenderImage: PdfImageListener = (pageNum, imgNum, { data, rect, pageIdx }) =>{
         const canvas = this.doc.createElement('canvas'),
             ctx = canvas.getContext('2d')!;
         canvas.width = data.width;
@@ -137,15 +134,15 @@ class PDFImages extends ReaderImages<'pdf'> {
         canvas.setAttribute('title', addon.locale.images.dblClickToCopy);
         canvas.addEventListener('click', () => this.reader.navigate({
             position: {
-                pageIndex: page,
-                rects: [[rect.left, rect.bottom, rect.right, rect.top]]
+                pageIndex: pageIdx,
+                rects: [rect]
             }
         }));
         canvas.addEventListener(
             'dblclick',
             () => new ClipboardHelper().addImage(canvas.toDataURL()).copy()
         );
-        this.imagesView.insertBefore(canvas, this.addHR(page));
+        this.imagesView.insertBefore(canvas, this.addHR(pageIdx));
     }
 
     private addHR(page: number) {

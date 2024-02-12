@@ -116,8 +116,14 @@ export class DebuggerBackend implements _ZoteroTypes.Server.Endpoint {
     };
 }
 
+export type PdfImageListener = (pageNum: number, imageNum: number, payload: {
+    data: ImageBitmap,
+    id: string,
+    rect: number[],
+    pageIdx: number
+}) => void;
 export class WorkerManager extends WorkerManagerBase<Worker> {
-    private readonly pdfListeners: Record<string, Function> = {};
+    private readonly pdfListeners: Record<string, PdfImageListener> = {};
 
     protected async onRequest(request: WorkerRequest<Worker>) {
         try {
@@ -137,10 +143,10 @@ export class WorkerManager extends WorkerManagerBase<Worker> {
     protected onDefault(data: _ZoteroTypes.anyObj) {
         if (data.stream?.method == 'allImages') {
             const listener = this.pdfListeners[data.stream.url];
-            if (listener) listener(data.stream.page, data.stream.payload);
+            if (listener) listener(data.stream.pageNum, data.stream.imageNum, data.stream.payload);
         }
     }
-    subscribePDF(id: string, listener: Function) {
+    subscribePDF(id: string, listener: PdfImageListener) {
         this.pdfListeners[id] = listener;
     }
     async close() {

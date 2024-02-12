@@ -1,4 +1,6 @@
-import type { WorkerStream } from "./manager";
+import { isValid } from '../bootstrap/modules/utils';
+import type { WorkerStream } from './manager';
+import type { PDFDocumentProxy } from '../../node_modules/pdfjs-dist/types/src/pdf';
 
 export function processPDF(url: string) {
     return new Promise(resolve => processInPromise(url, resolve));
@@ -27,45 +29,57 @@ export async function getPdfDoc(url: string) {
     return pdfjsLib.getDocument({ data, useWorkerFetch: false }).promise;
 }
 
+async function getPageImages(pdf: PDFDocumentProxy, pageIdx: number, url: string) {
+    const page = await pdf.getPage(pageIdx + 1),
+        opList = await page.getOperatorList(),
+        imgList = opList.fnArray
+            .map((fn, i) => (fn == pdfjsLib.OPS.paintImageXObject ? i : undefined))
+            .filter(isValid);
+    for (const i of imgList) {
+        const id: string = opList.argsArray[i][0],
+            data: ImageBitmap = page.objs.get(id).bitmap,
+            matrixes = new Array<Matrix>();
+        for (let j = i - 2; j > 1 && matrixes.length < 5; j -= 2)
+            if (opList.fnArray[j] == pdfjsLib.OPS.transform) matrixes.push(opList.argsArray[j]);
+            else break;
+        const [a, , , d, e, f] = matrixes.reduceRight(multiply, [1, 0, 0, 1, 0, 0]),
+            rect = [e, f, e + a, f + d];
+        postMessage(
+            {
+                stream: {
+                    method: 'allImages',
+                    url,
+                    pageNum: pdf.numPages,
+                    imageNum: imgList.length,
+                    payload: { data, id, rect, pageIdx },
+                } as WorkerStream,
+            },
+            [data],
+        );
+    }
+}
 export async function getAllImages(url: string) {
     const pdf = await getPdfDoc(url);
-    // result = new Array<[ImageBitmap, number[]]>();
-    for (let p = 1; p <= pdf.numPages; p++) {
-        const page = await pdf.getPage(p),
-            opList = await page.getOperatorList();
-        for (let i = 6; i < opList.fnArray.length; i++)
-            if (
-                opList.fnArray[i] == pdfjsLib.OPS.paintImageXObject &&
-                [2, 4, 6].every(j => opList.fnArray[i - j] == pdfjsLib.OPS.transform)
-            ) {
-                const matrixes: Array<number[]> = [2, 4, 6].map(j => opList.argsArray[i - j]),
-                    id = opList.argsArray[i][0],
-                    data: ImageBitmap = page.objs.get(id).bitmap,
-                    transform = matrixes.reduce(multiply, [1, 0, 0, 1, 0, 0]),
-                    rect = {
-                        left: transform[4],
-                        bottom: transform[5],
-                        right: transform[4] + transform[0],
-                        top: transform[5] + transform[3],
-                    };
-                postMessage(
-                    {
-                        stream: {
-                            method: 'allImages',
-                            url,
-                            page: p - 1,
-                            pages: pdf.numPages,
-                            payload: { data, rect, id },
-                        } as WorkerStream,
-                    },
-                    [data],
-                );
-            }
-    }
+    await Promise.all(Array.from({ length: pdf.numPages }, (_, i) => getPageImages(pdf, i, url)));
     return pdf.numPages;
+    // const zippedOps = zip(opList.fnArray, opList.argsArray);
+    // for (let i = 0; i < opList.fnArray.length; ++i)
+    //     if (opList.fnArray[i] == 1 &&  opList.fnArray[i + 1] != 37) {
+    //         const opTable = zippedOps.slice(i - 9, i + 6).map(([fn, op]) => {
+    //             const opName = Object.entries(pdfjsLib.OPS)
+    //                 .find(([, v]) => v == fn)!
+    //                 .at(0);
+    //             return { opName, op };
+    //         });
+    //         const names = opList.fnArray.slice(i - 9, i + 6).map(op =>
+    //             Object.entries(pdfjsLib.OPS).find(([, v]) => v == op)![0]
+    //         ), ops = opList.argsArray.slice(i - 9, i + 6);
+    //         console.table([names, ops]);
+    //     }
 }
 
-function multiply(left: number[], right: number[]) {
+type Matrix = [number, number, number, number, number, number];
+function multiply(left: Matrix, right: Matrix): Matrix {
     return [
         left[0] * right[0] + left[2] * right[1],
         left[1] * right[0] + left[3] * right[1],
