@@ -49,9 +49,10 @@ async function onMainWindowUnload({ window }, reason) {
     // addon.unload();
 }
 
-function shutdown({ id, version, resourceURI, rootURI }, reason) {
+async function shutdown({ id, version, resourceURI, rootURI }, reason) {
+    addon.log(reason);
     if (reason === APP_SHUTDOWN) return;
-    addon.unload();
+    await addon.unload();
 
     // eslint-disable-next-line mozilla/use-services
     Cc['@mozilla.org/intl/stringbundle;1'].getService(Ci.nsIStringBundleService).flushBundles();

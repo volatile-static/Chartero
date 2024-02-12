@@ -1,3 +1,5 @@
+import type { WorkerStream } from "./manager";
+
 export function processPDF(url: string) {
     return new Promise(resolve => processInPromise(url, resolve));
 }
@@ -39,21 +41,7 @@ export async function getAllImages(url: string) {
                 const matrixes: Array<number[]> = [2, 4, 6].map(j => opList.argsArray[i - j]),
                     id = opList.argsArray[i][0],
                     data: ImageBitmap = page.objs.get(id).bitmap,
-                    transform = matrixes.reduce(
-                        (tran, mat) => {
-                            const [a, b, c, d, e, f] = mat,
-                                [A, B, C, D, E, F] = tran;
-                            return [
-                                a * A + c * B,
-                                b * A + d * B,
-                                a * C + c * D,
-                                b * C + d * D,
-                                a * E + c * F + e,
-                                b * E + d * F + f,
-                            ];
-                        },
-                        [1, 0, 0, 1, 0, 0],
-                    ),
+                    transform = matrixes.reduce(multiply, [1, 0, 0, 1, 0, 0]),
                     rect = {
                         left: transform[4],
                         bottom: transform[5],
@@ -68,11 +56,22 @@ export async function getAllImages(url: string) {
                             page: p - 1,
                             pages: pdf.numPages,
                             payload: { data, rect, id },
-                        },
+                        } as WorkerStream,
                     },
                     [data],
                 );
             }
     }
     return pdf.numPages;
+}
+
+function multiply(left: number[], right: number[]) {
+    return [
+        left[0] * right[0] + left[2] * right[1],
+        left[1] * right[0] + left[3] * right[1],
+        left[0] * right[2] + left[2] * right[3],
+        left[1] * right[2] + left[3] * right[3],
+        left[0] * right[4] + left[2] * right[5] + left[4],
+        left[1] * right[4] + left[3] * right[5] + left[5],
+    ];
 }

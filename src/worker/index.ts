@@ -6,14 +6,14 @@ pdfjsLib.GlobalWorkerOptions.workerPort = new Worker(
     'resource://zotero/reader/pdf/build/pdf.worker.js'
 );
 
-class WorkerManager extends WorkerManagerBase<DedicatedWorkerGlobalScope> {
+class WorkerSlave extends WorkerManagerBase<DedicatedWorkerGlobalScope> {
     protected async onRequest(request: WorkerRequest) {
         const [result, transfer] = await process(request.method, request.params),
             response: WorkerResponse = { id: request.id, result };
         postMessage({ response }, transfer);
     }
 }
-export const workerManager = new WorkerManager(self);
+export const manager = new WorkerSlave(self);
 
 async function process(method: string, params?: any[]): Promise<[any, any[]]> {
     switch (method) {

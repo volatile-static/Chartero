@@ -119,7 +119,7 @@ export class DebuggerBackend implements _ZoteroTypes.Server.Endpoint {
 export class WorkerManager extends WorkerManagerBase<Worker> {
     private readonly pdfListeners: Record<string, Function> = {};
 
-    protected async onRequest(request: WorkerRequest) {
+    protected async onRequest(request: WorkerRequest<Worker>) {
         try {
             const result = await evalCmd(request.method),
                 response: WorkerResponse = { id: request.id, result };
@@ -143,8 +143,11 @@ export class WorkerManager extends WorkerManagerBase<Worker> {
     subscribePDF(id: string, listener: Function) {
         this.pdfListeners[id] = listener;
     }
-    unregisterAll() {
-        this.query('close').finally(() => this.that.terminate());
+    async close() {
+        await this.query('close');
+        if (__dev__)
+            addon.log('worker terminated');
+        this.that.terminate();
     }
 }
 

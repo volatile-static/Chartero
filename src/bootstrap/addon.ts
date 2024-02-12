@@ -216,15 +216,16 @@ export default class Addon extends toolBase.BasicTool {
             Zotero.Server.Endpoints['/test/chartero'] = DebuggerBackend;
     }
 
-    unload() {
+    async unload() {
         this.patchSearch.disable();
         this.overviewTabID && Zotero_Tabs.close(this.overviewTabID);
         this.notifierID && Zotero.Notifier.unregisterObserver(this.notifierID);
         this.prefsObserverIDs.forEach(id => Zotero.Prefs.unregisterObserver(id));
         this.listeners.forEach(({ target, type, listener }) =>
-            target.removeEventListener(type, listener)
+            target?.removeEventListener(type, listener)
         );
         ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
+        await this.worker.close();
         try {
             toolBase.unregister(this);
         } catch (error) {  // 工具箱注销时未定义
