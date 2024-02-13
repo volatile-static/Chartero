@@ -1,9 +1,9 @@
-import type { TagElementProps } from "zotero-plugin-toolkit/dist/tools/ui";
-import { ClipboardHelper } from "zotero-plugin-toolkit/dist/helpers/clipboard";
-import { isPDFReader, isEpubReader, isWebReader, PdfImageListener } from "../utils";
-import stylesheet from "./images.sass";
+import type { TagElementProps } from 'zotero-plugin-toolkit/dist/tools/ui';
+import { ClipboardHelper } from 'zotero-plugin-toolkit/dist/helpers/clipboard';
+import { isPDFReader, isEpubReader, isWebReader, PdfImageListener } from '../utils';
+import View, { type LoadedPages } from './components';
+import stylesheet from './images.sass';
 import icon from './viewImages.svg';
-
 /**
  * 给阅读器左侧边栏添加图片预览
  */
@@ -24,7 +24,7 @@ export default async function addImagesPanelForReader(reader: _ZoteroTypes.Reade
     }
 }
 
-abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap>{
+abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap> {
     protected readonly doc: Document;
     protected readonly primaryView: _ZoteroTypes.Reader.ViewTypeMap[T];
     protected readonly imagesView: HTMLDivElement;
@@ -40,58 +40,60 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap>{
         const sidebarCont = this.doc.getElementById('sidebarContent'),
             btnCont = this.doc.querySelector('#sidebarContainer .start')!;
 
-        this.viewImages = addon.ui.appendElement({
-            tag: 'button',
-            namespace: 'html',
-            id: 'viewImages',
-            classList: ['toolbar-button'],
-            attributes: {
-                title: addon.locale.images.allImages,
-                tabindex: '-1'
+        this.viewImages = addon.ui.appendElement(
+            {
+                tag: 'button',
+                namespace: 'html',
+                id: 'viewImages',
+                classList: ['toolbar-button'],
+                attributes: {
+                    title: addon.locale.images.allImages,
+                    tabindex: '-1',
+                },
+                properties: {
+                    innerHTML: icon,
+                },
             },
-            properties: {
-                innerHTML: icon
-            }
-        }, btnCont) as HTMLButtonElement;
-        this.imagesView = addon.ui.appendElement({
-            tag: 'div',
-            id: 'imagesView',
-            classList: ['hidden']
-        }, sidebarCont!) as HTMLDivElement;
+            btnCont,
+        ) as HTMLButtonElement;
+        this.imagesView = addon.ui.appendElement(
+            {
+                tag: 'div',
+                id: 'imagesView',
+                classList: ['hidden'],
+            },
+            sidebarCont!,
+        ) as HTMLDivElement;
 
         // 注入CSS样式
-        addon.ui.appendElement({
-            tag: 'style',
-            namespace: 'html',
-            properties: { textContent: stylesheet },
-            skipIfExists: true,
-        }, this.doc.head);
+        addon.ui.appendElement(
+            {
+                tag: 'style',
+                namespace: 'html',
+                properties: { textContent: stylesheet },
+                skipIfExists: true,
+            },
+            this.doc.head,
+        );
 
         // 标签按钮切换的额外操作
         addon.registerListener(btnCont, 'click', e => {
             addon.log(e);
-            if ((e.target as Element).tagName == 'DIV')
-                return;
+            if ((e.target as Element).tagName == 'DIV') return;
             const b = (e.target as Element).closest('button')!;
             if (b.id == 'viewImages') {
                 reader.setSidebarView('chartero');
                 this.viewImages.classList.toggle('active', true);
                 this.imagesView.classList.toggle('hidden', false);
-                if (!this.loadedImages)
-                    this.loadAll();  // 初始化
+                if (!this.loadedImages) this.loadAll(); // 初始化
             } else {
-                b.ownerDocument
-                    .getElementById('viewImages')?.classList
-                    .toggle('active', false);
-                b.ownerDocument
-                    .getElementById('imagesView')?.classList
-                    .toggle('hidden', true);
+                b.ownerDocument.getElementById('viewImages')?.classList.toggle('active', false);
+                b.ownerDocument.getElementById('imagesView')?.classList.toggle('hidden', true);
                 addon.log('hide images');
             }
         });
     }
 
-    protected abstract onImageClick(e: MouseEvent): void;
     protected abstract loadAllImages(): Promise<void>;
 
     private async loadAll() {
@@ -99,15 +101,11 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap>{
 
         // 初始化右下角弹窗
         this.popMsg = new Zotero.ProgressWindow();
-        this.popMsg.changeHeadline(
-            '',
-            'chrome://chartero/content/icons/icon.svg',
-            'Chartero'
-        );
+        this.popMsg.changeHeadline('', 'chrome://chartero/content/icons/icon.svg', 'Chartero');
         this.popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
         this.progMeter = new this.popMsg.ItemProgress(
             'chrome://chartero/content/icons/accept.png',
-            addon.locale.images.loadingImages
+            addon.locale.images.loadingImages,
         );
         this.popMsg.show();
 
@@ -121,48 +119,27 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap>{
 }
 
 class PDFImages extends ReaderImages<'pdf'> {
-    private readonly hrList: Record<number, HTMLHRElement> = {};
-    protected onImageClick() { }
+    private readonly render: ReactDOM.Renderer = (window as any).ReactDOM.render;
+    private readonly loadedPages: LoadedPages = {};
 
-    private onRenderImage: PdfImageListener = (pageNum, imgNum, { data, rect, pageIdx }) =>{
-        const canvas = this.doc.createElement('canvas'),
-            ctx = canvas.getContext('2d')!;
-        canvas.width = data.width;
-        canvas.height = data.height;
-        ctx.drawImage(data, 0, 0);
-        canvas.classList.add('previewImg');
-        canvas.setAttribute('title', addon.locale.images.dblClickToCopy);
-        canvas.addEventListener('click', () => this.reader.navigate({
-            position: {
-                pageIndex: pageIdx,
-                rects: [rect]
-            }
-        }));
-        canvas.addEventListener(
-            'dblclick',
-            () => new ClipboardHelper().addImage(canvas.toDataURL()).copy()
+    private onRenderImage: PdfImageListener = (pageNum, imgNum, { data, rect, pageIdx }) => {
+        this.loadedPages[pageIdx] ??= { numImages: imgNum, loadedImages: [] };
+        this.loadedPages[pageIdx].loadedImages.push({ data, rect });
+        window.console.time('render' + pageNum + '-' + imgNum);
+        this.render(
+            window.React.createElement(View, {
+                pages: this.loadedPages,
+                onNavigate: position => this.reader.navigate({ position }),
+            }),
+            this.imagesView,
         );
-        this.imagesView.insertBefore(canvas, this.addHR(pageIdx));
-    }
-
-    private addHR(page: number) {
-        const lastPage = Object.keys(this.hrList).at(-1),
-            lastHR = lastPage && this.hrList[parseInt(lastPage)],
-            hrProps: TagElementProps = {
-                tag: 'hr',
-                classList: ['hr-text'],
-                attributes: { 'data-content': page }
-            };
-        return this.hrList[page] ??= (
-            lastHR ?
-                addon.ui.insertElementBefore(hrProps, lastHR) :
-                addon.ui.appendElement(hrProps, this.imagesView)
-        ) as HTMLHRElement;
-    }
+        window.console.timeEnd('render' + pageNum + '-' + imgNum);
+        ++this.loadedImages;
+    };
 
     async loadAllImages() {
         const viewerApp = this.primaryView._iframeWindow!.PDFViewerApplication,
-            dat = await (this.reader as any)._getData() as { url: string };
+            dat = (await (this.reader as any)._getData()) as { url: string };
         await viewerApp.pdfLoadingTask?.promise;
         await viewerApp.pdfViewer?.pagesPromise;
         addon.worker.subscribePDF(dat.url, this.onRenderImage.bind(this));
@@ -181,9 +158,11 @@ class PDFImages extends ReaderImages<'pdf'> {
     }
 }
 
-abstract class DOMImages<DOMImageElement extends (SVGImageElement | HTMLImageElement)> extends ReaderImages<'epub' | 'snapshot'>{
+abstract class DOMImages<DOMImageElement extends SVGImageElement | HTMLImageElement> extends ReaderImages<
+    'epub' | 'snapshot'
+> {
     protected readonly imageLinks = new Array<DOMImageElement>();
-    protected readonly abstract imageSelector: string;
+    protected abstract readonly imageSelector: string;
 
     async loadAllImages() {
         const doc = (this.primaryView as any)._iframeDocument as Document,
@@ -202,22 +181,20 @@ abstract class DOMImages<DOMImageElement extends (SVGImageElement | HTMLImageEle
             id: 'chartero-allImages-' + this.loadedImages,
             attributes: {
                 src: url,
-                title: addon.locale.images.dblClickToCopy
+                title: addon.locale.images.dblClickToCopy,
             },
             classList: ['previewImg'],
             listeners: [
                 { type: 'click', listener: this.onImageClick.bind(this) },
-                { type: 'dblclick', listener: this.onImageDblClick }
-            ]
-        }
+                { type: 'dblclick', listener: this.onImageDblClick },
+            ],
+        };
     }
 
     protected onImageClick(e: MouseEvent): void {
         const idx = (e.target as HTMLImageElement).id.split('-').at(-1);
-        if (idx)
-            this.imageLinks[parseInt(idx)].scrollIntoView({ behavior: 'smooth' });
-        else
-            addon.log('No image to scroll.');
+        if (idx) this.imageLinks[parseInt(idx)].scrollIntoView({ behavior: 'smooth' });
+        else addon.log('No image to scroll.');
     }
 
     protected onImageDblClick(this: HTMLImageElement) {
