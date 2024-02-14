@@ -1,7 +1,7 @@
 import { config } from '../../package.json';
 import { renderSummaryPanel, updateDashboard } from './modules/sidebar';
 import { protectData } from './modules/history/misc';
-import { updateMinimap } from './modules/minimap/minimap';
+import { mountMinimap, updateMinimap } from './modules/minimap/minimap';
 import initPrefsPane from './modules/prefs';
 import { waitForReader } from './modules/utils';
 import addImagesPanelForReader from './modules/images/images';
@@ -129,8 +129,9 @@ export async function onNotify(
 export async function onOpenReader(
     event: _ZoteroTypes.Reader.EventParams<'renderToolbar'>
 ) {
-    if (!addon.getPref('enableAllImages'))
-        return;
     await waitForReader(event.reader);
-    addImagesPanelForReader(event.reader);
+    if (addon.getPref('enableAllImages'))
+        addImagesPanelForReader(event.reader);
+    if (addon.getPref('enableMinimap'))
+        mountMinimap(event.reader);
 }
