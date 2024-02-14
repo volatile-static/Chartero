@@ -122,9 +122,9 @@ class PDFImages extends ReaderImages<'pdf'> {
     private readonly render: ReactDOM.Renderer = (window as any).ReactDOM.render;
     private readonly loadedPages: LoadedPages = {};
 
-    private onRenderImage: PdfImageListener = (pageNum, imgNum, { data, rect, pageIdx }) => {
+    private onRenderImage: PdfImageListener = (pageNum, imgNum, { rect, pageIdx, data }) => {
         this.loadedPages[pageIdx] ??= { numImages: imgNum, loadedImages: [] };
-        this.loadedPages[pageIdx].loadedImages.push({ data, rect });
+        this.loadedPages[pageIdx].loadedImages.push({ rect, data });
         window.console.time('render' + pageNum + '-' + imgNum);
         this.render(
             window.React.createElement(View, {

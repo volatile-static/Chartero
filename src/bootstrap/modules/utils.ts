@@ -120,7 +120,8 @@ export type PdfImageListener = (pageNum: number, imageNum: number, payload: {
     data: ImageBitmap,
     id: string,
     rect: number[],
-    pageIdx: number
+    pageIdx: number,
+    // path: string
 }) => void;
 export class WorkerManager extends WorkerManagerBase<Worker> {
     private readonly pdfListeners: Record<string, PdfImageListener> = {};

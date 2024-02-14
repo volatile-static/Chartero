@@ -29,6 +29,14 @@ export async function getPdfDoc(url: string) {
     return pdfjsLib.getDocument({ data, useWorkerFetch: false }).promise;
 }
 
+async function saveImage(data: ImageBitmap, path: string) {
+    const canvas = new OffscreenCanvas(data.width, data.height),
+        ctx = canvas.getContext('2d')!;
+    ctx.drawImage(data, 0, 0);
+    const blob = await canvas.convertToBlob({ type: 'image/png' }),
+        buffer = new Uint8Array(await blob.arrayBuffer());
+    return IOUtils.write(path, buffer);
+}
 async function getPageImages(pdf: PDFDocumentProxy, pageIdx: number, url: string) {
     const page = await pdf.getPage(pageIdx + 1),
         opList = await page.getOperatorList(),
@@ -44,6 +52,8 @@ async function getPageImages(pdf: PDFDocumentProxy, pageIdx: number, url: string
             else break;
         const [a, , , d, e, f] = matrixes.reduceRight(multiply, [1, 0, 0, 1, 0, 0]),
             rect = [e, f, e + a, f + d];
+        //     path = `${dir}-${url.split('/').at(-2)}-${pageIdx}-${id}.png`;
+        // await saveImage(data, path);
         postMessage(
             {
                 stream: {

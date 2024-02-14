@@ -8,6 +8,7 @@ export type LoadedPages = Record<
         numImages: number;
         loadedImages: Array<{
             data: ImageBitmap;
+            // path: string;
             rect: number[];
         }>;
     }
@@ -30,22 +31,35 @@ function Page(props: {
     index: number;
     loadedImages: Array<{
         data: ImageBitmap;
+        // path: string;
         rect: number[];
     }>;
 }) {
     return (
-        <div>
+        <>
             {props.loadedImages.map((img, idx) => (
-                <Image key={idx} data={img.data} position={{ pageIndex: props.index, rects: [img.rect] }} />
+                <Image
+                    key={idx}
+                    data={img.data}
+                    // path={img.path}
+                    position={{ pageIndex: props.index, rects: [img.rect] }}
+                />
             ))}
             <hr data-content={props.index + 1} className="hr-text" />
-        </div>
+        </>
     );
 }
 
-function Image({ data, position }: { data: ImageBitmap; position: _ZoteroTypes.Reader.PDFPosition }) {
-    const canvas = React.useRef<HTMLCanvasElement>(null),
-        onNavigate = React.useContext(ReaderContext);
+function Image({
+    position,
+    data,
+}: {
+    data: ImageBitmap;
+    // path: string;
+    position: _ZoteroTypes.Reader.PDFPosition;
+}) {
+    const canvas = React.useRef<HTMLCanvasElement>(null);
+    const onNavigate = React.useContext(ReaderContext);
     React.useEffect(() => {
         if (canvas.current) {
             const ctx = canvas.current.getContext('2d')!;
@@ -60,9 +74,10 @@ function Image({ data, position }: { data: ImageBitmap; position: _ZoteroTypes.R
     // canvas.width = data.width;
     // canvas.height = data.height;
     // ctx.drawImage(data, 0, 0);
+    // window.console.log(path);
     // return (
     //     <img
-    //         src={canvas.toDataURL()}
+    //         src='resource://chartero/pdf.png'
     //         className="previewImg"
     //         title={addon.locale.images.dblClickToCopy}
     //         onClick={() => onNavigate(position)}
