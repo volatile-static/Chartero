@@ -232,6 +232,8 @@ export default class Addon extends toolBase.BasicTool {
     }
 
     async test(key: string) { // create a new file attachment
+        if (!__dev__) return;
+
         const item = Zotero.Items.get(411);
         const attachment = new Zotero.Item('attachment');
         attachment.libraryID = item.libraryID;
