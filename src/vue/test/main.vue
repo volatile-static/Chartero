@@ -1,11 +1,12 @@
 <template>
   <div>
-    <ComponentToTest :history="history" :theme="theme" />
+    <ComponentToTest :items="his" :history="his" :theme="theme" />
   </div>
 </template>
 
 <script lang="ts">
 import ComponentToTest from '../summary/main.vue';
+// import ComponentToTest from '../summary/components/dualSelect.vue';
 import { DarkUnicaTheme } from '../utility/themes';
 import fetchSync from './dummy/fetch';
 
@@ -18,7 +19,7 @@ export default {
         };
     },
     computed: {
-        history() {
+        his() {
             return this.selectedItems.map((id: number) => Zotero.Items.get(id));
         },
     },

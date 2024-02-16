@@ -2,6 +2,9 @@ import { ClipboardHelper } from 'zotero-plugin-toolkit/dist/helpers/clipboard';
 import { FilePickerHelper } from 'zotero-plugin-toolkit/dist/helpers/filePicker';
 import { WorkerManagerBase, WorkerRequest, WorkerResponse } from '../../worker/manager';
 
+// const { renderToStaticMarkup } = window.require('react-dom-server');
+// export { renderToStaticMarkup };
+
 export function copySVG2JPG(svg: string) {
     const img = new window.Image();
     img.onload = () => {
