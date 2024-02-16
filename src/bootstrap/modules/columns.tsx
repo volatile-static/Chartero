@@ -8,17 +8,20 @@ export default function addItemColumns() {
     Zotero.ItemTreeManager.registerColumns({
         dataKey: 'totalSeconds',
         label: addon.locale.totalTime,
-        iconLabel: <>
-            <span
-                className='icon icon-bg'
-                style={{
-                    backgroundImage: `url(
+        iconLabel: (
+            <>
+                <span
+                    className="icon icon-bg"
+                    style={{
+                        backgroundImage: `url(
                         chrome://${config.addonName}/content/icons/icon.svg
-                    )` }}
-            />
-            &nbsp;
-            <span>{addon.locale.totalTime}</span>
-        </>,
+                    )`,
+                    }}
+                />
+                &nbsp;
+                <span>{addon.locale.totalTime}</span>
+            </>
+        ),
         columnPickerSubMenu: true,
         pluginID: config.addonID,
         disabledIn: ['feed', 'feeds'],
@@ -26,8 +29,7 @@ export default function addItemColumns() {
         minWidth: 24,
         dataProvider: (item: Zotero.Item) => {
             try {
-                if (!addon.history.cacheLoaded)
-                    return '';
+                if (!addon.history.cacheLoaded) return '';
                 return new HistoryAnalyzer(item).totalS.toString();
             } catch (e) {
                 addon.log(e);
@@ -38,8 +40,8 @@ export default function addItemColumns() {
             return addon.ui.createElement(document, 'span', {
                 properties: { textContent: toTimeString(data) },
                 classList: ['cell', ...column.className.split(' ')],
-                enableElementDOMLog: false
+                enableElementDOMLog: false,
             });
-        }
+        },
     });
 }

@@ -29,14 +29,6 @@ export async function getPdfDoc(url: string) {
     return pdfjsLib.getDocument({ data, useWorkerFetch: false }).promise;
 }
 
-async function saveImage(data: ImageBitmap, path: string) {
-    const canvas = new OffscreenCanvas(data.width, data.height),
-        ctx = canvas.getContext('2d')!;
-    ctx.drawImage(data, 0, 0);
-    const blob = await canvas.convertToBlob({ type: 'image/png' }),
-        buffer = new Uint8Array(await blob.arrayBuffer());
-    return IOUtils.write(path, buffer);
-}
 async function getPageImages(pdf: PDFDocumentProxy, pageIdx: number, url: string) {
     const page = await pdf.getPage(pageIdx + 1),
         opList = await page.getOperatorList(),
@@ -52,8 +44,6 @@ async function getPageImages(pdf: PDFDocumentProxy, pageIdx: number, url: string
             else break;
         const [a, , , d, e, f] = matrixes.reduceRight(multiply, [1, 0, 0, 1, 0, 0]),
             rect = [e, f, e + a, f + d];
-        //     path = `${dir}-${url.split('/').at(-2)}-${pageIdx}-${id}.png`;
-        // await saveImage(data, path);
         postMessage(
             {
                 stream: {
@@ -72,20 +62,6 @@ export async function getAllImages(url: string) {
     const pdf = await getPdfDoc(url);
     await Promise.all(Array.from({ length: pdf.numPages }, (_, i) => getPageImages(pdf, i, url)));
     return pdf.numPages;
-    // const zippedOps = zip(opList.fnArray, opList.argsArray);
-    // for (let i = 0; i < opList.fnArray.length; ++i)
-    //     if (opList.fnArray[i] == 1 &&  opList.fnArray[i + 1] != 37) {
-    //         const opTable = zippedOps.slice(i - 9, i + 6).map(([fn, op]) => {
-    //             const opName = Object.entries(pdfjsLib.OPS)
-    //                 .find(([, v]) => v == fn)!
-    //                 .at(0);
-    //             return { opName, op };
-    //         });
-    //         const names = opList.fnArray.slice(i - 9, i + 6).map(op =>
-    //             Object.entries(pdfjsLib.OPS).find(([, v]) => v == op)![0]
-    //         ), ops = opList.argsArray.slice(i - 9, i + 6);
-    //         console.table([names, ops]);
-    //     }
 }
 
 type Matrix = [number, number, number, number, number, number];
