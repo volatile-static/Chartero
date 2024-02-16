@@ -34,9 +34,6 @@ async function renderDashboard(
             updateDashboard(reader.itemID)
         );
         reader.itemID && (dashboards[reader.itemID] = dashboard);
-
-        if (addon.getPref('enableReaderAlert'))
-            initReaderAlert(reader._iframe?.contentDocument)
     }
 }
 
