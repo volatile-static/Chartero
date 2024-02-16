@@ -35,7 +35,7 @@ export default class Addon extends toolBase.BasicTool {
     private notifierID?: string;
     private readonly prefsObserverIDs: symbol[] = [];
     private readonly listeners = new Array<{
-        target: EventTarget;
+        target: WeakRef<EventTarget>;
         type: string;
         listener: EventListenerOrEventListenerObject;
     }>();
@@ -142,7 +142,7 @@ export default class Addon extends toolBase.BasicTool {
         if (typeof target?.addEventListener != "function")
             return false;
         target.addEventListener(type, listener as EventListener, options);
-        this.listeners.push({ target, type, listener });
+        this.listeners.push({ target: new WeakRef(target), type, listener });
         return true;
     }
 
@@ -222,7 +222,7 @@ export default class Addon extends toolBase.BasicTool {
         this.notifierID && Zotero.Notifier.unregisterObserver(this.notifierID);
         this.prefsObserverIDs.forEach(id => Zotero.Prefs.unregisterObserver(id));
         this.listeners.forEach(({ target, type, listener }) =>
-            target?.removeEventListener(type, listener)
+            target?.deref()?.removeEventListener(type, listener)
         );
         ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
         await this.worker.close();
