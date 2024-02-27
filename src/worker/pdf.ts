@@ -57,6 +57,14 @@ async function getPageImages(pdf: PDFDocumentProxy, pageIdx: number, url: string
             [data],
         );
     }
+    // console.log('%c -------------------------' + pageIdx, 'color: red; font-size:20px;');
+    // for (let i = 0; i < opList.fnArray.length; ++i)
+    //     if (opList.fnArray[i] == 1 && opList.fnArray[i + 1] != 37) {
+    //         const names = opList.fnArray.slice(i - 9, i + 6).map(op =>
+    //             Object.entries(pdfjsLib.OPS).find(([, v]) => v == op)![0]
+    //         ), ops = opList.argsArray.slice(i - 9, i + 6);
+    //         console.table([names, ops]);
+    //     }
 }
 export async function getAllImages(url: string) {
     const pdf = await getPdfDoc(url);

@@ -14,7 +14,7 @@
     </a>
     <a href='https://github.com/volatile-static/Chartero/releases/latest/'>
         <img src="https://img.shields.io/github/downloads/volatile-static/Chartero/latest/total" alt='latest' />
-    </a> 
+    </a>
 </p>
 <p align='center'>
     <kbd>English</kbd> | <a href='doc/readme.Md'>简体中文</a>
@@ -29,14 +29,14 @@ The name _Chartero_ is a combination of **Char**t and Zo**tero**. As a [Zotero](
 <details>
 <summary><u>👉 <b>Introduction</b> 👈</u></summary>
 
-|                   Screenshots                   | Features                                                                                                                      |
-| :---------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------- |
-|      ![history recording](doc/record.jpg)       | The kernel of `Chartero`. It records page numbers and timestamps when you read.                                               |
-|         ![open recent](doc/recent.png)          | In the main menu `File`, you can open the recently read documents.                                                            |
-|            ![column](doc/column.png)            | In `items tree` of the library view, you can add a column to show reading progress.                                               |
-|         ![dashboard](doc/dashboard.jpg)         | Illustrates all information about a `top-level item`. Updating as soon as record changes when in a `Reader`.                  |
-|           ![summary](doc/summary.jpg)           | Summary of two or more `items`. _Will not_ be loaded if the number of selected items is larger than you set in preferences.   |
-|          ![overview](doc/overview.jpg)          | Click `Main menu -> View -> Overview` and jump to a new tab.                                                                  |
+|                   Screenshots                   | Features                                                                                                                     |
+| :---------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------- |
+|      ![history recording](doc/record.jpg)       | The kernel of `Chartero`. It records page numbers and timestamps when you read.                                              |
+|         ![open recent](doc/recent.png)          | In the main menu `File`, you can open the recently read documents.                                                           |
+|            ![column](doc/column.png)            | In `items tree` of the library view, you can add a column to show reading progress.                                          |
+|         ![dashboard](doc/dashboard.jpg)         | Illustrates all information about a `top-level item`. Updating as soon as record changes when in a `Reader`.                 |
+|           ![summary](doc/summary.jpg)           | Summary of two or more `items`. _Will not_ be loaded if the number of selected items is larger than you set in preferences.  |
+|          ![overview](doc/overview.jpg)          | Click `Main menu -> View -> Overview` and jump to a new tab.                                                                 |
 |           ![minimap](doc/minimap.gif)           | Besides the scrollbar of `Reader`(PDF and ePub), grayscale blocks for read pages and color strips for annotations.           |
 | ![images](doc/images.png) ![more](doc/more.png) | At the left sidebar of `Reader`, you can see all images in the current document. Click to navigate and double-click to copy. |
 
@@ -50,25 +50,35 @@ Please disable all other plugins when necessary, then file an issue with the exp
 
 ## Developer Guide
 
--   [![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/windingwind/zotero-plugin-template)
--   Using [![Highcharts](https://img.shields.io/github/package-json/dependency-version/volatile-static/Chartero/highcharts?logo=npm)](https://www.npmjs.com/package/highcharts) to generate charts
--   [Minimap](src/bootstrap/modules/minimap/) is rendered by [![GitHub package.json dependency version (dev dep on branch)](https://img.shields.io/github/package-json/dependency-version/volatile-static/chartero/dev/%40types%2Freact?logo=npm)](https://17.reactjs.org/)
--   UI components are from [![T-Design](https://img.shields.io/github/package-json/dependency-version/volatile-static/Chartero/tdesign-vue-next?logo=npm)](https://tdesign.tencent.com/vue-next)
--   For the legacy Zotero `6` version, please check out [this branch](https://github.com/volatile-static/Chartero/tree/js_overlay).
+- [![Using Zotero Plugin Template](https://img.shields.io/badge/Using-Zotero%20Plugin%20Template-blue?style=flat-square&logo=github)](https://github.com/windingwind/zotero-plugin-template)
+- Using [![Highcharts](https://img.shields.io/github/package-json/dependency-version/volatile-static/Chartero/highcharts?logo=npm)](https://www.npmjs.com/package/highcharts) to generate charts
+- [Minimap](src/bootstrap/modules/minimap/) and [All Images](src/bootstrap/modules/images/) are rendered by **built-in** [![GitHub package.json dependency version (dev dep on branch)](https://img.shields.io/github/package-json/dependency-version/volatile-static/chartero/dev/%40types%2Freact?logo=npm)](https://17.reactjs.org/)
+- [All Images](src/bootstrap/modules/images/) uses **built-in** [PDF.js](https://github.com/zotero/pdf.js) in [ChromeWorker](https://devdoc.net/web/developer.mozilla.org/en-US/docs/Web/API/ChromeWorker.html) to extract images from PDFs.
+- UI components are from [![T-Design](https://img.shields.io/github/package-json/dependency-version/volatile-static/Chartero/tdesign-vue-next?logo=npm)](https://tdesign.tencent.com/vue-next)
+- For the legacy Zotero `6` version, please check out [this branch](https://github.com/volatile-static/Chartero/tree/js_overlay).
 
 ### Directory Structure
 
--   [addon](addon): The assets of the plugin, see [template](https://github.com/windingwind/zotero-plugin-template) for details.
--   [tools](tools): Scripts for development.
--   src
-    -   [src/bootstrap](src/bootstrap): The entry point of the plugin.
-        -   [src/bootstrap/modules](src/bootstrap/modules): Implementation of modules.
-    -   [src/vue](src/vue): The `iframe` windows using [Vue](https://v3.vuejs.org/)
-        -   [src/vue/summary](src/vue/summary): At sidebar.
-        -   [src/vue/dashboard](src/vue/dashboard): At sidebar tab-panel.
-        -   [src/vue/overview](src/vue/overview): At new tab.
-        -   [src/vue/utility](src/vue/utility): The utility functions.
-        -   [src/vue/test](src/vue/test): The unit test for Vue components.
+- [addon](addon): The assets of the plugin, see [template](https://github.com/windingwind/zotero-plugin-template) for details.
+- [tools](tools): Scripts for development.
+- src
+  - [src/bootstrap](src/bootstrap): The entry point of the plugin.
+    - [src/bootstrap/modules](src/bootstrap/modules): Implementation of modules.
+  - [src/vue](src/vue): The `iframe` windows using [Vue](https://v3.vuejs.org/)
+    - [src/vue/summary](src/vue/summary): At sidebar.
+    - [src/vue/dashboard](src/vue/dashboard): At sidebar tab-panel.
+    - [src/vue/overview](src/vue/overview): At new tab.
+    - [src/vue/utility](src/vue/utility): The utility functions.
+    - [src/vue/test](src/vue/test): The unit test for Vue components.
+  - [src/modules](src/modules): Git-submodules for VS Code debugging.
+  - [src/worker](src/worker): The worker for data processing.
+
+### URL
+
+These URLs are registered in [bootstrap.ts](addon/content/bootstrap.ts), and you can access them via `fetch` in Zotero.
+
+- `chrome://chartero/`: Access to folder [addon](addon).
+- `resource://chartero/`: Access to folder [addon/content](addon/content).
 
 ### Preferences
 
@@ -76,20 +86,21 @@ The `config.defaultSettings` field of [package.json](package.json) defines the d
 
 ### Locales
 
-| Locales | [zh-CN](addon/locale/zh-CN/) | [en-US](addon/locale/en-US/) | [ja-JP](addon/locale/ja-JP/) | [it-IT](addon/locale/it-IT/)
-| :-----: | :---: | :---: | :---: | :---:
+| Locales | [zh-CN](addon/locale/zh-CN/) | [en-US](addon/locale/en-US/) | [ja-JP](addon/locale/ja-JP/) | [it-IT](addon/locale/it-IT/) |
+| :-----: | :--------------------------: | :--------------------------: | :--------------------------: | :--------------------------: |
 
 All locale strings are defined in [locale](addon/locale), which will be loaded dynamically when the plugin starts.
 
 ### Development Environment
 
 [package.json](package.json) defines the scripts for building and debugging. When executing commands with `NODE_ENV=development`, the global variable `__dev__` will be set to `true`, and the plugin will switch to the development mode.
+
 - Here are some useful scripts:
-    - `reload-all`: Build and reload the Zotero in **production** environment.
-    - `reload-dev`: Build in **development** environment without Vue pages and reload Zotero.
-    - `build`: Build in **development** environment and reload Zotero.
-    - `watch`: Watch changes of files in `src/vue` and reload Zotero.
-    - `dev`: Open a hot-reload server for `src/vue/test/`. 
+  - `reload-all`: Build and reload the Zotero in **production** environment.
+  - `reload-dev`: Build in **development** environment without Vue pages and reload Zotero.
+  - `build`: Build in **development** environment and reload Zotero.
+  - `watch`: Watch changes of files in `src/vue` and reload Zotero.
+  - `dev`: Open a hot-reload server for `src/vue/test/`.
 
 ### ⚡Hot-reload and Breakpoints in Source
 
@@ -118,13 +129,13 @@ The data structure of history records is defined in [history/data.ts](src/bootst
 
 > This section is for developers who have suspected compatibility issues with `Chartero`.
 
--   Patched the `search` method of object `Zotero.Search` to hide the note items that record the reading history.
--   Add click events to tabs in the left side-bar of `Reader`.
--   When adding "Overview" tab, `contextPane.js` throws `extraData[ids[0]] is undefined` error, caused by the `type` of this tab being `library`.
+- Patched the `search` method of object `Zotero.Search` to hide the note items that record the reading history.
+- Add click events to tabs in the left side-bar of `Reader`.
+- When adding "Overview" tab, `contextPane.js` throws `extraData[ids[0]] is undefined` error, caused by the `type` of this tab being `library`.
 
 ## See Also
 
--   [🤩 Awesome Zotero Plugins](https://plugins.zotero-chinese.com/charts.html)
+- [🤩 Awesome Zotero Plugins](https://plugins.zotero-chinese.com/charts.html)
 
 ---
 

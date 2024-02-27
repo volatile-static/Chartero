@@ -54,11 +54,14 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[markdown]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
     },
     "[sass]": {
         "editor.defaultFormatter": "syler.sass-indented"
     },
     "eslint.ignoreUntitled": false,
     "eslint.problems.shortenToSingleLine": true,
+    "markdownlint.config": {
+        "MD033": false
+    },
 }
