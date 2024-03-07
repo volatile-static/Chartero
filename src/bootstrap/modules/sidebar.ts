@@ -1,40 +1,9 @@
-import { initReaderAlert } from './history/misc';
-
 const dashboards: { [id: number]: HTMLIFrameElement } = {};
 
 export function updateDashboard(id?: number) {
     id &&
         addon.getPref('enableRealTimeDashboard') &&
         dashboards[id]?.contentWindow?.postMessage({ id }, '*');
-}
-
-async function renderDashboard(
-    panel: XUL.TabPanel,
-    reader?: _ZoteroTypes.ReaderInstance
-) {
-    await reader?._waitForReader();
-    if (panel.childElementCount) return; // 已经有元素了
-    const dashboard = addon.ui.appendElement(
-        {
-            tag: 'iframe',
-            namespace: 'xul',
-            ignoreIfExists: true,
-            attributes: {
-                flex: 1,
-                src: 'chrome://chartero/content/dashboard/index.html',
-            },
-            classList: ['chartero-dashboard'],
-        },
-        panel
-    ) as HTMLIFrameElement;
-    (dashboard.contentWindow as any).wrappedJSObject.addon ??= addon;
-
-    if (reader) {
-        dashboard.contentWindow?.addEventListener('load', () =>
-            updateDashboard(reader.itemID)
-        );
-        reader.itemID && (dashboards[reader.itemID] = dashboard);
-    }
 }
 
 /**
@@ -77,9 +46,9 @@ export function renderSummaryPanel(ids: number[]) {
             id: 'chartero-summary-iframe',
             ignoreIfExists: true,
             attributes: {
-                flex: 1,
                 src: 'chrome://chartero/content/summary/index.html',
             },
+            styles: { height: '100%' }
         });
 
     if (summary.parentElement != content) {
