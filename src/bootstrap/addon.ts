@@ -226,9 +226,7 @@ export default class Addon extends toolBase.BasicTool {
         );
         ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
         await this.worker.close();
-        this.history.unregister();
-        this.menu.unregisterAll();
-        this.ui.unregisterAll();
+        toolBase.unregister(this);
     }
 
     async test(key: string) { // create a new file attachment

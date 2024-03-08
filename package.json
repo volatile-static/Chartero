@@ -54,20 +54,20 @@
         "animejs": "^3.2.2",
         "compromise": "^14.12.0",
         "compromise-stats": "^0.1.0",
-        "highcharts": "^11.3.0",
-        "highcharts-vue": "^1.4.3",
+        "highcharts": "^11.4.0",
+        "highcharts-vue": "^2.0.0",
         "segmentit": "^2.0.3",
         "tdesign-vue-next": "^1.8.1",
         "vue": "3.4.12",
-        "zotero-plugin-toolkit": "^2.3.22"
+        "zotero-plugin-toolkit": "^2.3.23"
     },
     "devDependencies": {
         "@tsconfig/node18": "^18.2.2",
         "@types/animejs": "^3.1.12",
-        "@types/node": "^20.11.20",
+        "@types/node": "^20.11.25",
         "@types/react": "17.0.2",
         "@types/react-dom": "17.0.2",
-        "@typescript-eslint/eslint-plugin": "^7.0.1",
+        "@typescript-eslint/eslint-plugin": "^7.1.1",
         "@vitejs/plugin-vue": "^5.0.4",
         "@vitejs/plugin-vue-jsx": "^3.1.0",
         "@vue/eslint-config-prettier": "^9.0.0",
@@ -91,7 +91,7 @@
         "unplugin-auto-import": "^0.17.5",
         "unplugin-vue-components": "^0.26.0",
         "vite": "^5.1.5",
-        "vue-tsc": "^2.0.5",
+        "vue-tsc": "^2.0.6",
         "zotero-types": "file:../zotero-types"
     },
     "eslintConfig": {

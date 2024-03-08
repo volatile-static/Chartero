@@ -41,6 +41,7 @@ export default function addItemColumns() {
                 properties: { textContent: toTimeString(data) },
                 classList: ['cell', ...column.className.split(' ')],
                 enableElementDOMLog: false,
+                enableElementRecord: false,
             });
         },
     });
