@@ -57,9 +57,9 @@
         "highcharts": "^11.4.0",
         "highcharts-vue": "^2.0.0",
         "segmentit": "^2.0.3",
-        "tdesign-vue-next": "^1.8.1",
+        "tdesign-vue-next": "^1.9.0",
         "vue": "3.4.12",
-        "zotero-plugin-toolkit": "^2.3.23"
+        "zotero-plugin-toolkit": "^2.3.25"
     },
     "devDependencies": {
         "@tsconfig/node18": "^18.2.2",
@@ -71,14 +71,14 @@
         "@vitejs/plugin-vue": "^5.0.4",
         "@vitejs/plugin-vue-jsx": "^3.1.0",
         "@vue/eslint-config-prettier": "^9.0.0",
-        "@vue/eslint-config-typescript": "^12.0.0",
+        "@vue/eslint-config-typescript": "^13.0.0",
         "@vue/tsconfig": "^0.5.1",
         "bluebird": "^3.7.2",
         "compressing": "^1.10.0",
         "esbuild-plugin-svg": "^0.1.0",
         "esbuild-sass-plugin": "^3.1.0",
         "eslint": "^8.57.0",
-        "eslint-plugin-mozilla": "^3.7.0",
+        "eslint-plugin-mozilla": "^3.7.1",
         "eslint-plugin-vue": "^9.22.0",
         "lodash": "^4.17.21",
         "pdfjs-dist": "~3.8.0",

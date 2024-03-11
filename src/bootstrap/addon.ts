@@ -187,7 +187,6 @@ export default class Addon extends toolBase.BasicTool {
             { notify: onNotify },
             ['tab', 'setting', 'item']
         );
-        Zotero.Reader.registerEventListener('renderToolbar', onOpenReader, config.addonID);
 
         this.addPrefsObserver(() => {
             if (this.getPref('scanPeriod') < 1)
@@ -209,6 +208,9 @@ export default class Addon extends toolBase.BasicTool {
             enabled: true,
             patcher: patchedZoteroSearch
         });
+        Zotero.Reader.registerEventListener('renderToolbar', e => onOpenReader(e.reader), config.addonID);
+        Zotero.Reader._readers.forEach(onOpenReader);
+        
         this.log('Chartero initialized successfully!');
 
         if (__dev__)

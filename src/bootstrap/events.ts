@@ -110,7 +110,7 @@ export async function onNotify(
     if (type == 'item') protectData(event, ids);
 }
 
-export async function onOpenReader({ reader }: _ZoteroTypes.Reader.EventParams<'renderToolbar'>) {
+export async function onOpenReader(reader: _ZoteroTypes.ReaderInstance) {
     await waitForReader(reader);
     if (addon.getPref('enableAllImages')) addImagesPanelForReader(reader);
     if (addon.getPref('enableMinimap')) mountMinimap(reader);
