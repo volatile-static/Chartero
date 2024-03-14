@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 var chromeHandle;
 
 async function startup({ id, version, resourceURI, rootURI }, reason) {
@@ -24,12 +25,11 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
     const window = Zotero.getMainWindow();
     // Global variables for plugin code
     const ctx = {
-        Zotero,
         rootURI,
-        window,
-        document: window.document,
-        ZoteroPane: Zotero.getActiveZoteroPane(),
-        Zotero_Tabs: window.Zotero_Tabs,
+        // window,
+        // document: window.document,
+        // ZoteroPane: Zotero.getActiveZoteroPane(),
+        // Zotero_Tabs: window.Zotero_Tabs,
     };
     try {
         Services.scriptloader.loadSubScript(rootURI + 'content/__addonName__.js', ctx);
@@ -40,13 +40,10 @@ async function startup({ id, version, resourceURI, rootURI }, reason) {
 }
 
 async function onMainWindowLoad({ window }, reason) {
-    addon.log(reason);
-    // addon.init();
+    addon.init(window);
 }
 
 async function onMainWindowUnload({ window }, reason) {
-    addon.log(reason);
-    // addon.unload();
 }
 
 async function shutdown({ id, version, resourceURI, rootURI }, reason) {

@@ -1,6 +1,8 @@
 import type { AnnotationInfo } from './minimap';
-const React = window.React,
-    ReactDOM: ReactDOM = (window as any).ReactDOM;
+import { getGlobal } from '../utils';
+
+const React = getGlobal('React'),
+    ReactDOM: ReactDOM = getGlobal('ReactDOM');
 
 /**
  * 毫秒级刷新

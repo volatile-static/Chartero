@@ -1,7 +1,7 @@
 import { config } from '../../../package.json';
 import { isValid } from './utils';
 
-export default function () {
+export default function (win: MainWindow) {
     // 注册“最近在读”菜单
     addon.menu.register(
         'menuFile',
@@ -12,9 +12,9 @@ export default function () {
             icon: `chrome://${config.addonName}/content/icons/icon.svg`,
         },
         'before',
-        document.getElementById('menu_close') as XUL.Element
+        win.document.getElementById('menu_close') as XUL.Element
     );
-    document
+    win.document
         .getElementById('chartero-open-recent')!
         .addEventListener(
             'popupshowing',
@@ -39,34 +39,35 @@ export default function () {
                         },
                         listeners: [{
                             type: 'command',
-                            listener: () => ZoteroPane.viewAttachment(id)
+                            listener: () => Zotero.getActiveZoteroPane().viewAttachment(id)
                         }],
                     }, popup);
                 });
             }
         );
-    addon.registerListener(Zotero_Tabs.tabsMenuPanel, 'popupshowing', addRecentTabsMenu);
-    addon.registerListener(document.getElementById('zotero-tabs-menu-filter')!, 'input', addRecentTabsMenu);
+    addon.registerListener(win.Zotero_Tabs.tabsMenuPanel, 'popupshowing', addRecentTabsMenu);
+    addon.registerListener(win.document.getElementById('zotero-tabs-menu-filter')!, 'input', addRecentTabsMenu);
 }
 
-async function addRecentTabsMenu() {
-    const openedItems = Zotero_Tabs.getState().map(tab => tab.data?.itemID).filter(isValid),
-        regex = new RegExp(`(${Zotero.Utilities.quotemeta(Zotero_Tabs._tabsMenuFilter)})`, 'gi');
-    let tabIndex = Zotero_Tabs.tabsMenuList.querySelectorAll('*[tabindex]').length;
+async function addRecentTabsMenu({ target }: Event) {
+    const win = (target as any).ownerGlobal as MainWindow,
+        openedItems = win.Zotero_Tabs.getState().map(tab => tab.data?.itemID).filter(isValid),
+        regex = new RegExp(`(${Zotero.Utilities.quotemeta(win.Zotero_Tabs._tabsMenuFilter)})`, 'gi');
+    let tabIndex = win.Zotero_Tabs.tabsMenuList.querySelectorAll('*[tabindex]').length;
     if (__dev__)
         addon.log('recent tabs menu', tabIndex, regex);
     addon.ui.appendElement({
         tag: 'menuseparator',
         id: 'chartero-tabs-menu-separator',
         ignoreIfExists: true
-    }, Zotero_Tabs.tabsMenuList);
+    }, win.Zotero_Tabs.tabsMenuList);
 
     for (const info of getHistoryInfo()) {
         const { id, name, iconType } = await info;
         if (openedItems.includes(id) || !regex.test(name)) continue;
 
         const title = name.replace(regex, match => {
-            const b = document.createElementNS('http://www.w3.org/1999/xhtml', 'b');
+            const b = win.document.createElementNS('http://www.w3.org/1999/xhtml', 'b');
             b.textContent = match;
             return b.outerHTML;
         });
@@ -83,7 +84,7 @@ async function addRecentTabsMenu() {
                 classList: ['zotero-tabs-menu-entry', 'title'],
                 listeners: [{
                     type: 'command',
-                    listener: () => ZoteroPane.viewAttachment(id)
+                    listener: () => Zotero.getActiveZoteroPane().viewAttachment(id)
                 }],
                 children: [{
                     tag: 'span',
@@ -108,7 +109,7 @@ async function addRecentTabsMenu() {
                     pointerEvents: 'none'
                 }
             }]
-        }, Zotero_Tabs.tabsMenuList);
+        }, win.Zotero_Tabs.tabsMenuList);
     }
 }
 

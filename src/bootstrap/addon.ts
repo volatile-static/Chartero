@@ -5,12 +5,8 @@ import { PatchHelper } from 'zotero-plugin-toolkit/dist/helpers/patch';
 import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
 import { config, name as packageName } from '../../package.json';
 import ReadingHistory from './modules/history/history';
-import { hideDeleteMenuForHistory, patchedZoteroSearch } from './modules/history/misc';
-import buildRecentMenu from './modules/recent';
-import { onHistoryRecord, onItemSelect, onNotify, onOpenReader, openOverview } from './events';
-import { addDebugMenu } from './modules/debug';
-import addItemColumns from './modules/columns';
-import { DebuggerBackend, showMessage, WorkerManager } from './modules/utils';
+import { onAddonLoad, onHistoryRecord, onItemSelect, onMainWindowLoad } from './events';
+import { showMessage, WorkerManager } from './modules/utils';
 
 type DefaultPrefs = Omit<
     typeof config.defaultSettings,
@@ -32,7 +28,7 @@ export default class Addon extends toolBase.BasicTool {
 
     readonly rootURI = rootURI;
     overviewTabID?: string;
-    private notifierID?: string;
+    notifierID?: string;
     private readonly prefsObserverIDs: symbol[] = [];
     private readonly listeners = new Array<{
         target: WeakRef<EventTarget>;
@@ -47,8 +43,8 @@ export default class Addon extends toolBase.BasicTool {
             this.basicOptions.log.disableConsole = true;
         }
         this.basicOptions.debug.disableDebugBridgePassword = __dev__;
-        this.menu = new MenuManager(this);
         this.ui = new UITool(this);
+        this.menu = new MenuManager(this);
         this.extraField = new ExtraFieldTool(this);
         this.history = new ReadingHistory(this, onHistoryRecord);
         this.patchSearch = new PatchHelper();
@@ -121,7 +117,7 @@ export default class Addon extends toolBase.BasicTool {
     }
 
     // 仅供初始化调用
-    private addPrefsObserver(fn: () => void, key: keyof DefaultPrefs) {
+    addPrefsObserver(fn: () => void, key: keyof DefaultPrefs) {
         this.prefsObserverIDs.push(
             Zotero.Prefs.registerObserver(`${packageName}.${key}`, fn)
         );
@@ -149,84 +145,28 @@ export default class Addon extends toolBase.BasicTool {
     /**
      * 初始化插件时调用
      */
-    init() {
-        this.log('Initializing Chartero addon...');
-        // 注册设置面板
-        Zotero.PreferencePanes.register({
-            pluginID: config.addonID,
-            src: rootURI + 'content/preferences.xhtml',
-            stylesheets: [rootURI + 'content/preferences.css'],
-            image: `chrome://${config.addonName}/content/icons/icon32.png`,
-            helpURL: this.locale.helpURL,
-            label: config.addonName,
-        });
-
-        this.registerListener(
-            document.getElementById('zotero-itemmenu')!,
-            'popupshowing',
-            hideDeleteMenuForHistory
-        );
-        addItemColumns();
-
-        // 注册Overview菜单
-        this.menu.register('menuView', {
-            tag: 'menuitem',
-            label: this.locale.overview,
-            commandListener: openOverview,
-            icon: `chrome://${config.addonName}/content/icons/icon.svg`,
-        });
-        buildRecentMenu();
-        if (__dev__)
-            addDebugMenu();
-
-        // 监听条目选择事件
-        Zotero.uiReadyPromise.then(() =>
-            ZoteroPane.itemsView.onSelect.addListener(onItemSelect)
-        );
-        this.notifierID = Zotero.Notifier.registerObserver(
-            { notify: onNotify },
-            ['tab', 'setting', 'item']
-        );
-
-        this.addPrefsObserver(() => {
-            if (this.getPref('scanPeriod') < 1)
-                addon.setPref('scanPeriod', 1);
-            this.history.unregister();
-            this.history.register(this.getPref('scanPeriod'));
-        }, 'scanPeriod');
-        this.addPrefsObserver(() => {
-            const summaryFrame = document.getElementById('chartero-summary-iframe'),
-                summaryWin = (summaryFrame as HTMLIFrameElement)?.contentWindow;
-            summaryWin?.postMessage('updateExcludedTags');
-            addon.log('Updating excluded tags');
-        }, 'excludedTags');
-
-        this.history.register(addon.getPref("scanPeriod"));
-        this.patchSearch.setData({
-            target: Zotero.Search.prototype,
-            funcSign: 'search',
-            enabled: true,
-            patcher: patchedZoteroSearch
-        });
-        Zotero.Reader.registerEventListener('renderToolbar', e => onOpenReader(e.reader), config.addonID);
-        Zotero.Reader._readers.forEach(onOpenReader);
-        
-        this.log('Chartero initialized successfully!');
-
-        if (__dev__)
-            // 路径以/test开头可绕过Zotero安全限制
-            Zotero.Server.Endpoints['/test/chartero'] = DebuggerBackend;
+    init(win?: MainWindow) {
+        try {
+            if (win) {
+                onMainWindowLoad(win);
+            } else {
+                onAddonLoad();
+                onMainWindowLoad(Zotero.getMainWindow() as unknown as MainWindow);
+            }
+        } catch (error) {
+            this.log(error);
+        }
     }
 
     async unload() {
         this.patchSearch.disable();
-        this.overviewTabID && Zotero_Tabs.close(this.overviewTabID);
+        this.overviewTabID && (window as unknown as MainWindow).Zotero_Tabs.close(this.overviewTabID);
         this.notifierID && Zotero.Notifier.unregisterObserver(this.notifierID);
         this.prefsObserverIDs.forEach(id => Zotero.Prefs.unregisterObserver(id));
         this.listeners.forEach(({ target, type, listener }) =>
             target?.deref()?.removeEventListener(type, listener)
         );
-        ZoteroPane.itemsView.onSelect.removeListener(onItemSelect);
+        Zotero.getActiveZoteroPane().itemsView.onSelect.removeListener(onItemSelect);
         await this.worker.close();
         toolBase.unregister(this);
     }

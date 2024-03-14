@@ -1,6 +1,8 @@
 import { ClipboardHelper } from 'zotero-plugin-toolkit/dist/helpers/clipboard';
-const React = window.React,
-    ReaderContext = React.createContext<(position: _ZoteroTypes.Reader.PDFPosition) => void>(() => {});
+import { getGlobal } from '../utils';
+
+export const React = getGlobal('React');
+const ReaderContext = React.createContext<(position: _ZoteroTypes.Reader.PDFPosition) => void>(() => {});
 
 export type LoadedPages = Record<
     number,

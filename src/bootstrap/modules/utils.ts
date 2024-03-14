@@ -1,6 +1,10 @@
 import { ClipboardHelper } from 'zotero-plugin-toolkit/dist/helpers/clipboard';
 import { FilePickerHelper } from 'zotero-plugin-toolkit/dist/helpers/filePicker';
 import { WorkerManagerBase, WorkerRequest, WorkerResponse } from '../../worker/manager';
+import { BasicTool } from 'zotero-plugin-toolkit/dist/basic';
+
+const basicTool = new BasicTool();
+export const getGlobal = basicTool.getGlobal;
 
 // const { renderToStaticMarkup } = window.require('react-dom-server');
 // export { renderToStaticMarkup };
@@ -92,7 +96,7 @@ async function evalCmd(cmd: string) {
     addon.log('eval cmd:', cmd);
     const result = new Function(
         'Zotero', 'ZoteroPane', 'addon', 'return ' + cmd
-    )(Zotero, ZoteroPane, addon);
+    )(Zotero, Zotero.getActiveZoteroPane(), addon);
     addon.log(result);
 
     if (typeof result == 'string')

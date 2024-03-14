@@ -1,4 +1,3 @@
-import { isValid } from '../bootstrap/modules/utils';
 import type { WorkerStream } from './manager';
 import type { PDFDocumentProxy } from '../../node_modules/pdfjs-dist/types/src/pdf';
 
@@ -34,7 +33,7 @@ async function getPageImages(pdf: PDFDocumentProxy, pageIdx: number, url: string
         opList = await page.getOperatorList(),
         imgList = opList.fnArray
             .map((fn, i) => (fn == pdfjsLib.OPS.paintImageXObject ? i : undefined))
-            .filter(isValid);
+            .filter(Boolean) as number[];
     for (const i of imgList) {
         const id: string = opList.argsArray[i][0],
             data: ImageBitmap = page.objs.get(id).bitmap,

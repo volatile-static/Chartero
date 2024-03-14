@@ -1,8 +1,8 @@
 import { config } from '../../../package.json';
 import HistoryAnalyzer from './history/analyzer';
-import { toTimeString } from './utils';
+import { toTimeString, getGlobal } from './utils';
 
-const React = window.React;
+const React = getGlobal('React');
 
 export default function addItemColumns() {
     Zotero.ItemTreeManager.registerColumns({
@@ -25,7 +25,7 @@ export default function addItemColumns() {
         columnPickerSubMenu: true,
         pluginID: config.addonID,
         disabledIn: ['feed', 'feeds'],
-        zoteroPersist: ['width'],
+        zoteroPersist: ['width', 'hidden', 'sortDirection'],
         minWidth: 24,
         dataProvider: (item: Zotero.Item) => {
             try {
@@ -37,7 +37,8 @@ export default function addItemColumns() {
             }
         },
         renderCell: (_, data, column) => {
-            return addon.ui.createElement(document, 'span', {
+            const doc = Zotero.getMainWindow().document;
+            return addon.ui.createElement(doc, 'span', {
                 properties: { textContent: toTimeString(data) },
                 classList: ['cell', ...column.className.split(' ')],
                 enableElementDOMLog: false,

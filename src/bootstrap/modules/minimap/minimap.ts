@@ -37,7 +37,7 @@ export function updateMinimap(reader: _ZoteroTypes.ReaderInstance) {
                 200 * (1 - (history.record.pages[i]?.totalS ?? 0) / maxSeconds)
                 : 255;
             // 暗黑模式下反色
-            if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+            if (Zotero.getMainWindow().matchMedia('(prefers-color-scheme: dark)').matches)
                 val = 255 - val;
             return val;
         }),

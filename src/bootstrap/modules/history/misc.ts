@@ -176,8 +176,9 @@ export function initReaderAlert(doc: Document) {
         );
 }
 
-export function hideDeleteMenuForHistory() {
-    const menu = document.querySelector('#zotero-itemmenu .zotero-menuitem-move-to-trash') as XUL.MenuItem,
+export function hideDeleteMenuForHistory({ target }: Event) {
+    const doc = (target as Element).ownerDocument,
+        menu = doc.querySelector('#zotero-itemmenu .zotero-menuitem-move-to-trash') as XUL.MenuItem,
         hasHis = Zotero.getActiveZoteroPane()
             .getSelectedItems()
             .some(item => addon.history.isMainItem(item) || addon.history.isHistoryNote(item));

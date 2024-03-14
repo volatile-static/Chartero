@@ -1,10 +1,92 @@
 import { config } from '../../package.json';
-import { renderSummaryPanel, updateDashboard } from './modules/sidebar';
-import { initReaderAlert, protectData } from './modules/history/misc';
+import { addDebugMenu } from './modules/debug';
+import { DebuggerBackend, waitForReader } from './modules/utils';
 import { mountMinimap, updateMinimap } from './modules/minimap/minimap';
-import initPrefsPane from './modules/prefs';
-import { waitForReader } from './modules/utils';
+import { renderSummaryPanel, updateDashboard } from './modules/sidebar';
+import { hideDeleteMenuForHistory, initReaderAlert, patchedZoteroSearch, protectData } from './modules/history/misc';
 import addImagesPanelForReader from './modules/images/images';
+import buildRecentMenu from "./modules/recent";
+import addItemColumns from './modules/columns';
+import initPrefsPane from './modules/prefs';
+
+export function onAddonLoad() {
+    addon.log('Initializing Chartero addon...');
+
+    // 注册设置面板
+    Zotero.PreferencePanes.register({
+        pluginID: config.addonID,
+        src: rootURI + 'content/preferences.xhtml',
+        stylesheets: [rootURI + 'content/preferences.css'],
+        image: `chrome://${config.addonName}/content/icons/icon32.png`,
+        helpURL: addon.locale.helpURL,
+        label: config.addonName,
+    });
+
+
+    addon.notifierID = Zotero.Notifier.registerObserver(
+        { notify: onNotify },
+        ['tab', 'setting', 'item']
+    );
+
+    addon.addPrefsObserver(() => {
+        if (addon.getPref('scanPeriod') < 1)
+            addon.setPref('scanPeriod', 1);
+        addon.history.unregister();
+        addon.history.register(addon.getPref('scanPeriod'));
+    }, 'scanPeriod');
+    addon.addPrefsObserver(() => {
+        const summaryFrame = document.getElementById('chartero-summary-iframe'),
+            summaryWin = (summaryFrame as HTMLIFrameElement)?.contentWindow;
+        summaryWin?.postMessage('updateExcludedTags');
+        addon.log('Updating excluded tags');
+    }, 'excludedTags');
+
+    addon.history.register(addon.getPref("scanPeriod"));
+    addon.patchSearch.setData({
+        target: Zotero.Search.prototype,
+        funcSign: 'search',
+        enabled: true,
+        patcher: patchedZoteroSearch
+    });
+
+    Zotero.Reader.registerEventListener('renderToolbar', e => onOpenReader(e.reader), config.addonID);
+    Zotero.Reader._readers.forEach(onOpenReader);
+
+    addItemColumns();
+    addon.log('Chartero initialized successfully!');
+    if (__dev__)
+        // 路径以/test开头可绕过Zotero安全限制
+        Zotero.Server.Endpoints['/test/chartero'] = DebuggerBackend;
+}
+
+export function onMainWindowLoad(win: MainWindow) {
+    addon.registerListener(
+        win.document.getElementById('zotero-itemmenu')!,
+        'popupshowing',
+        hideDeleteMenuForHistory
+    );
+
+    // 注册Overview菜单
+    addon.menu.register('menuView', {
+        tag: 'menuitem',
+        label: addon.locale.overview,
+        commandListener: openOverview,
+        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
+    });
+    buildRecentMenu(win);
+    if (__dev__)
+        addDebugMenu();
+
+    // 监听条目选择事件
+    function waitForPane() {
+        const pane = win.ZoteroPane_Local;
+        if (pane.itemsView)
+            pane.itemsView.onSelect.addListener(onItemSelect);
+        else
+            setTimeout(waitForPane, 100);
+    }
+    waitForPane();
+}
 
 export function openReport() {
     Zotero.openInViewer(`chrome://${config.addonName}/content/report/index.html`, {
@@ -16,6 +98,7 @@ export function openReport() {
 }
 
 export function openOverview() {
+    const Zotero_Tabs = (Zotero.getMainWindow() as unknown as MainWindow).Zotero_Tabs;
     if (addon.overviewTabID) {
         Zotero_Tabs.select(addon.overviewTabID);
         return;
@@ -52,9 +135,12 @@ export function onHistoryRecord(reader: _ZoteroTypes.ReaderInstance) {
 
 export async function onItemSelect() {
     // 仅用户操作GUI时响应
-    if (Zotero_Tabs.selectedType != 'library') return;
-    const items = ZoteroPane.getSelectedItems(true),
-        dashboard = document.querySelector('#zotero-view-tabbox .chartero-dashboard') as HTMLIFrameElement,
+    if ((Zotero.getMainWindow() as unknown as MainWindow).Zotero_Tabs.selectedType != 'library') return;
+    const ZoteroPane = Zotero.getActiveZoteroPane(),
+        items = ZoteroPane.getSelectedItems(true),
+        dashboard = Zotero.getMainWindow().document.querySelector(
+            '#zotero-view-tabbox .chartero-dashboard'
+        ) as HTMLIFrameElement,
         renderSummaryPanelDebounced = Zotero.Utilities.debounce(renderSummaryPanel, 233);
     // 当前处于侧边栏标签页
     if (items.length == 1) {

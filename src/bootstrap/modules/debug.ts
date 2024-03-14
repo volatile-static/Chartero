@@ -1,12 +1,13 @@
 import { config } from '../../../package.json';
 
 export function addDebugMenu() {
+    const Zotero_Tabs = (Zotero.getMainWindow() as unknown as MainWindow).Zotero_Tabs;
     addon.menu.register('item', { tag: 'menuseparator' });
     addon.menu.register('item', {
         tag: 'menuitem',
         label: 'log to console',
         icon: `chrome://${config.addonName}/content/icons/icon.svg`,
-        commandListener: () => addon.log(ZoteroPane.getSelectedItems()),
+        commandListener: () => addon.log(Zotero.getActiveZoteroPane().getSelectedItems()),
     });
 
     addon.menu.register('collection', { tag: 'menuseparator' });
@@ -14,7 +15,7 @@ export function addDebugMenu() {
         tag: 'menuitem',
         label: 'log to console',
         icon: `chrome://${config.addonName}/content/icons/icon.svg`,
-        commandListener: () => addon.log(ZoteroPane.getCollectionTreeRow()?.ref),
+        commandListener: () => addon.log(Zotero.getActiveZoteroPane().getCollectionTreeRow()?.ref),
     });
 
     addon.menu.register('menuHelp', { tag: 'menuseparator' });

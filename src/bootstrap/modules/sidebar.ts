@@ -38,10 +38,11 @@ export function renderSummaryPanel(ids: number[]) {
         ids.length > addon.getPref('maxSummaryItems')
     )
         return;
-    const content = document.getElementById(
-        'zotero-item-pane-content'
-    ) as XUL.Deck,
-        summary: any = addon.ui.createElement(document, 'iframe', {
+    const win = Zotero.getMainWindow(),
+        content = win.document.getElementById(
+            'zotero-item-pane-content'
+        ) as XUL.Deck,
+        summary: any = addon.ui.createElement(win.document, 'iframe', {
             namespace: 'xul',
             id: 'chartero-summary-iframe',
             ignoreIfExists: true,
