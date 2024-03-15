@@ -14,37 +14,28 @@ export default function (win: MainWindow) {
         'before',
         win.document.getElementById('menu_close') as XUL.Element
     );
-    win.document
-        .getElementById('chartero-open-recent')!
-        .addEventListener(
-            'popupshowing',
-            function (this: XUL.Menu, event: Event) {
-                const popup = event.target as XUL.MenuPopup;
-                popup.replaceChildren();
-                if (__dev__)
-                    addon.log('recent menu', popup.childElementCount);
-
-                getHistoryInfo().forEach(async info => {
-                    const { id, name, image } = await info;
-                    addon.ui.appendElement({
-                        tag: 'menuitem',
-                        classList: ['menuitem-iconic'],
-                        styles: {
-                            // @ts-expect-error list-style-image
-                            'list-style-image': `url('${image}')`,
-                        },
-                        attributes: {
-                            label: name,
-                            tooltiptext: name,
-                        },
-                        listeners: [{
-                            type: 'command',
-                            listener: () => Zotero.getActiveZoteroPane().viewAttachment(id)
-                        }],
-                    }, popup);
-                });
-            }
-        );
+    win.document.getElementById('chartero-open-recent')!.addEventListener('popupshowing', event => {
+        const popup = event.target as XUL.MenuPopup,
+            info = getHistoryInfo();
+        popup.replaceChildren();
+        for (const { id, name, image } of info)
+            addon.ui.appendElement({
+                tag: 'menuitem',
+                namespace: 'xul',
+                classList: ['menuitem-iconic'],
+                styles: {
+                    listStyleImage: `url('${image}')`
+                },
+                attributes: {
+                    label: name,
+                    tooltiptext: name,
+                },
+                listeners: [{
+                    type: 'command',
+                    listener: () => Zotero.getActiveZoteroPane().viewAttachment(id)
+                }],
+            }, popup);
+    });
     addon.registerListener(win.Zotero_Tabs.tabsMenuPanel, 'popupshowing', addRecentTabsMenu);
     addon.registerListener(win.document.getElementById('zotero-tabs-menu-filter')!, 'input', addRecentTabsMenu);
 }
@@ -62,8 +53,7 @@ async function addRecentTabsMenu({ target }: Event) {
         ignoreIfExists: true
     }, win.Zotero_Tabs.tabsMenuList);
 
-    for (const info of getHistoryInfo()) {
-        const { id, name, iconType } = await info;
+    for (const { id, name, iconType } of getHistoryInfo()) {
         if (openedItems.includes(id) || !regex.test(name)) continue;
 
         const title = name.replace(regex, match => {
@@ -100,8 +90,7 @@ async function addRecentTabsMenu({ target }: Event) {
                 classList: ['zotero-tabs-menu-entry'],
                 attributes: { tabindex: ++tabIndex },
                 styles: {
-                    // @ts-expect-error list-style-image
-                    'list-style-image': 'url(chrome://chartero/content/icons/history.svg)',
+                    listStyleImage: 'url(chrome://chartero/content/icons/history.svg)',
                     border: '0px',
                     color: 'var(--fill-secondary)',
                     fill: 'currentColor',
@@ -120,14 +109,20 @@ function getHistoryInfo() {
         .filter(isValid)
         .sort((a, b) => b.tim - a.tim)
         .slice(0, 10)
-        .map(async his => {
-            const attachment = await Zotero.Items.getAsync(his.id),
-                topLevel = attachment.topLevelItem;
-            return {
-                id: his.id,
-                name: topLevel.getField('title'),
-                image: topLevel.getImageSrc(),
-                iconType: topLevel.getItemTypeIconName()
-            };
-        });
+        .map(his => {
+            try {
+                const attachment = Zotero.Items.get(his.id),
+                    topLevel = attachment.topLevelItem;
+                return {
+                    id: his.id,
+                    name: topLevel.getField('title'),
+                    image: topLevel.getImageSrc(),
+                    iconType: topLevel.getItemTypeIconName()
+                };
+            } catch (error) {
+                addon.log('unload recent menu', his.id, error);
+                return null;
+            }
+        })
+        .filter(isValid);
 }
