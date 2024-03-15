@@ -49,7 +49,7 @@ export function renderSummaryPanel(ids: number[]) {
             attributes: {
                 src: 'chrome://chartero/content/summary/index.html',
             },
-            styles: { height: '100%' }
+            styles: { height: '100%', width: '100%' }
         });
 
     if (summary.parentElement != content) {
