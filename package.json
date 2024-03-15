@@ -1,6 +1,6 @@
 {
     "name": "chartero",
-    "version": "2.6.2",
+    "version": "2.6.3",
     "type": "module",
     "config": {
         "addonName": "Chartero",
