@@ -78,14 +78,18 @@ export function onMainWindowLoad(win: MainWindow) {
         addDebugMenu();
 
     // 监听条目选择事件
-    function waitForPane() {
-        const pane = win.ZoteroPane_Local;
-        if (pane.itemsView)
-            pane.itemsView.onSelect.addListener(onItemSelect);
-        else
-            setTimeout(waitForPane, 100);
-    }
-    waitForPane();
+    const pane = win.ZoteroPane_Local,
+        itemsTree = win.document.getElementById('zotero-items-tree')!,
+        observer: MutationObserver = new (win as any).MutationObserver(() => {
+            if (pane.itemsView) {
+                observer.disconnect();
+                pane.itemsView.onSelect.addListener(onItemSelect);
+            }
+        });
+    if (pane.itemsView)  // 主窗口加载时已经初始化
+        pane.itemsView.onSelect.addListener(onItemSelect);
+    else
+        observer.observe(itemsTree, { childList: true });
 }
 
 export function openReport() {
@@ -149,7 +153,7 @@ export async function onItemSelect() {
             // 只有常规条目才有仪表盘
             dashboard?.contentWindow?.postMessage({ id: items[0] }, '*');
     } else if (
-        ZoteroPane.itemsView.rowCount > items.length &&
+        (ZoteroPane.itemsView as _ZoteroTypes.ItemTree).rowCount > items.length &&
         items.length > 1 &&
         'duplicates' != ZoteroPane.getCollectionTreeRow()?.type
     )
