@@ -91,4 +91,15 @@ export function addDebugMenu() {
             }
         },
     });
+    addon.menu.register('menuFile', {
+        tag: 'menuitem',
+        label: 'reload',
+        icon: `resource://chartero/icons/icon.svg`,
+        commandListener: async () => {
+            Services.obs.notifyObservers(null, 'startupcache-invalidate');
+            const { AddonManager } = ChromeUtils.import('resource://gre/modules/AddonManager.jsm');
+            const addon = await AddonManager.getAddonByID(config.addonID);
+            addon.reload();
+        },
+    });
 }
