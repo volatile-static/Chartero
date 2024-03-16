@@ -130,6 +130,7 @@
             ],
             "curly": "off",
             "no-undef": "off",
+            "no-console": "warn",
             "consistent-return": "off",
             "vue/max-attributes-per-line": "off",
             "vue/multi-word-component-names": "warn",

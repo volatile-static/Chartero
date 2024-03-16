@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type { RollupWatcher } from 'rollup';
 import { build } from 'esbuild';
 import type { BuildOptions } from 'esbuild';

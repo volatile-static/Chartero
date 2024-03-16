@@ -1,8 +1,8 @@
 import { config } from '../../package.json';
 import { addDebugMenu } from './modules/debug';
-import { DebuggerBackend, waitForReader } from './modules/utils';
+import { ICON_URL, DebuggerBackend, waitForReader } from './modules/utils';
 import { mountMinimap, updateMinimap } from './modules/minimap/minimap';
-import { renderSummaryPanel, updateDashboard } from './modules/sidebar';
+import { registerPanels, renderSummaryPanel, updateDashboard } from './modules/sidebar';
 import { hideDeleteMenuForHistory, initReaderAlert, patchedZoteroSearch, protectData } from './modules/history/misc';
 import addImagesPanelForReader from './modules/images/images';
 import buildRecentMenu from "./modules/recent";
@@ -49,6 +49,8 @@ export function onAddonLoad() {
         patcher: patchedZoteroSearch
     });
 
+    registerPanels();
+
     Zotero.Reader.registerEventListener('renderToolbar', e => onOpenReader(e.reader), config.addonID);
     Zotero.Reader._readers.forEach(onOpenReader);
 
@@ -71,7 +73,7 @@ export function onMainWindowLoad(win: MainWindow) {
         tag: 'menuitem',
         label: addon.locale.overview,
         commandListener: openOverview,
-        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
+        icon: ICON_URL,
     });
     buildRecentMenu(win);
     if (__dev__)

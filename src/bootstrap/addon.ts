@@ -166,7 +166,7 @@ export default class Addon extends toolBase.BasicTool {
         this.listeners.forEach(({ target, type, listener }) =>
             target?.deref()?.removeEventListener(type, listener)
         );
-        Zotero.getActiveZoteroPane().itemsView.onSelect.removeListener(onItemSelect);
+        (Zotero.getActiveZoteroPane().itemsView as any).onSelect.removeListener(onItemSelect);
         await this.worker.close();
         toolBase.unregister(this);
     }
