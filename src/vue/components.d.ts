@@ -8,8 +8,11 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     TButton: typeof import('tdesign-vue-next')['Button']
+    TCollapse: typeof import('tdesign-vue-next')['Collapse']
+    TCollapsePanel: typeof import('tdesign-vue-next')['CollapsePanel']
     TContent: typeof import('tdesign-vue-next')['Content']
     TDialog: typeof import('tdesign-vue-next')['Dialog']
+    TDivider: typeof import('tdesign-vue-next')['Divider']
     THeader: typeof import('tdesign-vue-next')['Header']
     TLayout: typeof import('tdesign-vue-next')['Layout']
     TOption: typeof import('tdesign-vue-next')['Option']
@@ -19,6 +22,9 @@ declare module 'vue' {
     TSpace: typeof import('tdesign-vue-next')['Space']
     TTabPanel: typeof import('tdesign-vue-next')['TabPanel']
     TTabs: typeof import('tdesign-vue-next')['Tabs']
+    TTag: typeof import('tdesign-vue-next')['Tag']
+    TTimeline: typeof import('tdesign-vue-next')['Timeline']
+    TTimelineItem: typeof import('tdesign-vue-next')['TimelineItem']
     TTooltip: typeof import('tdesign-vue-next')['Tooltip']
     TTransfer: typeof import('tdesign-vue-next')['Transfer']
   }

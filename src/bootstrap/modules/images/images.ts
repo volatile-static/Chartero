@@ -1,12 +1,10 @@
 import type { TagElementProps } from 'zotero-plugin-toolkit/dist/tools/ui';
 import { ClipboardHelper } from 'zotero-plugin-toolkit/dist/helpers/clipboard';
-import { isPDFReader, isEpubReader, isWebReader, PdfImageListener, getGlobal } from '../utils';
-import View, { type LoadedPages, React } from './components';
+import { isPDFReader, isEpubReader, isWebReader, PdfImageListener } from '../utils';
+import { React, ReactDOM } from '../global';
+import View, { type LoadedPages } from './components';
 import stylesheet from './images.sass';
 import icon from './viewImages.svg';
-
-const req = getGlobal('require'),
-    { render } = req('react-dom');
 
 /**
  * 给阅读器左侧边栏添加图片预览
@@ -123,25 +121,24 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap> {
 }
 
 class PDFImages extends ReaderImages<'pdf'> {
-    private readonly require = getGlobal('require');
     private readonly loadedPages: LoadedPages = {};
 
     private onRenderImage: PdfImageListener = (pageNum, imgNum, { rect, pageIdx, data }) => {
         this.loadedPages[pageIdx] ??= { numImages: imgNum, loadedImages: [] };
         this.loadedPages[pageIdx].loadedImages.push({ rect, data });
         if (__dev__)
-            getGlobal('console').time('render' + pageNum + '-' + imgNum);
+            addon.getGlobal('console').time('render' + pageNum + '-' + imgNum);
         try {
             const view = React.createElement(View, {
                     pages: this.loadedPages,
                     onNavigate: position => this.reader.navigate({ position }),
                 });
-            render(view, this.imagesView);
+            ReactDOM.render(view, this.imagesView);
         } catch (error) {
             addon.log(error);
         }
         if (__dev__)
-            getGlobal('console').timeEnd('render' + pageNum + '-' + imgNum);
+            addon.getGlobal('console').timeEnd('render' + pageNum + '-' + imgNum);
         ++this.loadedImages;
     };
 

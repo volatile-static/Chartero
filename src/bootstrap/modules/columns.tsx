@@ -1,8 +1,7 @@
 import { config } from '../../../package.json';
 import HistoryAnalyzer from './history/analyzer';
-import { toTimeString, getGlobal } from './utils';
-
-const React = getGlobal('React');
+import { toTimeString } from './utils';
+import { React } from './global';
 
 export default function addItemColumns() {
     Zotero.ItemTreeManager.registerColumns({

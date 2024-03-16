@@ -49,8 +49,9 @@ export function registerPanels() {
         onDataChange: args => {
             addon.log(args.incomingData);
             if (args.incomingData.type === 'item') {
-                const iframe = args.body.getElementsByTagName('iframe')[0];
-                iframe.contentWindow!.postMessage({ id: args.incomingData.value.id }, '*');
+                const iframe = args.body.getElementsByTagName('iframe')[0],
+                    id = Number(args.incomingData.value.id);
+                iframe.contentWindow!.postMessage({ id }, '*');
             }
             return true;
         },
