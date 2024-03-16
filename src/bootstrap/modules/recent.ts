@@ -1,5 +1,4 @@
-import { config } from '../../../package.json';
-import { isValid } from './utils';
+import { ICON_URL, isValid } from './utils';
 
 export default function (win: MainWindow) {
     // 注册“最近在读”菜单
@@ -9,7 +8,7 @@ export default function (win: MainWindow) {
             tag: 'menu',
             id: 'chartero-open-recent',
             label: addon.locale.recent,
-            icon: `chrome://${config.addonName}/content/icons/icon.svg`,
+            icon: ICON_URL,
         },
         'before',
         win.document.getElementById('menu_close') as XUL.Element

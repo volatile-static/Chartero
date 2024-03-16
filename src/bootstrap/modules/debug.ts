@@ -1,4 +1,5 @@
 import { config } from '../../../package.json';
+import { ICON_URL } from './utils';
 
 export function addDebugMenu() {
     const Zotero_Tabs = (Zotero.getMainWindow() as unknown as MainWindow).Zotero_Tabs;
@@ -6,7 +7,7 @@ export function addDebugMenu() {
     addon.menu.register('item', {
         tag: 'menuitem',
         label: 'log to console',
-        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
+        icon: ICON_URL,
         commandListener: () => addon.log(Zotero.getActiveZoteroPane().getSelectedItems()),
     });
 
@@ -14,7 +15,7 @@ export function addDebugMenu() {
     addon.menu.register('collection', {
         tag: 'menuitem',
         label: 'log to console',
-        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
+        icon: ICON_URL,
         commandListener: () => addon.log(Zotero.getActiveZoteroPane().getCollectionTreeRow()?.ref),
     });
 
@@ -22,13 +23,13 @@ export function addDebugMenu() {
     addon.menu.register('menuHelp', {
         tag: 'menuitem',
         label: 'log reader to console',
-        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
+        icon: ICON_URL,
         commandListener: () => addon.log(Zotero.Reader.getByTabID(Zotero_Tabs.selectedID)),
     });
     addon.menu.register('menuHelp', {
         tag: 'menuitem',
         label: 'log iframe window to console',
-        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
+        icon: ICON_URL,
         commandListener: () => addon.log((
             <_ZoteroTypes.Reader.PDFView>Zotero.Reader.getByTabID(Zotero_Tabs.selectedID)._primaryView
         )._iframeWindow)
@@ -36,13 +37,13 @@ export function addDebugMenu() {
     addon.menu.register('menuHelp', {
         tag: 'menuitem',
         label: 'log main items to console',
-        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
+        icon: ICON_URL,
         commandListener: () => addon.log((<any>addon.history)._mainItems),
     });
     addon.menu.register('menuHelp', {
         tag: 'menuitem',
         label: 'open dev tools',
-        icon: `chrome://${config.addonName}/content/icons/icon.svg`,
+        icon: ICON_URL,
         commandListener: () => {
             Zotero.Prefs.set('devtools.debugger.remote-enabled', true, true);
             Zotero.Prefs.set('devtools.debugger.remote-port', 6100, true);
@@ -94,7 +95,7 @@ export function addDebugMenu() {
     addon.menu.register('menuFile', {
         tag: 'menuitem',
         label: 'reload',
-        icon: `resource://chartero/icons/icon.svg`,
+        icon: ICON_URL,
         commandListener: async () => {
             Services.obs.notifyObservers(null, 'startupcache-invalidate');
             const { AddonManager } = ChromeUtils.import('resource://gre/modules/AddonManager.jsm');

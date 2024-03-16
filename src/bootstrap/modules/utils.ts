@@ -3,6 +3,8 @@ import { FilePickerHelper } from 'zotero-plugin-toolkit/dist/helpers/filePicker'
 import { WorkerManagerBase, WorkerRequest, WorkerResponse } from '../../worker/manager';
 import { BasicTool } from 'zotero-plugin-toolkit/dist/basic';
 
+export const ICON_URL = 'resource://chartero/icons/icon.svg';
+
 const basicTool = new BasicTool();
 export const getGlobal = basicTool.getGlobal;
 
