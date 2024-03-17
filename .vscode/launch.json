@@ -10,22 +10,22 @@
             "request": "launch",
             "reAttach": true,
             "url": "http://localhost:5173/",
-            "firefoxExecutable": "F:\\Firefox\\firefox.exe",
+            "firefoxExecutable": "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
             "pathMappings": [
                 {
                     "url": "http://localhost:5173/@vite/client.ts",
                     "path": "${workspaceFolder}/src/modules/vite/packages/vite/src/client/client.ts"
                 },
                 {
-                    "url": "http://localhost:5173/@fs/E:/zotero/chartero/src",
+                    "url": "http://localhost:5173/@fs/*/*/Chartero/src",
                     "path": "${workspaceFolder}/src"
                 },
                 {
-                    "url": "http://localhost:5173/@fs/E:/zotero/chartero/node_modules/tdesign-vue-next",
+                    "url": "http://localhost:5173/@fs/*/*/Chartero/node_modules/tdesign-vue-next",
                     "path": "${workspaceFolder}/src/modules/tdesign"
                 },
                 {
-                    "url": "http://localhost:5173/@fs/E:/zotero/chartero/node_modules",
+                    "url": "http://localhost:5173/@fs/*/*/Chartero/node_modules",
                     "path": "${workspaceFolder}/node_modules"
                 },
                 {
@@ -33,7 +33,7 @@
                     "path": "${workspaceFolder}/src/vue/test"
                 },
                 {
-                    "url": "http://localhost:5173/@fs/F:/zotero%20add-on/Chartero/",
+                    "url": "http://localhost:5173/@fs/*/*/Chartero/",
                     "path": "${workspaceFolder}"
                 }
             ],
