@@ -8,6 +8,7 @@ class Item {
             get(target, prop: string) {
                 if (typeof prop != 'string') return null;
                 if (prop == 'id') return target.id;
+                if (prop == 'getBestAttachment') return target.getBestAttachment;
                 if (prop.startsWith('__v_')) return Reflect.get(target, prop);
 
                 const itemStr = `Zotero.Items.get(${target.id})`,
@@ -18,6 +19,12 @@ class Item {
                 return fetchSync(`${itemStr}.${prop}`);
             },
         });
+    }
+    async getBestAttachment() {
+        const att = fetchSync(`Zotero.Items.get(${this.id}).getBestAttachment()`);
+        if (!att.key)
+            return null;
+        return new Item(fetchSync(`Zotero.Items.getIDFromLibraryAndKey(1, '${att.key}')`));
     }
 }
 
@@ -43,6 +50,9 @@ export default class Zotero {
             ];
         },
     };
+    Libraries = {
+        userLibraryID: 1,
+    };
     Tags = {
         getID(tag: string) {
             return fetchSync(`Zotero.Tags.getID('${tag}')`);
@@ -64,6 +74,16 @@ export default class Zotero {
     };
     Utilities = {
         debounce,
+    };
+    File = {
+        pathToFile(path: string) {
+            return new Proxy({ path }, {
+                get(target, prop: string) {
+                    const p = target.path.replace(/\\/g, '\\\\');
+                    return fetchSync(`Zotero.File.pathToFile('${p}').${prop}`);
+                }
+            });
+        }
     };
     greenfrog = {};
 }

@@ -1,69 +1,41 @@
 <template>
-  <t-collapse
-    :default-value="['progress', 'date']" :value="collapseValue" expand-icon-placement="right"
-    @change="onCollapseChange"
-  >
-    <t-collapse-panel value="progress" :header="locale.readingProgress">
-      <t-space align="center" size="small" class="progress-space">
-        <t-tooltip :content="locale.readingProgressTip" :show-arrow="false">
-          <t-progress theme="circle" size="small" :percentage="readingProgress" />
-        </t-tooltip>
-        <div class="progress-info">
-          <span>{{
-            `🔖 ${locale.progressLabel.read} ${readPages} ${locale.pages} / ${locale.progressLabel.total}
+  <t-space v-show="activeTab == SectionTab.Progress" align="center" size="small" class="progress-space">
+    <t-tooltip :content="locale.readingProgressTip" :show-arrow="false">
+      <t-progress theme="circle" size="small" :percentage="readingProgress" />
+    </t-tooltip>
+    <div class="progress-info">
+      <span>{{
+        `🔖 ${locale.progressLabel.read} ${readPages} ${locale.pages} / ${locale.progressLabel.total}
                                             ${numPages} ${locale.pages}`
-          }}</span>
-          <span>{{
-            `📚 ${numAttachment} ${locale.progressLabel.PDFs} / ${locale.progressLabel.total} ${attachmentSize}
+      }}</span>
+      <span>{{
+        `📚 ${numAttachment} ${locale.progressLabel.PDFs} / ${locale.progressLabel.total} ${attachmentSize}
                         MB`
-          }}</span>
-          <span>📝 {{ noteNum }} {{ locale.progressLabel.notes }} /
-            {{ locale.progressLabel.total }} {{ noteWords }}
-            {{ locale.progressLabel.words }}</span>
-        </div>
-        <template #separator>
-          <t-divider layout="vertical" />
-        </template>
-      </t-space>
-    </t-collapse-panel>
+      }}</span>
+      <span>📝 {{ noteNum }} {{ locale.progressLabel.notes }} /
+        {{ locale.progressLabel.total }} {{ noteWords }}
+        {{ locale.progressLabel.words }}</span>
+    </div>
+    <template #separator>
+      <t-divider layout="vertical" />
+    </template>
+  </t-space>
 
-    <!-- <t-collapse-panel value="bubble" :disabled="collapseDisabled">
-            <ProgressBubble :history="itemHistory" :theme="chartTheme" />
-        </t-collapse-panel> -->
+  <PageTime v-show="activeTab == SectionTab.Page" :history="itemHistory" :theme="chartTheme" />
 
-    <t-collapse-panel value="page" :header="locale.chartTitle.pageTime" :disabled="collapseDisabled">
-      <PageTime :history="itemHistory" :theme="chartTheme" />
-    </t-collapse-panel>
+  <DateTime v-show="activeTab == SectionTab.Date" :history="itemHistory" :theme="chartTheme" />
 
-    <t-collapse-panel value="date" :header="locale.chartTitle.dateTime" :disabled="collapseDisabled">
-      <DateTime :history="itemHistory" :theme="chartTheme" />
-    </t-collapse-panel>
+  <UserPie v-show="activeTab == SectionTab.Group" :history="itemHistory" :theme="chartTheme" />
 
-    <t-collapse-panel v-if="!isUserLib" value="users" :header="locale.chartTitle.users">
-      <UserPie :history="itemHistory" :theme="chartTheme" />
-    </t-collapse-panel>
+  <Network
+    v-show="activeTab == SectionTab.Relation"
+    :top-level="topLevel" :theme="chartTheme" :item-i-d="topLevel?.id"
+  />
 
-    <t-collapse-panel value="network" :header="locale.chartTitle.network">
-      <Network
-        :top-level="topLevel" :theme="chartTheme" :item-i-d="topLevel?.id"
-        :show="collapseValue.includes('network')"
-      />
-    </t-collapse-panel>
-
-    <t-collapse-panel value="timeline" :header="locale.timeline" :disabled="collapseDisabled">
-      <TimeLine :history="itemHistory" />
-    </t-collapse-panel>
-  </t-collapse>
-
-  <!-- <div class="theme-button">
-        <t-button @click="switchTheme" size="large" shape="circle">{{
-            themeBtn
-        }}</t-button>
-    </div> -->
+  <TimeLine v-show="activeTab == SectionTab.Timeline" :history="itemHistory" />
 </template>
 
 <script lang="ts">
-import type { CollapseValue } from 'tdesign-vue-next';
 import { nextTick } from 'vue';
 import { GridLightTheme, DarkUnicaTheme } from '@/themes';
 import PageTime from './components/pageTime.vue';
@@ -71,10 +43,19 @@ import DateTime from './components/dateTime.vue';
 import TimeLine from './components/timeline.vue';
 import Network from './components/network.vue';
 import UserPie from './components/userPie.vue';
-import ProgressBubble from './components/progressBubble.vue';
 import anime from 'animejs';
 import HistoryAnalyzer from '$/history/analyzer';
 import type { AttachmentHistory } from '$/history/history';
+
+enum SectionTab {
+    Progress = 'progress',
+    Bubble = 'bubble',
+    Page = 'page',
+    Date = 'date',
+    Group = 'group',
+    Relation = 'relation',
+    Timeline = 'timeline',
+}
 
 export default {
     components: { PageTime, DateTime, TimeLine, Network, UserPie },
@@ -82,13 +63,14 @@ export default {
         return {
             dark: false,
             locale: addon.locale,
+            SectionTab,
+            activeTab: SectionTab.Progress,
             noteNum: 0,
             noteWords: 0,
             readPages: 0,
             numPages: 0,
             numAttachment: 0,
             attachmentSize: '',
-            collapseValue: ['progress'] as Array<string | number>,
             item: null as null | Zotero.Item,
             animateInt: {
                 round: 1,
@@ -109,9 +91,6 @@ export default {
         },
         chartTheme(): object {
             return this.dark ? DarkUnicaTheme : GridLightTheme;
-        },
-        themeBtn(): string {
-            return this.dark ? '☀️' : '🌙';
         },
         collapseDisabled(): boolean {
             return this.itemHistory.length < 1;
@@ -141,16 +120,17 @@ export default {
             
         },
     },
-    watch: {
-        collapseDisabled(val: boolean) {
-            if (val) this.collapseValue = ['progress'];
-        },
-    },
     mounted() {
-        window.addEventListener('message', e => {
+        addEventListener('message', e => {
+            if (typeof e.data.tab == 'string') {
+                this.activeTab = e.data.tab;
+                return;
+            }
+
             // 判断消息是否包含ID
             if (typeof e.data.id != 'number')
                 return;
+
             this.item = Zotero.Items.get(e.data.id); // 获取传入的条目
             if (addon.getPref('enableRealTimeDashboard'))  // 强制刷新
                 this.realtimeUpdating = !this.realtimeUpdating;
@@ -180,12 +160,6 @@ export default {
         updateTheme() {
             if (!window.matchMedia('(prefers-color-scheme: dark)'))
                 this.switchTheme();
-        },
-        onCollapseChange(val: CollapseValue) {
-            this.collapseValue = val.filter(i =>
-                this.itemHistory.length ||
-                ['progress', 'network'].includes(i as string)
-            );
         },
         // 统计笔记信息
         updateNotes() {

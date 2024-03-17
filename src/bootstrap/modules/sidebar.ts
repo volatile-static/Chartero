@@ -23,21 +23,23 @@ export function registerPanels() {
             l10nID: 'zotero-toolbar-tabs-menu',
             icon: `resource://${config.addonName}/icons/sidebar.svg`,
         },
-        sectionButtons: [{
-            type: 'info',
-            icon: `resource://${config.addonName}/icons/sidebar.svg`,
-            onClick: addon.log
-        }],
+        sectionButtons: ['progress', 'page', 'date', 'group', 'relation', 'timeline'].map(tab => ({
+            type: tab,
+            icon: `resource://${config.addonName}/icons/${tab}.svg`,
+            onClick(e) {
+                const iframe = e.body.getElementsByTagName('iframe')[0];
+                iframe.contentWindow!.postMessage({ tab }, '*');
+            }
+        })),
         onInit: args => {
-            const iframe = args.doc.createXULElement('iframe') as HTMLElement as HTMLIFrameElement;
-            iframe.setAttribute('src', 'resource://chartero/dashboard/index.html');
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.addEventListener('load', ({ target }) => {
-                const win = (target as Document).defaultView!;
-                (win as any).wrappedJSObject.addon = addon;
-            }, true);
-            args.body.appendChild(iframe);
+            const iframe = addon.ui.appendElement({
+                tag: 'iframe',
+                namespace: 'xul',
+                attributes: { src: 'chrome://chartero/content/dashboard/index.html' },
+                styles: { height: '100%', width: '100%' },
+                enableElementRecord: false,
+            }, args.body) as HTMLIFrameElement;
+            (iframe.contentWindow as any).wrappedJSObject.addon = addon;
             args.body.style.height = '600px';
         },
         onRender: args => {
