@@ -71,7 +71,14 @@ Please disable all other plugins when necessary, then file an issue with the exp
     - [src/vue/utility](src/vue/utility): The utility functions.
     - [src/vue/test](src/vue/test): The unit test for Vue components.
   - [src/modules](src/modules): Git-submodules for VS Code debugging.
-  - [src/worker](src/worker): The worker for data processing.
+    - use the following command to initialize the submodules:
+
+      ```bash
+      git submodule init
+      git submodule update
+      ```
+
+- [src/worker](src/worker): The worker for data processing.
 
 ### URL
 

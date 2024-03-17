@@ -76,6 +76,13 @@ _Chartero_ 这个名字是连接了 **Char**t 与 Zo**tero**，作为一个[Zote
     - [src/vue/utility](../src/vue/utility/)：一些辅助代码
     - [src/vue/test](../src/vue/test/)：测试模块
   - [src/modules](../src/modules/)：Git子仓库，用于在VS Code中调试TS源码
+    - 初始化：
+
+        ```bash
+        git submodule init
+        git submodule update
+        ```
+
   - [src/worker](../src/worker/)：数据处理的后台线程
 
 ### URL
