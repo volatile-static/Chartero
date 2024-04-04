@@ -27,10 +27,10 @@
 
   <UserPie v-show="activeTab == SectionTab.Group" :history="itemHistory" :theme="chartTheme" />
 
-  <Network
+  <!-- <Network
     v-show="activeTab == SectionTab.Relation"
     :top-level="topLevel" :theme="chartTheme" :item-i-d="topLevel?.id"
-  />
+  /> -->
 
   <TimeLine v-show="activeTab == SectionTab.Timeline" :history="itemHistory" />
 </template>
@@ -121,6 +121,7 @@ export default {
         },
     },
     mounted() {
+        addon.log('Dashboard mounted');
         addEventListener('message', e => {
             if (typeof e.data.tab == 'string') {
                 this.activeTab = e.data.tab;

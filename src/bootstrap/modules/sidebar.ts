@@ -12,6 +12,19 @@ export function updateDashboard(id?: number) {
  * 初始化侧边栏TabPanel
  */
 export function registerPanels() {
+    function post(body: HTMLDivElement, message: any) {
+        const iframe = body.getElementsByTagName('iframe')[0];
+        if (!iframe?.contentWindow)
+            addon.log(new Error('Dashboard iframe not found'));
+        else if (iframe.contentDocument?.readyState === 'complete')
+            iframe.contentWindow.postMessage(message, '*');
+        else
+            iframe.addEventListener('load', ({ target }) =>
+                (target as Document).defaultView!.postMessage(message, '*'), true);
+        addon.log(message, iframe.contentDocument?.readyState);
+    }
+    const tabs = ['progress', 'page', 'date', 'group', 'relation', 'timeline'];
+
     if (!Zotero.ItemPaneManager?.registerSection)
         addon.log(new Error('ItemPaneManager not found'));
     Zotero.ItemPaneManager?.registerSection({
@@ -25,12 +38,14 @@ export function registerPanels() {
             l10nID: 'chartero-dashboardSection',
             icon: `resource://${config.addonName}/icons/sidebar.svg`,
         },
-        sectionButtons: ['progress', 'page', 'date', 'group', 'relation', 'timeline'].map(tab => ({
+        sectionButtons: tabs.map(tab => ({
             type: tab,
+            l10nID: `chartero-dashboard-${tab}`,
             icon: `resource://${config.addonName}/icons/${tab}.svg`,
             onClick(e) {
-                const iframe = e.body.getElementsByTagName('iframe')[0];
-                iframe.contentWindow!.postMessage({ tab }, '*');
+                post(e.body, { tab });
+                for (const t of tabs)
+                    e.setSectionButtonStatus(t, { disabled: t === tab });
             }
         })),
         onInit: args => {
@@ -44,15 +59,8 @@ export function registerPanels() {
             (iframe.contentWindow as any).wrappedJSObject.addon = addon;
             args.body.style.height = '600px';
         },
-        onRender: args => {
-        },
-        onItemChange: args => {
-            addon.log(args);
-            const iframe = args.body.getElementsByTagName('iframe')[0],
-                id = Number(args.item.id);
-            iframe.contentWindow!.postMessage({ id }, '*');
-        },
-        onDestroy: args => addon.log(args),
+        onRender: args => post(args.body, 'render'),
+        onItemChange: args => post(args.body, { id: args.item.id }),
     });
 }
 

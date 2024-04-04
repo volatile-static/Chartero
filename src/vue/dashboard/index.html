@@ -63,11 +63,24 @@
     import { createApp } from 'vue';
     import App from './main.vue';
     import 'tdesign-vue-next/es/style/index.css';
-    try {
-      createApp(App).mount('#app');
-    } catch (error) {
-      addon.log('dashboard app', error)
+
+    function switchTheme(e) {
+      document.documentElement.setAttribute('theme-mode', e.matches ? 'dark' : 'light');
     }
+    const darkQuery = matchMedia('(prefers-color-scheme: dark)');
+    darkQuery.addListener(switchTheme);
+    switchTheme(darkQuery);
+
+    function onMsg({ data }) {
+      if (data == 'render')
+        try {
+          createApp(App).mount('#app');
+          removeEventListener('message', onMsg);
+        } catch (error) {
+          console.error('dashboard app', error)
+        }
+    }
+    addEventListener('message', onMsg);
   </script>
   <script>Zotero = addon.getGlobal('Zotero');</script>
 </body>
