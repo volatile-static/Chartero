@@ -25,3 +25,7 @@ historySize = Current history size: <b>{ $size }</b> KB
 maxSummaryItems = Do not render Summary when the number of items exceeds this value:
 translate = Auto translate locale strings using <i>PDFTranslate</i> Plugin (Experimental)
 completeThreshold = Complete threshold for progress (seconds):
+
+dashboardSection =
+    .label = Dashboard
+    .tooltiptext = Chartero Dashboard

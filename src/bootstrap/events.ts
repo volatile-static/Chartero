@@ -22,7 +22,6 @@ export function onAddonLoad() {
         label: config.addonName,
     });
 
-
     addon.notifierID = Zotero.Notifier.registerObserver(
         { notify: onNotify },
         ['tab', 'setting', 'item']
@@ -67,6 +66,8 @@ export function onMainWindowLoad(win: MainWindow) {
         'popupshowing',
         hideDeleteMenuForHistory
     );
+
+    (win as any).MozXULElement.insertFTLIfNeeded('chartero.ftl');
 
     // 注册Overview菜单
     addon.menu.register('menuView', {

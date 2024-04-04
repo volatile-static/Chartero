@@ -25,3 +25,7 @@ historySize = 現在の履歴データのサイズ：<b>{ $size }</b> KB
 maxSummaryItems = サイドバーにレンダーする項目の最大数：
 translate = <i>PDFtranslate</i>プラグイン自動翻訳インタフェース言語を呼び出す
 completeThreshold = 完了進捗閾値（秒）：
+
+dashboardSection =
+    .label = ダッシュボード
+    .tooltiptext = Charteroダッシュボード

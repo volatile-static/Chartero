@@ -12,15 +12,17 @@ export function updateDashboard(id?: number) {
  * 初始化侧边栏TabPanel
  */
 export function registerPanels() {
-    Zotero.ItemPaneManager?.registerSections({
+    if (!Zotero.ItemPaneManager?.registerSection)
+        addon.log(new Error('ItemPaneManager not found'));
+    Zotero.ItemPaneManager?.registerSection({
         paneID: 'chartero-dashboard',
         pluginID: config.addonID,
-        head: {
-            l10nID: 'zotero-toolbar-tabs-menu',
-            icon: `chrome://zotero/skin/itempane/16/abstract.svg`,
+        header: {
+            l10nID: 'chartero-dashboardSection',
+            icon: `resource://${config.addonName}/icons/sidebar.svg`,
         },
         sidenav: {
-            l10nID: 'zotero-toolbar-tabs-menu',
+            l10nID: 'chartero-dashboardSection',
             icon: `resource://${config.addonName}/icons/sidebar.svg`,
         },
         sectionButtons: ['progress', 'page', 'date', 'group', 'relation', 'timeline'].map(tab => ({
@@ -43,19 +45,12 @@ export function registerPanels() {
             args.body.style.height = '600px';
         },
         onRender: args => {
-            addon.log(args.getData());
         },
-        onSecondaryRender: args => {
-            addon.log(args.getData());
-        },
-        onDataChange: args => {
-            addon.log(args.incomingData);
-            if (args.incomingData.type === 'item') {
-                const iframe = args.body.getElementsByTagName('iframe')[0],
-                    id = Number(args.incomingData.value.id);
-                iframe.contentWindow!.postMessage({ id }, '*');
-            }
-            return true;
+        onItemChange: args => {
+            addon.log(args);
+            const iframe = args.body.getElementsByTagName('iframe')[0],
+                id = Number(args.item.id);
+            iframe.contentWindow!.postMessage({ id }, '*');
         },
         onDestroy: args => addon.log(args),
     });

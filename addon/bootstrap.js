@@ -44,6 +44,7 @@ async function onMainWindowLoad({ window }, reason) {
 }
 
 async function onMainWindowUnload({ window }, reason) {
+    window.document.querySelector('[href="chartero.ftl"]')?.remove();
 }
 
 async function shutdown({ id, version, resourceURI, rootURI }, reason) {

@@ -25,3 +25,7 @@ historySize = Dimensione della cronologia attuale: <b>{ $size }</b> KB
 maxSummaryItems = Non creare l'indice quando il numero di elementi eccede:
 translate = Traduci automaticamente le stringhe locali utilizzando il plugin <i>PDFTranslate</i>
 completeThreshold = Limite di avanzamento completo (secondi):
+
+dashboardSection =
+    .label = Cruscotto
+    .tooltiptext = Chartero Cruscotto

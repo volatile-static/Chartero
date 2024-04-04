@@ -25,3 +25,7 @@ historySize = 当前历史记录共占用存储空间：<b>{ $size }</b> KB
 maxSummaryItems = 条目数量超过多少时不再渲染侧边栏：
 translate = 调用<i>PDFTranslate</i>插件自动翻译界面语言(Beta)
 completeThreshold = 页均阅读阈值（用于进度统计）：
+
+dashboardSection =
+    .label = 仪表盘
+    .tooltiptext = Chartero仪表盘
