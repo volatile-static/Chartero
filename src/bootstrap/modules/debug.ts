@@ -103,4 +103,10 @@ export function addDebugMenu() {
             addon.reload();
         },
     });
+    addon.menu.register('menuFile', {
+        tag: 'menuitem',
+        label: 'restart',
+        icon: ICON_URL,
+        commandListener: () => Zotero.Utilities.Internal.quit(true),
+    });
 }
