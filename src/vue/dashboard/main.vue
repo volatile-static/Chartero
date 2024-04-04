@@ -1,25 +1,27 @@
 <template>
-  <t-space v-show="activeTab == SectionTab.Progress" align="center" size="small" class="progress-space">
-    <t-tooltip :content="locale.readingProgressTip" :show-arrow="false">
-      <t-progress theme="circle" size="small" :percentage="readingProgress" />
-    </t-tooltip>
-    <div class="progress-info">
-      <span>{{
-        `🔖 ${locale.progressLabel.read} ${readPages} ${locale.pages} / ${locale.progressLabel.total}
-                                            ${numPages} ${locale.pages}`
-      }}</span>
-      <span>{{
-        `📚 ${numAttachment} ${locale.progressLabel.PDFs} / ${locale.progressLabel.total} ${attachmentSize}
-                        MB`
-      }}</span>
-      <span>📝 {{ noteNum }} {{ locale.progressLabel.notes }} /
-        {{ locale.progressLabel.total }} {{ noteWords }}
-        {{ locale.progressLabel.words }}</span>
-    </div>
-    <template #separator>
-      <t-divider layout="vertical" />
-    </template>
-  </t-space>
+  <div v-show="activeTab == SectionTab.Progress">
+    <t-space align="center" size="small" class="progress-space">
+      <t-tooltip :content="locale.readingProgressTip" :show-arrow="false">
+        <t-progress theme="circle" size="small" :percentage="readingProgress" />
+      </t-tooltip>
+      <div class="progress-info">
+        <span>{{
+          `🔖 ${locale.progressLabel.read} ${readPages} ${locale.pages} / ${locale.progressLabel.total}
+                    ${numPages} ${locale.pages}`
+        }}</span>
+        <span>{{
+          `📚 ${numAttachment} ${locale.progressLabel.PDFs} / ${locale.progressLabel.total} ${attachmentSize}
+                    MB`
+        }}</span>
+        <span>📝 {{ noteNum }} {{ locale.progressLabel.notes }} /
+          {{ locale.progressLabel.total }} {{ noteWords }}
+          {{ locale.progressLabel.words }}</span>
+      </div>
+      <template #separator>
+        <t-divider layout="vertical" />
+      </template>
+    </t-space>
+  </div>
 
   <PageTime v-show="activeTab == SectionTab.Page" :history="itemHistory" :theme="chartTheme" />
 
@@ -27,10 +29,10 @@
 
   <UserPie v-show="activeTab == SectionTab.Group" :history="itemHistory" :theme="chartTheme" />
 
-  <!-- <Network
-    v-show="activeTab == SectionTab.Relation"
-    :top-level="topLevel" :theme="chartTheme" :item-i-d="topLevel?.id"
-  /> -->
+  <Network
+    v-show="activeTab == SectionTab.Relation" :top-level="topLevel" :theme="chartTheme"
+    :item-i-d="topLevel?.id"
+  />
 
   <TimeLine v-show="activeTab == SectionTab.Timeline" :history="itemHistory" />
 </template>
@@ -117,11 +119,13 @@ export default {
                     this.item && addon.history.getByAttachment(this.item);
                 // addon.log('itemHistory: ', his);
                 return his ? [his] : [];
-            
         },
     },
     mounted() {
-        addon.log('Dashboard mounted');
+        const darkMedia = matchMedia('(prefers-color-scheme: dark)');
+        darkMedia.addEventListener('change', e => this.switchTheme(e.matches));
+        this.switchTheme(darkMedia.matches);
+
         addEventListener('message', e => {
             if (typeof e.data.tab == 'string') {
                 this.activeTab = e.data.tab;
@@ -135,7 +139,6 @@ export default {
             this.item = Zotero.Items.get(e.data.id); // 获取传入的条目
             if (addon.getPref('enableRealTimeDashboard'))  // 强制刷新
                 this.realtimeUpdating = !this.realtimeUpdating;
-            this.updateTheme();
             nextTick(() => {
                 try {
                     this.updateNotes();
@@ -148,19 +151,15 @@ export default {
         });
     },
     methods: {
-        switchTheme() {
-            // this.dark = !this.dark;
-            // if (this.dark)
-            //     document.documentElement.setAttribute('theme-mode', 'dark');
-            // else
-            //     document.documentElement.removeAttribute('theme-mode');
-            // document
-            //     .querySelectorAll('div.highcharts-data-table')
-            //     .forEach(el => el.remove());
-        },
-        updateTheme() {
-            if (!window.matchMedia('(prefers-color-scheme: dark)'))
-                this.switchTheme();
+        switchTheme(dark: boolean) {
+            this.dark = dark;
+            if (dark)
+                document.documentElement.setAttribute('theme-mode', 'dark');
+            else
+                document.documentElement.removeAttribute('theme-mode');
+            document
+                .querySelectorAll('div.highcharts-data-table')
+                .forEach(el => el.remove());
         },
         // 统计笔记信息
         updateNotes() {

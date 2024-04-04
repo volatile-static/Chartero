@@ -15,7 +15,7 @@ export default {
     data() {
         return {
             theme: DarkUnicaTheme,
-            selectedItems: fetchSync('ZoteroPane.getCollectionTreeRow().ref.getChildItems(true)') as number[],
+            selectedItems: []//fetchSync('ZoteroPane.getCollectionTreeRow().ref.getChildItems(true)') as number[],
         };
     },
     computed: {

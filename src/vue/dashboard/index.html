@@ -64,13 +64,6 @@
     import App from './main.vue';
     import 'tdesign-vue-next/es/style/index.css';
 
-    function switchTheme(e) {
-      document.documentElement.setAttribute('theme-mode', e.matches ? 'dark' : 'light');
-    }
-    const darkQuery = matchMedia('(prefers-color-scheme: dark)');
-    darkQuery.addListener(switchTheme);
-    switchTheme(darkQuery);
-
     function onMsg({ data }) {
       if (data == 'render')
         try {

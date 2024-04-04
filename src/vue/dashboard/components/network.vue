@@ -52,13 +52,12 @@ export default defineComponent({
             visitedNodes: new Set<number>(),
             cachedTree: new Tree(this.topLevel?.id),
             svgStr: Zotero.File.getResource(
-                'chrome://chartero/content/icons/star.svg'
+                'resource://chartero/icons/star.svg'
             )
         }
     },
     computed: {
         options() {
-            // addon.log('network options', JSON.parse(JSON.stringify(this.graphNodes)));
             return Highcharts.merge(this.theme, this.chartOpts);
         },
         chartOpts() {

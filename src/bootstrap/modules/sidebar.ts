@@ -1,4 +1,5 @@
 import { config } from "../../../package.json";
+import { G } from "./global";
 
 const dashboards: { [id: number]: HTMLIFrameElement } = {};
 
@@ -23,7 +24,7 @@ export function registerPanels() {
                 (target as Document).defaultView!.postMessage(message, '*'), true);
         addon.log(message, iframe.contentDocument?.readyState);
     }
-    const tabs = ['progress', 'page', 'date', 'group', 'relation', 'timeline'];
+    const tabs = ['progress', 'page', 'date', 'group', /*'relation',*/ 'timeline'];
 
     if (!Zotero.ItemPaneManager?.registerSection)
         addon.log(new Error('ItemPaneManager not found'));
@@ -55,11 +56,22 @@ export function registerPanels() {
                 attributes: { src: 'chrome://chartero/content/dashboard/index.html' },
                 styles: { height: '100%', width: '100%' },
                 enableElementRecord: false,
-            }, args.body) as HTMLIFrameElement;
+            }, args.body) as HTMLIFrameElement,
+                ResizeObserver = G('ResizeObserver'),
+                observer = new ResizeObserver(
+                    ([entry]) => args.body.style.height = `${entry.contentRect.height}px`
+                );
             (iframe.contentWindow as any).wrappedJSObject.addon = addon;
-            args.body.style.height = '600px';
+            iframe.addEventListener('load', ({target}) => {
+                observer.observe((target as Document).documentElement);
+            }, true);
         },
-        onRender: args => post(args.body, 'render'),
+        onRender: args => {
+            post(args.body, 'render');
+            if (args.item.libraryID == Zotero.Libraries.userLibraryID)
+                args.setSectionButtonStatus('group', { hidden: true });
+            args.setSectionButtonStatus('progress', { disabled: true });
+        },
         onItemChange: args => post(args.body, { id: args.item.id }),
     });
 }

@@ -83,6 +83,9 @@ export default class Zotero {
                     return fetchSync(`Zotero.File.pathToFile('${p}').${prop}`);
                 }
             });
+        },
+        getResource(path: string) {
+            return fetchSync(`Zotero.File.getResource('${path}')`);
         }
     };
     greenfrog = {};
