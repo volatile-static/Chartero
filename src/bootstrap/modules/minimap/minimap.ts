@@ -13,11 +13,24 @@ export function mountMinimap(reader: _ZoteroTypes.ReaderInstance) {
         },
         doc.head
     );
-    addon.ui.appendElement({
+    let timer: number;
+    const container = addon.ui.appendElement({
         tag: 'div',
         id: 'chartero-minimap-container',
+        listeners: [
+            {
+                type: 'mouseenter',
+                listener: () => timer = setTimeout(() => container.classList.add('hovered'), 500) 
+            }, {
+                type: 'mouseleave',
+                listener: () => {
+                    clearTimeout(timer);
+                    container.classList.remove('hovered');
+                }
+            }
+        ],
         removeIfExists: true
-    }, outerContainer!);
+    }, outerContainer!) as HTMLDivElement;
     updateMinimap(reader);
 }
 
@@ -37,7 +50,7 @@ export function updateMinimap(reader: _ZoteroTypes.ReaderInstance) {
                 200 * (1 - (history.record.pages[i]?.totalS ?? 0) / maxSeconds)
                 : 255;
             // 暗黑模式下反色
-            if (Zotero.getMainWindow().matchMedia('(prefers-color-scheme: dark)').matches)
+            if (Zotero.getMainWindow().matchMedia('(prefers-color-scheme: dark)')?.matches)
                 val = 255 - val;
             return val;
         }),
