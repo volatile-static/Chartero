@@ -12,7 +12,7 @@
     },
     "include": [
         "./",
-        "../../node_modules/zotero-types"
+        "../../node_modules/zotero-types/index.d.ts"
     ],
     "exclude": []
 }

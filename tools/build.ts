@@ -16,7 +16,7 @@ import path from 'path';
 import util from 'util';
 import lodash from 'lodash';
 import replaceInFile from 'replace-in-file';
-import details from '../package.json' assert { type: 'json' };
+import details from '../package.json' with { type: 'json' };
 
 const buildDir = 'build',
     isDevBuild = argv.includes('--dev'),
