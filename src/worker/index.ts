@@ -1,9 +1,9 @@
 import { getAllImages, processPDF } from './pdf';
 import { WorkerManagerBase, WorkerRequest, WorkerResponse } from './manager';
-importScripts('resource://zotero/reader/pdf/build/pdf.js');
+importScripts('resource://pdf.js/build/pdf.js');
 
 pdfjsLib.GlobalWorkerOptions.workerPort = new Worker(
-    'resource://zotero/reader/pdf/build/pdf.worker.js'
+    'resource://pdf.js/build/pdf.worker.js'
 );
 
 class WorkerSlave extends WorkerManagerBase<DedicatedWorkerGlobalScope> {
