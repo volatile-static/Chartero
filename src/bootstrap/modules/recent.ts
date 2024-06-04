@@ -61,9 +61,11 @@ async function addRecentTabsMenu({ target }: Event) {
             return b.outerHTML;
         });
         addon.ui.appendElement({
-            tag: 'toolbaritem',
+            tag: 'div',
+            classList: ['row'],
+            attributes: { draggable: false },
             children: [{
-                tag: 'toolbarbutton',
+                tag: 'div',
                 attributes: {
                     flex: '1',
                     tabindex: ++tabIndex,
@@ -72,7 +74,7 @@ async function addRecentTabsMenu({ target }: Event) {
                 },
                 classList: ['zotero-tabs-menu-entry', 'title'],
                 listeners: [{
-                    type: 'command',
+                    type: 'click',
                     listener: () => Zotero.getActiveZoteroPane().viewAttachment(id)
                 }],
                 children: [{
@@ -80,12 +82,12 @@ async function addRecentTabsMenu({ target }: Event) {
                     classList: ['icon', 'icon-css', 'tab-icon', 'icon-item-type'],
                     attributes: { 'data-item-type': iconType }
                 }, {
-                    tag: 'description',
+                    tag: 'label',
                     attributes: { flex: '1' },
                     properties: { innerHTML: title }
                 }]
             }, {
-                tag: 'toolbarbutton',
+                tag: 'div',
                 classList: ['zotero-tabs-menu-entry'],
                 attributes: { tabindex: ++tabIndex },
                 styles: {
