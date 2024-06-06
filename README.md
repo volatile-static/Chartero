@@ -1,7 +1,7 @@
 <h1 align='center'>Chartero</h1>
 <p align='center'>
     <a href="https://app.codacy.com/gh/volatile-static/Chartero/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade">
-        <img src="https://app.codacy.com/project/badge/Grade/e9a03b20fb90462180218819b41eb34d" />
+        <img src="https://app.codacy.com/project/badge/Grade/e9a03b20fb90462180218819b41eb34d" alt='codacy' />
     </a>
     <a href='../src/'>
         <img src='https://img.shields.io/github/languages/code-size/volatile-static/Chartero?logo=vuedotjs' alt='code size' />
@@ -100,7 +100,13 @@ All locale strings are defined in [locale](addon/locale), which will be loaded d
 
 ### Development Environment
 
-[package.json](package.json) defines the scripts for building and debugging. When executing commands with `NODE_ENV=development`, the global variable `__dev__` will be set to `true`, and the plugin will switch to the development mode.
+- [.env](./.env):
+
+```bash
+ZOTERO_PLUGIN_ZOTERO_BIN_PATH = */Zotero.app/Contents/MacOS/zotero
+ZOTERO_PLUGIN_PROFILE_PATH = /path/to/profile
+ZOTERO_PLUGIN_DATA_DIR =
+```
 
 - Here are some useful scripts:
   - `reload-all`: Build and reload the Zotero in **production** environment.
