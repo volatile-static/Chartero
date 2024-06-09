@@ -17,6 +17,8 @@ import util from 'util';
 import lodash from 'lodash';
 import replaceInFile from 'replace-in-file';
 import details from '../package.json' with { type: 'json' };
+import loadConfig from './config';
+import { Build } from 'zotero-plugin-scaffold';
 
 const buildDir = 'build',
     isDevBuild = argv.includes('--dev'),
@@ -55,6 +57,12 @@ main().catch(error => {
 });
 
 async function main() {
+    if (argv.includes('--scaffold')) {
+        const config = await loadConfig(isDevBuild);
+        const builder = new Build(config);
+        await builder.run();
+        return;
+    }
     console.log(
         `[Build] BUILD_DIR=${buildDir}, VERSION=${details.version}, BUILD_TIME=${buildTime}, ENV=${[
             env.NODE_ENV,
@@ -279,9 +287,9 @@ function patchLocaleStrings() {
 
 async function esbuild() {
     const indexes = [
-        ['../src/bootstrap/index.ts', `addon/content/${details.config.addonName}.js`],
-        ['../src/worker/index.ts', `addon/content/${details.config.addonName}-worker.js`],
-    ],
+            ['../src/bootstrap/index.ts', `addon/content/${details.config.addonName}.js`],
+            ['../src/worker/index.ts', `addon/content/${details.config.addonName}-worker.js`],
+        ],
         builds = indexes.map(([entry, outfile]) =>
             build({
                 ...esbuildConfig,
