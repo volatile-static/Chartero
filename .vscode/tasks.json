@@ -3,12 +3,12 @@
     "tasks": [
         {
             "type": "npm",
-            "script": "reload-dev",
+            "script": "build-bootstrap",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "label": "npm: reload-bootstrap",
+            "label": "npm: build-bootstrap",
             "isBackground": true
         },
         {
