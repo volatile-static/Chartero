@@ -1,13 +1,9 @@
 /* eslint-disable no-console */
 import type { RollupWatcher } from 'rollup';
 import { build } from 'esbuild';
-import type { BuildOptions } from 'esbuild';
 import type { AliasOptions, InlineConfig } from 'vite';
 import { build as vite } from 'vite';
 import { zip } from 'compressing';
-//@ts-expect-error no types
-import svg from 'esbuild-plugin-svg';
-import { sassPlugin } from 'esbuild-sass-plugin';
 import { env, exit, argv } from 'process';
 import { execSync } from 'child_process';
 import { createRequire } from 'module';
@@ -41,14 +37,6 @@ const buildDir = 'build',
         build: { minify: isDevBuild ? false : 'esbuild' },
         define: { __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: String(isDevBuild) },
         resolve: isDevBuild ? { alias: viteResolveConfig } : undefined,
-    },
-    esbuildConfig: BuildOptions = {
-        target: 'firefox102',
-        define: { __dev__: String(isDevBuild) },
-        plugins: [svg(), sassPlugin({ type: 'css-text', style: 'compressed' })],
-        bundle: true,
-        minify: !isDevBuild,
-        external: ['resource://*', 'chrome://*'],
     };
 
 main().catch(error => {
@@ -225,7 +213,6 @@ function replaceString() {
 
     const replaceResultFlt = replaceInFileSync({
         files: `${buildDir}/addon/locale/**/*.ftl`,
-        //@ts-expect-error https://github.com/adamreisnz/replace-in-file/issues/170
         processor(fltContent: string) {
             const lines = fltContent.split('\n');
             const prefixedLines = lines.map(line => {
@@ -243,7 +230,6 @@ function replaceString() {
 
     const replaceResultXhtml = replaceInFileSync({
         files: `${buildDir}/addon/**/*.xhtml`,
-        //@ts-expect-error https://github.com/adamreisnz/replace-in-file/issues/170
         processor: input => {
             const matches = [...input.matchAll(/(data-l10n-id)="(\S*)"/g)];
             matches.map(match => {
@@ -292,7 +278,7 @@ async function esbuild() {
         ],
         builds = indexes.map(([entry, outfile]) =>
             build({
-                ...esbuildConfig,
+                // ...esbuildConfig,
                 entryPoints: [path.join(buildDir, entry)],
                 outfile: path.join(buildDir, outfile),
             }),
