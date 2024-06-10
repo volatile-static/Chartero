@@ -30,6 +30,7 @@
         "build": "tsx tools/build.ts --full",
         "build-bootstrap": "tsx tools/build.ts --dev",
         "build-dev": "tsx tools/build.ts --full --dev",
+        "build-watch": "tsx tools/build.ts --watch",
         "dev": "vite ./src/vue/test",
         "release": "release-it",
         "preview": "vite preview ./src/vue",
@@ -161,7 +162,8 @@
     },
     "zotero-plugin": {
         "source": [
-            "addon"
+            "addon",
+            "src"
         ]
     }
 }

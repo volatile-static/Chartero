@@ -53,7 +53,6 @@ export default function loadConfig(isDevBuild: boolean = false, isFullBuild: boo
         name: pkg.config.addonName,
         id: pkg.config.addonID,
         namespace: pkg.name,
-        server: { asProxy: true },
         dist: buildDir,
         build: {
             assets: 'addon/**/*.*',
