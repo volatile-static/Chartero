@@ -10,12 +10,14 @@ export default function loadConfig(isDevBuild: boolean) {
         namespace: pkg.name,
         server: { asProxy: true },
         build: {
-            assets: ['addon'],
+            assets: 'addon/**/*.*',
             define: {
                 ...pkg.config,
                 author: pkg.author,
                 homepage: pkg.homepage,
                 releasepage: pkg.releasepage,
+                description: 'Charts for Zotero',
+                defaultSettings: '',
                 devBuild: isDevBuild
                     ? '<html:h2>Development Build, <html:span style="color: red;">Do NOT</html:span> Use!</html:h2>'
                     : '',
