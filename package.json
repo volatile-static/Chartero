@@ -1,6 +1,6 @@
 {
     "name": "chartero",
-    "version": "2.7.3",
+    "version": "2.7.5",
     "type": "module",
     "config": {
         "addonName": "Chartero",
@@ -32,7 +32,7 @@
         "build-dev": "tsx tools/build.ts --full --dev",
         "build-watch": "tsx tools/build.ts --watch",
         "dev": "vite ./src/vue/test",
-        "release": "release-it",
+        "release": "tsx tools/release.ts",
         "preview": "vite preview ./src/vue",
         "lint": "eslint . --ext .vue,.ts,.tsx,.js --ignore-path .gitignore --fix",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -83,8 +83,6 @@
         "lodash": "^4.17.21",
         "pdfjs-dist": "~4.2.0",
         "prettier": "3.3.1",
-        "release-it": "^17.3.0",
-        "replace-in-file": "^7.2.0",
         "tdesign-icons-vue-next": "^0.2.2",
         "ts-node": "^10.9.2",
         "tsx": "^4.15.1",
