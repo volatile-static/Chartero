@@ -38,7 +38,11 @@ export default function loadConfig(isDevBuild: boolean = false, isFullBuild: boo
         ],
         viteConfig: InlineConfig = {
             root: path.join(buildDir, '../src/vue'),
-            build: { minify: isDevBuild ? false : 'esbuild' },
+            build: {
+                minify: isDevBuild ? false : 'esbuild',
+                emptyOutDir: false,
+                chunkSizeWarningLimit: 8192,
+            },
             define: { __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: String(isDevBuild) },
             resolve: isDevBuild ? { alias: viteResolveOptions } : undefined,
         },
