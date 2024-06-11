@@ -1,5 +1,0 @@
-{
-  "usage": "Copy and rename this file to zotero-cmd.json. Edit the cmd.",
-  "killZotero": "taskkill /f /im zotero.exe",
-  "startZotero": "zotero.exe --debugger --purgecaches -ZoteroDebugText -jsconsole"
-}
