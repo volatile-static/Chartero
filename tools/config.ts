@@ -83,6 +83,11 @@ export default function loadConfig(isDevBuild: boolean = false, isFullBuild: boo
                 },
             },
         },
+        release: {
+            bumpp: {
+                commit: '🔖 Release v',
+            },
+        },
     });
 }
 
