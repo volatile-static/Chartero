@@ -58,6 +58,7 @@ export default function loadConfig(isDevBuild: boolean = false, isFullBuild: boo
         id: pkg.config.addonID,
         namespace: pkg.name,
         dist: buildDir,
+        xpiDownloadLink: 'https://gitee.com/const_volatile/chartero/releases/download/v{{version}}/{{xpiName}}.xpi',
         build: {
             assets: 'addon/**/*.*',
             define: {
