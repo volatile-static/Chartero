@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import fetch from 'node-fetch';
+//@ts-expect-error no types
+import NodeFormData from 'form-data';
+import { GiteeClient } from '@gitee/typescript-sdk-v5';
 import { Release } from 'zotero-plugin-scaffold';
 import loadConfig from './config';
 
@@ -12,25 +14,33 @@ async function main() {
     await releaser.run();
     if (!process.env.GITHUB_ACTIONS) return;
 
-    const changelog = releaser.getChangelog(),
-        tag = releaser.ctx.release.bumpp.tag,
-        res = await releaseGitee({
-            tag_name: tag,
-            name: 'Release ' + tag,
+    const changelog = await releaser.getChangelog(),
+        client = new GiteeClient({ TOKEN: process.env.GITEE_TOKEN }),
+        release = await client.repositories.postV5ReposOwnerRepoReleases({
+            owner: 'const_volatile',
+            repo: 'chartero',
+            tagName: 'v' + releaser.version,
+            name: 'Release' + releaser.version,
+            targetCommitish: 'main',
             body: changelog,
-            prerelease: 'false',
-            target_commitish: 'main',
         }),
-        xpi = fs.readFileSync(path.join(releaser.dist, `${releaser.xpiName}.xpi`));
-    releaser.logger.info({ changelog, tag, res });
-    releaseGitee({ file: xpi }, `/${res.id}/attach_files`);
-}
+        form = new NodeFormData(),
+        xpi = fs.createReadStream(path.join(releaser.dist, `${releaser.xpiName}.xpi`));
+    form.append('file', xpi);
 
-async function releaseGitee(body: Record<string, unknown>, path: string = '') {
-    const res = await fetch('https://gitee.com/api/v5/repos/const_volatile/chartero/releases' + path, {
+    const response = await client.repositories.httpRequest.request({
         method: 'POST',
-        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...body, access_token: process.env.GITEE_TOKEN }),
+        url: '/v5/repos/{owner}/{repo}/releases/{release_id}/attach_files',
+        path: {
+            owner: 'const_volatile',
+            repo: 'chartero',
+            release_id: release.id,
+        },
+        // formData: { file: xpi },
+        // 因为gitee的api有问题，这里只能手动实现
+        // gitee要求不是Blob就转string，但调用form-data时必须是stream。。
+        headers: form.getHeaders(),
+        body: form,
     });
-    return (await res.json()) as Record<string, string>;
+    releaser.logger.info(response);
 }
