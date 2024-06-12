@@ -12,7 +12,7 @@ permissions:
     pull-requests: write
 
 jobs:
-    release-it:
+    release:
         runs-on: ubuntu-latest
         env:
             NODE_ENV: production
@@ -26,9 +26,9 @@ jobs:
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: lts
+                  node-version: lts/*
 
-            - run: npm install
+            - run: npm ci
             - run: npm run build
             - run: npm run release
 
