@@ -14,7 +14,7 @@ main();
 async function main() {
     const config = await loadConfig(false, true),
         releaser = new Release(config);
-    await releaser.run();
+    // await releaser.run();
     if (!process.env.GITHUB_ACTIONS) return;
 
     const changelog = await releaser.getChangelog(),
@@ -31,7 +31,7 @@ async function main() {
 
 async function rewriteRelease(tag: string, name: string, body: string, prerelease = false) {
     const old = await client.repositories.getV5ReposOwnerRepoReleasesTagsTag({ owner, repo, tag });
-    if (old.id)
+    if (old?.id)
         return client.repositories.patchV5ReposOwnerRepoReleasesId({
             owner,
             repo,
