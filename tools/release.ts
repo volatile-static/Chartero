@@ -54,20 +54,24 @@ async function rewriteRelease(tag: string, name: string, body: string, prereleas
 }
 
 async function rewriteAttach(release: GiteeRelease, file: string) {
-    const form = new NodeFormData(),
+    const assets = await client.repositories.getV5ReposOwnerRepoReleasesReleaseIdAttachFiles({
+            owner,
+            repo,
+            releaseId: release.id!,
+        }),
+        form = new NodeFormData(),
         stream = fs.createReadStream(file);
-    form.append('file', stream);
-
-    for (const asset of release.assets || [])
-        if ((asset as any).name == path.basename(file))
+    for (const asset of assets)
+        if (asset.name == path.basename(file))
             await client.repositories
                 .deleteV5ReposOwnerRepoReleasesReleaseIdAttachFilesAttachFileId({
                     owner,
                     repo,
                     releaseId: release.id!,
-                    attachFileId: (asset as any).id,
+                    attachFileId: asset.id!,
                 })
                 .catch(console.error);
+    form.append('file', stream);
     return client.repositories.httpRequest.request({
         method: 'POST',
         url: '/v5/repos/{owner}/{repo}/releases/{release_id}/attach_files',
