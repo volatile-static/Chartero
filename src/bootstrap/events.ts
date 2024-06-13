@@ -3,9 +3,14 @@ import { addDebugMenu } from './modules/debug';
 import { ICON_URL, DebuggerBackend, waitForReader } from './modules/utils';
 import { mountMinimap, updateMinimap } from './modules/minimap/minimap';
 import { registerPanels, renderSummaryPanel, updateDashboard } from './modules/sidebar';
-import { hideDeleteMenuForHistory, initReaderAlert, patchedZoteroSearch, protectData } from './modules/history/misc';
+import {
+    hideDeleteMenuForHistory,
+    initReaderAlert,
+    patchedZoteroSearch,
+    protectData,
+} from './modules/history/misc';
 import addImagesPanelForReader from './modules/images/images';
-import buildRecentMenu from "./modules/recent";
+import buildRecentMenu from './modules/recent';
 import addItemColumns from './modules/columns';
 import initPrefsPane from './modules/prefs';
 
@@ -22,14 +27,10 @@ export function onAddonLoad() {
         label: config.addonName,
     });
 
-    addon.notifierID = Zotero.Notifier.registerObserver(
-        { notify: onNotify },
-        ['tab', 'setting', 'item']
-    );
+    addon.notifierID = Zotero.Notifier.registerObserver({ notify: onNotify }, ['tab', 'setting', 'item']);
 
     addon.addPrefsObserver(() => {
-        if (addon.getPref('scanPeriod') < 1)
-            addon.setPref('scanPeriod', 1);
+        if (addon.getPref('scanPeriod') < 1) addon.setPref('scanPeriod', 1);
         addon.history.unregister();
         addon.history.register(addon.getPref('scanPeriod'));
     }, 'scanPeriod');
@@ -40,12 +41,12 @@ export function onAddonLoad() {
         addon.log('Updating excluded tags');
     }, 'excludedTags');
 
-    addon.history.register(addon.getPref("scanPeriod"));
+    addon.history.register(addon.getPref('scanPeriod'));
     addon.patchSearch.setData({
         target: Zotero.Search.prototype,
         funcSign: 'search',
         enabled: true,
-        patcher: patchedZoteroSearch
+        patcher: patchedZoteroSearch,
     });
 
     registerPanels();
@@ -64,10 +65,10 @@ export function onMainWindowLoad(win: MainWindow) {
     addon.registerListener(
         win.document.getElementById('zotero-itemmenu')!,
         'popupshowing',
-        hideDeleteMenuForHistory
+        hideDeleteMenuForHistory,
     );
 
-    (win as any).MozXULElement.insertFTLIfNeeded('chartero.ftl');
+    (win as any).MozXULElement.insertFTLIfNeeded('chartero-prefs.ftl');
 
     // 注册Overview菜单
     addon.menu.register('menuView', {
@@ -77,8 +78,7 @@ export function onMainWindowLoad(win: MainWindow) {
         icon: ICON_URL,
     });
     buildRecentMenu(win);
-    if (__dev__)
-        addDebugMenu();
+    if (__dev__) addDebugMenu();
 
     // 监听条目选择事件
     const pane = win.ZoteroPane_Local,
@@ -89,10 +89,10 @@ export function onMainWindowLoad(win: MainWindow) {
                 pane.itemsView.onSelect.addListener(onItemSelect);
             }
         });
-    if (pane.itemsView)  // 主窗口加载时已经初始化
+    if (pane.itemsView)
+        // 主窗口加载时已经初始化
         pane.itemsView.onSelect.addListener(onItemSelect);
-    else
-        observer.observe(itemsTree, { childList: true });
+    else observer.observe(itemsTree, { childList: true });
 }
 
 export function openReport() {
@@ -146,7 +146,7 @@ export async function onItemSelect() {
     const ZoteroPane = Zotero.getActiveZoteroPane(),
         items = ZoteroPane.getSelectedItems(true),
         dashboard = Zotero.getMainWindow().document.querySelector(
-            '#zotero-view-tabbox .chartero-dashboard'
+            '#zotero-view-tabbox .chartero-dashboard',
         ) as HTMLIFrameElement,
         renderSummaryPanelDebounced = Zotero.Utilities.debounce(renderSummaryPanel, 233);
     // 当前处于侧边栏标签页
