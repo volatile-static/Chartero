@@ -7,7 +7,6 @@
         "addonPref": "extensions.zotero.chartero",
         "issue": "https://github.com/volatile-static/Chartero/issues",
         "gitee": "https://gitee.com/const_volatile/chartero",
-        "updateURL": "https://raw.githubusercontent.com/volatile-static/Chartero/main/tools/update.json",
         "addonID": "chartero@volatile.static",
         "defaultSettings": {
             "enableRealTimeDashboard": true,
