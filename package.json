@@ -77,6 +77,7 @@
         "eslint": "^8.57.0",
         "eslint-plugin-mozilla": "^3.7.1",
         "eslint-plugin-vue": "^9.26.0",
+        "form-data": "^4.0.0",
         "lodash": "^4.17.21",
         "prettier": "3.3.2",
         "tdesign-icons-vue-next": "^0.2.2",
