@@ -9,12 +9,5 @@
         "inlineSourceMap": true,
         "isolatedModules": false,
         "forceConsistentCasingInFileNames": true
-    },
-    "ts-node": {
-        "esm": true,
-        "experimentalSpecifierResolution": "node"
-    },
-    "lib": [
-        "esnext"
-    ],
+    }
 }

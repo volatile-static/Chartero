@@ -4,7 +4,7 @@ import { React, ReactDOM } from '../global';
 /**
  * 毫秒级刷新
  */
-export default function renderMinimap(container: HTMLElement, props: MinimapProps) {
+export default function renderMinimap(container: Element, props: MinimapProps) {
     try {
         ReactDOM.render(
             <Minimap

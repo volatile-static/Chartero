@@ -7,3 +7,7 @@ declare namespace React {
         class?: string;
     }
 }
+
+declare namespace global {
+    const setTimeout: typeof window.setTimeout;
+}
