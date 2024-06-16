@@ -22,10 +22,13 @@ class Item {
     }
     async getBestAttachment() {
         const att = fetchSync(`Zotero.Items.get(${this.id}).getBestAttachment()`);
-        if (!att.key)
-            return null;
+        if (!att.key) return null;
         return new Item(fetchSync(`Zotero.Items.getIDFromLibraryAndKey(1, '${att.key}')`));
     }
+}
+
+class Collection {
+    constructor(public id: number) {}
 }
 
 export default class Zotero {
@@ -50,8 +53,14 @@ export default class Zotero {
             ];
         },
     };
+    Collections = {
+        getByLibrary(libraryID: number, recursive: boolean) {
+            return [];
+        },
+    };
     Libraries = {
         userLibraryID: 1,
+        userLibrary: { name: 'Test Library' },
     };
     Tags = {
         getID(tag: string) {
@@ -62,7 +71,7 @@ export default class Zotero {
         },
         async getAutomaticInLibrary(libraryID: number) {
             return fetchSync(`Zotero.Tags.getAutomaticInLibrary(${libraryID})`);
-        }
+        },
     };
     Prefs = {
         get(pref: string) {
@@ -77,16 +86,19 @@ export default class Zotero {
     };
     File = {
         pathToFile(path: string) {
-            return new Proxy({ path }, {
-                get(target, prop: string) {
-                    const p = target.path.replace(/\\/g, '\\\\');
-                    return fetchSync(`Zotero.File.pathToFile('${p}').${prop}`);
-                }
-            });
+            return new Proxy(
+                { path },
+                {
+                    get(target, prop: string) {
+                        const p = target.path.replace(/\\/g, '\\\\');
+                        return fetchSync(`Zotero.File.pathToFile('${p}').${prop}`);
+                    },
+                },
+            );
         },
         getResource(path: string) {
             return fetchSync(`Zotero.File.getResource('${path}')`);
-        }
+        },
     };
     greenfrog = {};
 }

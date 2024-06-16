@@ -1,4 +1,4 @@
-import * as Highcharts from 'highcharts';
+import Highcharts from 'highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
 HighchartsMore(Highcharts);
 import HighchartsGantt from 'highcharts/modules/gantt';
@@ -29,10 +29,15 @@ import HighchartsDrilldown from 'highcharts/modules/drilldown';
 HighchartsDrilldown(Highcharts);
 // import MouseWheelZoom from 'highcharts/modules/mouse-wheel-zoom';
 // MouseWheelZoom(Highcharts);
-import HighchartsPlugin from '@highcharts/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin';
-HighchartsPlugin.custom.connectHighcharts(Highcharts);
-import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src';
-Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
+
+import Dashboards from '@highcharts/dashboards';
+import DataGrid from '@highcharts/dashboards/datagrid';
+import LayoutModule from '@highcharts/dashboards/modules/layout';
+LayoutModule(Dashboards);
+Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
 import { copySVG2JPG, saveSVG } from '../../bootstrap/modules/utils';
 import { viewItemsInLib } from './utils';
@@ -57,10 +62,8 @@ Highcharts.setOptions({
             duration: 1200,
             easing: (pos: number) => {
                 if (pos < 1 / 2.75) return 7.5625 * pos * pos;
-                if (pos < 2 / 2.75)
-                    return 7.5625 * (pos -= 1.5 / 2.75) * pos + 0.75;
-                if (pos < 2.5 / 2.75)
-                    return 7.5625 * (pos -= 2.25 / 2.75) * pos + 0.9375;
+                if (pos < 2 / 2.75) return 7.5625 * (pos -= 1.5 / 2.75) * pos + 0.75;
+                if (pos < 2.5 / 2.75) return 7.5625 * (pos -= 2.25 / 2.75) * pos + 0.9375;
                 return 7.5625 * (pos -= 2.625 / 2.75) * pos + 0.984375;
             },
         },
@@ -118,13 +121,7 @@ Highcharts.setOptions({
         },
         buttons: {
             contextButton: {
-                menuItems: [
-                    'viewFullscreen',
-                    'downloadSVG',
-                    'downloadJPEG',
-                    'showInLibrary',
-                    'help',
-                ],
+                menuItems: ['viewFullscreen', 'downloadSVG', 'downloadJPEG', 'showInLibrary', 'help'],
             },
         },
     },

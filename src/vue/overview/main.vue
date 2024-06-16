@@ -131,15 +131,14 @@ export default {
                             { id: 'cell-schedule' },
                             {
                                 id: 'cell-r1-c2',
-                                width: '700px',
                                 layout: {
                                     rows: [
-                                        { cells: [{ id: 'cell-skyline', height: '130px' }] },
+                                        { cells: [{ id: 'cell-skyline' }] },
                                         {
                                             cells: [
-                                                { id: 'cell-pie', width: '60%' },
+                                                { id: 'cell-pie' },
                                                 // { id: 'cell-kpi' },
-                                                { id: 'cell-progress', width: '40%' }
+                                                { id: 'cell-progress' }
                                             ]
                                         }
                                     ]
@@ -194,7 +193,9 @@ export default {
                     tooltip: {
                         useHTML: true,
                         pointFormatter () {
-                            const dot = `<span style="color: var(--highcharts-color-${this.colorIndex})">\u25CF</span>`;
+                            const dot = `<span style="color: var(--highcharts-color-${
+                                    this.colorIndex
+                                })">\u25CF</span>`;
                             return `
                                 ${dot} ${addon.locale.itemsCount}: <b>${this.y}</b><br/>
                                 ${dot} ${addon.locale.totalTime}: <b>${toTimeString((this as any).z)}</b>
@@ -255,5 +256,21 @@ export default {
     position: relative;
     left: calc(50% - 80px);
     top: calc(50% - 160px);
+}
+</style>
+
+<style>
+#cell-r1-c2 {
+    flex: revert;
+    width: 700px;
+}
+#cell-skyline {
+    height: 135px;
+}
+#cell-pie {
+    flex: 3;
+}
+#cell-progress {
+    flex: 2;
 }
 </style>

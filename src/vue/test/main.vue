@@ -5,8 +5,9 @@
 </template>
 
 <script lang="ts">
-import ComponentToTest from '../dashboard/main.vue';
+// import ComponentToTest from '../dashboard/main.vue';
 // import ComponentToTest from '../summary/components/dualSelect.vue';
+import ComponentToTest from '../overview/main.vue';
 import { DarkUnicaTheme } from '../utility/themes';
 import fetchSync from './dummy/fetch';
 
@@ -26,7 +27,7 @@ export default {
     async mounted() {
         await this.$nextTick();
         // postMessage([...this.selectedItems]);
-        postMessage({ id: fetchSync('ZoteroPane.getSelectedItems(true)[0]') });
+        // postMessage({ id: fetchSync('ZoteroPane.getSelectedItems(true)[0]') });
     },
 };
 </script>
