@@ -10,7 +10,7 @@
             "request": "launch",
             "reAttach": true,
             "url": "http://localhost:5173/",
-            "firefoxExecutable": "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+            "firefoxExecutable": "C:\\Program Files\\Firefox Developer Edition\\firefox.exe",
             "pathMappings": [
                 {
                     "url": "http://localhost:5173/@vite/client.ts",
