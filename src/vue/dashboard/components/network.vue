@@ -107,14 +107,12 @@ export default defineComponent({
                         marker: {
                             symbol: this.svgURL
                         },
-                        events: { legendItemClick: () => false }
                     },
                     {
                         type: 'bubble',  // 图例
                         name: addon.locale.relatedItems,
                         color: this.thatColor,
                         marker: { fillOpacity: 0.8 },
-                        events: { legendItemClick: () => false }
                     },
                     {
                         type: 'bubble',  // 图例
@@ -125,11 +123,11 @@ export default defineComponent({
                             lineWidth: 2,
                             lineColor: this.thatColor
                         },
-                        events: { legendItemClick: () => false }
                     }
                 ],
                 legend: {
-                    itemHoverStyle: { cursor: 'default' }
+                    events: { itemClick: () => false },
+                    itemHoverStyle: { cursor: 'default' },
                 },
                 xAxis: [{ visible: false }, { visible: false }],
                 yAxis: { visible: false },

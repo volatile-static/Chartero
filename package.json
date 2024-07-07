@@ -44,11 +44,11 @@
     "homepage": "https://github.com/volatile-static/Chartero",
     "releasepage": "https://github.com/volatile-static/Chartero/releases/latest/download/chartero.xpi",
     "dependencies": {
-        "@highcharts/dashboards": "^2.1.0",
+        "@highcharts/dashboards": "^2.2.0",
         "animejs": "^3.2.2",
         "compromise": "^14.12.0",
         "compromise-stats": "^0.1.0",
-        "highcharts": "^11.4.3",
+        "highcharts": "^11.4.5",
         "highcharts-vue": "^2.0.1",
         "segmentit": "^2.0.3",
         "tdesign-vue-next": "^1.9.6",
@@ -84,7 +84,7 @@
         "vite": "^5.3.1",
         "vue-tsc": "^2.0.21",
         "zotero-plugin-scaffold": "^0.0.31",
-        "zotero-types": "^2.0.1"
+        "zotero-types": "^2.0.3"
     },
     "eslintConfig": {
         "extends": [
