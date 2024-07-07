@@ -163,10 +163,6 @@ export class WorkerManager extends WorkerManagerBase<Worker> {
     }
 }
 
-export function isValid<T>(x: T | undefined | null): x is T {
-    return Boolean(x);
-}
-
 export function isPDFReader(
     reader: _ZoteroTypes.ReaderInstance
 ): reader is _ZoteroTypes.ReaderInstance<'pdf'> {

@@ -28,7 +28,7 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "typescript.tsdk": "node_modules/typescript/lib",
     "editor.suggestSelection": "recentlyUsed",

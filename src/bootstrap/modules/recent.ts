@@ -1,4 +1,4 @@
-import { ICON_URL, isValid } from './utils';
+import { ICON_URL } from './utils';
 
 export default function (win: MainWindow) {
     // 注册“最近在读”菜单
@@ -41,7 +41,7 @@ export default function (win: MainWindow) {
 
 async function addRecentTabsMenu({ target }: Event) {
     const win = (target as any).ownerGlobal as MainWindow,
-        openedItems = win.Zotero_Tabs.getState().map(tab => tab.data?.itemID).filter(isValid),
+        openedItems = win.Zotero_Tabs.getState().map(tab => tab.data?.itemID).filter(i => !!i),
         regex = new RegExp(`(${Zotero.Utilities.quotemeta(win.Zotero_Tabs._tabsMenuFilter)})`, 'gi');
     let tabIndex = win.Zotero_Tabs.tabsMenuList.querySelectorAll('*[tabindex]').length;
     if (__dev__)
@@ -107,7 +107,7 @@ function getHistoryInfo() {
     return addon.history
         .getAll()
         .map((his, id) => (his ? { tim: his.record.lastTime ?? 0, id } : undefined))
-        .filter(isValid)
+        .filter(i => !!i)
         .sort((a, b) => b.tim - a.tim)
         .slice(0, 10)
         .map(his => {
@@ -125,5 +125,5 @@ function getHistoryInfo() {
                 return null;
             }
         })
-        .filter(isValid);
+        .filter(i => !!i);
 }
