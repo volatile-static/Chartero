@@ -51,9 +51,9 @@
         "highcharts": "^11.4.5",
         "highcharts-vue": "^2.0.1",
         "segmentit": "^2.0.3",
-        "tdesign-vue-next": "^1.9.6",
+        "tdesign-vue-next": "^1.9.7",
         "vue": "^3.4.28",
-        "zotero-plugin-toolkit": "^2.3.32"
+        "zotero-plugin-toolkit": "^2.3.37"
     },
     "devDependencies": {
         "@gitee/typescript-sdk-v5": "^5.4.84",
@@ -78,10 +78,10 @@
         "lodash": "^4.17.21",
         "prettier": "3.3.2",
         "tdesign-icons-vue-next": "^0.2.2",
-        "tsx": "^4.15.4",
+        "tsx": "^4.16.2",
         "unplugin-auto-import": "^0.17.6",
         "unplugin-vue-components": "^0.27.0",
-        "vite": "^5.3.1",
+        "vite": "^5.3.3",
         "vue-tsc": "^2.0.21",
         "zotero-plugin-scaffold": "^0.0.31",
         "zotero-types": "^2.0.3"
