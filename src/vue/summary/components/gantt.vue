@@ -71,6 +71,38 @@ function filterData(opts: string[], data: GanttItem[]): GanttItem[] {
         }),
     );
 }
+function addParentData(data: GanttItem[]): GanttItem[] {
+    let parentIds = new Set<string>();
+    // 遍历找到共同父条目的附件
+    for (let i = 0; i < data.length; ++i)
+        for (let j = i + 1; j < data.length; ++j) {
+            const pi = Zotero.Items.get(data[i].id!).parentID,
+                pj = Zotero.Items.get(data[j].id!).parentID;
+            if (pi === pj) {
+                parentIds.add(String(pi));
+                data[i].parent = data[j].parent = String(pi);
+            }
+        }
+    // 添加父条目
+    for (const id of parentIds) {
+        const it = Zotero.Items.get(id), ha = new HistoryAnalyzer(it);
+        data.push({
+            id: String(id),
+            name: it.getField('title'),
+            start: ha.firstTime * 1000,
+            end: ha.lastTime * 1000,
+            completed: ha.progress / 100,
+            custom: { totalS: ha.totalS, author: it.firstCreator },
+        });
+    }
+    // 替换顶层条目名为父条目标题
+    for (const d of data)
+        if (!d.parent) {
+            const it = Zotero.Items.get(d.id!);
+            d.name = (it.parentItem ?? it).getField('title');
+        }
+    return data;
+}
 
 function pointFormatter(this: Point) {
     const data = this.options as GanttItem,
@@ -119,8 +151,8 @@ export default defineComponent({
                 xAxis: { tickPixelInterval: 100 },
                 yAxis: {
                     visible: window.innerWidth > 500,
-                    type: 'category',
-                    grid: { enabled: true, columns: [colTitleOpt] },
+                    // type: 'category',
+                    // grid: { enabled: true, columns: [colTitleOpt] },
                 },
                 tooltip: {
                     headerFormat: `<span style="color: {point.color}">\u25CF</span>`,
@@ -162,8 +194,7 @@ export default defineComponent({
             this.seriesData = sortData(opt, this.seriesData);
         },
         filterOption(opt) {
-            this.seriesData = sortData(this.sortOption, filterData(opt, rawData));
-            (this.chartOpts.navigator!.yAxis as NavigatorYAxisOptions).max = this.seriesData.length - 1;
+            this.updateSeriesData(this.sortOption, opt);
         },
         titleOption(opt) {
             const col = (this.chartOpts.yAxis as YAxisOptions).grid!.columns!;
@@ -183,10 +214,17 @@ export default defineComponent({
         window.addEventListener('resize', this.onResizeDebounced);
     },
     methods: {
+        updateSeriesData(sortOption: string, filterOption: string[]) {
+            this.seriesData = sortData(
+                sortOption,
+                addParentData(filterData(filterOption, rawData))
+            );
+            (this.chartOpts.navigator!.yAxis as NavigatorYAxisOptions).max = this.seriesData.length - 1;
+        },
         updateChart(his: AttachmentHistory[]) {
             rawData = his
                 .map(attHis => {
-                    const ha = new HistoryAnalyzer([attHis]);
+                    const ha = new HistoryAnalyzer(attHis);
                     return {
                         name: ha.titles[0],
                         start: (attHis.record.firstTime ?? 0) * 1000,
@@ -201,9 +239,7 @@ export default defineComponent({
                 })
                 .filter(point => point.start! + point.end! > 0);
             this.noHistoryFound = rawData.length < 1;
-
-            this.seriesData = sortData(this.sortOption, filterData(this.filterOption, rawData));
-            (this.chartOpts.navigator!.yAxis as NavigatorYAxisOptions).max = this.seriesData.length - 1;
+            this.updateSeriesData(this.sortOption, this.filterOption);
         },
         onResize() {
             (this.chartOpts.yAxis as YAxisOptions).visible = this.isLandscape = window.innerWidth > 500;

@@ -7,7 +7,8 @@
 <script lang="ts">
 // import ComponentToTest from '../dashboard/main.vue';
 // import ComponentToTest from '../summary/components/dualSelect.vue';
-import ComponentToTest from '../overview/main.vue';
+// import ComponentToTest from '../overview/main.vue';
+import ComponentToTest from '../summary/components/gantt.vue';
 import { DarkUnicaTheme } from '../utility/themes';
 import fetchSync from './dummy/fetch';
 
@@ -16,12 +17,18 @@ export default {
     data() {
         return {
             theme: DarkUnicaTheme,
-            selectedItems: []//fetchSync('ZoteroPane.getCollectionTreeRow().ref.getChildItems(true)') as number[],
+            selectedItems: fetchSync('ZoteroPane.getCollectionTreeRow().ref.getChildItems(true)') as number[],
         };
     },
     computed: {
-        his() {
+        its() {
             return this.selectedItems.map((id: number) => Zotero.Items.get(id));
+        },
+        his() {
+            return this.its
+                .filter(it => it.isRegularItem())
+                .map(it => addon.history.getInTopLevelSync(it))
+                .flat();
         },
     },
     async mounted() {
