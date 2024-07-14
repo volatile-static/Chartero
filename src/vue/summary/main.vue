@@ -2,7 +2,7 @@
 import {
     TreeRoundDotVerticalIcon,
     ChartRadialIcon,
-    ChartColumIcon,
+    ChartColumnIcon,
     ChartRingIcon,
     FormatVerticalAlignRightIcon,
     BlockchainIcon,
@@ -33,7 +33,7 @@ export default {
         BlockchainIcon,
         CloudIcon,
         ChartPieIcon,
-        ChartColumIcon,
+        ChartColumnIcon,
         ChartRadialIcon,
         ChartRingIcon,
         KpiGauge,
@@ -135,7 +135,7 @@ export default {
         </t-tab-panel>
         <t-tab-panel v-if="greenFrog" value="authorIF" :style="panelStyle">
           <template #label>
-            <ChartColumIcon /> {{ locale.authorIF }}
+            <ChartColumnIcon /> {{ locale.authorIF }}
           </template>
           <authorIF :items="items" :theme="chartTheme" />
         </t-tab-panel>
