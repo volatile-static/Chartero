@@ -114,6 +114,7 @@ export function openOverview() {
     const { id, container } = Zotero_Tabs.add({
         type: 'library',
         title: 'Chartero',
+        data: {},
         select: true,
         onClose: () => (addon.overviewTabID = undefined),
     });
