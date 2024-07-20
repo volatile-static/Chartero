@@ -27,7 +27,7 @@ jobs:
               with:
                   node-version: lts/*
 
-            - run: npm ci
+            - run: npm ci --registry=https://registry.npmjs.org/
             - run: npm run build
             - run: npm run release
 
