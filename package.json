@@ -52,7 +52,7 @@
         "highcharts-vue": "^2.0.1",
         "segmentit": "^2.0.3",
         "tdesign-vue-next": "^1.9.7",
-        "vue": "^3.4.31",
+        "vue": "^3.4.33",
         "zotero-plugin-toolkit": "^2.3.37"
     },
     "devDependencies": {
@@ -62,7 +62,7 @@
         "@types/bluebird": "^3.5.42",
         "@types/react": "17.0.2",
         "@types/react-dom": "17.0.2",
-        "@typescript-eslint/eslint-plugin": "^7.16.0",
+        "@typescript-eslint/eslint-plugin": "^7.16.1",
         "@vitejs/plugin-vue": "^5.0.5",
         "@vitejs/plugin-vue-jsx": "^4.0.0",
         "@vue/eslint-config-prettier": "^9.0.0",
@@ -79,11 +79,11 @@
         "prettier": "3.3.3",
         "tdesign-icons-vue-next": "^0.2.4",
         "tsx": "^4.16.2",
-        "unplugin-auto-import": "^0.17.8",
-        "unplugin-vue-components": "^0.27.2",
+        "unplugin-auto-import": "^0.18.0",
+        "unplugin-vue-components": "^0.27.3",
         "vite": "^5.3.3",
         "vue-tsc": "^2.0.26",
-        "zotero-plugin-scaffold": "^0.0.32",
+        "zotero-plugin-scaffold": "^0.0.33",
         "zotero-types": "^2.0.3"
     },
     "eslintConfig": {
