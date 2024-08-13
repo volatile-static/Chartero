@@ -39,7 +39,8 @@ export async function saveSVG(svg: string) {
 }
 
 export function showMessage(msg: string, icon: string) {
-    new window.Notification('Chartero', {
+    const Notification = addon.getGlobal('Notification');
+    new Notification('Chartero', {
         body: msg,
         icon,
     });

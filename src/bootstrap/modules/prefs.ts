@@ -77,7 +77,7 @@ function autoImportHistory() {
             return;
         }
     }
-    window.alert(addon.locale.legacyNotFound);
+    Zotero.getMainWindow().alert(addon.locale.legacyNotFound);
 }
 
 function updateHistorySize(doc: Document) {

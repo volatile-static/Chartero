@@ -68,7 +68,7 @@ export async function importLegacyHistory(str: string) {
         const total = Object.keys(json.items).length,
             mainItem: Zotero.Item = await addon.history.getMainItem();
         Zotero.showZoteroPaneProgressMeter(addon.locale.migratingLegacy, true);
-        window.focus();
+        Zotero.getMainWindow().focus();
         let i = 0;
         for (const key in json.items) {
             const item = Zotero.Items.getByLibraryAndKey(1, key);
@@ -94,7 +94,7 @@ export async function importLegacyHistory(str: string) {
         addon.history.loadAll();
         showMessage(addon.locale.migrationFinished, 'chrome://chartero/content/icons/accept.png');
     } catch (error) {
-        window.alert(error);
+        Zotero.getMainWindow().alert(error);
     } finally {
         Zotero.hideZoteroPaneOverlays();
     }
@@ -140,7 +140,7 @@ export async function compressHistory() {
             await his.note.saveTx({ skipSelect: true, skipNotifier: true });
         }
     }
-    if (window.confirm(addon.locale.confirmRestart)) Zotero.Utilities.Internal.quit(true);
+    if (Zotero.getMainWindow().confirm(addon.locale.confirmRestart)) Zotero.Utilities.Internal.quit(true);
 }
 
 export function initReaderAlert(doc: Document) {
