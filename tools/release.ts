@@ -1,14 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import NodeFormData from 'form-data';
-import { GiteeClient } from '@gitee/typescript-sdk-v5';
+import { OpenAPI } from '@gitee/typescript-sdk-v5';
+import { RepositoriesService } from '@gitee/typescript-sdk-v5/src/services.gen';
+import type { Release as GiteeRelease } from '@gitee/typescript-sdk-v5';
+import { request } from '@gitee/typescript-sdk-v5/src/core/request';
 import { Release } from 'zotero-plugin-scaffold';
 import loadConfig from './config';
-import type { Release as GiteeRelease } from '@gitee/typescript-sdk-v5/src/models/Release';
 
-const owner = 'const_volatile',
-    repo = 'chartero',
-    client = new GiteeClient({ TOKEN: process.env.GITEE_TOKEN });
+const owner = 'const_volatile', repo = 'chartero';
+OpenAPI.TOKEN = process.env.GITEE_TOKEN;
 
 main();
 
@@ -31,9 +32,9 @@ async function main() {
 }
 
 async function rewriteRelease(tag: string, name: string, body: string, prerelease = false) {
-    const old = await client.repositories.getV5ReposOwnerRepoReleasesTagsTag({ owner, repo, tag });
+    const old = await RepositoriesService.getV5ReposOwnerRepoReleasesTagsTag({ owner, repo, tag });
     if (old?.id)
-        return client.repositories.patchV5ReposOwnerRepoReleasesId({
+        return RepositoriesService.patchV5ReposOwnerRepoReleasesId({
             owner,
             repo,
             name,
@@ -42,7 +43,7 @@ async function rewriteRelease(tag: string, name: string, body: string, prereleas
             id: old.id,
             tagName: tag,
         });
-    return client.repositories.postV5ReposOwnerRepoReleases({
+    return RepositoriesService.postV5ReposOwnerRepoReleases({
         owner,
         repo,
         name,
@@ -54,16 +55,16 @@ async function rewriteRelease(tag: string, name: string, body: string, prereleas
 }
 
 async function rewriteAttach(release: GiteeRelease, file: string) {
-    const assets = await client.repositories.getV5ReposOwnerRepoReleasesReleaseIdAttachFiles({
-            owner,
-            repo,
-            releaseId: release.id!,
-        }),
+    const assets = await RepositoriesService.getV5ReposOwnerRepoReleasesReleaseIdAttachFiles({
+        owner,
+        repo,
+        releaseId: release.id!,
+    }),
         form = new NodeFormData(),
         stream = fs.createReadStream(file);
     for (const asset of assets)
         if (asset.name == path.basename(file))
-            await client.repositories
+            await RepositoriesService
                 .deleteV5ReposOwnerRepoReleasesReleaseIdAttachFilesAttachFileId({
                     owner,
                     repo,
@@ -72,7 +73,7 @@ async function rewriteAttach(release: GiteeRelease, file: string) {
                 })
                 .catch(console.error);
     form.append('file', stream);
-    return client.repositories.httpRequest.request({
+    return request(OpenAPI, {
         method: 'POST',
         url: '/v5/repos/{owner}/{repo}/releases/{release_id}/attach_files',
         path: { owner, repo, release_id: release.id },
