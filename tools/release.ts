@@ -1,10 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import NodeFormData from 'form-data';
 import { OpenAPI } from '@gitee/typescript-sdk-v5';
 import { RepositoriesService } from '@gitee/typescript-sdk-v5/src/services.gen';
 import type { Release as GiteeRelease } from '@gitee/typescript-sdk-v5';
-import { request } from '@gitee/typescript-sdk-v5/src/core/request';
 import { Release } from 'zotero-plugin-scaffold';
 import loadConfig from './config';
 
@@ -17,7 +15,7 @@ async function main() {
     const config = await loadConfig(false, true),
         releaser = new Release(config);
     await releaser.run();
-    if (!process.env.GITHUB_ACTIONS) return;
+    if (!process.env.GITHUB_ACTIONS) return;  // 非CI环境不发布
 
     const changelog = await releaser.getChangelog(),
         latestRelease = await rewriteRelease('v' + releaser.version, 'Release' + releaser.version, changelog),
@@ -59,9 +57,7 @@ async function rewriteAttach(release: GiteeRelease, file: string) {
         owner,
         repo,
         releaseId: release.id!,
-    }),
-        form = new NodeFormData(),
-        stream = fs.createReadStream(file);
+    }), fileBuffer = fs.readFileSync(file);
     for (const asset of assets)
         if (asset.name == path.basename(file))
             await RepositoriesService
@@ -72,15 +68,10 @@ async function rewriteAttach(release: GiteeRelease, file: string) {
                     attachFileId: asset.id!,
                 })
                 .catch(console.error);
-    form.append('file', stream);
-    return request(OpenAPI, {
-        method: 'POST',
-        url: '/v5/repos/{owner}/{repo}/releases/{release_id}/attach_files',
-        path: { owner, repo, release_id: release.id },
-        // formData: { file: xpi },
-        // 因为gitee的api有问题，这里只能手动实现
-        // gitee要求不是Blob就转string，但调用form-data时必须是stream。。
-        headers: form.getHeaders(),
-        body: form,
+    RepositoriesService.postV5ReposOwnerRepoReleasesReleaseIdAttachFiles({
+        owner,
+        repo,
+        releaseId: release.id!,
+        file: new Blob([fileBuffer], { type: 'application/octet-stream' }),
     });
 }
