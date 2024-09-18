@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import { OpenAPI } from '@gitee/typescript-sdk-v5';
 import { RepositoriesService } from '@gitee/typescript-sdk-v5/src/services.gen';
-import type { Release as GiteeRelease } from '@gitee/typescript-sdk-v5';
 import { Release } from 'zotero-plugin-scaffold';
 import loadConfig from './config';
 
@@ -14,19 +13,20 @@ main();
 async function main() {
     const config = await loadConfig(false, true),
         releaser = new Release(config);
+    const { version, dist, xpiName } = releaser.ctx;
     await releaser.run();
     if (!process.env.GITHUB_ACTIONS) return;  // 非CI环境不发布
 
-    const changelog = await releaser.getChangelog(),
-        latestRelease = await rewriteRelease('v' + releaser.version, 'Release' + releaser.version, changelog),
+    const changelog = releaser.getChangelog(),
+        latestRelease = await rewriteRelease('v' + version, 'Release' + version, changelog),
         updateRelease = await rewriteRelease(
             'update',
             'Zotero Auto Update Manifest',
-            `Updated in UTC ${new Date().toISOString()} for version ${releaser.version}.`,
+            `Updated in UTC ${new Date().toISOString()} for version ${version}.`,
             true,
         );
-    await rewriteAttach(latestRelease, path.join(releaser.dist, `${releaser.xpiName}.xpi`));
-    await rewriteAttach(updateRelease, path.join(releaser.dist, 'update.json'));
+    await rewriteAttach(latestRelease.id!, path.join(dist, `${xpiName}.xpi`));
+    await rewriteAttach(updateRelease.id!, path.join(dist, 'update.json'));
 }
 
 async function rewriteRelease(tag: string, name: string, body: string, prerelease = false) {
@@ -52,11 +52,11 @@ async function rewriteRelease(tag: string, name: string, body: string, prereleas
     });
 }
 
-async function rewriteAttach(release: GiteeRelease, file: string) {
+async function rewriteAttach(releaseId: number, file: string) {
     const assets = await RepositoriesService.getV5ReposOwnerRepoReleasesReleaseIdAttachFiles({
         owner,
         repo,
-        releaseId: release.id!,
+        releaseId,
     }), fileBuffer = fs.readFileSync(file);
     for (const asset of assets)
         if (asset.name == path.basename(file))
@@ -64,14 +64,14 @@ async function rewriteAttach(release: GiteeRelease, file: string) {
                 .deleteV5ReposOwnerRepoReleasesReleaseIdAttachFilesAttachFileId({
                     owner,
                     repo,
-                    releaseId: release.id!,
+                    releaseId,
                     attachFileId: asset.id!,
                 })
                 .catch(console.error);
     RepositoriesService.postV5ReposOwnerRepoReleasesReleaseIdAttachFiles({
         owner,
         repo,
-        releaseId: release.id!,
+        releaseId,
         file: new Blob([fileBuffer], { type: 'application/octet-stream' }),
     });
 }

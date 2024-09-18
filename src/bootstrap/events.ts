@@ -1,6 +1,7 @@
 import { config } from '../../package.json';
 import { addDebugMenu } from './modules/debug';
-import { ICON_URL, DebuggerBackend, waitForReader } from './modules/utils';
+import { ICON_URL, DebuggerBackend } from './modules/utils';
+import { waitForReader } from 'zotero-plugin-toolkit/dist/utils/wait';
 import { mountMinimap, updateMinimap } from './modules/minimap/minimap';
 import { registerPanels, renderSummaryPanel, updateDashboard } from './modules/sidebar';
 import {

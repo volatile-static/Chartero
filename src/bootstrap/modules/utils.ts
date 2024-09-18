@@ -46,13 +46,6 @@ export function showMessage(msg: string, icon: string) {
     });
 }
 
-export async function waitForReader(reader: _ZoteroTypes.ReaderInstance) {
-    await reader._initPromise;
-    await reader._lastView.initializedPromise;
-    if (isPDFReader(reader))
-        await reader._lastView._iframeWindow!.PDFViewerApplication.initializedPromise;
-}
-
 export function toTimeString(seconds: number | string) {
     function s2hour(s: number) {
         return {
