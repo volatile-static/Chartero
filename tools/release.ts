@@ -17,7 +17,7 @@ async function main() {
     await releaser.run();
     if (!process.env.GITHUB_ACTIONS) return;  // 非CI环境不发布
 
-    const changelog = releaser.getChangelog(),
+    const changelog = releaser.ctx.release.changelog as string,
         latestRelease = await rewriteRelease('v' + version, 'Release' + version, changelog),
         updateRelease = await rewriteRelease(
             'update',
