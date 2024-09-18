@@ -13,7 +13,7 @@ export function updateDashboard(id?: number) {
  * 初始化侧边栏TabPanel
  */
 export function registerPanels() {
-    function post(body: HTMLDivElement, message: any) {
+    function post(body: HTMLDivElement, message: object | string) {
         const iframe = body.getElementsByTagName('iframe')[0];
         if (!iframe?.contentWindow)
             addon.log(new Error('Dashboard iframe not found'));
@@ -26,9 +26,7 @@ export function registerPanels() {
     }
     const tabs = ['progress', 'page', 'date', 'group', /*'relation',*/ 'timeline'];
 
-    if (!Zotero.ItemPaneManager?.registerSection)
-        addon.log(new Error('ItemPaneManager not found'));
-    Zotero.ItemPaneManager?.registerSection({
+    Zotero.ItemPaneManager.registerSection({
         paneID: 'chartero-dashboard',
         pluginID: config.addonID,
         header: {
@@ -62,12 +60,11 @@ export function registerPanels() {
                     ([entry]) => args.body.style.height = `${entry.contentRect.height}px`
                 );
             (iframe.contentWindow as any).wrappedJSObject.addon = addon;
-            iframe.addEventListener('load', ({target}) => {
+            iframe.addEventListener('load', ({ target }) => {
                 observer.observe((target as Document).documentElement);
             }, true);
         },
         onRender: args => {
-            post(args.body, 'render');
             if (args.item.libraryID == Zotero.Libraries.userLibraryID)
                 args.setSectionButtonStatus('group', { hidden: true });
             args.setSectionButtonStatus('progress', { disabled: true });

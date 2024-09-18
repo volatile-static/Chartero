@@ -63,17 +63,7 @@
     import { createApp } from 'vue';
     import App from './main.vue';
     import 'tdesign-vue-next/es/style/index.css';
-
-    function onMsg({ data }) {
-      if (data == 'render')
-        try {
-          createApp(App).mount('#app');
-          removeEventListener('message', onMsg);
-        } catch (error) {
-          console.error('dashboard app', error)
-        }
-    }
-    addEventListener('message', onMsg);
+    createApp(App).mount('#app');
   </script>
   <script>Zotero = addon.getGlobal('Zotero');</script>
 </body>

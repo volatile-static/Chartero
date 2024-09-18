@@ -93,8 +93,8 @@ export default class Addon extends toolBase.BasicTool {
         const pref = Zotero.Prefs.get(`${packageName}.${key}`) ?? JSON.stringify(
             config.defaultSettings[key]
         );
-        if (__dev__)
-            this.log(`Getting pref ${key}:`, pref);
+        // if (__dev__)
+        //     this.log(`Getting pref ${key}:`, pref);
         switch (typeof config.defaultSettings[key]) {
             case 'object':
                 return JSON.parse(pref as string) as DefaultPrefs[K];
