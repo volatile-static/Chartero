@@ -41,10 +41,11 @@ export function registerPanels() {
             type: tab,
             l10nID: `chartero-dashboard-${tab}`,
             icon: `resource://${config.addonName}/icons/${tab}.svg`,
-            onClick(e) {
-                post(e.body, { tab });
-                for (const t of tabs)
-                    e.setSectionButtonStatus(t, { disabled: t === tab });
+            onClick(args) {
+                post(args.body, { tab });
+                args.setSectionButtonStatus(tab, { disabled: true });
+                args.setSectionButtonStatus(args.body.dataset.tab!, { disabled: false });
+                args.body.dataset.tab = tab;
             }
         })),
         onInit: args => {
@@ -55,7 +56,7 @@ export function registerPanels() {
                 styles: { height: '100%', width: '100%' },
                 enableElementRecord: false,
             }, args.body) as HTMLIFrameElement,
-                ResizeObserver = G('ResizeObserver'),
+                ResizeObserver = G('ResizeObserver'),  // 切换页面时自动调整高度
                 observer = new ResizeObserver(
                     ([entry]) => args.body.style.height = `${entry.contentRect.height}px`
                 );
@@ -63,13 +64,22 @@ export function registerPanels() {
             iframe.addEventListener('load', ({ target }) => {
                 observer.observe((target as Document).documentElement);
             }, true);
-        },
-        onRender: args => {
-            if (args.item.libraryID == Zotero.Libraries.userLibraryID)
-                args.setSectionButtonStatus('group', { hidden: true });
+
+            // 默认第一页
             args.setSectionButtonStatus('progress', { disabled: true });
+            args.body.dataset.tab = 'progress';
         },
-        onItemChange: args => post(args.body, { id: args.item.id }),
+        onItemChange: args => {
+            const hidden = args.item.libraryID == Zotero.Libraries.userLibraryID;
+            args.setSectionButtonStatus('group', { hidden });
+            if (hidden && args.body.dataset.tab == 'group') {
+                args.setSectionButtonStatus('progress', { disabled: true });
+                args.setSectionButtonStatus('group', { disabled: false });
+                args.body.dataset.tab = 'progress';
+                post(args.body, { tab: 'progress' });
+            }
+            post(args.body, { id: args.item.id });
+        },
     });
 }
 
