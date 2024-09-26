@@ -1,4 +1,4 @@
-import { BasicTool } from "zotero-plugin-toolkit/dist/basic";
+import { BasicTool } from "zotero-plugin-toolkit";
 
 const basicTool = new BasicTool();
 export const G = basicTool.getGlobal;

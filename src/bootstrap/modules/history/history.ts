@@ -1,4 +1,4 @@
-import { BasicTool, BasicOptions, ManagerTool } from "zotero-plugin-toolkit/dist/basic";
+import { BasicTool, BasicOptions, ManagerTool } from "zotero-plugin-toolkit";
 import { AttachmentRecord, PageRecord } from "./data";
 import { name as packageName } from "../../../../package.json";
 

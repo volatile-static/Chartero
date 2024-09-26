@@ -1,5 +1,4 @@
-import { ClipboardHelper } from 'zotero-plugin-toolkit/dist/helpers/clipboard';
-import { FilePickerHelper } from 'zotero-plugin-toolkit/dist/helpers/filePicker';
+import { ClipboardHelper, FilePickerHelper } from 'zotero-plugin-toolkit';
 import { WorkerManagerBase, WorkerRequest, WorkerResponse } from '../../worker/manager';
 
 export const ICON_URL = 'resource://chartero/icons/icon.svg';

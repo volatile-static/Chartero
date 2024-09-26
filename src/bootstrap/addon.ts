@@ -1,8 +1,11 @@
-import * as toolBase from 'zotero-plugin-toolkit/dist/basic';
-import { ExtraFieldTool } from 'zotero-plugin-toolkit/dist/tools/extraField';
-import { MenuManager } from 'zotero-plugin-toolkit/dist/managers/menu';
-import { PatchHelper } from 'zotero-plugin-toolkit/dist/helpers/patch';
-import { UITool } from 'zotero-plugin-toolkit/dist/tools/ui';
+import {
+    UITool,
+    ExtraFieldTool,
+    MenuManager,
+    PatchHelper,
+    BasicTool,
+    unregister
+} from 'zotero-plugin-toolkit';
 import { config, name as packageName } from '../../package.json';
 import ReadingHistory from './modules/history/history';
 import { onAddonLoad, onHistoryRecord, onItemSelect, onMainWindowLoad } from './events';
@@ -15,7 +18,7 @@ type DefaultPrefs = Omit<
     excludedTags: number[];
 };
 
-export default class Addon extends toolBase.BasicTool {
+export default class Addon extends BasicTool {
     readonly extraField: ExtraFieldTool;
     readonly ui: UITool;
     readonly menu: MenuManager;
@@ -151,7 +154,7 @@ export default class Addon extends toolBase.BasicTool {
                 onMainWindowLoad(win);
             } else {
                 onAddonLoad();
-                onMainWindowLoad(Zotero.getMainWindow() as unknown as MainWindow);
+                Zotero.getMainWindows().forEach(onMainWindowLoad);
             }
         } catch (error) {
             this.log(error);
@@ -168,7 +171,7 @@ export default class Addon extends toolBase.BasicTool {
         );
         (Zotero.getActiveZoteroPane().itemsView as any).onSelect.removeListener(onItemSelect);
         await this.worker.close();
-        toolBase.unregister(this);
+        unregister(this);
     }
 
     async test(key: string) { // create a new file attachment
