@@ -1,6 +1,6 @@
 import { ICON_URL } from './utils';
 
-export default function (win: MainWindow) {
+export default function (win: _ZoteroTypes.MainWindow) {
     // 注册“最近在读”菜单
     addon.menu.register(
         'menuFile',
@@ -40,7 +40,7 @@ export default function (win: MainWindow) {
 }
 
 async function addRecentTabsMenu({ target }: Event) {
-    const win = (target as any).ownerGlobal as MainWindow,
+    const win = (target as any).ownerGlobal as _ZoteroTypes.MainWindow,
         openedItems = win.Zotero_Tabs.getState().map(tab => tab.data?.itemID).filter(i => !!i),
         regex = new RegExp(`(${Zotero.Utilities.quotemeta(win.Zotero_Tabs._tabsMenuFilter)})`, 'gi');
     let tabIndex = win.Zotero_Tabs.tabsMenuList.querySelectorAll('*[tabindex]').length;

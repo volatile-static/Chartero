@@ -10,6 +10,7 @@ import { config, name as packageName } from '../../package.json';
 import ReadingHistory from './modules/history/history';
 import { onAddonLoad, onHistoryRecord, onItemSelect, onMainWindowLoad } from './events';
 import { showMessage, WorkerManager } from './modules/utils';
+import { G } from './modules/global';
 
 type DefaultPrefs = Omit<
     typeof config.defaultSettings,
@@ -148,7 +149,7 @@ export default class Addon extends BasicTool {
     /**
      * 初始化插件时调用
      */
-    init(win?: MainWindow) {
+    init(win?: _ZoteroTypes.MainWindow) {
         try {
             if (win) {
                 onMainWindowLoad(win);
@@ -163,7 +164,7 @@ export default class Addon extends BasicTool {
 
     async unload() {
         this.patchSearch.disable();
-        this.overviewTabID && (window as unknown as MainWindow).Zotero_Tabs.close(this.overviewTabID);
+        this.overviewTabID && G('Zotero_Tabs').close(this.overviewTabID);
         this.notifierID && Zotero.Notifier.unregisterObserver(this.notifierID);
         this.prefsObserverIDs.forEach(id => Zotero.Prefs.unregisterObserver(id));
         this.listeners.forEach(({ target, type, listener }) =>

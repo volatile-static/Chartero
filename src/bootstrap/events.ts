@@ -62,7 +62,7 @@ export function onAddonLoad() {
         Zotero.Server.Endpoints['/test/chartero'] = DebuggerBackend;
 }
 
-export function onMainWindowLoad(win: MainWindow) {
+export function onMainWindowLoad(win: _ZoteroTypes.MainWindow) {
     addon.registerListener(
         win.document.getElementById('zotero-itemmenu')!,
         'popupshowing',
@@ -106,7 +106,7 @@ export function openReport() {
 }
 
 export function openOverview() {
-    const Zotero_Tabs = (Zotero.getMainWindow() as unknown as MainWindow).Zotero_Tabs;
+    const Zotero_Tabs = Zotero.getMainWindow().Zotero_Tabs;
     if (addon.overviewTabID) {
         Zotero_Tabs.select(addon.overviewTabID);
         return;
@@ -144,7 +144,7 @@ export function onHistoryRecord(reader: _ZoteroTypes.ReaderInstance) {
 
 export async function onItemSelect() {
     // 仅用户操作GUI时响应
-    if ((Zotero.getMainWindow() as unknown as MainWindow).Zotero_Tabs.selectedType != 'library') return;
+    if (Zotero.getMainWindow().Zotero_Tabs.selectedType != 'library') return;
     const ZoteroPane = Zotero.getActiveZoteroPane(),
         items = ZoteroPane.getSelectedItems(true),
         dashboard = Zotero.getMainWindow().document.querySelector(
