@@ -1,7 +1,7 @@
 import { config } from '../../package.json';
 import { addDebugMenu } from './modules/debug';
 import { ICON_URL, DebuggerBackend } from './modules/utils';
-import { waitForReader } from 'zotero-plugin-toolkit/dist/utils/wait.js';
+import { wait } from 'zotero-plugin-toolkit';
 import { mountMinimap, updateMinimap } from './modules/minimap/minimap';
 import { registerPanels, renderSummaryPanel, updateDashboard } from './modules/sidebar';
 import {
@@ -206,7 +206,7 @@ export async function onNotify(
 }
 
 export async function onOpenReader(reader: _ZoteroTypes.ReaderInstance) {
-    await waitForReader(reader);
+    await wait.waitForReader(reader);
     if (addon.getPref('enableAllImages')) addImagesPanelForReader(reader);
     if (addon.getPref('enableMinimap')) mountMinimap(reader);
     if (addon.getPref('enableReaderAlert')) initReaderAlert(reader._iframe?.contentDocument);
