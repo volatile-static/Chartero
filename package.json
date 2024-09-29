@@ -29,7 +29,7 @@
         "dev": "vite ./src/vue/test",
         "release": "tsx tools/release.ts",
         "preview": "vite preview ./src/vue",
-        "lint": "eslint . --ext .vue,.ts,.tsx,.js --ignore-path .gitignore --fix",
+        "lint": "eslint . --ext .vue,.ts,.tsx,.js --fix",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -61,7 +61,7 @@
         "@tsconfig/node-lts": "^20.1.3",
         "@types/animejs": "^3.1.12",
         "@types/bluebird": "^3.5.42",
-        "@typescript-eslint/eslint-plugin": "^8.7.0",
+        "@typescript-eslint/eslint-plugin": "^7.18.0",
         "@vitejs/plugin-vue": "^5.1.2",
         "@vitejs/plugin-vue-jsx": "^4.0.1",
         "@vue/eslint-config-prettier": "^9.0.0",
@@ -70,7 +70,7 @@
         "bluebird": "^3.7.2",
         "esbuild-plugin-svg": "^0.1.0",
         "esbuild-sass-plugin": "^3.3.1",
-        "eslint": "^8.57.0",
+        "eslint": "^8.57.1",
         "eslint-plugin-mozilla": "^3.7.5",
         "eslint-plugin-vue": "^9.28.0",
         "lodash": "^4.17.21",
