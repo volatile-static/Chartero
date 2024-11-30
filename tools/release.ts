@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { OpenAPI } from '@gitee/typescript-sdk-v5';
+import { OpenAPI } from '@gitee/typescript-sdk-v5/src/core/OpenAPI';
 import { RepositoriesService } from '@gitee/typescript-sdk-v5/src/services.gen';
 import { Release } from 'zotero-plugin-scaffold';
 import loadConfig from './config';
