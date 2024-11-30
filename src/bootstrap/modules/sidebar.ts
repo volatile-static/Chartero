@@ -69,6 +69,7 @@ export function registerPanels() {
             args.setSectionButtonStatus('progress', { disabled: true });
             args.body.dataset.tab = 'progress';
         },
+        onRender: () => { },
         onItemChange: args => {
             const hidden = args.item.libraryID == Zotero.Libraries.userLibraryID;
             args.setSectionButtonStatus('group', { hidden });

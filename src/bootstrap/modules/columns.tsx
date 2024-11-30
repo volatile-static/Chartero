@@ -4,7 +4,7 @@ import { toTimeString } from './utils';
 import { React } from './global';
 
 export default function addItemColumns() {
-    Zotero.ItemTreeManager.registerColumns({
+    Zotero.ItemTreeManager.registerColumn({
         dataKey: 'totalSeconds',
         label: addon.locale.totalTime,
         iconLabel: (
