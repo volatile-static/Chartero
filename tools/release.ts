@@ -1,12 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import { OpenAPI } from '@gitee/typescript-sdk-v5/src/core/OpenAPI';
+// import { OpenAPI } from '@gitee/typescript-sdk-v5/src/core/OpenAPI';
 import { RepositoriesService } from '@gitee/typescript-sdk-v5/src/services.gen';
 import { Release } from 'zotero-plugin-scaffold';
 import loadConfig from './config';
 
 const owner = 'const_volatile', repo = 'chartero';
-OpenAPI.TOKEN = process.env.GITEE_TOKEN;
+// OpenAPI.TOKEN = process.env.GITEE_TOKEN;
 
 main();
 
@@ -15,18 +15,18 @@ async function main() {
         releaser = new Release(config);
     const { version, dist, xpiName } = releaser.ctx;
     await releaser.run();
-    if (!process.env.GITHUB_ACTIONS) return;  // 非CI环境不发布
+    // if (!process.env.GITHUB_ACTIONS) return;  // 非CI环境不发布
 
-    const changelog = releaser.ctx.release.changelog as string,
-        latestRelease = await rewriteRelease('v' + version, 'Release' + version, changelog),
-        updateRelease = await rewriteRelease(
-            'update',
-            'Zotero Auto Update Manifest',
-            `Updated in UTC ${new Date().toISOString()} for version ${version}.`,
-            true,
-        );
-    await rewriteAttach(latestRelease.id!, path.join(dist, `${xpiName}.xpi`));
-    await rewriteAttach(updateRelease.id!, path.join(dist, 'update.json'));
+    // const changelog = releaser.ctx.release.changelog as string,
+    //     latestRelease = await rewriteRelease('v' + version, 'Release' + version, changelog),
+    //     updateRelease = await rewriteRelease(
+    //         'update',
+    //         'Zotero Auto Update Manifest',
+    //         `Updated in UTC ${new Date().toISOString()} for version ${version}.`,
+    //         true,
+    //     );
+    // await rewriteAttach(latestRelease.id!, path.join(dist, `${xpiName}.xpi`));
+    // await rewriteAttach(updateRelease.id!, path.join(dist, 'update.json'));
 }
 
 async function rewriteRelease(tag: string, name: string, body: string, prerelease = false) {
