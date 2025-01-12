@@ -2,9 +2,9 @@
 import { exit, argv } from 'process';
 import { Build, Serve } from 'zotero-plugin-scaffold';
 import loadConfig from './config';
-import { OpenAPI } from '@gitee/typescript-sdk-v5';
+import * as test from '@gitee/typescript-sdk-v5';
 
-console.warn(OpenAPI);
+console.warn(test);
 // main().catch(error => {
 //     console.error(error);
 //     exit(1);
