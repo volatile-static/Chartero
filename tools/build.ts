@@ -2,11 +2,13 @@
 import { exit, argv } from 'process';
 import { Build, Serve } from 'zotero-plugin-scaffold';
 import loadConfig from './config';
+import { OpenAPI } from '@gitee/typescript-sdk-v5/src/core/OpenAPI';
 
-main().catch(error => {
-    console.error(error);
-    exit(1);
-});
+console.warn(OpenAPI);
+// main().catch(error => {
+//     console.error(error);
+//     exit(1);
+// });
 
 async function main() {
     if (argv.includes('--watch')) {
