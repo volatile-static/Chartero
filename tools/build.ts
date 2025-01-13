@@ -2,10 +2,9 @@
 import { exit, argv } from 'process';
 import { Build, Serve } from 'zotero-plugin-scaffold';
 import loadConfig from './config';
-import GITEE from '@gitee/typescript-sdk-v5';
-
-console.warn(GITEE);
-console.warn(GITEE.OpenAPI);
+import Gitee from '@gitee/typescript-sdk-v5';
+Gitee.OpenAPI.TOKEN = process.env.GITEE_TOKEN;
+console.warn(Gitee.OpenAPI.TOKEN);
 // main().catch(error => {
 //     console.error(error);
 //     exit(1);
