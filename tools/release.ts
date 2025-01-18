@@ -72,6 +72,6 @@ async function rewriteAttach(releaseId: number, file: string) {
         owner,
         repo,
         releaseId,
-        file: new Blob([fileBuffer], { type: 'application/octet-stream' }),
+        file: new File([fileBuffer], path.basename(file), { type: 'application/octet-stream' }),
     });
 }
