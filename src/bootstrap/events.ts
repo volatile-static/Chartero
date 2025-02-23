@@ -152,18 +152,7 @@ export async function onItemSelect() {
         ) as HTMLIFrameElement,
         renderSummaryPanelDebounced = Zotero.Utilities.debounce(renderSummaryPanel, 233);
     // 当前处于侧边栏标签页
-    if (items.length == 1) {
-        const item = Zotero.Items.get(items[0]);
-        if (item.isRegularItem())
-            // 只有常规条目才有仪表盘
-            dashboard?.contentWindow?.postMessage({ id: items[0] }, '*');
-    } else if (
-        (ZoteroPane.itemsView as _ZoteroTypes.ItemTree).rowCount > items.length &&
-        items.length > 1 &&
-        'duplicates' != ZoteroPane.getCollectionTreeRow()?.type
-    )
-        renderSummaryPanelDebounced(items); // 当前选择多个条目
-    else {
+    if ('duplicates' == ZoteroPane.getCollectionTreeRow()?.type || !items.length) {
         // 当前选择整个分类
         const row = ZoteroPane.getCollectionTreeRow();
         addon.log('selected summary: ', row?.type);
@@ -189,7 +178,13 @@ export async function onItemSelect() {
             default:
                 break;
         }
-    }
+    } else if (items.length == 1) {
+        const item = Zotero.Items.get(items[0]);
+        if (item.isRegularItem())
+            // 只有常规条目才有仪表盘
+            dashboard?.contentWindow?.postMessage({ id: items[0] }, '*');
+    } else
+        renderSummaryPanelDebounced(items); // 当前选择多个条目
 }
 
 export async function onNotify(
