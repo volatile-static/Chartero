@@ -2,7 +2,7 @@ import { config } from '../../../package.json';
 import { ICON_URL } from './utils';
 
 export function addDebugMenu() {
-    const Zotero_Tabs = (Zotero.getMainWindow() as unknown as MainWindow).Zotero_Tabs;
+    const Zotero_Tabs = (Zotero.getMainWindow() as unknown as _ZoteroTypes.MainWindow).Zotero_Tabs;
     addon.menu.register('item', { tag: 'menuseparator' });
     addon.menu.register('item', {
         tag: 'menuitem',
@@ -51,11 +51,10 @@ export function addDebugMenu() {
             Zotero.Prefs.set('devtools.debugger.chrome-debugging-websocket', false, true);
 
             const env =
-                // @ts-expect-error Cc Ci
                 // eslint-disable-next-line mozilla/use-services
                 Services.env || Cc['@mozilla.org/process/environment;1'].getService(Ci.nsIEnvironment);
 
-            env.set('MOZ_BROWSER_TOOLBOX_PORT', 6100);
+            env.set('MOZ_BROWSER_TOOLBOX_PORT', '6100');
             Zotero.openInViewer('chrome://devtools/content/framework/browser-toolbox/window.html', {
                 onLoad: doc => {
                     doc.getElementById('status-message-container')!.style.visibility = 'collapse';
@@ -97,8 +96,8 @@ export function addDebugMenu() {
         label: 'reload',
         icon: ICON_URL,
         commandListener: async () => {
-            Services.obs.notifyObservers(null, 'startupcache-invalidate');
-            const { AddonManager } = ChromeUtils.import('resource://gre/modules/AddonManager.jsm');
+            Services.obs.notifyObservers({}, 'startupcache-invalidate');
+            const { AddonManager } = ChromeUtils.importESModule('resource://gre/modules/AddonManager.jsm');
             const addon = await AddonManager.getAddonByID(config.addonID);
             addon.reload();
         },

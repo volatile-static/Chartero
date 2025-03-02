@@ -29,7 +29,7 @@ export default class ReadingHistory extends ManagerTool {
 
     private _intervalID: number;
     private _mutex: boolean;
-    private _loadingPromise: _ZoteroTypes.DeferredPromise<void>;
+    private _loadingPromise: _ZoteroTypes.Promise.DeferredPromise<void>;
 
     constructor(base: BasicTool | BasicOptions, hook: RecordHook) {
         super(base);
@@ -83,7 +83,7 @@ export default class ReadingHistory extends ManagerTool {
             });
         };
         loadLib(1).then(() =>
-            Promise.all(Zotero.Groups.getAll().map((group: Zotero.DataObject) =>
+            Promise.all(Zotero.Groups.getAll().map((group: Zotero.Group) =>
                 Zotero.Groups.getLibraryIDFromGroupID(group.id)
             ).map(loadLib)).then(() => this._loadingPromise.resolve()));
     }

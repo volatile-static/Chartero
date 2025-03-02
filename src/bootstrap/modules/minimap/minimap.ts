@@ -13,14 +13,14 @@ export function mountMinimap(reader: _ZoteroTypes.ReaderInstance) {
         },
         doc.head
     );
-    let timer: number;
+    let timer: ReturnType<typeof setTimeout>;
     const container = addon.ui.appendElement({
         tag: 'div',
         id: 'chartero-minimap-container',
         listeners: [
             {
                 type: 'mouseenter',
-                listener: () => timer = setTimeout(() => container.classList.add('hovered'), 500) 
+                listener: () => timer = setTimeout(() => container.classList.add('hovered'), 500)
             }, {
                 type: 'mouseleave',
                 listener: () => {

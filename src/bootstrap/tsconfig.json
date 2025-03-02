@@ -7,7 +7,6 @@
         "noImplicitAny": true,
         "strictNullChecks": true,
         "resolveJsonModule": true,
-        "skipLibCheck": true,
         "allowJs": true,
         "types": [
             "zotero-types"

@@ -32,7 +32,7 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap> {
     protected readonly imagesView: HTMLDivElement;
     protected readonly viewImages: HTMLButtonElement;
     protected popMsg: Zotero.ProgressWindow;
-    protected progMeter: typeof Zotero.ProgressWindow.ItemProgress;
+    protected progMeter: _ZoteroTypes.ItemProgress;
     protected loadedImages = 0;
 
     constructor(protected readonly reader: _ZoteroTypes.ReaderInstance<T>) {

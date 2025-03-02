@@ -61,7 +61,7 @@ export default class Addon extends BasicTool {
     }
 
     async translateLocaleStrings(): Promise<typeof this.locale> {
-        if (!Zotero.PDFTranslate?.api?.translate) {
+        if (!(Zotero as any).PDFTranslate?.api?.translate) {
             showMessage(
                 'PDFTranslate not found, using default locale!',
                 'chrome://chartero/content/icons/exclamation.png'
@@ -71,7 +71,7 @@ export default class Addon extends BasicTool {
         const locale = JSON.parse(
             Zotero.File.getContentsFromURL(rootURI + 'locale/zh-CN/chartero.json')
         ), translate = (str: string) =>
-            str.startsWith('http') ? str : Zotero.PDFTranslate.api.translate(str, {
+            str.startsWith('http') ? str : (Zotero as any).PDFTranslate.api.translate(str, {
                 pluginID: config.addonID,
                 langfrom: 'zh-CN',
                 langto: Zotero.locale

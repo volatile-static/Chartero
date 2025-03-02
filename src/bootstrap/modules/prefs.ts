@@ -4,7 +4,7 @@ import { showMessage } from "./utils";
 export default function initPrefsPane(win: Window) {
     // 绑定事件
     const $: typeof document.getElementById = win.document.getElementById.bind(win.document),
-        btn = $('chartero-preferences-pane-history-import-area') as XUL.Button;
+        btn = $('chartero-preferences-pane-history-import-area') as unknown as XULButtonElement;
     btn.addEventListener('command', onMergeClick);
     btn.parentElement!.previousElementSibling!.addEventListener('input', onJsonInput);
     $('chartero-preferences-pane-history-compress')?.addEventListener('command', compressHistory);

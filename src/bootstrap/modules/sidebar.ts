@@ -93,7 +93,7 @@ export function renderSummaryPanel(ids: number[]) {
     const win = Zotero.getMainWindow(),
         content = win.document.getElementById(
             'zotero-item-pane-content'
-        ) as XUL.Deck,
+        ) as unknown as XULDeckElement,
         summary: any = addon.ui.createElement(win.document, 'iframe', {
             namespace: 'xul',
             id: 'chartero-summary-iframe',

@@ -11,7 +11,7 @@ export default function (win: _ZoteroTypes.MainWindow) {
             icon: ICON_URL,
         },
         'before',
-        win.document.getElementById('menu_close') as XUL.Element
+        win.document.getElementById('menu_close') as unknown as XULElement
     );
     win.document.getElementById('chartero-open-recent')!.addEventListener('popupshowing', event => {
         const popup = event.target as XUL.MenuPopup,
