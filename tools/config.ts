@@ -14,18 +14,18 @@ const buildDir = 'build';
 
 export default function loadConfig(isDevBuild: boolean = false, isFullBuild: boolean = false) {
     const esbuildConfig: BuildOptions = {
-            target: 'firefox115',
-            define: { __dev__: String(isDevBuild) },
-            plugins: [svg(), sassPlugin({ type: 'css-text', style: 'compressed' })],
-            bundle: true,
-            minify: !isDevBuild,
-            external: ['resource://*', 'chrome://*'],
-            outdir: path.join(buildDir, 'addon/content'),
-            entryPoints: [
-                { in: 'src/bootstrap/index.ts', out: pkg.config.addonName },
-                { in: 'src/worker/index.ts', out: `${pkg.config.addonName}-worker` },
-            ],
-        },
+        target: 'firefox128',
+        define: { __dev__: String(isDevBuild) },
+        plugins: [svg(), sassPlugin({ type: 'css-text', style: 'compressed' })],
+        bundle: true,
+        minify: !isDevBuild,
+        external: ['resource://*', 'chrome://*'],
+        outdir: path.join(buildDir, 'addon/content'),
+        entryPoints: [
+            { in: 'src/bootstrap/index.ts', out: pkg.config.addonName },
+            { in: 'src/worker/index.ts', out: `${pkg.config.addonName}-worker` },
+        ],
+    },
         viteResolveOptions: AliasOptions = [
             {
                 find: /^highcharts\/(.*)(?<!\.css)$/,
