@@ -1,5 +1,6 @@
 import renderMinimap from "./components";
 import stylesheet from "./minimap.sass";
+import { G } from "../global";
 
 export function mountMinimap(reader: _ZoteroTypes.ReaderInstance) {
     const doc = reader._iframeWindow!.document,
@@ -97,7 +98,7 @@ export function updateMinimap(reader: _ZoteroTypes.ReaderInstance) {
             mappingArr: Array<[cfi: string, idx: string]> =
                 JSON.parse(mappingStr!)?.mappings,
             cfiArr = mappingArr?.sort((a, b) => parseInt(a[1]) - parseInt(b[1])),
-            ranges = cfiArr?.map(map => view.getRange('epubcfi(' + map[0] + ')')),
+            ranges = cfiArr?.map(map => view.getRange('epubcfi(' + map[0] + ')')?.toRange()),
             pagesHeight = ranges?.reduce((arr, range, i) => {
                 if (i == 0 || !range || !ranges[i - 1]) return arr;
                 return [...arr, range.getBoundingClientRect().y -
@@ -108,11 +109,11 @@ export function updateMinimap(reader: _ZoteroTypes.ReaderInstance) {
 
         for (const ann of annotations) {
             const pos = ann.position as _ZoteroTypes.Reader.FragmentSelector,
-                range = view.getRange(pos.value),
+                range = view.getRange(pos.value)?.toRange(),
                 rect = range?.getBoundingClientRect(),
                 // 寻找当前注释所在的页码
                 idx = ranges.findIndex(
-                    r => r && r.compareBoundaryPoints(window.Range.END_TO_END, range!) > 0
+                    r => r && r.compareBoundaryPoints(G('Range').END_TO_END, range!) > 0
                 ) - 1,
                 pageRect = ranges.at(idx)?.getBoundingClientRect(),
                 arr = annArr[idx] ??= [];
