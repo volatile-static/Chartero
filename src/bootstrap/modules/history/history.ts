@@ -310,8 +310,9 @@ export default class ReadingHistory extends ManagerTool {
         },
             checkState = (
                 thisState: ReaderState,
-                thatState: _ZoteroTypes.Reader.State | _ZoteroTypes.Reader.DOMViewState
+                thatState: _ZoteroTypes.Reader.State | _ZoteroTypes.Reader.DOMViewState | null
             ) => {
+                if (!thatState) return false;
                 if ('cfi' in thatState)
                     return checkEPUBState(
                         thisState as EPUBReaderState,
