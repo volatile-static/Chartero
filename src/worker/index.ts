@@ -1,10 +1,5 @@
-import { getAllImages, processPDF } from './pdf';
+import { getAllImages, processPDF, pdfjsLib } from './pdf';
 import { WorkerManagerBase, WorkerRequest, WorkerResponse } from './manager';
-importScripts('resource://pdf.js/build/pdf.js');
-
-pdfjsLib.GlobalWorkerOptions.workerPort = new Worker(
-    'resource://pdf.js/build/pdf.worker.js'
-);
 
 class WorkerSlave extends WorkerManagerBase<DedicatedWorkerGlobalScope> {
     protected async onRequest(request: WorkerRequest<DedicatedWorkerGlobalScope>) {

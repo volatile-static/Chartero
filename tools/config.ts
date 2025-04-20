@@ -16,16 +16,22 @@ export default function loadConfig(isDevBuild: boolean = false, isFullBuild: boo
     const esbuildConfig: BuildOptions = {
         target: 'firefox128',
         define: { __dev__: String(isDevBuild) },
-        plugins: [svg(), sassPlugin({ type: 'css-text', style: 'compressed' })],
         bundle: true,
         minify: !isDevBuild,
         external: ['resource://*', 'chrome://*'],
         outdir: path.join(buildDir, 'addon/content'),
-        entryPoints: [
-            { in: 'src/bootstrap/index.ts', out: pkg.config.addonName },
-            { in: 'src/worker/index.ts', out: `${pkg.config.addonName}-worker` },
-        ],
     },
+        sandboxConfig: BuildOptions = {
+            ...esbuildConfig,
+            plugins: [svg(), sassPlugin({ type: 'css-text', style: 'compressed' })],
+            entryPoints: [{ in: 'src/bootstrap/index.ts', out: pkg.config.addonName }]
+        },
+        workerConfig: BuildOptions = {
+            ...esbuildConfig,
+            format: 'esm',
+            outExtension: { '.js': '.mjs' },
+            entryPoints: [{ in: 'src/worker/index.ts', out: `${pkg.config.addonName}-worker` }],
+        },
         viteResolveOptions: AliasOptions = [
             {
                 find: /^highcharts\/(.*)(?<!\.css)$/,
@@ -77,7 +83,7 @@ export default function loadConfig(isDevBuild: boolean = false, isFullBuild: boo
                 buildTime: '{{buildTime}}',
                 ...prefs,
             },
-            esbuildOptions: [esbuildConfig],
+            esbuildOptions: [sandboxConfig, workerConfig],
             hooks: {
                 'build:bundle': async () => {
                     buildPrefs();

@@ -3,4 +3,6 @@ declare const IOUtils: {
     write(path: string, data: Uint8Array): void;
 }
 
-declare const pdfjsLib: typeof import('node_modules/pdfjs-dist/types/src/pdf.d.ts');
+declare module 'resource://zotero/reader/pdf/build/pdf.mjs' {
+    export * from 'node_modules/pdfjs-dist/types/src/pdf.d.ts';
+}

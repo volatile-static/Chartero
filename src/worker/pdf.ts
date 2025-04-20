@@ -1,5 +1,9 @@
 import type { WorkerStream } from './manager';
 import type { PDFDocumentProxy } from '../../node_modules/pdfjs-dist/types/src/pdf';
+import * as pdfjsLib from 'resource://zotero/reader/pdf/build/pdf.mjs';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'resource://zotero/reader/pdf/build/pdf.worker.mjs';
+export { pdfjsLib };
 
 export function processPDF(url: string) {
     return new Promise(resolve => processInPromise(url, resolve));

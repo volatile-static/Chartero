@@ -25,9 +25,10 @@ export default class Addon extends BasicTool {
     readonly menu: MenuManager;
     readonly patchSearch: PatchHelper;
     readonly history: ReadingHistory;
-    readonly worker = new WorkerManager(
-        new ChromeWorker(`chrome://${packageName}/content/${config.addonName}-worker.js`)
-    );
+    readonly worker = new WorkerManager(new ChromeWorker(
+        `resource://${packageName}/${config.addonName}-worker.mjs`,
+        { type: 'module' }
+    ));
     readonly locale: typeof import('../../addon/locale/zh-CN/chartero.json');
 
     readonly rootURI = rootURI;
