@@ -8,8 +8,5 @@
         "strictNullChecks": true,
         "resolveJsonModule": true,
         "allowJs": true,
-        "types": [
-            "zotero-types"
-        ]
     }
 }

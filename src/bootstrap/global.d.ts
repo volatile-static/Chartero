@@ -1,3 +1,5 @@
+/// <reference types="zotero-types/entries/sandbox/index.d.ts" />
+
 declare const addon: import('./addon').default;
 declare const rootURI: string;
 declare const __dev__: boolean;
