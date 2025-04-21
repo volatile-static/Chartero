@@ -1,18 +1,17 @@
 import type { AnnotationInfo } from './minimap';
-import { React, ReactDOM } from '../global';
+import { React, createRoot } from '../global';
 
 /**
  * 毫秒级刷新
  */
 export default function renderMinimap(container: Element, props: MinimapProps) {
     try {
-        ReactDOM.render(
+        createRoot(container).render(
             <Minimap
                 background={props.background}
                 pagesHeight={props.pagesHeight}
                 annotations={props.annotations}
             />,
-            container,
         );
     } catch (error) {
         addon.log(error);

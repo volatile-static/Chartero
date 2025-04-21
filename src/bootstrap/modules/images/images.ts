@@ -1,7 +1,7 @@
 import type { TagElementProps } from 'zotero-plugin-toolkit';
 import { ClipboardHelper } from 'zotero-plugin-toolkit';
 import { isPDFReader, isEpubReader, isWebReader, PdfImageListener } from '../utils';
-import { React, ReactDOM, G } from '../global';
+import { React, G, createRoot } from '../global';
 import View, { type LoadedPages } from './components';
 import stylesheet from './images.sass';
 import icon from './viewImages.svg';
@@ -133,7 +133,7 @@ class PDFImages extends ReaderImages<'pdf'> {
                 pages: this.loadedPages,
                 onNavigate: position => this.reader.navigate({ position }),
             });
-            ReactDOM.render(view, this.imagesView);
+            createRoot(this.imagesView).render(view);
         } catch (error) {
             addon.log(error);
         }
