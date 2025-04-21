@@ -14,7 +14,7 @@ export default function (win: _ZoteroTypes.MainWindow) {
         win.document.getElementById('menu_close') as unknown as XULElement
     );
     win.document.getElementById('chartero-open-recent')!.addEventListener('popupshowing', event => {
-        const popup = event.target as XUL.MenuPopup,
+        const popup = event.target as XULMenuPopupElement,
             info = getHistoryInfo();
         popup.replaceChildren();
         for (const { id, name, image } of info)
@@ -58,7 +58,7 @@ async function addRecentTabsMenu({ target }: Event) {
         const title = name.replace(regex, match => {
             const b = win.document.createElementNS('http://www.w3.org/1999/xhtml', 'b');
             b.textContent = match;
-            return b.outerHTML;
+            return b.outerHTML.toString();
         });
         addon.ui.appendElement({
             tag: 'div',

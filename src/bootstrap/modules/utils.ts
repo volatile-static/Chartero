@@ -1,5 +1,6 @@
 import { ClipboardHelper, FilePickerHelper } from 'zotero-plugin-toolkit';
 import { WorkerManagerBase, WorkerRequest, WorkerResponse } from '../../worker/manager';
+import { G } from './global';
 
 export const ICON_URL = 'resource://chartero/icons/icon.svg';
 
@@ -7,9 +8,9 @@ export const ICON_URL = 'resource://chartero/icons/icon.svg';
 // export { renderToStaticMarkup };
 
 export function copySVG2JPG(svg: string) {
-    const img = new window.Image();
+    const Blob = G('Blob'), Image = G('Image'), img = new Image();
     img.onload = () => {
-        const canvas = document.createElement('canvas'),
+        const canvas = G('document').createElement('canvas'),
             ctx = canvas?.getContext('2d');
         canvas.height = img.height;
         canvas.width = img.width;
@@ -17,7 +18,7 @@ export function copySVG2JPG(svg: string) {
         new ClipboardHelper().addImage(canvas.toDataURL('image/png')).copy();
     };
     img.src = URL.createObjectURL(
-        new window.Blob([svg], {
+        new Blob([svg], {
             type: 'image/svg+xml;charset-utf-16',
         })
     );

@@ -154,7 +154,7 @@ export function initReaderAlert(doc: Document) {
             ignoreIfExists: true,
             properties: { textContent: readerStyles },
         },
-        doc.head,
+        doc.head!,
     );
     addon.ui.appendElement(
         {
@@ -177,10 +177,10 @@ export function initReaderAlert(doc: Document) {
 }
 
 export function hideDeleteMenuForHistory({ target }: Event) {
-    const doc = (target as Element).ownerDocument,
-        menu = doc.querySelector('#zotero-itemmenu .zotero-menuitem-move-to-trash') as XUL.MenuItem,
+    const doc = (target as Element).ownerDocument!,
+        menu = doc.querySelector('#zotero-itemmenu .zotero-menuitem-move-to-trash') as XULMenuItemElement,
         hasHis = Zotero.getActiveZoteroPane()
             .getSelectedItems()
             .some(item => addon.history.isMainItem(item) || addon.history.isHistoryNote(item));
-    menu.setAttribute('disabled', hasHis);
+    menu.setAttribute('disabled', hasHis.toString());
 }

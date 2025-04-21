@@ -12,7 +12,7 @@ export function mountMinimap(reader: _ZoteroTypes.ReaderInstance) {
             properties: { textContent: stylesheet },
             ignoreIfExists: true,
         },
-        doc.head
+        doc.head!
     );
     let timer: ReturnType<typeof setTimeout>;
     const container = addon.ui.appendElement({

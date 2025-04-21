@@ -3,7 +3,7 @@ import { showMessage } from "./utils";
 
 export default function initPrefsPane(win: Window) {
     // 绑定事件
-    const $: typeof document.getElementById = win.document.getElementById.bind(win.document),
+    const $: typeof Document.prototype.getElementById = win.document.getElementById.bind(win.document),
         btn = $('chartero-preferences-pane-history-import-area') as unknown as XULButtonElement;
     btn.addEventListener('command', onMergeClick);
     btn.parentElement!.previousElementSibling!.addEventListener('input', onJsonInput);
@@ -41,7 +41,7 @@ function refreshExcludedTags(doc: Document) {
 
 function onTagClick(event: MouseEvent) {
     const div = event.target as HTMLDivElement,
-        win = div.ownerDocument.defaultView;
+        win = div.ownerDocument?.defaultView;
     if (win?.confirm(addon.locale.confirmRemoveExcludedTag)) {
         const tagID = div.id.split('-').at(-1),
             tags = addon.getPref('excludedTags');
@@ -52,7 +52,7 @@ function onTagClick(event: MouseEvent) {
 }
 
 async function onMergeClick(e: MouseEvent) {
-    const btn = e.target as XUL.Button,
+    const btn = e.target as XULButtonElement,
         txt = btn.parentElement!.previousElementSibling as HTMLTextAreaElement,
         str = txt.value;
     btn.disabled = true;
@@ -60,7 +60,7 @@ async function onMergeClick(e: MouseEvent) {
 }
 
 function onJsonInput(e: Event) {
-    ((e.target as XUL.Element).nextElementSibling!.lastChild as XUL.Button).disabled =
+    ((e.target as XULElement).nextElementSibling!.lastChild as XULButtonElement).disabled =
         false;
 }
 

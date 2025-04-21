@@ -14,7 +14,7 @@ export function updateDashboard(id?: number) {
  */
 export function registerPanels() {
     function post(body: HTMLDivElement, message: object | string) {
-        const iframe = body.getElementsByTagName('iframe')[0];
+        const iframe: HTMLIFrameElement = body.getElementsByTagName('iframe')[0];
         if (!iframe?.contentWindow)
             addon.log(new Error('Dashboard iframe not found'));
         else if (iframe.contentDocument?.readyState === 'complete')
@@ -62,7 +62,7 @@ export function registerPanels() {
                 );
             (iframe.contentWindow as any).wrappedJSObject.addon = addon;
             iframe.addEventListener('load', ({ target }) => {
-                observer.observe((target as Document).documentElement);
+                observer.observe((target as Document).documentElement!);
             }, true);
 
             // 默认第一页

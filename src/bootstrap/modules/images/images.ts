@@ -1,7 +1,7 @@
 import type { TagElementProps } from 'zotero-plugin-toolkit';
 import { ClipboardHelper } from 'zotero-plugin-toolkit';
 import { isPDFReader, isEpubReader, isWebReader, PdfImageListener } from '../utils';
-import { React, ReactDOM } from '../global';
+import { React, ReactDOM, G } from '../global';
 import View, { type LoadedPages } from './components';
 import stylesheet from './images.sass';
 import icon from './viewImages.svg';
@@ -75,7 +75,7 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap> {
                 properties: { textContent: stylesheet },
                 skipIfExists: true,
             },
-            this.doc.head,
+            this.doc.head!,
         );
 
         // 标签按钮切换的额外操作
@@ -89,8 +89,8 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap> {
                 this.imagesView.classList.toggle('hidden', false);
                 if (!this.loadedImages) this.loadAll(); // 初始化
             } else {
-                b.ownerDocument.getElementById('viewImages')?.classList.toggle('active', false);
-                b.ownerDocument.getElementById('imagesView')?.classList.toggle('hidden', true);
+                b.ownerDocument?.getElementById('viewImages')?.classList.toggle('active', false);
+                b.ownerDocument?.getElementById('imagesView')?.classList.toggle('hidden', true);
                 addon.log('hide images');
             }
         });
@@ -173,8 +173,8 @@ abstract class DOMImages<DOMImageElement extends SVGImageElement | HTMLImageElem
         const doc = (this.primaryView as any)._iframeDocument as Document,
             imgList: NodeListOf<DOMImageElement> = doc.querySelectorAll(this.imageSelector);
         Array.prototype.forEach.call(imgList, (img: DOMImageElement) => {
-            const url = img instanceof window.SVGImageElement ? img.href.baseVal : img.src;
-            addon.ui.appendElement(this.renderImage(url), this.imagesView);
+            const url = img instanceof G('SVGImageElement') ? img.href.baseVal : img.src;
+            addon.ui.appendElement(this.renderImage(url.toString()), this.imagesView);
             this.imageLinks.push(img);
         });
     }
@@ -204,7 +204,7 @@ abstract class DOMImages<DOMImageElement extends SVGImageElement | HTMLImageElem
 
     protected onImageDblClick(this: HTMLImageElement) {
         addon.log(this);
-        const canvas = this.ownerDocument.createElement('canvas');
+        const canvas = this.ownerDocument!.createElement('canvas');
         canvas.width = this.naturalWidth;
         canvas.height = this.naturalHeight;
         canvas.getContext('2d')?.drawImage(this, 0, 0);

@@ -2,6 +2,7 @@ import { config } from '../../package.json';
 import { addDebugMenu } from './modules/debug';
 import { ICON_URL, DebuggerBackend } from './modules/utils';
 import { wait } from 'zotero-plugin-toolkit';
+import { G } from './modules/global';
 import { mountMinimap, updateMinimap } from './modules/minimap/minimap';
 import { registerPanels, renderSummaryPanel, updateDashboard } from './modules/sidebar';
 import {
@@ -36,7 +37,7 @@ export function onAddonLoad() {
         addon.history.register(addon.getPref('scanPeriod'));
     }, 'scanPeriod');
     addon.addPrefsObserver(() => {
-        const summaryFrame = document.getElementById('chartero-summary-iframe'),
+        const summaryFrame = G('document').getElementById('chartero-summary-iframe'),
             summaryWin = (summaryFrame as HTMLIFrameElement)?.contentWindow;
         summaryWin?.postMessage('updateExcludedTags');
         addon.log('Updating excluded tags');
