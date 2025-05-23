@@ -131,8 +131,8 @@ export default {
                 if (cancelToken?.cancelled) return; // 取消执行当前promise
 
                 for (let i = 0; i < textList.length; ++i)
-                    for (let j = i + 1; j < textList.length; ++j)
-                        if (textList[i].includes(this.history[j].getField('title'))) {
+                    for (let j = 0; j < textList.length; ++j)
+                        if (i !== j && textList[i].includes(this.history[j].getField('title'))) {
                             // 如果i引用了j
                             addon.log(`Found ${this.history[j].id} cited by ${this.history[i].id}`);
                             this.seriesData.push([this.history[i].id, this.history[j].id].map(String));
