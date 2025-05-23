@@ -68,7 +68,7 @@ export default function loadConfig(isDevBuild: boolean = false, isFullBuild: boo
         xpiDownloadLink:
             'https://gitee.com/const_volatile/chartero/releases/download/v{{version}}/{{xpiName}}.xpi',
         build: {
-            assets: 'addon/**/*.*',
+            assets: 'addon',
             define: {
                 ...pkg.config,
                 author: pkg.author,
@@ -84,6 +84,7 @@ export default function loadConfig(isDevBuild: boolean = false, isFullBuild: boo
                 ...prefs,
             },
             esbuildOptions: [sandboxConfig, workerConfig],
+            fluent: { dts: false },
             hooks: {
                 'build:bundle': async () => {
                     buildPrefs();
