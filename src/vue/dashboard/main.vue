@@ -123,8 +123,8 @@ export default {
     },
     mounted() {
         const darkMedia = matchMedia('(prefers-color-scheme: dark)');
-        darkMedia.addEventListener('change', e => this.switchTheme(e.matches));
-        this.switchTheme(darkMedia.matches);
+        darkMedia?.addEventListener('change', e => this.switchTheme(e.matches));
+        this.switchTheme(darkMedia?.matches ?? false);
 
         addEventListener('message', e => {
             if (typeof e.data.tab == 'string') {

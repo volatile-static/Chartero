@@ -102,7 +102,7 @@ export default {
                 });
             }
             // 进度条
-            const chartRef = (this.$refs.chartRef as Chart)?.chart;
+            const chartRef = (this.$refs.chartRef as typeof Chart)?.chart;
             chartRef.showLoading();
             this.progress = 0;
 
@@ -170,7 +170,7 @@ export default {
                 .catch(e => addon.log(ids, e))
                 .finally(() => {
                     // 隐藏进度条
-                    (this.$refs.chartRef as Chart)?.chart.hideLoading();
+                    (this.$refs.chartRef as typeof Chart)?.chart.hideLoading();
                     this.progress = 1;
                 });
         },
@@ -188,7 +188,7 @@ export default {
       class="progress"
     />
   </Transition>
-  <Chart :key="options" ref="chartRef" :options="options" />
+  <Chart :key="JSON.stringify(options)" ref="chartRef" :options="options" />
 </template>
 
 <style scoped>
