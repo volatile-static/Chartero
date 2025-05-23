@@ -5,7 +5,7 @@ import {
     ChartColumnIcon,
     ChartRingIcon,
     FormatVerticalAlignRightIcon,
-    BlockchainIcon,
+    QuoteIcon,
     CloudIcon,
     ChartPieIcon,
 } from 'tdesign-icons-vue-next';
@@ -30,7 +30,7 @@ export default {
         TagsPie,
         TreeRoundDotVerticalIcon,
         FormatVerticalAlignRightIcon,
-        BlockchainIcon,
+        QuoteIcon,
         CloudIcon,
         ChartPieIcon,
         ChartColumnIcon,
@@ -111,7 +111,7 @@ export default {
         </t-tab-panel>
         <t-tab-panel value="network" :style="panelStyle">
           <template #label>
-            <BlockchainIcon />{{ locale.reference }}
+            <QuoteIcon />{{ locale.reference }}
           </template>
           <Reference :history="items" :theme="chartTheme" />
         </t-tab-panel>

@@ -51,7 +51,8 @@
         "highcharts": "^11.4.8",
         "highcharts-vue": "^2.0.1",
         "segmentit": "^2.0.3",
-        "tdesign-vue-next": "^1.11.1",
+        "tdesign-icons-vue-next": "^0.3.6",
+        "tdesign-vue-next": "^1.13.0",
         "vue": "^3.5.10",
         "zotero-plugin-scaffold": "^0.1.7",
         "zotero-plugin-toolkit": "^5.0.0-1"
@@ -76,7 +77,6 @@
         "eslint-plugin-vue": "^9.33.0",
         "lodash": "^4.17.21",
         "prettier": "3.5.3",
-        "tdesign-icons-vue-next": "^0.3.6",
         "tsx": "^4.19.2",
         "unplugin-auto-import": "^19.2.0",
         "unplugin-vue-components": "^28.5.0",
