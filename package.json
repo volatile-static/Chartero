@@ -46,11 +46,8 @@
     "dependencies": {
         "@highcharts/dashboards": "^2.3.0",
         "animejs": "^3.2.2",
-        "compromise": "^14.12.0",
-        "compromise-stats": "^0.1.0",
         "highcharts": "^11.4.8",
         "highcharts-vue": "^2.0.1",
-        "segmentit": "^2.0.3",
         "tdesign-icons-vue-next": "^0.3.6",
         "tdesign-vue-next": "^1.13.0",
         "vue": "^3.5.10",
