@@ -61,7 +61,7 @@ export default {
     mounted() {
         setTimeout(this.init, 10);
         const colorScheme = matchMedia('(prefers-color-scheme: dark)');
-        colorScheme.addEventListener('change', e => this.init(e.matches));
+        colorScheme?.addEventListener('change', e => this.init(e.matches));
     },
     methods: {
         init(isDark: boolean) {

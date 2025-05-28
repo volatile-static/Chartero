@@ -12,7 +12,8 @@ import { toTimeString } from '$/utils';
 import { helpMessageOption } from '@/utils';
 import type {
     SeriesNetworkgraphNodesOptions,
-    PointMarkerOptionsObject
+    PointMarkerOptionsObject,
+    Point
 } from 'highcharts';
 
 type GraphData = Array<[from: string, to: string]>;
@@ -85,12 +86,12 @@ export default defineComponent({
                     }
                 },
                 tooltip: {
-                    formatter () {
-                        if ('custom' in this.point)
+                    formatter (this: Point) {
+                        if ('custom' in this)
                             return `
-                                <b>${(this.point as any).custom.title}</b><br>
+                                <b>${(this as any).custom.title}</b><br>
                                 <span>${addon.locale.time}: ${toTimeString(
-                                (this.point as any).custom.time
+                                (this as any).custom.time
                             )}</span>`;
                         return '';
                     },
@@ -181,7 +182,7 @@ export default defineComponent({
             this.thisID = this.topLevel?.id;
         },
         loading(newVal) {
-            const chartRef = (this.$refs.chartRef as Chart)?.chart;
+            const chartRef = (this.$refs.chartRef as typeof Chart)?.chart;
             if (newVal)
                 chartRef?.showLoading();
             else

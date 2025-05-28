@@ -89,7 +89,7 @@ export default {
                 },
                 tooltip: {
                     formatter() {
-                        const weight = this.point.options.weight!,
+                        const weight = this.options.weight!,
                             context = isTag ? toTimeString(weight) : weight + addon.locale.occurrences;
                         return `
                             <span style="color: ${this.color}">\u25CF</span>
@@ -154,7 +154,7 @@ export default {
         {{ locale.filterTags }}
       </t-button>
     </t-space>
-    <Chart :key="theme" :options="options" />
+    <Chart :key="JSON.stringify(theme)" :options="options" />
   </t-space>
   <t-dialog
     v-model:visible="dialogVisible"

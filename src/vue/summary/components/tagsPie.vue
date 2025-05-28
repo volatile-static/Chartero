@@ -75,7 +75,7 @@ export default {
         <t-option value="lastCreator" :label="locale.author" />
       </t-select>
     </t-space>
-    <Chart :key="theme" :options="options" />
+    <Chart :key="JSON.stringify(theme)" :options="options" />
   </t-space>
 </template>
 

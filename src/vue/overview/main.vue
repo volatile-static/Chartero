@@ -118,7 +118,6 @@ export default {
         return {
             overallProgress: analyzer.progress,
             locale: addon.locale,
-            theme: 'light'  // TODO: dark
         };
     },
     async mounted() {
@@ -149,9 +148,10 @@ export default {
                 }]
             },
             components: [{
-                cell: 'cell-schedule',
+                renderTo: 'cell-schedule',
                 type: 'Highcharts',
                 chartOptions: {
+                    chart: { styledMode: true },
                     title: { text: addon.locale.chartTitle.schedule },
                     exporting: { enabled: false },
                     xAxis: [
@@ -174,19 +174,20 @@ export default {
                     series: drawSchedule()
                 } as Highcharts.Options
             }, {
-                cell: 'cell-skyline',
+                renderTo: 'cell-skyline',
                 type: 'HTML',
                 elements: [{ tagName: 'div' }]
             }, {
-                cell: 'cell-kpi',
-                type: 'KPI',
-                title: addon.locale.chartTitle.readToday,
-                value: analyzer.getByDay(new Date().getDay()),
-                valueFormatter: toTimeString
-            }, {
-                cell: 'cell-pie',
+            //     renderTo: 'cell-kpi',
+            //     type: 'KPI',
+            //     title: addon.locale.chartTitle.readToday,
+            //     value: analyzer.getByDay(new Date().getDay()),
+            //     valueFormatter: toTimeString
+            // }, {
+                renderTo: 'cell-pie',
                 type: 'Highcharts',
                 chartOptions: {
+                    chart: { styledMode: true },
                     title: { text: addon.locale.chartTitle.pie },
                     subtitle: { text: addon.locale.chartTitle.pieSub },
                     exporting: { enabled: false },
@@ -215,7 +216,7 @@ export default {
                     } as SeriesVariablepieOptions]
                 } as Highcharts.Options
             }, {
-                cell: 'cell-progress',
+                renderTo: 'cell-progress',
                 type: 'HTML',
                 elements: [{
                     tagName: 'div',
@@ -230,7 +231,7 @@ export default {
 
         // 等待DOM挂载后把组件移动到对应位置
         for (const component of board.mountedComponents)
-            switch (component.options.cell) {
+            switch (component.options.renderTo) {
                 case 'cell-skyline':
                     component.component.contentElement.appendChild(document.getElementById('skyline')!);
                     break;

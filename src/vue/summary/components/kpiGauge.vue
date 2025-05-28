@@ -145,12 +145,12 @@ export default {
     },
     mounted() {
         const colorScheme = matchMedia('(prefers-color-scheme: dark)');
-        this.isDark = colorScheme.matches;
-        colorScheme.addEventListener('change', e => (this.isDark = e.matches));
+        this.isDark = colorScheme?.matches ?? false;
+        colorScheme?.addEventListener('change', e => (this.isDark = e.matches));
     },
 };
 </script>
 
 <template>
-  <Chart :key="theme" :options="options" :class="{ 'highcharts-dark': isDark }" />
+  <Chart :key="JSON.stringify(theme)" :options="options" :class="{ 'highcharts-dark': isDark }" />
 </template>

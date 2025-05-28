@@ -41,7 +41,7 @@ export default {
 </script>
 
 <template>
-  <Chart :key="theme" :options="options" />
+  <Chart :key="JSON.stringify(theme)" :options="options" />
 </template>
 
 <style scoped></style>

@@ -1,12 +1,11 @@
 <template>
-  <Chart :key="theme" ref="chart" :options="options" />
+  <Chart :key="JSON.stringify(theme)" ref="chart" :options="options" />
 </template>
 
 <script lang="ts">
 import { Chart } from 'highcharts-vue';
 import type {
     Tooltip,
-    TooltipFormatterContextObject,
     Point,
     PointClickEventObject,
     ExportingOptions,
@@ -20,25 +19,21 @@ import { toTimeString } from '$/utils';
 
 function onPointClick(this: Point, events: PointClickEventObject) {
     if (events.ctrlKey || events.metaKey)
-        Zotero.OpenPDF.openToPage(
-            Zotero.Items.get(Number(this.series.options.id)),
-            this.category
-        );
+        Zotero.FileHandlers.open(Zotero.Items.get(Number(this.series.options.id)), {
+            location: { pageIndex: Number(this.category) - 1 },
+        });
     return false;
 }
 
-function tooltipFormatter(
-    this: TooltipFormatterContextObject,
-    tooltip: Tooltip
-) {
+function tooltipFormatter(this: Point, tooltip: Tooltip) {
     const result =
         tooltip.chart.series.length > 1
             ? `<span style="color: ${this.series.color}">\u25CF</span> ${this.series.name}:<br>`
             : '';
     return (
         result +
-        `${addon.locale.pageNum}: ${this.x}<br>${addon.locale.time
-        }: ${toTimeString(this.y!)}`
+        `${addon.locale.pageNum}: ${this.category}<br>${addon.locale.time}: ` +
+        toTimeString(this.y!)
     );
 }
 
@@ -91,7 +86,7 @@ export default defineComponent({
     watch: {
         history(his: AttachmentHistory[]) {
             if (his.length < 1) return;
-            (this.$refs.chart as Chart).chart.hideData();
+            (this.$refs.chart as typeof Chart).chart.hideData();
             this.chartOpts.series = his.map(attHis => {
                 const ha = new HistoryAnalyzer([attHis]),
                     firstPage = attHis.record.firstPage,

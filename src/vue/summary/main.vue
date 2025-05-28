@@ -43,7 +43,7 @@ export default {
     data() {
         return {
             locale: addon.locale.summary,
-            isDark: matchMedia('(prefers-color-scheme: dark)').matches,
+            isDark: matchMedia('(prefers-color-scheme: dark)')?.matches ?? false,
             messageContent: '',
             itemHistory: new Array<AttachmentHistory>(),
             items: new Array<Zotero.Item>(),
@@ -61,7 +61,7 @@ export default {
     },
     mounted() {
         const colorScheme = matchMedia('(prefers-color-scheme: dark)');
-        colorScheme.addEventListener('change', e => this.switchTheme(e.matches));
+        colorScheme?.addEventListener('change', e => this.switchTheme(e.matches));
 
         window.addEventListener('message', async e => {
             if (!Array.isArray(e.data) || e.data.length < 1) return; // TODO: show message

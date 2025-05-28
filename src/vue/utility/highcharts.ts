@@ -1,43 +1,28 @@
 import Highcharts from 'highcharts';
-import HighchartsMore from 'highcharts/highcharts-more';
-HighchartsMore(Highcharts);
-import HighchartsGantt from 'highcharts/modules/gantt';
-HighchartsGantt(Highcharts);
-import NetworkGraph from 'highcharts/modules/networkgraph';
-NetworkGraph(Highcharts);
-import WordCloudGraph from 'highcharts/modules/wordcloud';
-WordCloudGraph(Highcharts);
-import VariablePieGraph from 'highcharts/modules/variable-pie';
-VariablePieGraph(Highcharts);
-import SankeyGraph from 'highcharts/modules/sankey';
-SankeyGraph(Highcharts);
-import SolidGaugeGraph from 'highcharts/modules/solid-gauge';
-SolidGaugeGraph(Highcharts);
+import 'highcharts/highcharts-more';
+import 'highcharts/modules/gantt';
+import 'highcharts/modules/networkgraph';
+import 'highcharts/modules/wordcloud';
+import 'highcharts/modules/variable-pie';
+import 'highcharts/modules/sankey';
+import 'highcharts/modules/solid-gauge';
 // import DependencyWheelGraph from 'highcharts/modules/dependency-wheel';
-// DependencyWheelGraph(Highcharts);
 // import MarkerCluster from 'highcharts/modules/marker-clusters';
-// MarkerCluster(Highcharts);
-import HighchartsColorAxis from 'highcharts/modules/coloraxis';
-HighchartsColorAxis(Highcharts);
-import HighchartsExporting from 'highcharts/modules/exporting';
-HighchartsExporting(Highcharts);
-import HighchartsExportData from 'highcharts/modules/export-data';
-HighchartsExportData(Highcharts);
-import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
-NoDataToDisplay(Highcharts);
-import HighchartsDrilldown from 'highcharts/modules/drilldown';
-HighchartsDrilldown(Highcharts);
+import 'highcharts/modules/coloraxis';
+import 'highcharts/modules/exporting';
+import 'highcharts/modules/export-data';
+import 'highcharts/modules/no-data-to-display';
+import 'highcharts/modules/drilldown';
 // import MouseWheelZoom from 'highcharts/modules/mouse-wheel-zoom';
-// MouseWheelZoom(Highcharts);
 
 import Dashboards from '@highcharts/dashboards';
 import DataGrid from '@highcharts/dashboards/datagrid';
 import LayoutModule from '@highcharts/dashboards/modules/layout';
 LayoutModule(Dashboards);
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+Dashboards.GridPlugin.custom.connectGrid(DataGrid);
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 
 import { copySVG2JPG, saveSVG } from '../../bootstrap/modules/utils';
 import { viewItemsInLib } from './utils';
@@ -46,13 +31,14 @@ import { MessagePlugin } from 'tdesign-vue-next';
 
 let infoFlag = false;
 if (['zh-CN', 'zh-TW', 'ja-JP'].includes(navigator.language))
-    Highcharts.setOptions(zh_CN as Highcharts.Options);
+    Highcharts.setOptions(zh_CN as unknown as Highcharts.Options);
 Highcharts.setOptions({
     accessibility: { enabled: false },
     time: {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         useUTC: false,
     },
+    lang: { locale: navigator.language },
     title: { text: undefined },
     // tooltip: { outside: true },
     chart: {
@@ -121,7 +107,7 @@ Highcharts.setOptions({
         },
         buttons: {
             contextButton: {
-                menuItems: ['viewFullscreen', 'downloadSVG', 'downloadJPEG', 'showInLibrary', 'help'],
+                menuItems: ['downloadSVG', 'downloadJPEG', 'showInLibrary', 'help'],
             },
         },
     },

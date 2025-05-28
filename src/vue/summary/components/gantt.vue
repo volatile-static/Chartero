@@ -323,7 +323,7 @@ export default defineComponent({
       </t-space>
 
       <Chart
-        :key="theme"
+        :key="JSON.stringify(theme)"
         ref="chart"
         constructor-type="ganttChart"
         :options="options"

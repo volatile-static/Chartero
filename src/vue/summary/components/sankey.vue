@@ -5,8 +5,7 @@ import type {
     SeriesSankeyOptions,
     SeriesSankeyPointOptionsObject,
     SeriesSankeyNodesOptionsObject,
-    SeriesDependencywheelOptions,
-    TooltipFormatterContextObject,
+    SankeyNodeObject,
 } from 'highcharts';
 import { toTimeString } from '$/utils';
 import { creator2str, helpMessageOption } from '@/utils';
@@ -22,8 +21,8 @@ interface ItemInfo {
     totalSeconds: number;
 }
 
-function formatter(this: TooltipFormatterContextObject) {
-    const items: ItemInfo[] | undefined = (this.point as any).custom?.items,
+function formatter(this: Highcharts.Point) {
+    const items: ItemInfo[] | undefined = (this as any).custom?.items,
         colName = [addon.locale.firstCreator, addon.locale.lastCreator, addon.locale.journal],
         borderStyle = `border-left: 1px solid ${this.color}; border-top: solid ${this.color};`,
         breakStyle = 'white-space: normal;',
@@ -59,8 +58,8 @@ function formatter(this: TooltipFormatterContextObject) {
         `;
     return `
             <span style='color: ${this.color}'>\u25CF </span>
-            ${colName[(this.point as any).column]}:
-            <b> ${this.point.name}</b>
+            ${colName[(this as SankeyNodeObject).column]}:
+            <b> ${this.name}</b>
         `;
 }
 
@@ -210,7 +209,7 @@ export default {
     </h1>
     <t-space v-else direction="vertical" style="width: 100%" size="small">
       <DualSelect :items="history" />
-      <Chart :key="theme" :options="options" />
+      <Chart :key="JSON.stringify(theme)" :options="options" />
       <!-- <Chart :options="wheelOptions" :key="theme"></Chart> -->
     </t-space>
   </div>

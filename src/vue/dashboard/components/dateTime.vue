@@ -1,5 +1,5 @@
 <template>
-  <Chart :key="theme" ref="chart" :options="options" />
+  <Chart :key="JSON.stringify(theme)" ref="chart" :options="options" />
 </template>
 
 <script lang="ts">
@@ -13,7 +13,6 @@ import type {
     Options,
     SeriesSplineOptions,
     Tooltip,
-    TooltipFormatterContextObject,
 } from 'highcharts';
 import type { AttachmentHistory } from '$/history/history';
 import { toTimeString } from '$/utils';
@@ -70,7 +69,7 @@ export default defineComponent({
     watch: {
         history(newHis: AttachmentHistory[]) {
             if (!newHis) return;
-            (this.$refs.chart as Chart).chart.hideData();
+            (this.$refs.chart as typeof Chart).chart.hideData();
 
             this.chartOpts.series = newHis.map(attHis => {
                 const ha = new HistoryAnalyzer([attHis]);
