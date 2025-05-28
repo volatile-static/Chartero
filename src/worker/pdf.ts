@@ -37,14 +37,28 @@ async function getPageImages(pdf: PDFDocumentProxy, pageIdx: number, url: string
         opList = await page.getOperatorList(),
         imgList = opList.fnArray
             .map((fn, i) => (fn == pdfjsLib.OPS.paintImageXObject ? i : undefined))
-            .filter(Boolean) as number[];
-    for (const i of imgList) {
-        const id: string = opList.argsArray[i][0],
-            data: ImageBitmap = page.objs.get(id).bitmap,
-            matrixes = new Array<Matrix>();
-        for (let j = i - 2; j > 1 && matrixes.length < 5; j -= 2)
-            if (opList.fnArray[j] == pdfjsLib.OPS.transform) matrixes.push(opList.argsArray[j]);
-            else break;
+            .filter(Boolean) as number[],
+        datList = await Promise.all(imgList.map(
+            i => new Promise<{ dat: ImageBitmap | null, idx?: number }>(resolve => {
+                const id = opList.argsArray[i][0], timer = setTimeout(() => {
+                    console.warn(`Image ${id} timed out in page ${pageIdx + 1}`);
+                    resolve({ dat: null });
+                }, 10000);
+                page.objs.get(id, (dat: any) => {
+                    clearTimeout(timer);
+                    resolve({ dat: dat.bitmap, idx: i });
+                });
+            })
+        ));
+
+    for (const { dat, idx } of datList) {
+        if (!dat) continue;
+        const matrixes = new Array<Matrix>();
+        for (let j = imgList[idx!] - 2; j > 1 && matrixes.length < 5; j -= 2)
+            if (opList.fnArray[j] == pdfjsLib.OPS.transform)
+                matrixes.push(opList.argsArray[j]);
+            else
+                break;
         const [a, , , d, e, f] = matrixes.reduceRight(multiply, [1, 0, 0, 1, 0, 0]),
             rect = [e, f, e + a, f + d];
         postMessage(
@@ -54,10 +68,10 @@ async function getPageImages(pdf: PDFDocumentProxy, pageIdx: number, url: string
                     url,
                     pageNum: pdf.numPages,
                     imageNum: imgList.length,
-                    payload: { data, id, rect, pageIdx },
+                    payload: { data: dat, id: imgList[idx!], rect, pageIdx },
                 } as WorkerStream,
             },
-            [data],
+            [dat],
         );
     }
     // console.log('%c -------------------------' + pageIdx, 'color: red; font-size:20px;');
@@ -71,7 +85,16 @@ async function getPageImages(pdf: PDFDocumentProxy, pageIdx: number, url: string
 }
 export async function getAllImages(url: string) {
     const pdf = await getPdfDoc(url);
-    await Promise.all(Array.from({ length: pdf.numPages }, (_, i) => getPageImages(pdf, i, url)));
+    // eslint-disable-next-line no-console
+    console.time(`getAllImages(${url})`);
+    await Promise.all(Array.from(
+        { length: pdf.numPages },
+        (_, i) => getPageImages(pdf, i, url).catch(
+            error => console.error(`<${url}> Error processing page ${i + 1}:`, error)
+        )
+    ));
+    // eslint-disable-next-line no-console
+    console.timeEnd(`getAllImages(${url})`);
     return pdf.numPages;
 }
 
