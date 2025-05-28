@@ -45,7 +45,7 @@ import DateTime from './components/dateTime.vue';
 import TimeLine from './components/timeline.vue';
 import Network from './components/network.vue';
 import UserPie from './components/userPie.vue';
-import anime from 'animejs';
+import { animate, utils, type AnimationParams } from 'animejs';
 import HistoryAnalyzer from '$/history/analyzer';
 import type { AttachmentHistory } from '$/history/history';
 
@@ -75,10 +75,9 @@ export default {
             attachmentSize: '',
             item: null as null | Zotero.Item,
             animateInt: {
-                round: 1,
+                modifier: utils.round(0),
                 duration: 260,
-                targets: this,
-            } as anime.AnimeParams,
+            } as AnimationParams,
             realtimeUpdating: false,
         };
     },
@@ -166,8 +165,8 @@ export default {
             const noteIDs = this.topLevel?.getNotes(),
                 notes = noteIDs?.map(id => Zotero.Items.get(id).getNote()),
                 text = notes?.map(str => str.replace(/<[^<>]+>/g, '')).join('');
-            anime({ ...this.animateInt, noteNum: noteIDs?.length ?? 0 });
-            anime({
+            animate(this, { ...this.animateInt, noteNum: noteIDs?.length ?? 0 });
+            animate(this, {
                 ...this.animateInt,
                 noteWords: text?.replace(/\s/g, '').length ?? 0,
             });
@@ -179,8 +178,8 @@ export default {
                 : await this.topLevel?.getBestAttachment(),
                 his = att && addon.history.getByAttachment(att);
             if (his) {
-                anime({ ...this.animateInt, readPages: his.record.readPages });
-                anime({
+                animate(this, { ...this.animateInt, readPages: his.record.readPages });
+                animate(this, {
                     ...this.animateInt,
                     numPages: his.record.numPages ?? 0,
                 });
@@ -206,14 +205,13 @@ export default {
                             return size;
                         }
                     }, 0) ?? 0;
-            anime({
-                targets: this,
+            animate(this, {
                 attachmentSize: (totalSize / 1024 / 1024).toFixed(2),
-                round: 100,
+                modifier: utils.round(0),
                 duration: 260,
-                easing: 'linear',
+                ease: 'linear',
             });
-            anime({
+            animate(this, {
                 ...this.animateInt,
                 numAttachment: this.topLevel?.numNonHTMLFileAttachments() ?? 1, // 自己本身算一个
             });
