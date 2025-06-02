@@ -173,17 +173,20 @@ export default {
         },
         // 更新阅读进度
         async updateProgress() {
-            const att = this.isReader
-                ? this.item
-                : await this.topLevel?.getBestAttachment(),
-                his = att && addon.history.getByAttachment(att);
-            if (his) {
-                animate(this, { ...this.animateInt, readPages: his.record.readPages });
-                animate(this, {
-                    ...this.animateInt,
-                    numPages: his.record.numPages ?? 0,
-                });
+            const att = this.isReader ? this.item : await this.topLevel?.getBestAttachment();
+            let readPages = 0;
+            let numPages = 0;
+            if (att) {
+                const his = addon.history.getByAttachment(att);
+                if (his) {
+                    readPages = his.record.readPages;
+                    numPages = his.record.numPages ?? 0;
+                } else {
+                    const fullPages = await Zotero.FullText.getPages(att.id);
+                    numPages = fullPages ? fullPages.total : 0;
+                }
             }
+            animate(this, { ...this.animateInt, readPages, numPages });
         },
         // 统计附件大小
         updateSize() {
