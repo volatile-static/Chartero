@@ -10,7 +10,7 @@ main().catch(error => {
 
 async function main() {
     if (argv.includes('--watch')) {
-        const config = await loadConfig(true, false),
+        const config = await loadConfig(true, argv.includes('--full')),
             server = new Serve(config);
         await server.run();
     } else {

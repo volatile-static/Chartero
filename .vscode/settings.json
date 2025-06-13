@@ -36,7 +36,7 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[vue]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "editor.defaultFormatter": "Vue.volar",
     },
     "[json]": {
         "editor.defaultFormatter": "vscode.json-language-features"

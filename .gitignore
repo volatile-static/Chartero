@@ -4,3 +4,4 @@ auto-imports.d.ts
 .idea
 .env
 src/vue/test/components.d.ts
+.DS_Store
