@@ -46,8 +46,7 @@ export function addDebugMenu() {
         icon: ICON_URL,
         commandListener: async () => {
             Services.obs.notifyObservers({}, 'startupcache-invalidate');
-            // eslint-disable-next-line mozilla/use-chromeutils-import
-            const { AddonManager } = Cu.import('resource://gre/modules/AddonManager.jsm');
+            const { AddonManager } = ChromeUtils.import('resource://gre/modules/AddonManager.jsm');
             const addon = await AddonManager.getAddonByID(config.addonID);
             addon.reload();
         },
