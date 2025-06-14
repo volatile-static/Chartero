@@ -105,7 +105,7 @@ export class DebuggerBackend implements _ZoteroTypes.Server.Endpoint {
         };
         try {
             const result = await evalCmd(options.data);
-            return [200, headers, JSON.stringify(result)];
+            return [200, headers, JSON.stringify(result ?? null)];
         } catch (error) {
             Zotero.logError(error);
             if (error instanceof Error)

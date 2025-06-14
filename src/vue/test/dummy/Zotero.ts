@@ -16,6 +16,10 @@ class Item {
                 if (propType == 'function')
                     return (...args: string[]) =>
                         fetchSync(`${itemStr}.${prop}(${args.map(str => `'${str}'`).join(', ')})`);
+                if (fetchSync(`${itemStr}.${prop} instanceof Zotero.Item`))
+                    return new Item(fetchSync(`${itemStr}.${prop}.id`));
+                if (fetchSync(`${itemStr}.${prop} instanceof Zotero.Collection`))
+                    return new Collection(fetchSync(`${itemStr}.${prop}.id`));
                 return fetchSync(`${itemStr}.${prop}`);
             },
         });
@@ -28,7 +32,7 @@ class Item {
 }
 
 class Collection {
-    constructor(public id: number) {}
+    constructor(public id: number) { }
 }
 
 export default class Zotero {
@@ -54,6 +58,7 @@ export default class Zotero {
         },
     };
     Collections = {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         getByLibrary(libraryID: number, recursive: boolean) {
             return [];
         },
@@ -101,4 +106,6 @@ export default class Zotero {
         },
     };
     greenfrog = {};
+    logError = console.error;
+    getMainWindow = () => window;
 }
