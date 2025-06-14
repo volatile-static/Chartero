@@ -31,7 +31,7 @@ export const DarkUnicaTheme = {
             textTransform: 'uppercase'
         }
     },
-    xAxis: [{
+    xAxis: {
         gridLineColor: '#707073',
         labels: {
             style: {
@@ -46,22 +46,7 @@ export const DarkUnicaTheme = {
                 color: '#A0A0A3'
             }
         }
-    }, {
-        gridLineColor: '#707073',
-        labels: {
-            style: {
-                color: '#E0E0E3'
-            }
-        },
-        lineColor: '#707073',
-        minorGridLineColor: '#505053',
-        tickColor: '#707073',
-        title: {
-            style: {
-                color: '#A0A0A3'
-            }
-        }
-    }],
+    },
     yAxis: {
         gridLineColor: '#707073',
         labels: {
