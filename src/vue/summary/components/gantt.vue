@@ -146,10 +146,39 @@ export default defineComponent({
                 navigator: {
                     enabled: true,
                     yAxis: { reversed: true, min: 0, max: 1 },
+                    handles: { width: 16 }
                 },
                 // rangeSelector: { enabled: true },
                 scrollbar: { enabled: true, liveRedraw: true },
-                xAxis: { tickPixelInterval: 100 },
+                xAxis: {
+                    dateTimeLabelFormats: {
+                        year: '%[Y]',
+                        month: {
+                            list: ['%[yB]', '%[b]'],
+                            main: {},
+                        },
+                        week: {
+                            list: ['%Y | W%W', 'Week%W', 'W%W'],
+                            main: {},
+                        },
+                        day: {
+                            list: ['%[YBe]', '%[be]', '%[a]', '%e'],
+                            main: {},
+                        },
+                        hour: {
+                            list: ['%[YBeH]', '%[beH]', '%[H]'],
+                            main: {}
+                        },
+                        minute: {
+                            list: ['%[YBe] %H:%M', '%[be] %H:%M', '%H:%M'],
+                            main: {},
+                        },
+                        second: {
+                            list: ['%H:%M:%S', '%H:%M'],
+                            main: {},
+                        },
+                    }
+                },
                 yAxis: {
                     visible: window.innerWidth > 500,
                     // type: 'category',
