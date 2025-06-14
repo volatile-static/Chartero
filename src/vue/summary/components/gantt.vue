@@ -6,6 +6,7 @@ import type {
     YAxisOptions,
     NavigatorYAxisOptions,
     Point,
+    XAxisOptions,
 } from 'highcharts';
 import { FilterIcon, SwapIcon } from 'tdesign-icons-vue-next';
 import { Chart } from 'highcharts-vue';
@@ -177,7 +178,10 @@ export default defineComponent({
     },
     computed: {
         options() {
-            return Highcharts.merge(this.chartOpts, this.theme);
+            const opts: Options = Highcharts.merge(this.chartOpts, this.theme),
+                xAxis = opts.xAxis as XAxisOptions;
+            opts.xAxis = [xAxis, xAxis];
+            return opts;
         },
         seriesData: {
             get(): GanttItem[] {
