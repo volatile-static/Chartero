@@ -80,19 +80,15 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap> {
 
         // 标签按钮切换的额外操作
         addon.registerListener(btnCont, 'click', e => {
-            addon.log(e);
             if ((e.target as Element).tagName == 'DIV') return;
-            const b = (e.target as Element).closest('button')!;
-            if (b.id == 'viewImages') {
+            const btn = (e.target as Element).closest('button'),
+                show = btn == this.viewImages;
+            if (show) {
                 reader.setSidebarView('chartero');
-                this.viewImages.classList.toggle('active', true);
-                this.imagesView.classList.toggle('hidden', false);
                 if (!this.loadedImages) this.loadAll(); // 初始化
-            } else {
-                b.ownerDocument?.getElementById('viewImages')?.classList.toggle('active', false);
-                b.ownerDocument?.getElementById('imagesView')?.classList.toggle('hidden', true);
-                addon.log('hide images');
             }
+            this.viewImages.classList.toggle('active', show);
+            this.imagesView.classList.toggle('hidden', !show);
         });
     }
 
