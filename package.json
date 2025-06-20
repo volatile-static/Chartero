@@ -52,7 +52,7 @@
         "highcharts-vue": "^2.0.1",
         "tdesign-icons-vue-next": "^0.3.6",
         "tdesign-vue-next": "^1.13.2",
-        "vue": "^3.5.16",
+        "vue": "^3.5.17",
         "zotero-plugin-toolkit": "^5.0.1"
     },
     "devDependencies": {
