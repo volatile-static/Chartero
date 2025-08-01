@@ -24,7 +24,7 @@ export function onAddonLoad() {
         pluginID: config.addonID,
         src: rootURI + 'content/preferences.xhtml',
         stylesheets: [rootURI + 'content/preferences.css'],
-        image: `chrome://${config.addonName}/content/icons/icon32.png`,
+        image: rootURI + 'content/icons/icon32.png',
         helpURL: addon.locale.helpURL,
         label: config.addonName,
     });

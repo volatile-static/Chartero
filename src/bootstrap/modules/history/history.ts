@@ -31,6 +31,8 @@ export default class ReadingHistory extends ManagerTool {
     private _mutex: boolean;
     private _loadingPromise: _ZoteroTypes.Promise.DeferredPromise<void>;
 
+    cacheLoaded: boolean = false;
+
     constructor(base: BasicTool | BasicOptions, hook: RecordHook) {
         super(base);
 
@@ -83,13 +85,15 @@ export default class ReadingHistory extends ManagerTool {
             });
         };
         loadLib(1).then(() =>
-            Promise.all(Zotero.Groups.getAll().map((group: Zotero.Group) =>
-                Zotero.Groups.getLibraryIDFromGroupID(group.id)
-            ).map(loadLib)).then(() => this._loadingPromise.resolve()));
-    }
-
-    get cacheLoaded() {
-        return this._loadingPromise.promise.isResolved();
+            Promise.all(
+                Zotero.Groups.getAll()
+                    .map((group: Zotero.Group) => Zotero.Groups.getLibraryIDFromGroupID(group.id))
+                    .map(loadLib),
+            ).then(() => {
+                this._loadingPromise.resolve();
+                this.cacheLoaded = true;
+            }),
+        );
     }
 
     /**

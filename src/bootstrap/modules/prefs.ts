@@ -94,7 +94,7 @@ function updateHistorySize(doc: Document) {
 }
 
 function translateLocale() {
-    showMessage('Translating locale strings...', 'chrome://chartero/content/icons/information.png');
+    showMessage('Translating locale strings...', rootURI + 'content/icons/information.png');
     addon.translateLocaleStrings().then(
         // @ts-expect-error override
         locale => addon.locale = locale

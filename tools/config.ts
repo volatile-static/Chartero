@@ -14,7 +14,7 @@ const buildDir = 'build';
 
 export default function loadConfig(isDevBuild: boolean = false, isFullBuild: boolean = false) {
     const esbuildConfig: BuildOptions = {
-        target: 'firefox128',
+        target: 'firefox140',
         define: { __dev__: String(isDevBuild) },
         bundle: true,
         minify: !isDevBuild,

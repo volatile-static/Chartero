@@ -99,10 +99,10 @@ abstract class ReaderImages<T extends keyof _ZoteroTypes.Reader.ViewTypeMap> {
 
         // 初始化右下角弹窗
         this.popMsg = new Zotero.ProgressWindow();
-        this.popMsg.changeHeadline('', 'chrome://chartero/content/icons/icon.svg', 'Chartero');
+        this.popMsg.changeHeadline('', rootURI + 'content/icons/icon.svg', 'Chartero');
         this.popMsg.addDescription('‾‾‾‾‾‾‾‾‾‾‾‾');
         this.progMeter = new this.popMsg.ItemProgress(
-            'chrome://chartero/content/icons/accept.png',
+            rootURI + 'content/icons/accept.png',
             addon.locale.images.loadingImages,
         );
         this.popMsg.show();

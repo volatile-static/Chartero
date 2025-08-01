@@ -92,7 +92,7 @@ export async function importLegacyHistory(str: string) {
             Zotero.updateZoteroPaneProgressMeter((++i * 100) / total);
         }
         addon.history.loadAll();
-        showMessage(addon.locale.migrationFinished, 'chrome://chartero/content/icons/accept.png');
+        showMessage(addon.locale.migrationFinished, rootURI + 'content/icons/accept.png');
     } catch (error) {
         Zotero.getMainWindow().alert(error);
     } finally {

@@ -65,7 +65,7 @@ export default class Addon extends BasicTool {
         if (!(Zotero as any).PDFTranslate?.api?.translate) {
             showMessage(
                 'PDFTranslate not found, using default locale!',
-                'chrome://chartero/content/icons/exclamation.png'
+                rootURI + 'content/icons/exclamation.png'
             );
             return this.locale;
         }
@@ -89,7 +89,7 @@ export default class Addon extends BasicTool {
             else
                 for (const k in locale[key])
                     locale[key][k] = await translate(locale[key][k]);
-        showMessage('Locale strings translated successfully!', 'chrome://chartero/content/icons/accept.png');
+        showMessage('Locale strings translated successfully!', rootURI + 'content/icons/accept.png');
         return locale;
     }
 

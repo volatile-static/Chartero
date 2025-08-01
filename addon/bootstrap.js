@@ -2,7 +2,6 @@
 var chromeHandle;
 
 async function startup({ id, version, resourceURI, rootURI }, reason) {
-    await Zotero.initializationPromise;
     Zotero.debug('~~~~~~ __addonName__ startup ~~~~~~');
 
     var aomStartup = Cc['@mozilla.org/addons/addon-manager-startup;1'].getService(Ci.amIAddonManagerStartup);
@@ -51,11 +50,6 @@ async function shutdown({ id, version, resourceURI, rootURI }, reason) {
     addon.log(reason);
     if (reason === APP_SHUTDOWN) return;
     await addon.unload();
-
-    // eslint-disable-next-line mozilla/use-services
-    Cc['@mozilla.org/intl/stringbundle;1'].getService(Ci.nsIStringBundleService).flushBundles();
-
-    Cu.unload(rootURI + 'content/__addonName__.js');
 
     if (chromeHandle) {
         chromeHandle.destruct();
