@@ -80,7 +80,7 @@
         "unplugin-vue-components": "^28.7.0",
         "vite": "^7.0.6",
         "vue-tsc": "^3.0.4",
-        "zotero-plugin-scaffold": "^0.7.2",
+        "zotero-plugin-scaffold": "^0.8.0",
         "zotero-types": "^4.0.5"
     },
     "eslintConfig": {

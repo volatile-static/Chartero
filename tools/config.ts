@@ -93,6 +93,7 @@ export default function loadConfig(isDevBuild: boolean = false, isFullBuild: boo
                 },
             },
         },
+        watchIgnore: /src[\/\\]vue[\/\\].*\.d\.ts$/,
         release: {
             bumpp: {
                 commit: '🔖 Release v',
