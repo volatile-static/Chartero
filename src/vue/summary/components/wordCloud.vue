@@ -3,11 +3,14 @@ import type { Options, SeriesWordcloudOptions } from 'highcharts';
 import type { DataOption } from 'tdesign-vue-next/es/transfer/type';
 import { Chart } from 'highcharts-vue';
 import Highcharts from '@/highcharts';
+import StopWords from 'stopwords-iso';
 import HistoryAnalyzer from '$/history/analyzer';
 import { helpMessageOption, buttons } from '@/utils';
 import { toTimeString } from '$/utils';
 
 const Zotero = addon.getGlobal('Zotero');
+const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
+const stopWordSet = new Set(Object.values(StopWords).flat());
 
 export default {
     components: { Chart },
@@ -29,12 +32,12 @@ export default {
             const data = new Map<string, number>();
 
             function setData(text: string[]) {
-                text.forEach(str => {
-                    const words = str.split(/\W/g).filter(w => w.length > 3);
-                    words.forEach(word => {
-                        data.set(word, (data.get(word) ?? 0) + 1);
-                    });
-                });
+                for (const str of text)
+                    for (const { segment, isWordLike } of Array.from(segmenter.segment(str))) {
+                        const word = segment.toLocaleLowerCase();
+                        if (isWordLike && !stopWordSet.has(word))
+                            data.set(word, (data.get(word) ?? 0) + 1);
+                    }
             }
 
             switch (this.dataOption) {
@@ -141,41 +144,28 @@ export default {
 </script>
 
 <template>
-  <t-space direction="vertical" style="width: 100%">
-    <t-space style="padding: 8px" break-line>
-      <b>{{ locale.selectDataSource }}</b>
-      <t-select v-model="dataOption" :placeholder="locale.sort" size="small" auto-width>
-        <t-option value="tag" :label="locale.tags" />
-        <t-option value="author" :label="locale.author" />
-        <t-option value="title" :label="locale.itemTitle" />
-        <t-option value="annotation" :label="locale.pdfAnnotation" />
-      </t-select>
-      <t-button v-show="dataOption === 'tag'" size="small" @click="openDialog">
-        {{ locale.filterTags }}
-      </t-button>
+    <t-space direction="vertical" style="width: 100%">
+        <t-space style="padding: 8px" break-line>
+            <b>{{ locale.selectDataSource }}</b>
+            <t-select v-model="dataOption" :placeholder="locale.sort" size="small" auto-width>
+                <t-option value="tag" :label="locale.tags" />
+                <t-option value="author" :label="locale.author" />
+                <t-option value="title" :label="locale.itemTitle" />
+                <t-option value="annotation" :label="locale.pdfAnnotation" />
+            </t-select>
+            <t-button v-show="dataOption === 'tag'" size="small" @click="openDialog">
+                {{ locale.filterTags }}
+            </t-button>
+        </t-space>
+        <Chart :key="JSON.stringify(theme)" :options="options" />
     </t-space>
-    <Chart :key="JSON.stringify(theme)" :options="options" />
-  </t-space>
-  <t-dialog
-    v-model:visible="dialogVisible"
-    :on-confirm="saveTagFilter"
-    :header="locale.filterTags"
-    :confirm-btn="locale.save"
-    mode="modeless"
-    width="96%"
-    confirm-on-enter
-    draggable
-  >
-    <div style="display: block; width: 500px">
-      <t-transfer
-        v-model="filteredTags"
-        :title="[locale.allTags, locale.excludedTags]"
-        :data="allTags"
-        theme="primary"
-        search
-      />
-    </div>
-  </t-dialog>
+    <t-dialog v-model:visible="dialogVisible" :on-confirm="saveTagFilter" :header="locale.filterTags"
+        :confirm-btn="locale.save" mode="modeless" width="96%" confirm-on-enter draggable>
+        <div style="display: block; width: 500px">
+            <t-transfer v-model="filteredTags" :title="[locale.allTags, locale.excludedTags]" :data="allTags"
+                theme="primary" search />
+        </div>
+    </t-dialog>
 </template>
 
 <style scoped></style>

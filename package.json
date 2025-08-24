@@ -50,6 +50,7 @@
         "animejs": "^4.0.2",
         "highcharts": "^12.2.0",
         "highcharts-vue": "^2.0.1",
+        "stopwords-iso": "^1.1.0",
         "tdesign-icons-vue-next": "^0.3.6",
         "tdesign-vue-next": "^1.13.2",
         "vue": "^3.5.17",
