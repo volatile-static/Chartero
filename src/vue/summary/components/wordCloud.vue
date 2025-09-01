@@ -31,12 +31,16 @@ export default {
         seriesData(): Array<[word: string, weight: number]> {
             const data = new Map<string, number>();
 
+            function setWord(word: string) {
+                data.set(word, (data.get(word) ?? 0) + 1);
+            }
+
             function setData(text: string[]) {
                 for (const str of text)
                     for (const { segment, isWordLike } of Array.from(segmenter.segment(str))) {
                         const word = segment.toLocaleLowerCase();
                         if (isWordLike && !stopWordSet.has(word))
-                            data.set(word, (data.get(word) ?? 0) + 1);
+                            setWord(word);
                     }
             }
 
@@ -55,7 +59,9 @@ export default {
                     break;
 
                 case 'author':
-                    setData(this.items.map(item => item.firstCreator));
+                    for (const item of this.items)
+                        for (const c of item.getCreators()) 
+                            setWord(c.firstName + ' ' + c.lastName);
                     break;
 
                 case 'title':
