@@ -5,3 +5,5 @@ auto-imports.d.ts
 .env
 src/vue/test/components.d.ts
 .DS_Store
+
+developing.md

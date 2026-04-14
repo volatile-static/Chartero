@@ -8,7 +8,7 @@
                     "applications": {
                         "zotero": {
                             "strict_min_version": "7.1.0",
-                            "strict_max_version": "7.999"
+                            "strict_max_version": "9.999"
                         }
                     }
                 }
