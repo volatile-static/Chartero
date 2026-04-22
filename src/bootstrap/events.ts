@@ -12,7 +12,6 @@ import {
     protectData,
 } from './modules/history/misc';
 import addImagesPanelForReader from './modules/images/images';
-import buildRecentMenu from './modules/recent';
 import addItemColumns from './modules/columns';
 import initPrefsPane from './modules/prefs';
 
@@ -79,7 +78,6 @@ export function onMainWindowLoad(win: _ZoteroTypes.MainWindow) {
         commandListener: openOverview,
         icon: ICON_URL,
     });
-    buildRecentMenu(win);
     if (__dev__) addDebugMenu();
 
     // 监听条目选择事件
