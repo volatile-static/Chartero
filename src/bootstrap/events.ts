@@ -1,5 +1,6 @@
 import { config } from '../../package.json';
 import { addDebugMenu } from './modules/debug';
+import { l10nID, registerMenu } from './modules/menu';
 import { ICON_URL, DebuggerBackend } from './modules/utils';
 import { wait } from 'zotero-plugin-toolkit';
 import { G } from './modules/global';
@@ -56,6 +57,18 @@ export function onAddonLoad() {
     Zotero.Reader._readers.forEach(onOpenReader);
 
     addItemColumns();
+
+    // 注册Overview菜单（Zotero原生MenuManager，对所有主窗口生效）
+    registerMenu('overview', 'main/menubar/view', [
+        {
+            menuType: 'menuitem',
+            l10nID: l10nID('menuOverview'),
+            icon: ICON_URL,
+            onCommand: openOverview,
+        },
+    ]);
+    if (__dev__) addDebugMenu();
+
     addon.log('Chartero initialized successfully!');
     if (__dev__)
         // 路径以/test开头可绕过Zotero安全限制
@@ -70,15 +83,6 @@ export function onMainWindowLoad(win: _ZoteroTypes.MainWindow) {
     );
 
     (win as any).MozXULElement.insertFTLIfNeeded('chartero-prefs.ftl');
-
-    // 注册Overview菜单
-    addon.menu.register('menuView', {
-        tag: 'menuitem',
-        label: addon.locale.overview,
-        commandListener: openOverview,
-        icon: ICON_URL,
-    });
-    if (__dev__) addDebugMenu();
 
     // 监听条目选择事件
     const pane = win.ZoteroPane_Local,
@@ -144,8 +148,9 @@ export function onHistoryRecord(reader: _ZoteroTypes.ReaderInstance) {
 export async function onItemSelect() {
     // 仅用户操作GUI时响应
     if (Zotero.getMainWindow().Zotero_Tabs.selectedType != 'library') return;
-    const ZoteroPane = Zotero.getActiveZoteroPane(),
-        items = ZoteroPane.getSelectedItems(true),
+    const ZoteroPane = Zotero.getActiveZoteroPane();
+    if (!ZoteroPane) return;
+    const items = ZoteroPane.getSelectedItems(true),
         dashboard = Zotero.getMainWindow().document.querySelector(
             '#zotero-view-tabbox .chartero-dashboard',
         ) as HTMLIFrameElement,
@@ -179,7 +184,7 @@ export async function onItemSelect() {
         }
     } else if (items.length == 1) {
         const item = Zotero.Items.get(items[0]);
-        if (item.isRegularItem())
+        if (item && item.isRegularItem())
             // 只有常规条目才有仪表盘
             dashboard?.contentWindow?.postMessage({ id: items[0] }, '*');
     } else

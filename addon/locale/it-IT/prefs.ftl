@@ -41,3 +41,9 @@ dashboard-relation =
     .tooltiptext = Network delle relazioni
 dashboard-timeline =
     .tooltiptext = Linea temporale
+
+menuOverview =
+    .label = Panoramica della biblioteca
+# Used by debug menus in dev builds only
+menuLabel =
+    .label = { $label }

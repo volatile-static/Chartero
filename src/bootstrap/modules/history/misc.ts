@@ -21,7 +21,10 @@ export const patchedZoteroSearch: SearchPatcher = origin =>
             // 必须在这个if语句内，否则可能产生递归！
             const mainItem = await addon.history.getMainItem(parseInt(conditions[0].value));
             // window.console.trace(ids, conditions, mainItemKey);
-            return ids.filter(id => Zotero.Items.get(id).parentItemKey != mainItem.key);
+            return ids.filter(id => {
+                const item = Zotero.Items.get(id);
+                return !item || item.parentItemKey != mainItem.key;
+            });
         }
         return ids;
     };
@@ -35,7 +38,9 @@ export function protectData(event: string, ids: number[] | string[]) {
         item.deleted = false;
         item.saveTx({ skipDateModifiedUpdate: true, skipNotifier: true });
     },
-        items = ids.map(id => Zotero.Items.get(id)), // 触发事件的条目
+        items = ids
+            .map(id => Zotero.Items.get(id))
+            .filter((it): it is Zotero.Item => !!it), // 触发事件的条目
         mainItems = items.filter(it => addon.history.isMainItem(it)); // 筛选出的主条目
 
     switch (event) {
@@ -179,8 +184,8 @@ export function initReaderAlert(doc: Document) {
 export function hideDeleteMenuForHistory({ target }: Event) {
     const doc = (target as Element).ownerDocument!,
         menu = doc.querySelector('#zotero-itemmenu .zotero-menuitem-move-to-trash') as XULMenuItemElement,
-        hasHis = Zotero.getActiveZoteroPane()
-            .getSelectedItems()
+        hasHis = !!Zotero.getActiveZoteroPane()
+            ?.getSelectedItems()
             .some(item => addon.history.isMainItem(item) || addon.history.isHistoryNote(item));
     menu.setAttribute('disabled', hasHis.toString());
 }

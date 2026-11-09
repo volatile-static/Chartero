@@ -41,3 +41,9 @@ dashboard-relation =
     .tooltiptext = 文献関連ネットワーク
 dashboard-timeline =
     .tooltiptext = タイムライン
+
+menuOverview =
+    .label = 総覧
+# Used by debug menus in dev builds only
+menuLabel =
+    .label = { $label }

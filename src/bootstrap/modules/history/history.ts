@@ -110,6 +110,7 @@ export default class ReadingHistory extends ManagerTool {
         await this._loadingPromise.promise;
         if (!this._cached[attID]) {
             const attachment = Zotero.Items.get(attID);
+            if (!attachment) throw new Error(`Attachment ${attID} not found`);
             this._cached[attID] = {
                 note: await this.newNoteItem(attachment),
                 key: attachment.key,
@@ -248,8 +249,8 @@ export default class ReadingHistory extends ManagerTool {
         if (!ids.length) return this.newMainItem(libraryID); // 没搜到，新建
         if (ids.length > 1) {
             await Zotero.Items.merge(
-                Zotero.Items.get(ids[0]),
-                Zotero.Items.get(ids.slice(1))
+                Zotero.Items.get(ids[0]) as Zotero.Item,
+                Zotero.Items.get(ids.slice(1)).filter((it): it is Zotero.Item => !!it)
             );
             this.log('merge main item ', ids.slice(1), ' into ', ids[0]);
         }

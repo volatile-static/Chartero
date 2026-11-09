@@ -1,7 +1,6 @@
 import {
     UITool,
     ExtraFieldTool,
-    MenuManager,
     PatchHelper,
     BasicTool,
     unregister
@@ -11,6 +10,7 @@ import ReadingHistory from './modules/history/history';
 import { onAddonLoad, onHistoryRecord, onItemSelect, onMainWindowLoad } from './events';
 import { showMessage, WorkerManager } from './modules/utils';
 import { G } from './modules/global';
+import { unregisterMenus } from './modules/menu';
 
 type DefaultPrefs = Omit<
     typeof config.defaultSettings,
@@ -22,7 +22,6 @@ type DefaultPrefs = Omit<
 export default class Addon extends BasicTool {
     readonly extraField: ExtraFieldTool;
     readonly ui: UITool;
-    readonly menu: MenuManager;
     readonly patchSearch: PatchHelper;
     readonly history: ReadingHistory;
     readonly worker = new WorkerManager(new ChromeWorker(
@@ -47,9 +46,7 @@ export default class Addon extends BasicTool {
             this.basicOptions.log.prefix = `[${config.addonName}]`;
             this.basicOptions.log.disableConsole = true;
         }
-        this.basicOptions.debug.disableDebugBridgePassword = __dev__;
         this.ui = new UITool(this);
-        this.menu = new MenuManager(this);
         this.extraField = new ExtraFieldTool(this);
         this.history = new ReadingHistory(this, onHistoryRecord);
         this.patchSearch = new PatchHelper();
@@ -165,13 +162,14 @@ export default class Addon extends BasicTool {
 
     async unload() {
         this.patchSearch.disable();
+        unregisterMenus();
         this.overviewTabID && G('Zotero_Tabs').close(this.overviewTabID);
         this.notifierID && Zotero.Notifier.unregisterObserver(this.notifierID);
         this.prefsObserverIDs.forEach(id => Zotero.Prefs.unregisterObserver(id));
         this.listeners.forEach(({ target, type, listener }) =>
             target?.deref()?.removeEventListener(type, listener)
         );
-        (Zotero.getActiveZoteroPane().itemsView as any).onSelect.removeListener(onItemSelect);
+        (Zotero.getActiveZoteroPane()?.itemsView as any)?.onSelect.removeListener(onItemSelect);
         await this.worker.close();
         unregister(this);
     }
@@ -180,6 +178,7 @@ export default class Addon extends BasicTool {
         if (!__dev__) return;
 
         const item = Zotero.Items.get(411);
+        if (!item) return;
         const attachment = new Zotero.Item('attachment');
         attachment.libraryID = item.libraryID;
         attachment.parentID = item.id;
